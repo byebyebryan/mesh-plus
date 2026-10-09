@@ -1,15 +1,17 @@
 {
   "status": "candidate validated",
-  "sourceCommit": "fc4c3560f4a0a66421e0fd34140564a3e3e6bf11",
+  "sourceCommit": "18359c80e8be9fbec75ebed0097bb9080635726c",
   "version": "0.1.0a1",
   "wheel": {
     "file": "mesh_plus-0.1.0a1-py3-none-any.whl",
-    "sha256": "e210475c21a76e5c7bbadeee1d6bda98e899f4b47577b6d1ea94a488a95eefa6",
+    "sha256": "64f23468711f9cb164bd841c1479a4c6b2c482d5ce1ddbd11103a66533517eb9",
     "moduleDigests": {
       "mesh_plus/__init__.py": "593059e8ff9a52dd3ba45997d888ad2fd57d797a6af2328d896ff928ad5298bc",
+      "mesh_plus/authority.py": "188570bdf706fcd758dae0b94be022645957313aaf7917d2b24fe65d856097b0",
+      "mesh_plus/authority_cli.py": "f80c9400720bfb4f02ecafccd9c85834d9e24f2f57c0db35bf8c51dc4d1bd9a6",
       "mesh_plus/bridge.py": "f9573122892aaa097deb04b08f934644ba3ef0afde181cdc923e82072bd705ca",
-      "mesh_plus/catalog.py": "0f63534338157469a6dbe47ec3e5638251bd6ff81ed2e72fa82922a2bedc76ba",
-      "mesh_plus/cli.py": "572a925aede8f6c54596d9c1fafae16eb2d390caf51d06e5aad632fac51cea22",
+      "mesh_plus/catalog.py": "bc557aa78dd1705cb628c209ba83acc7ed15114ea4136804d849a14eeadd9661",
+      "mesh_plus/cli.py": "daac09ccbe48b3fc839bef9d95fb3c4dbb3145d33c196d16d824cee30b908460",
       "mesh_plus/client.py": "d652519c805ff120a459c1e09becad8104c8ce7466d3d3bc04507102a072ce42",
       "mesh_plus/observer.py": "a67d141ddb16d919e250bba11db5f72fcf283dbd06aae69d6353fa2150fcc7a3",
       "mesh_plus/protocol.py": "e5c50b53bd17a9ab8784175971eb3081a3c91ea8470821e3607cf67ac1790717",
@@ -61,5 +63,12 @@
     "Local candidate artifact only; no release upload or installed operational selection",
     "Standalone core scope excludes native adapters; full suite uses isolated producer wheels",
     "No live fleet migration, GUI or physical suspend acceptance"
-  ]
+  ],
+  "authorityInput": {
+    "project": "rofi-ssh-plus",
+    "sourceCommit": "f677491f4f3b78eb154dd0563220a871dd09bb90",
+    "selection": "ROFI_SSH_PLUS_MESH_BACKEND=mesh-plus",
+    "evidence": "authority-native-selection.json",
+    "limits": "Source selection tested; no SSH artifact or operational deployment selected"
+  }
 }

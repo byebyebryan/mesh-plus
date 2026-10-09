@@ -185,7 +185,7 @@
       ]
     },
     "rofi-ssh-plus": {
-      "head": "a69bd751d2219f97dac5bbc8443db5e477198833",
+      "head": "f677491f4f3b78eb154dd0563220a871dd09bb90",
       "worktreeClean": true,
       "files": [
         {
@@ -194,7 +194,7 @@
           "frozenPath": "reference/rofi-ssh-plus/docs/HOST_MESH_V1.md"
         },
         {
-          "path": "rofi_ssh_plus/mesh.py",
+          "path": "rofi_ssh_plus/_legacy_mesh.py",
           "sha256": "188570bdf706fcd758dae0b94be022645957313aaf7917d2b24fe65d856097b0"
         },
         {
@@ -390,8 +390,18 @@
           "path": "contracts/host-mesh-v1/schemas/report-route.schema.json",
           "sha256": "890031c4b025b9fcae79f009744a0b306426f4d475b6eee6aefc266846f06394",
           "frozenPath": "reference/rofi-ssh-plus/contracts/host-mesh-v1/schemas/report-route.schema.json"
+        },
+        {
+          "path": "rofi_ssh_plus/mesh.py",
+          "sha256": "b6fb47c36e0f68a7c8e06cd12bbf902390c3fa53852446bb0a14d46db64cdedd"
+        },
+        {
+          "path": "tests/test_mesh_backend.py",
+          "sha256": "c79c04d1069ebc09bf86e7166cd6a6bbb48a806853e5504d5b61f08bc1cd6461"
         }
-      ]
+      ],
+      "previousHead": "a69bd751d2219f97dac5bbc8443db5e477198833",
+      "implementationReview": "Explicit optional Mesh authority selector; original model/store bytes retained at _legacy_mesh.py; original design tuple remains in read-design-baselines.json"
     }
   }
 }

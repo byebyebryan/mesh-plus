@@ -190,3 +190,23 @@ paired artifact are still separate gates. There is no config-directory move,
 second registry, history import or automatic switch of operational writers.
 The recorded wheel candidate covers the earlier `fc4c356` transport checkpoint;
 the new authority is currently source-tested and requires a subsequent wheel.
+
+## SSH compatibility selection
+
+SSH Plus `f677491` now provides `ROFI_SSH_PLUS_MESH_BACKEND=mesh-plus`, aliasing
+the common model/store for its picker and public commands. `legacy` remains the
+standalone default and preserves the original implementation bytes. Missing or
+incompatible selected Mesh packages and unknown selections produce typed load
+failure; selection never silently falls back. Configuration/history paths and
+the published Host Mesh bundle checksum are unchanged.
+
+All eighty SSH checks pass with Mesh selected, including the actual process
+entry point. The standalone check passes with only the optional Mesh-specific
+case skipped. Mesh's fifty-two checks also pass from an isolated Python 3.11
+wheel with isolated producer wheels. Reports identify the exact source inputs;
+operational artifact selection and paired rollback remain unperformed.
+
+Reproduce native selection with
+`scripts/check-authority-compat.py --ssh-plus PATH --backend mesh-plus`.
+The current source baseline records the reviewed selector and original legacy
+bytes; the initial design tuple remains in `read-design-baselines.json`.

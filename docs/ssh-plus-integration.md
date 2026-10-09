@@ -53,6 +53,12 @@ explicitly. The model/store retains the original paths and bytes. SSH Plus's
 actual facade and operational artifact selection remain at Stage A until their
 paired integration gate. See [checkpoint evidence](implementation-progress.md).
 
+SSH Plus now exposes an explicit optional Stage B selection through
+`ROFI_SSH_PLUS_MESH_BACKEND=mesh-plus`; picker and process commands share Mesh's
+model/store module. Its standard-library legacy default remains available for
+standalone use and rollback. Both selections passed their source gate; managed
+selection remains at Stage A. The extraction creates no new live state directory.
+
 ## Route reporting
 
 The interactive SSH picker can continue recording a server that answers with an
