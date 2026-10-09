@@ -15,6 +15,21 @@ listener cleanup. The original design suites remain independent oracles.
 This checkpoint is transport infrastructure. It does not yet provide a client,
 bridge command, Observer adapter, selected runtime or deployed migration.
 
+## Concurrent delivery engine
+
+The asynchronous client and fixed-source bridge now support cached requests
+concurrently with independent state subscriptions. Cumulative credit uses actual
+encoded octets. A bounded latest-state slot coalesces pending replacements and
+signals a gap before resync. Cancellation completes an admitted write before its
+terminal barrier; source request failure is typed and leaves siblings usable.
+Client queues have per-stream frame bounds and a 96 MiB encoded-byte admission
+budget. Decoded heap and OS buffers require separate resource measurement.
+
+Fifteen runtime tests include actual IPC concurrency, independent cancellation,
+request deadlines, a 1 MiB frame, source-failure isolation, zero-credit resync and
+packaged-schema parity. Adapter/native and real SSH acceptance remain subsequent
+checkpoints. No publisher polling fallback or provider actions are introduced.
+
 Reproduce runtime tests after installing the package into a validation venv:
 
 ```sh

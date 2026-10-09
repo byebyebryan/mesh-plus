@@ -59,6 +59,11 @@ class ProtocolTests(unittest.TestCase):
         with self.assertRaisesRegex(ProtocolError, "unsupported_product"):
             Lifecycle(hello, "fixture-host")
 
+    def test_packaged_schemas_match_reviewed_contract(self):
+        from importlib.resources import files
+        for source in (ROOT / "contracts/mesh-delivery-v1").glob("*.schema.json"):
+            self.assertEqual(files("mesh_plus").joinpath("schemas", source.name).read_bytes(), source.read_bytes())
+
 
 if __name__ == "__main__":
     unittest.main()
