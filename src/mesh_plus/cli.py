@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import json
 import os
+import signal
 import stat
 import sys
 import tomllib
@@ -97,10 +98,16 @@ async def run(args):
         await bridge.serve(await stdio_channel())
     else:
         server = await IPCServer(args.socket, bridge.serve).start()
+        stopped = asyncio.Event()
+        loop = asyncio.get_running_loop()
+        for selected in (signal.SIGTERM, signal.SIGINT):
+            loop.add_signal_handler(selected, stopped.set)
         try:
-            await asyncio.Event().wait()
+            await stopped.wait()
         finally:
             await server.close()
+            for selected in (signal.SIGTERM, signal.SIGINT):
+                loop.remove_signal_handler(selected)
 
 
 def main():

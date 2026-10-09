@@ -146,3 +146,25 @@ rtk proxy uv pip install --python .venv-design/bin/python --no-deps -e .
 rtk proxy .venv-design/bin/python -m unittest discover -s tests -v
 rtk proxy .venv-design/bin/ruff check src tests scripts
 ```
+
+## Restart and subprocess recovery
+
+The IPC publisher holds an exclusive private lease, recovers only a refused,
+unchanged, owned socket, and refuses another live publisher. Repeated shutdown
+cannot remove a replacement publisher. CLI SIGTERM closes its owned endpoint
+without starting the configured Observer. Subprocess shutdown drains unread
+stdout, reaps the owned child and wakes an idle reader; reached-source evidence
+survives bounded diagnostic-tail eviction. Configured host/source identities
+are rejected before an invalid source can be advertised.
+
+Thirty-eight runtime checks cover these boundaries. Standalone wheel and
+Observer-wheel validation reports are recorded separately from editable source
+validation. These are disposable test environments, not installed artifact
+selection or operational fleet deployment.
+
+The next integration gates remain: extract shared catalog/config/health authority
+behind the SSH Plus compatibility facade; migrate the Tmux desktop coordinator
+without changing action authority or artifact pins; integrate Agent's current
+native service independently of the intentionally older Agent Plus; and measure
+operational reconnect, suspend and fleet costs. Native ordered events remain
+explicitly unsupported until their producer contracts are accepted.

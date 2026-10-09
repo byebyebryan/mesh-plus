@@ -1,9 +1,9 @@
 {
   "status": "passed",
-  "checkedAtUtc": "2026-10-09T23:33:12.043173+00:00",
+  "checkedAtUtc": "2026-10-09T23:42:04.242873+00:00",
   "python": "3.13.7",
   "scope": "runtime and owned native/SSH acceptance",
-  "testsRun": 33,
+  "testsRun": 38,
   "failures": 0,
   "errors": 0,
   "skipped": [],
@@ -17,9 +17,9 @@
     "__init__.py": "593059e8ff9a52dd3ba45997d888ad2fd57d797a6af2328d896ff928ad5298bc",
     "bridge.py": "f9573122892aaa097deb04b08f934644ba3ef0afde181cdc923e82072bd705ca",
     "catalog.py": "0f63534338157469a6dbe47ec3e5638251bd6ff81ed2e72fa82922a2bedc76ba",
-    "cli.py": "8f5af44fdf26a1e5c296ea7141d4083ff19a02dbc6d859e117681fc6dbb68809",
+    "cli.py": "572a925aede8f6c54596d9c1fafae16eb2d390caf51d06e5aad632fac51cea22",
     "client.py": "d652519c805ff120a459c1e09becad8104c8ce7466d3d3bc04507102a072ce42",
-    "observer.py": "c58c55bab9111c3038a8098728010835a6615ddd274e455d893bd2d7ff30cd63",
+    "observer.py": "a67d141ddb16d919e250bba11db5f72fcf283dbd06aae69d6353fa2150fcc7a3",
     "protocol.py": "e5c50b53bd17a9ab8784175971eb3081a3c91ea8470821e3607cf67ac1790717",
     "reader.py": "0a6797b784eb5143d1654de7a28cce41d04266c33bd6d3572bf303ec788ba45c",
     "remote.py": "f466bb64cf953ae4dde6318b43c60dab367bb365cd08fd5ced11c0c6d933eed5",
@@ -43,18 +43,18 @@
     "schemas/read-tmux.stream.schema.json": "e529b284e1ed365daddaa14e3eee5ced28d778f82aa0fc5be376f86886f44bd7",
     "schemas/server-frame.schema.json": "0b9a9443561247dac8e459e168367bea6de373d41eb024d59d7fe412023b6175",
     "schemas/tmux-native.schema.json": "b79b26cddc4363e43dbc73265f880115570afa9fa5f9851aed947ebb6f0c8c8c",
-    "transport.py": "95ad98274e4235c598bb56945093753ccde8d99ecb2e3b349a9a0aa86285dc0a",
+    "transport.py": "23c0ca0347c29a31df1455a0f69e7b00e69bfa35149c4191456e3223c1500d17",
     "view.py": "9e0e693e1b4ff9f6fdf262c787d138e1d7653e5e4722198c26b1e32ad8e96427"
   },
   "testDigests": {
     "tests/ssh_fixture.py": "d54bc1a0a8d15b505724d78fb1b6317f5dded7b456dc45d285f19b04c1544b1b",
     "tests/test_delivery.py": "03088cbfe051955b9ff17aebb147435ff67b77fde9bf30adbfa4210d168dc35e",
     "tests/test_native.py": "8e0208c888a13b97201def0fe07c7d9eab73eb437391bacf7e579174a9b54ec7",
-    "tests/test_observer.py": "34a0ee92e67f61420673159b055d9d77489ab2571e98009028c0f1c6629d9451",
+    "tests/test_observer.py": "32695974ba6f38550232776c20882d898271c7ae12d5ed9c5ba60ef49f4f8fda",
     "tests/test_protocol.py": "9a6c6d32dfa85a08b92a59dd04498620e2894aedf13fac1d22a8c1c164bcc41d",
     "tests/test_reader.py": "2d2d41220ba56c28feed2aa83b684a75176398ae8b8cfa6d6c79a09145c941ed",
     "tests/test_remote.py": "f826cccfc36f909277785a78fabda642b8aa2b4e1b946d68a8f9b6fc1c926a6f",
-    "tests/test_transport.py": "2316022df5cdc21a23a0950b63cdaa00b6d37a0d668c791601156ca532e8f8f8"
+    "tests/test_transport.py": "162a9bb5e99f515c7b413aff83748ec9af16aec3c46e5161f384a9bb40004d6b"
   },
   "limits": [
     "No operational fleet, installed artifact selection, GUI or physical suspend acceptance",

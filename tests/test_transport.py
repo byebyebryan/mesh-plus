@@ -1,5 +1,7 @@
 import asyncio
 import os
+import socket
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -7,7 +9,7 @@ from pathlib import Path
 from test_protocol import example
 
 from mesh_plus.protocol import ProtocolError
-from mesh_plus.transport import IPCServer, connect_ipc
+from mesh_plus.transport import IPCServer, connect_ipc, subprocess_channel
 
 
 class TransportTests(unittest.IsolatedAsyncioTestCase):
@@ -51,3 +53,55 @@ class TransportTests(unittest.IsolatedAsyncioTestCase):
             os.chmod(directory, 0o755)
             with self.assertRaisesRegex(ProtocolError, "ipc_directory_policy"):
                 await IPCServer(Path(directory) / "mesh.sock", None).start()
+
+    async def test_abandoned_owned_socket_recovers_but_duplicate_lease_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "mesh.sock"
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as abandoned:
+                abandoned.bind(str(path))
+                path.chmod(0o600)
+            server = await IPCServer(path, None).start()
+            duplicate = IPCServer(path, None)
+            try:
+                with self.assertRaisesRegex(ProtocolError, "ipc_publisher_running"):
+                    await duplicate.start()
+                self.assertIsNone(duplicate.lease)
+                self.assertTrue(path.is_socket())
+            finally:
+                await server.close()
+            self.assertIsNone(server.lease)
+
+    async def test_repeated_close_preserves_new_publisher(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "mesh.sock"
+            old = await IPCServer(path, None).start()
+            await old.close()
+            new = await IPCServer(path, None).start()
+            try:
+                await old.close()
+                self.assertTrue(path.is_socket())
+            finally:
+                await new.close()
+
+    async def test_owned_child_close_drains_paused_stdout(self):
+        program = "import os,time\nfor _ in range(400): os.write(1,b'x'*65536)\ntime.sleep(30)"
+        channel = await subprocess_channel([sys.executable, "-c", program])
+        await asyncio.sleep(.1)
+        await asyncio.wait_for(channel.close(), 3)
+        self.assertIsNotNone(channel.process.returncode)
+
+    async def test_channel_close_wakes_idle_reader(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "mesh.sock"
+            async def idle(channel):
+                await asyncio.Event().wait()
+            server = await IPCServer(path, idle).start()
+            channel = await connect_ipc(path)
+            pending = asyncio.create_task(channel.receive())
+            try:
+                await asyncio.sleep(.01)
+                await channel.close()
+                with self.assertRaises(EOFError):
+                    await asyncio.wait_for(pending, .1)
+            finally:
+                await server.close()

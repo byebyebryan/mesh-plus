@@ -39,6 +39,9 @@ class ObserverCodec:
 
     def __init__(self, domain, host, source):
         check(domain in {"tmux", "agent"}, "observer_domain")
+        check(isinstance(source, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,127}", source), "configured_source_id")
+        check(isinstance(host, str) and len(host) <= 16384 and re.fullmatch(r"[a-z0-9][a-z0-9_.-]*", host),
+              "configured_host_id")
         self.domain, self.host, self.source = domain, host, source
         if domain == "tmux":
             from tmux_observer.delivery import validate_service_frame

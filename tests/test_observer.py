@@ -36,6 +36,34 @@ def native_fixture(domain):
 
 
 class ObserverTests(unittest.IsolatedAsyncioTestCase):
+    async def test_cli_server_sigterm_removes_only_owned_endpoint(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = root / "sources.toml"
+            config.write_text(f'version = 1\nhost = "test-host"\n[sources.default]\ndomain = "tmux"\nsocket = "{root / "absent-owner.sock"}"\n')
+            config.chmod(0o600)
+            path = root / "mesh.sock"
+            process = await asyncio.create_subprocess_exec(
+                sys.executable, "-m", "mesh_plus.cli", "serve", "--source", "default",
+                "--config", str(config), "--socket", str(path),
+                stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+            try:
+                for _ in range(200):
+                    if path.is_socket() or process.returncode is not None:
+                        break
+                    await asyncio.sleep(.01)
+                self.assertTrue(path.is_socket())
+                process.terminate()
+                stdout, stderr = await asyncio.wait_for(process.communicate(), 3)
+                self.assertEqual(process.returncode, 0, stderr.decode())
+                self.assertEqual(stdout, b"")
+                self.assertFalse(path.exists())
+                self.assertFalse((root / "absent-owner.sock").exists())
+            finally:
+                if process.returncode is None:
+                    process.kill()
+                    await process.wait()
+
     async def exercise(self, domain, subprocess=False, ssh=False):
         with tempfile.TemporaryDirectory(dir=sys.prefix if ssh else None, prefix="mesh-runtime-test-") as directory:
             root = Path(directory)

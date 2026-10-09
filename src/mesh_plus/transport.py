@@ -2,6 +2,7 @@
 
 import asyncio
 import contextlib
+import fcntl
 import os
 import secrets
 import shlex
@@ -30,19 +31,38 @@ class LineChannel:
         self.closed = False
         self.stderr_tail = bytearray()
         self.reached_nonce = reached_nonce
+        self._reached = False
+        self.read_job = None
         self.stderr_task = asyncio.create_task(self._stderr()) if process else None
 
     async def _stderr(self):
         while block := await self.process.stderr.read(4096):
             self.stderr_tail.extend(block)
+            if self.reached_nonce:
+                marker = ("\x1eROFI_PLUS_REACHED_V1:" + self.reached_nonce + "\x1f\n").encode()
+                self._reached = self._reached or marker in self.stderr_tail
             del self.stderr_tail[:-65536]
 
     async def receive(self):
+        check(self.read_job is None, "concurrent_read")
+        self.read_job = asyncio.create_task(self._receive())
+        try:
+            return await self.read_job
+        except asyncio.CancelledError:
+            if self.closed:
+                raise EOFError("channel_closed") from None
+            raise
+        finally:
+            self.read_job = None
+
+    async def _receive(self):
         try:
             first = await self.reader.readexactly(1)
             started = boottime_ms()
             raw = first if first == b"\n" else first + await asyncio.wait_for(self.reader.readuntil(b"\n"), self.io_timeout)
             check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
+        except ProtocolError:
+            raise
         except (asyncio.LimitOverrunError, ValueError) as error:
             raise ProtocolError("message_capacity") from error
         except asyncio.IncompleteReadError as error:
@@ -55,9 +75,7 @@ class LineChannel:
 
     @property
     def reached(self):
-        if not self.reached_nonce:
-            return False
-        return ("\x1eROFI_PLUS_REACHED_V1:" + self.reached_nonce + "\x1f\n").encode() in self.stderr_tail
+        return self._reached
 
     async def send(self, value):
         raw = encode(value)
@@ -72,6 +90,15 @@ class LineChannel:
         if self.closed:
             return
         self.closed = True
+        if self.read_job:
+            self.read_job.cancel()
+            await asyncio.gather(self.read_job, return_exceptions=True)
+        drain = None
+        if self.process:
+            async def discard_stdout():
+                while await self.reader.read(65536):
+                    pass
+            drain = asyncio.create_task(discard_stdout())
         self.writer.close()
         with contextlib.suppress(Exception):
             await asyncio.wait_for(self.writer.wait_closed(), 1)
@@ -81,8 +108,12 @@ class LineChannel:
             try:
                 await asyncio.wait_for(self.process.wait(), 1)
             except TimeoutError:
-                self.process.kill()
-                await self.process.wait()
+                with contextlib.suppress(ProcessLookupError):
+                    self.process.kill()
+                await asyncio.wait_for(self.process.wait(), 1)
+        if drain:
+            with contextlib.suppress(Exception):
+                await asyncio.wait_for(drain, 1)
         if self.stderr_task:
             self.stderr_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
@@ -155,7 +186,7 @@ async def connect_ssh(destination, source_id, *, executable="ssh", timeout_secon
 
 
 class IPCServer:
-    """Private same-user listener; refuses replacement of any existing pathname."""
+    """Private leased listener; recovers only a proved abandoned owned socket."""
 
     def __init__(self, path, handler, *, max_clients=32):
         self.path = Path(path)
@@ -165,23 +196,60 @@ class IPCServer:
         self.server = None
         self.inode = None
         self.closing = False
+        self.lease = None
+        self.closed = False
 
     async def start(self):
+        check(self.server is None and self.lease is None and not self.closing, "ipc_server_state")
+        check(self.path.is_absolute() and self.path.parent.resolve() == self.path.parent and
+              len(os.fsencode(self.path)) < 108, "ipc_socket_path")
         parent = self.path.parent.lstat()
         check(stat.S_ISDIR(parent.st_mode) and parent.st_uid == os.getuid() and
               parent.st_mode & 0o077 == 0, "ipc_directory_policy")
-        check(not self.path.exists() and not self.path.is_symlink(), "ipc_path_exists")
+        try:
+            self.lease = os.open(str(self.path) + ".lock", os.O_CREAT | os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW, 0o600)
+            node = os.fstat(self.lease)
+            check(stat.S_ISREG(node.st_mode) and node.st_uid == os.getuid() and node.st_mode & 0o077 == 0, "ipc_lease_policy")
+            try:
+                fcntl.flock(self.lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError as error:
+                raise ProtocolError("ipc_publisher_running") from error
+            if self.path.exists() or self.path.is_symlink():
+                node = self.path.lstat()
+                check(stat.S_ISSOCK(node.st_mode) and node.st_uid == os.getuid() and node.st_mode & 0o077 == 0,
+                      "ipc_path_exists")
+                try:
+                    _reader, writer = await asyncio.wait_for(asyncio.open_unix_connection(self.path), .1)
+                except ConnectionRefusedError:
+                    current = self.path.lstat()
+                    check((current.st_dev, current.st_ino) == (node.st_dev, node.st_ino), "ipc_socket_changed")
+                    self.path.unlink()
+                else:
+                    writer.close()
+                    await writer.wait_closed()
+                    raise ProtocolError("ipc_publisher_running")
+        except BaseException:
+            if self.lease is not None:
+                os.close(self.lease)
+                self.lease = None
+            raise
         # Bind synchronously with mode restricted before the event loop admits peers.
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         try:
             sock.bind(str(self.path))
+            self.inode = self.path.lstat().st_ino
             os.chmod(self.path, 0o600)
             sock.listen(self.max_clients)
             sock.setblocking(False)
-            self.inode = self.path.lstat().st_ino
             self.server = await asyncio.start_unix_server(self._accept, sock=sock, limit=MAX_CONTROL + 1)
         except BaseException:
             sock.close()
+            with contextlib.suppress(FileNotFoundError):
+                if self.path.lstat().st_ino == self.inode:
+                    self.path.unlink()
+            if self.lease is not None:
+                os.close(self.lease)
+                self.lease = None
             raise
         return self
 
@@ -201,6 +269,9 @@ class IPCServer:
             self.tasks.discard(task)
 
     async def close(self):
+        if self.closed:
+            return
+        self.closed = True
         self.closing = True
         if self.server:
             self.server.close()
@@ -213,3 +284,6 @@ class IPCServer:
         with contextlib.suppress(FileNotFoundError):
             if self.path.lstat().st_ino == self.inode:
                 self.path.unlink()
+        if self.lease is not None:
+            os.close(self.lease)
+            self.lease = None
