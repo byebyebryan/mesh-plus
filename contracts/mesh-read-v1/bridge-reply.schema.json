@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:read:1:bridge-reply",
+  "type": "object",
+  "properties": {
+    "meshProtocol": {
+      "const": 1
+    },
+    "kind": {
+      "enum": [
+        "proof",
+        "candidate",
+        "heartbeat",
+        "gap",
+        "error"
+      ]
+    },
+    "nonce": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{32,64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "bridgeId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 36,
+      "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "sourceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9_]{0,127}$"
+    },
+    "hostId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16384,
+      "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+    },
+    "clock": {
+      "type": "object",
+      "properties": {
+        "bootId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+        },
+        "timeNamespace": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^time:[0-9]+$"
+        }
+      },
+      "required": [
+        "bootId",
+        "timeNamespace"
+      ],
+      "additionalProperties": false
+    },
+    "encodedAtMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "ownerFrame": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ownerDigest": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "remaining": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "component": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9_]{0,127}$"
+          },
+          "health": {
+            "enum": [
+              "current",
+              "partial",
+              "stale",
+              "warming",
+              "unavailable"
+            ]
+          },
+          "accepted": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "remainingMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "sourceId",
+          "component",
+          "health",
+          "accepted",
+          "remainingMs"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 32
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[a-z][a-z0-9_]{0,127}$"
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "meshProtocol",
+    "kind",
+    "nonce",
+    "bridgeId",
+    "sequence",
+    "sourceId",
+    "hostId",
+    "clock",
+    "encodedAtMs",
+    "ownerFrame",
+    "ownerDigest",
+    "remaining",
+    "error"
+  ],
+  "additionalProperties": false
+}

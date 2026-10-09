@@ -1,0 +1,540 @@
+{
+  "status": "passed",
+  "checkedAtUtc": "2026-10-09T22:57:47.367445+00:00",
+  "validationScope": "schemas, adversarial design model, frozen producer projection; no native/network/runtime acceptance",
+  "sourceParityChecked": true,
+  "checksPassed": 116,
+  "checks": [
+    {
+      "name": "frozen source digests and current checkout parity",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile agent-empty",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile agent-fleet",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile agent-historical",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile agent-local",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile agent-partial-host",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile agent-warming",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile agent-wss-fleet",
+      "result": "passed"
+    },
+    {
+      "name": "valid control-heartbeat",
+      "result": "passed"
+    },
+    {
+      "name": "valid request-error",
+      "result": "passed"
+    },
+    {
+      "name": "valid request-hosts",
+      "result": "passed"
+    },
+    {
+      "name": "valid request-local",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile tmux-empty",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile tmux-fleet",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile tmux-historical",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile tmux-local",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile tmux-partial-host",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile tmux-warming",
+      "result": "passed"
+    },
+    {
+      "name": "valid profile tmux-wss-fleet",
+      "result": "passed"
+    },
+    {
+      "name": "correlated host-local bridge proof",
+      "result": "passed"
+    },
+    {
+      "name": "valid bridge-candidate.json",
+      "result": "passed"
+    },
+    {
+      "name": "valid bridge-heartbeat.json",
+      "result": "passed"
+    },
+    {
+      "name": "tmux lossless original snapshot reconstruction",
+      "result": "passed"
+    },
+    {
+      "name": "tmux same local and fleet selector",
+      "result": "passed"
+    },
+    {
+      "name": "tmux cross-host equal native IDs stay distinct",
+      "result": "passed"
+    },
+    {
+      "name": "tmux expiry while retaining cached response",
+      "result": "passed"
+    },
+    {
+      "name": "tmux historical delivery cannot supply current rows",
+      "result": "passed"
+    },
+    {
+      "name": "tmux unavailable sibling preserves healthy rows",
+      "result": "passed"
+    },
+    {
+      "name": "agent lossless original snapshot reconstruction",
+      "result": "passed"
+    },
+    {
+      "name": "agent same local and fleet selector",
+      "result": "passed"
+    },
+    {
+      "name": "agent cross-host equal native IDs stay distinct",
+      "result": "passed"
+    },
+    {
+      "name": "agent expiry while retaining cached response",
+      "result": "passed"
+    },
+    {
+      "name": "agent historical delivery cannot supply current rows",
+      "result": "passed"
+    },
+    {
+      "name": "agent unavailable sibling preserves healthy rows",
+      "result": "passed"
+    },
+    {
+      "name": "complete delivery preserves partial Claude coverage",
+      "result": "passed"
+    },
+    {
+      "name": "empty and warming have distinct metadata",
+      "result": "passed"
+    },
+    {
+      "name": "conservative numeric remote proof",
+      "result": "passed"
+    },
+    {
+      "name": "expired during round trip",
+      "result": "passed"
+    },
+    {
+      "name": "late proof",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "cross-clock negative RTT",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "boolean proof counter",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "missing selected host outcome",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "foreign record host",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "duplicate exact native identity",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "owner host relabelling",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "wrong local clock domain",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "remote arrival without proof",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "proof digest changed",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "remote validity reset on delivery",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "unproved extra remaining lease",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "late proof accepted",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "catalog revision missing",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "successful facade hides sibling failure",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "unsupported Mesh version",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "unsupported owner version",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "unsupported domain profile version",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "base watch cannot dispatch action",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "wrong source component",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "omitted history receipt would bypass conservative expiry",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "expired source asserted current",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "heartbeat cannot carry fresh positive expiry",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "gap cannot carry positive view",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "duplicate source receipt",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "catalog capacity silently enlarged",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "oversized common extensions",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "local request with remote host list",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "wrong bridge nonce",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "bridge renews lease from arrival",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "matching proof in current epoch",
+      "result": "passed"
+    },
+    {
+      "name": "replayed correlated nonce",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "late previous connection epoch",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "reply completed after absolute proof deadline",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "reached bridge with unavailable owner",
+      "result": "passed"
+    },
+    {
+      "name": "empty bridge reply without source error",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "initial full watch view",
+      "result": "passed"
+    },
+    {
+      "name": "heartbeat changes delivery time only",
+      "result": "passed"
+    },
+    {
+      "name": "skipped sequence without gap",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "publisher replacement in old stream guard",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "catalog replacement in old stream guard",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "gap revokes positive view",
+      "result": "passed"
+    },
+    {
+      "name": "view before scoped resync",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "full resync restores supported view",
+      "result": "passed"
+    },
+    {
+      "name": "catalog loss terminates watch guard",
+      "result": "passed"
+    },
+    {
+      "name": "late view after terminated watch",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "tmux suspended reader clock expires positives",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "agent suspended reader clock expires positives",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "earliest provider component expires only affected provider",
+      "result": "passed"
+    },
+    {
+      "name": "unfamiliar bounded diagnostic accepted",
+      "result": "passed"
+    },
+    {
+      "name": "explicit remote selection need not include local owner",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published list-local-only",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published list-multi-route",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published report-accepted",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published report-stale-observation",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published error-invalid-input",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published error-invalid-config",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published error-unsupported-schema",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published error-unknown-host",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published error-unknown-route",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published error-stale-mesh",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published error-persistence-failed",
+      "result": "passed"
+    },
+    {
+      "name": "Host Mesh published raw-duplicate-object-key",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-extra-document",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-extra-final-lf",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-space-after-final-lf",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-trailing-byte",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-leading-bom",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-invalid-utf8",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-embedded-nul",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-missing-final-lf",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "Host Mesh published raw-non-finite-number",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "strict Mesh wire",
+      "result": "passed"
+    },
+    {
+      "name": "escaped surrogate",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "multiline frame",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "aggregate wire cap",
+      "result": "passed",
+      "expectation": "reject"
+    },
+    {
+      "name": "documentation links and whitespace",
+      "result": "passed"
+    },
+    {
+      "name": "existing pure producer semantic validators",
+      "result": "passed",
+      "details": [
+        {
+          "domain": "tmux",
+          "ownersValidated": 9,
+          "pureImports": true
+        },
+        {
+          "domain": "agent",
+          "ownersValidated": 9,
+          "pureImports": true
+        }
+      ]
+    }
+  ],
+  "limits": "Native passivity, SSH integration, GUI, resource, physical suspend and deployment remain later gates"
+}

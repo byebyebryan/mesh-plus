@@ -1,0 +1,956 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agent-observer:snapshot:4",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 4
+    },
+    "collectionId": {
+      "type": "string",
+      "maxLength": 36,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+    },
+    "collectedAt": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 4000000000000
+    },
+    "host": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "type": "string",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$"
+        },
+        "authoritySource": {
+          "enum": [
+            "caller"
+          ]
+        },
+        "nativeHostname": {
+          "type": "string",
+          "maxLength": 256,
+          "minLength": 1
+        },
+        "uid": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "authority",
+        "authoritySource",
+        "nativeHostname",
+        "uid"
+      ],
+      "additionalProperties": false
+    },
+    "sourceHealth": {
+      "enum": [
+        "current",
+        "partial",
+        "unavailable"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "enum": [
+              "codex",
+              "claude"
+            ]
+          },
+          "namespace": {
+            "type": "string",
+            "maxLength": 71,
+            "minLength": 1,
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "runtimeNamespace": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 71,
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "configHome": {
+            "type": "string",
+            "maxLength": 4096,
+            "minLength": 1
+          },
+          "configHomeKind": {
+            "enum": [
+              "default",
+              "explicit"
+            ]
+          },
+          "runtime": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 1
+                  },
+                  "binarySha256": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "topology": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "bootId": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                  },
+                  "pid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 1
+                  },
+                  "startTicks": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 4000000000000
+                  },
+                  "endpoint": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 4096
+                  }
+                },
+                "required": [
+                  "version",
+                  "binarySha256",
+                  "topology",
+                  "bootId",
+                  "pid",
+                  "startTicks",
+                  "endpoint"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "discovery": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "catalogMode": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "sourceKinds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "minLength": 1
+                    },
+                    "maxItems": 32
+                  },
+                  "catalogRows": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "runtimeRows": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "parkedRows": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "pages": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "nativeMessageBytes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "historyClocks": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "catalogMode",
+                  "sourceKinds",
+                  "catalogRows",
+                  "runtimeRows",
+                  "parkedRows",
+                  "pages",
+                  "nativeMessageBytes",
+                  "historyClocks"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceHealth": {
+            "enum": [
+              "current",
+              "partial",
+              "stale",
+              "unavailable"
+            ]
+          },
+          "coverage": {
+            "type": "object",
+            "properties": {
+              "saved": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "complete",
+                      "partial",
+                      "unavailable",
+                      "unsupported"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  }
+                },
+                "required": [
+                  "status",
+                  "reason"
+                ],
+                "additionalProperties": false
+              },
+              "runtime": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "complete",
+                      "partial",
+                      "unavailable",
+                      "unsupported"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "scope": {
+                    "enum": [
+                      "daemon_threads",
+                      "provider_sessions"
+                    ]
+                  }
+                },
+                "required": [
+                  "status",
+                  "reason",
+                  "scope"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "saved",
+              "runtime"
+            ],
+            "additionalProperties": false
+          },
+          "capabilities": {
+            "type": "object",
+            "properties": {
+              "phase": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "working",
+                    "blocked",
+                    "waiting"
+                  ]
+                },
+                "maxItems": 3
+              },
+              "blockedReasons": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "approval",
+                    "question"
+                  ]
+                },
+                "maxItems": 2
+              },
+              "runtime": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "running",
+                    "parked"
+                  ]
+                },
+                "maxItems": 2
+              },
+              "activity": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "phase",
+              "blockedReasons",
+              "runtime",
+              "activity"
+            ],
+            "additionalProperties": false
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[a-z][a-z0-9_]{0,127}$"
+            },
+            "maxItems": 128
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[a-z][a-z0-9_]{0,127}$"
+            },
+            "maxItems": 128
+          }
+        },
+        "required": [
+          "provider",
+          "namespace",
+          "runtimeNamespace",
+          "configHome",
+          "configHomeKind",
+          "runtime",
+          "discovery",
+          "sourceHealth",
+          "coverage",
+          "capabilities",
+          "errors",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 2
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "identity": {
+            "type": "object",
+            "properties": {
+              "hostScope": {
+                "type": "string",
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$"
+              },
+              "provider": {
+                "enum": [
+                  "codex",
+                  "claude"
+                ]
+              },
+              "namespace": {
+                "type": "string",
+                "maxLength": 71,
+                "minLength": 1,
+                "pattern": "^sha256:[0-9a-f]{64}$"
+              },
+              "nativeIdKind": {
+                "enum": [
+                  "thread",
+                  "session"
+                ]
+              },
+              "nativeId": {
+                "type": "string",
+                "maxLength": 36,
+                "minLength": 1,
+                "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+              }
+            },
+            "required": [
+              "hostScope",
+              "provider",
+              "namespace",
+              "nativeIdKind",
+              "nativeId"
+            ],
+            "additionalProperties": false
+          },
+          "nativeIds": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "threadId": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                  },
+                  "sessionTreeRootId": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                  }
+                },
+                "required": [
+                  "threadId",
+                  "sessionTreeRootId"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "sessionId": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                  }
+                },
+                "required": [
+                  "sessionId"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "user",
+              "child",
+              "unknown"
+            ]
+          },
+          "cwd": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 4096
+          },
+          "cwdSource": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9_]{0,127}$"
+          },
+          "inventory": {
+            "enum": [
+              "live",
+              "saved"
+            ]
+          },
+          "hasSavedHistory": {
+            "type": "boolean"
+          },
+          "phase": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "working",
+                      "blocked",
+                      "waiting",
+                      "unknown"
+                    ]
+                  },
+                  "observedAt": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 4000000000000
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 128,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "health": {
+                    "enum": [
+                      "current",
+                      "stale",
+                      "unavailable",
+                      "unsupported",
+                      "ambiguous"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "clock": {
+                    "enum": [
+                      "native",
+                      "sample",
+                      null
+                    ]
+                  },
+                  "lastKnownValue": {
+                    "enum": [
+                      "working",
+                      "blocked",
+                      "waiting"
+                    ]
+                  }
+                },
+                "required": [
+                  "value",
+                  "observedAt",
+                  "source",
+                  "health",
+                  "reason",
+                  "clock"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "runtime": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "enum": [
+                  "running",
+                  "parked",
+                  "unknown"
+                ]
+              },
+              "observedAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "health": {
+                "enum": [
+                  "current",
+                  "stale",
+                  "unavailable",
+                  "unsupported",
+                  "ambiguous"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "clock": {
+                "enum": [
+                  "native",
+                  "sample",
+                  null
+                ]
+              },
+              "lastKnownValue": {
+                "enum": [
+                  "running",
+                  "parked"
+                ]
+              }
+            },
+            "required": [
+              "value",
+              "observedAt",
+              "source",
+              "health",
+              "reason",
+              "clock"
+            ],
+            "additionalProperties": false
+          },
+          "outcome": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "enum": [
+                  "completed",
+                  "failed",
+                  "cancelled",
+                  "unknown"
+                ]
+              },
+              "observedAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "health": {
+                "enum": [
+                  "current",
+                  "stale",
+                  "unavailable",
+                  "unsupported",
+                  "ambiguous"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "clock": {
+                "enum": [
+                  "native",
+                  "sample",
+                  null
+                ]
+              },
+              "lastKnownValue": {
+                "enum": [
+                  "completed",
+                  "failed",
+                  "cancelled"
+                ]
+              }
+            },
+            "required": [
+              "value",
+              "observedAt",
+              "source",
+              "health",
+              "reason",
+              "clock"
+            ],
+            "additionalProperties": false
+          },
+          "blockedReasons": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "approval",
+                "question"
+              ]
+            },
+            "maxItems": 2
+          },
+          "createdAt": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 4000000000000
+          },
+          "activity": {
+            "type": "object",
+            "properties": {
+              "at": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "health": {
+                "enum": [
+                  "current",
+                  "stale",
+                  "unavailable",
+                  "unsupported",
+                  "ambiguous"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "lastKnownAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              }
+            },
+            "required": [
+              "at",
+              "source",
+              "health",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "health": {
+                    "enum": [
+                      "current",
+                      "unavailable",
+                      "unsupported"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "root": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 4096
+                  },
+                  "rootKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$"
+                  },
+                  "relativePath": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 4096
+                  },
+                  "projectKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 256,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$"
+                  },
+                  "repo": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "root": {
+                            "type": "string",
+                            "maxLength": 4096,
+                            "minLength": 1
+                          },
+                          "commonDir": {
+                            "type": "string",
+                            "maxLength": 4096,
+                            "minLength": 1
+                          },
+                          "relativePath": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "maxLength": 4096
+                          }
+                        },
+                        "required": [
+                          "root",
+                          "commonDir",
+                          "relativePath"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "health",
+                  "reason",
+                  "root",
+                  "rootKey",
+                  "relativePath",
+                  "projectKey",
+                  "repo"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadataIssues": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[a-z][a-z0-9_]{0,127}$"
+            },
+            "maxItems": 128
+          }
+        },
+        "required": [
+          "identity",
+          "nativeIds",
+          "title",
+          "kind",
+          "cwd",
+          "cwdSource",
+          "inventory",
+          "hasSavedHistory",
+          "phase",
+          "runtime",
+          "outcome",
+          "blockedReasons",
+          "createdAt",
+          "activity",
+          "workspace",
+          "metadataIssues"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 4096
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[a-z][a-z0-9_]{0,127}$"
+      },
+      "maxItems": 128
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[a-z][a-z0-9_]{0,127}$"
+      },
+      "maxItems": 128
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "collectionId",
+    "collectedAt",
+    "host",
+    "sourceHealth",
+    "sources",
+    "sessions",
+    "errors",
+    "limitations"
+  ],
+  "additionalProperties": false
+}

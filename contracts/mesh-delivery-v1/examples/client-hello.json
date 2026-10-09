@@ -1,0 +1,20 @@
+{
+  "protocol": "mesh-plus.delivery-candidate.v1",
+  "version": 1,
+  "kind": "hello",
+  "sequence": 1,
+  "helloNonce": "11111111111111111111111111111111",
+  "expectedHost": "fixture-host",
+  "sourceId": "synthetic",
+  "product": "state",
+  "profile": "mesh-plus.synthetic.state.v1",
+  "requiredCapabilities": [
+    "snapshot",
+    "subscribe"
+  ],
+  "limits": {
+    "maxMessageBytes": 8470528,
+    "maxOutstanding": 8,
+    "maxSubscriptions": 8
+  }
+}

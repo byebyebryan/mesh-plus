@@ -1,0 +1,14 @@
+{
+  "registryProtocol": "mesh-plus.endpoints-candidate.v1",
+  "revision": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "endpointId": "ipc_events",
+  "hostId": "fixture-host",
+  "sourceId": "synthetic",
+  "product": "events",
+  "profile": "mesh-plus.synthetic.events.v1",
+  "authRef": "configured_principal",
+  "backend": "ipc",
+  "address": {
+    "path": "/run/user/1000/mesh-plus/fixture.sock"
+  }
+}

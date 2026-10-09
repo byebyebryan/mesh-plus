@@ -1,0 +1,43 @@
+{
+  "protocol": "tmux-observer.observation.v1",
+  "schemaVersion": 1,
+  "source": {
+    "hostId": "fixture-local",
+    "uid": 1000,
+    "server": "default",
+    "nativeHostname": "fixture-local"
+  },
+  "clock": {
+    "bootId": "00000000-0000-4000-8000-000000000000",
+    "timeNamespace": "time:10"
+  },
+  "sample": {
+    "startedAt": 100,
+    "finishedAt": 120,
+    "observedAt": 1700000000000,
+    "coverage": "complete",
+    "error": null
+  },
+  "serverGeneration": "tmux-v1:1700000000:4321:/tmp/tmux-fixture/default",
+  "sessions": [
+    {
+      "hostId": "fixture-local",
+      "serverGeneration": "tmux-v1:1700000000:4321:/tmp/tmux-fixture/default",
+      "sessionId": "$2",
+      "createdAt": 1700000001,
+      "name": "fixture",
+      "activityAt": 1700000002,
+      "lastAttachedAt": null,
+      "attachedClients": 0,
+      "pending": false,
+      "windowCount": 1,
+      "sessionPath": "/tmp",
+      "currentWindow": "fixture",
+      "currentPath": "/tmp"
+    }
+  ],
+  "capabilities": {
+    "panes": false,
+    "options": []
+  }
+}

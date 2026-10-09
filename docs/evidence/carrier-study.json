@@ -1,0 +1,114 @@
+{
+  "status": "passed",
+  "checkedAtUtc": "2026-10-09T22:27:08.212267+00:00",
+  "environment": {
+    "python": "3.13.7",
+    "websockets": "17.1",
+    "ssh": "OpenSSH_10.6p1, OpenSSL 3.6.5 29 Sep 2026"
+  },
+  "validationScope": "owned synthetic endpoints: Unix IPC, subprocess stdio, disposable loopback SSH and WSS with verified server certificate; no native Observer, fleet, production auth or performance acceptance",
+  "results": {
+    "unix-ipc": {
+      "status": "passed",
+      "scenario": "two timer-push subscriptions, interleaved cached requests, 8 MiB response and independent cancellation",
+      "requestSamples": [
+        {
+          "payloadBytes": 1024,
+          "requestRoundtripMs": 1.393
+        },
+        {
+          "payloadBytes": 65536,
+          "requestRoundtripMs": 4.888
+        },
+        {
+          "payloadBytes": 8388608,
+          "requestRoundtripMs": 502.259
+        }
+      ],
+      "encodedJsonBytesReceived": 8459750,
+      "pushFramesReceived": 4,
+      "onePublisherProcess": true,
+      "channelFramesValidated": 13
+    },
+    "subprocess-stdio": {
+      "status": "passed",
+      "scenario": "two timer-push subscriptions, interleaved cached requests, 8 MiB response and independent cancellation",
+      "requestSamples": [
+        {
+          "payloadBytes": 1024,
+          "requestRoundtripMs": 1.918
+        },
+        {
+          "payloadBytes": 65536,
+          "requestRoundtripMs": 7.43
+        },
+        {
+          "payloadBytes": 8388608,
+          "requestRoundtripMs": 546.151
+        }
+      ],
+      "encodedJsonBytesReceived": 8462495,
+      "pushFramesReceived": 13,
+      "onePublisherProcess": true,
+      "channelFramesValidated": 22,
+      "stderrBytesDrained": 0
+    },
+    "ssh-stdio": {
+      "status": "passed",
+      "scenario": "two timer-push subscriptions, interleaved cached requests, 8 MiB response and independent cancellation",
+      "requestSamples": [
+        {
+          "payloadBytes": 1024,
+          "requestRoundtripMs": 1.87
+        },
+        {
+          "payloadBytes": 65536,
+          "requestRoundtripMs": 7.517
+        },
+        {
+          "payloadBytes": 8388608,
+          "requestRoundtripMs": 866.604
+        }
+      ],
+      "encodedJsonBytesReceived": 8463715,
+      "pushFramesReceived": 17,
+      "onePublisherProcess": true,
+      "channelFramesValidated": 26,
+      "stderrBytesDrained": 0
+    },
+    "wss": {
+      "status": "passed",
+      "scenario": "two timer-push subscriptions, interleaved cached requests, 8 MiB response and independent cancellation",
+      "requestSamples": [
+        {
+          "payloadBytes": 1024,
+          "requestRoundtripMs": 1.359
+        },
+        {
+          "payloadBytes": 65536,
+          "requestRoundtripMs": 4.378
+        },
+        {
+          "payloadBytes": 8388608,
+          "requestRoundtripMs": 472.36
+        }
+      ],
+      "encodedJsonBytesReceived": 8459750,
+      "pushFramesReceived": 4,
+      "onePublisherProcess": true,
+      "channelFramesValidated": 13,
+      "untrustedServerCertificateRejected": true,
+      "clientAuthorizationTested": false
+    }
+  },
+  "cleanup": "temporary directory removed; owned listeners/children closed; operational SSH config, services and providers untouched",
+  "limits": "Single warm-channel sample per payload size, no CPU/RSS benchmark; WSS user authorization and peer-credential IPC acceptance remain untested",
+  "inputDigests": {
+    "scripts/study-carriers.py": "80139cfd3a9e5756e98d5a64d43a4b5c9a6ec3648ad78309b459051f0beb1714",
+    "scripts/delivery_model.py": "cc81962219b490791dc4c0975b86040d31ff7e2f81be334bddbabcb561ceafcb",
+    "contracts/mesh-delivery-v1/client-frame.schema.json": "eaf51f8b062c89dc6a0b3e39e30afd8363705f9471856bf5ff42d38062b3a673",
+    "contracts/mesh-delivery-v1/digest-proof.schema.json": "fa7937de408fe7b24becb323a4f5916b2697401379060bbfbb2fe43dd236b620",
+    "contracts/mesh-delivery-v1/endpoint.schema.json": "b8a451e3701bfe2227cf7cd736e17daebee3a7f92a69d8779c67eed5a28ace02",
+    "contracts/mesh-delivery-v1/server-frame.schema.json": "0b9a9443561247dac8e459e168367bea6de373d41eb024d59d7fe412023b6175"
+  }
+}

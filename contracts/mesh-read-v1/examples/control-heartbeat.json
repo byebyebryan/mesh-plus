@@ -1,0 +1,21 @@
+{
+  "protocol": "agent-observer.mesh-candidate.v1",
+  "schemaVersion": 1,
+  "mesh": {
+    "meshProtocol": 1,
+    "requestId": "11111111111111111111111111111111",
+    "operation": "watch",
+    "access": "cached",
+    "reader": {
+      "id": "33333333-3333-4333-8333-333333333333",
+      "clock": {
+        "bootId": "00000000-0000-0000-0000-000000000001",
+        "timeNamespace": "time:42"
+      },
+      "encodedAtMs": 2001,
+      "sequence": 2,
+      "revision": 1
+    },
+    "kind": "heartbeat"
+  }
+}

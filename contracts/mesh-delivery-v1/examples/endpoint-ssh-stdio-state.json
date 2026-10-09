@@ -1,0 +1,15 @@
+{
+  "registryProtocol": "mesh-plus.endpoints-candidate.v1",
+  "revision": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "endpointId": "ssh_stdio_state",
+  "hostId": "fixture-host",
+  "sourceId": "synthetic",
+  "product": "state",
+  "profile": "mesh-plus.synthetic.state.v1",
+  "authRef": "configured_principal",
+  "backend": "ssh-stdio",
+  "address": {
+    "hostMeshRevision": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "routeToken": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  }
+}

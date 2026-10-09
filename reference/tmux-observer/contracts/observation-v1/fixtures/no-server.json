@@ -1,0 +1,27 @@
+{
+  "protocol": "tmux-observer.observation.v1",
+  "schemaVersion": 1,
+  "source": {
+    "hostId": "fixture-local",
+    "uid": 1000,
+    "server": "default",
+    "nativeHostname": "fixture-local"
+  },
+  "clock": {
+    "bootId": "00000000-0000-4000-8000-000000000000",
+    "timeNamespace": "time:10"
+  },
+  "sample": {
+    "startedAt": 100,
+    "finishedAt": 120,
+    "observedAt": 1700000000000,
+    "coverage": "complete",
+    "error": null
+  },
+  "serverGeneration": null,
+  "sessions": [],
+  "capabilities": {
+    "panes": false,
+    "options": []
+  }
+}

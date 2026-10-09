@@ -1,0 +1,2 @@
+# Frozen hostile wire fixtures must retain their exact bytes.
+reference/rofi-ssh-plus/contracts/host-mesh-v1/fixtures/invalid/*.bin binary

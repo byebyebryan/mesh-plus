@@ -1,0 +1,15 @@
+{
+  "meshProtocol": 1,
+  "requestId": "11111111111111111111111111111111",
+  "profile": "tmux-observer.mesh-candidate.v1",
+  "operation": "watch",
+  "access": "cached",
+  "selection": {
+    "mode": "hosts",
+    "hostIds": [
+      "fixture-local",
+      "fixture-remote"
+    ]
+  },
+  "extensions": {}
+}

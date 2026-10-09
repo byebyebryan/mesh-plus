@@ -1,0 +1,7 @@
+{
+  "meshProtocol": 1,
+  "nonce": "22222222222222222222222222222222",
+  "sourceId": "agent_default",
+  "operation": "proof",
+  "expectedHost": "fixture-remote"
+}

@@ -1,0 +1,18 @@
+{
+  "meshProtocol": 1,
+  "kind": "heartbeat",
+  "nonce": null,
+  "bridgeId": "22222222-2222-4222-8222-222222222222",
+  "sequence": 3,
+  "sourceId": "agent_default",
+  "hostId": "fixture-remote",
+  "clock": {
+    "bootId": "00000000-0000-0000-0000-000000000001",
+    "timeNamespace": "time:43"
+  },
+  "encodedAtMs": 1001000,
+  "ownerFrame": null,
+  "ownerDigest": null,
+  "remaining": [],
+  "error": null
+}

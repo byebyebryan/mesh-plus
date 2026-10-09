@@ -1,0 +1,12 @@
+{
+  "meshProtocol": 1,
+  "requestId": "11111111111111111111111111111111",
+  "profile": "agent-observer.mesh-candidate.v1",
+  "operation": "snapshot",
+  "access": "cached",
+  "selection": {
+    "mode": "local",
+    "hostIds": []
+  },
+  "extensions": {}
+}

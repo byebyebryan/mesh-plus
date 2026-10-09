@@ -1,0 +1,8 @@
+{
+  "meshProtocol": 1,
+  "requestId": "11111111111111111111111111111111",
+  "error": {
+    "code": "unknown_host",
+    "message": "Selected host is not configured"
+  }
+}

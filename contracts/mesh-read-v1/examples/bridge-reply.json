@@ -1,0 +1,450 @@
+{
+  "meshProtocol": 1,
+  "kind": "proof",
+  "nonce": "22222222222222222222222222222222",
+  "bridgeId": "22222222-2222-4222-8222-222222222222",
+  "sequence": 1,
+  "sourceId": "agent_default",
+  "hostId": "fixture-remote",
+  "clock": {
+    "bootId": "00000000-0000-0000-0000-000000000001",
+    "timeNamespace": "time:43"
+  },
+  "encodedAtMs": 1001000,
+  "ownerFrame": {
+    "serviceProtocol": 2,
+    "serviceId": "11111111-1111-4111-8111-111111111111",
+    "bootId": "00000000-0000-0000-0000-000000000001",
+    "uid": 1000,
+    "hostScope": "fixture-remote",
+    "sequence": 1,
+    "viewRevision": 1,
+    "kind": "status",
+    "state": "ready",
+    "emittedAt": 1700000020000,
+    "emittedBoottimeMs": 1001000,
+    "clock": "boottime",
+    "clockDomain": "time:[43]",
+    "reason": "native_snapshot",
+    "sources": [
+      {
+        "provider": "codex",
+        "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+        "configHome": "/fixture/codex",
+        "configHomeKind": "explicit",
+        "contextGeneration": 1,
+        "components": [
+          {
+            "name": "runtime",
+            "attempts": 1,
+            "accepted": 1,
+            "sampledBoottimeMs": 1000100,
+            "expiresBoottimeMs": 1090100,
+            "health": "current",
+            "lastResult": "complete",
+            "inFlight": false
+          },
+          {
+            "name": "history",
+            "attempts": 1,
+            "accepted": 1,
+            "sampledBoottimeMs": 1000100,
+            "expiresBoottimeMs": 1360100,
+            "health": "current",
+            "lastResult": "complete",
+            "inFlight": false
+          }
+        ]
+      },
+      {
+        "provider": "claude",
+        "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+        "configHome": "/fixture/claude",
+        "configHomeKind": "explicit",
+        "contextGeneration": 1,
+        "components": [
+          {
+            "name": "runtime",
+            "attempts": 1,
+            "accepted": 1,
+            "sampledBoottimeMs": 1000100,
+            "expiresBoottimeMs": 1090100,
+            "health": "current",
+            "lastResult": "complete",
+            "inFlight": false
+          },
+          {
+            "name": "history",
+            "attempts": 1,
+            "accepted": 1,
+            "sampledBoottimeMs": 1000100,
+            "expiresBoottimeMs": 1360100,
+            "health": "current",
+            "lastResult": "complete",
+            "inFlight": false
+          }
+        ]
+      }
+    ],
+    "snapshot": {
+      "schemaVersion": 4,
+      "collectionId": "00000000-0000-0000-0000-000000000001",
+      "collectedAt": 1700000020000,
+      "host": {
+        "authority": "fixture-remote",
+        "authoritySource": "caller",
+        "nativeHostname": "fixture-remote",
+        "uid": 1000
+      },
+      "sourceHealth": "partial",
+      "sources": [
+        {
+          "provider": "codex",
+          "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+          "runtimeNamespace": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "configHome": "/fixture/codex",
+          "configHomeKind": "explicit",
+          "runtime": {
+            "version": "0.160.0",
+            "binarySha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "topology": "native_managed_endpoint",
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "pid": 123,
+            "startTicks": 123,
+            "endpoint": "/fixture/socket"
+          },
+          "sourceHealth": "current",
+          "coverage": {
+            "saved": {
+              "status": "complete",
+              "reason": "native_snapshot"
+            },
+            "runtime": {
+              "status": "complete",
+              "reason": "native_snapshot",
+              "scope": "daemon_threads"
+            }
+          },
+          "capabilities": {
+            "phase": [
+              "working",
+              "blocked",
+              "waiting"
+            ],
+            "blockedReasons": [
+              "approval"
+            ],
+            "runtime": [
+              "running"
+            ],
+            "activity": false
+          },
+          "errors": [],
+          "limitations": [
+            "activity_source_unproved",
+            "parked_predicate_unproved",
+            "questions_unproved",
+            "client_binding_unproved",
+            "offline_history_unavailable",
+            "unloaded_work_state_unavailable"
+          ],
+          "discovery": null
+        },
+        {
+          "provider": "claude",
+          "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+          "runtimeNamespace": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "configHome": "/fixture/claude",
+          "configHomeKind": "explicit",
+          "runtime": null,
+          "sourceHealth": "partial",
+          "coverage": {
+            "saved": {
+              "status": "partial",
+              "reason": "saved_child_roster_provider_excluded"
+            },
+            "runtime": {
+              "status": "partial",
+              "reason": "interactive_registration_assumed",
+              "scope": "provider_sessions"
+            }
+          },
+          "capabilities": {
+            "phase": [
+              "working",
+              "blocked",
+              "waiting"
+            ],
+            "blockedReasons": [
+              "approval",
+              "question"
+            ],
+            "runtime": [
+              "running",
+              "parked"
+            ],
+            "activity": true
+          },
+          "errors": [],
+          "limitations": [
+            "interactive_runtime_only",
+            "native_registration_assumed",
+            "unregistered_interactive_runtime_unproved",
+            "background_runtime_unsupported",
+            "generic_dialog_unproved",
+            "saved_child_roster_provider_excluded"
+          ],
+          "discovery": null
+        }
+      ],
+      "errors": [],
+      "limitations": [
+        "prerelease_contract",
+        "host_local_only",
+        "sampled_watch",
+        "no_native_event_replay",
+        "synthetic_contract_example"
+      ],
+      "sessions": [
+        {
+          "identity": {
+            "hostScope": "fixture-remote",
+            "provider": "codex",
+            "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+            "nativeIdKind": "thread",
+            "nativeId": "00000000-0000-0000-0000-000000000002"
+          },
+          "nativeIds": {
+            "threadId": "00000000-0000-0000-0000-000000000002",
+            "sessionTreeRootId": "00000000-0000-0000-0000-000000000002"
+          },
+          "title": "Fixture Codex 2",
+          "kind": "user",
+          "cwd": "/fixture/project",
+          "cwdSource": "codex_rpc",
+          "inventory": "live",
+          "phase": {
+            "value": "blocked",
+            "observedAt": 1700000020000,
+            "source": "codex_rpc",
+            "health": "current",
+            "reason": "native_snapshot",
+            "clock": "sample"
+          },
+          "runtime": {
+            "value": "running",
+            "observedAt": 1700000020000,
+            "source": "codex_rpc",
+            "health": "current",
+            "reason": "native_snapshot",
+            "clock": "sample"
+          },
+          "outcome": {
+            "value": "unknown",
+            "observedAt": null,
+            "source": null,
+            "health": "unsupported",
+            "reason": "outcome_source_unproved",
+            "clock": null
+          },
+          "createdAt": 1700000000000,
+          "activity": {
+            "at": null,
+            "source": null,
+            "health": "unsupported",
+            "reason": "activity_source_unproved"
+          },
+          "workspace": null,
+          "metadataIssues": [],
+          "blockedReasons": [
+            "approval"
+          ],
+          "hasSavedHistory": true
+        },
+        {
+          "identity": {
+            "hostScope": "fixture-remote",
+            "provider": "claude",
+            "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+            "nativeIdKind": "session",
+            "nativeId": "00000000-0000-0000-0000-000000000010"
+          },
+          "nativeIds": {
+            "sessionId": "00000000-0000-0000-0000-000000000010"
+          },
+          "title": "Synthetic Claude question",
+          "kind": "user",
+          "cwd": "/fixture/project",
+          "cwdSource": "claude_registry",
+          "inventory": "saved",
+          "phase": {
+            "value": "blocked",
+            "observedAt": 1700000020000,
+            "source": "claude_interactive_registry",
+            "health": "current",
+            "reason": "native_interactive_status",
+            "clock": "sample"
+          },
+          "runtime": {
+            "value": "running",
+            "observedAt": 1700000020000,
+            "source": "claude_interactive_registry",
+            "health": "current",
+            "reason": "native_interactive_registration",
+            "clock": "sample"
+          },
+          "outcome": {
+            "value": "unknown",
+            "observedAt": null,
+            "source": null,
+            "health": "unsupported",
+            "reason": "outcome_source_unproved",
+            "clock": null
+          },
+          "createdAt": 1700000000000,
+          "activity": {
+            "at": 1699999920000,
+            "source": "claude_conversation_metadata",
+            "health": "current",
+            "reason": "native_conversation_event"
+          },
+          "workspace": null,
+          "metadataIssues": [],
+          "blockedReasons": [
+            "question"
+          ],
+          "hasSavedHistory": true
+        },
+        {
+          "identity": {
+            "hostScope": "fixture-remote",
+            "provider": "claude",
+            "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+            "nativeIdKind": "session",
+            "nativeId": "00000000-0000-0000-0000-000000000011"
+          },
+          "nativeIds": {
+            "sessionId": "00000000-0000-0000-0000-000000000011"
+          },
+          "title": "Synthetic Claude parked",
+          "kind": "user",
+          "cwd": "/fixture/project",
+          "cwdSource": "claude_registry",
+          "inventory": "saved",
+          "phase": null,
+          "runtime": {
+            "value": "parked",
+            "observedAt": 1700000020000,
+            "source": "claude_interactive_registry",
+            "health": "current",
+            "reason": "no_live_registered_interactive_context",
+            "clock": "sample"
+          },
+          "outcome": {
+            "value": "unknown",
+            "observedAt": null,
+            "source": null,
+            "health": "unsupported",
+            "reason": "outcome_source_unproved",
+            "clock": null
+          },
+          "createdAt": 1700000000000,
+          "activity": {
+            "at": 1699999910000,
+            "source": "claude_conversation_metadata",
+            "health": "current",
+            "reason": "native_conversation_event"
+          },
+          "workspace": null,
+          "metadataIssues": [],
+          "blockedReasons": [],
+          "hasSavedHistory": true
+        },
+        {
+          "identity": {
+            "hostScope": "fixture-remote",
+            "provider": "claude",
+            "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+            "nativeIdKind": "session",
+            "nativeId": "00000000-0000-0000-0000-000000000012"
+          },
+          "nativeIds": {
+            "sessionId": "00000000-0000-0000-0000-000000000012"
+          },
+          "title": "Synthetic Claude ambiguous registration",
+          "kind": "user",
+          "cwd": "/fixture/project",
+          "cwdSource": "claude_registry",
+          "inventory": "saved",
+          "phase": {
+            "value": "unknown",
+            "observedAt": 1700000020000,
+            "source": "claude_interactive_registry",
+            "health": "ambiguous",
+            "reason": "runtime_unavailable",
+            "clock": "sample"
+          },
+          "runtime": {
+            "value": "unknown",
+            "observedAt": 1700000020000,
+            "source": "claude_interactive_registry",
+            "health": "ambiguous",
+            "reason": "interactive_record_ambiguous",
+            "clock": "sample"
+          },
+          "outcome": {
+            "value": "unknown",
+            "observedAt": null,
+            "source": null,
+            "health": "unsupported",
+            "reason": "outcome_source_unproved",
+            "clock": null
+          },
+          "createdAt": 1700000000000,
+          "activity": {
+            "at": 1699999900000,
+            "source": "claude_conversation_metadata",
+            "health": "current",
+            "reason": "native_conversation_event"
+          },
+          "workspace": null,
+          "metadataIssues": [],
+          "blockedReasons": [],
+          "hasSavedHistory": true
+        }
+      ]
+    }
+  },
+  "ownerDigest": "sha256:b6f72f87616fb75bd76a81b30c7bc59afe2b514cc69444f69bf12980bef2007b",
+  "remaining": [
+    {
+      "sourceId": "codex:sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+      "component": "runtime",
+      "health": "current",
+      "accepted": 1,
+      "remainingMs": 89100
+    },
+    {
+      "sourceId": "codex:sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+      "component": "history",
+      "health": "current",
+      "accepted": 1,
+      "remainingMs": 359100
+    },
+    {
+      "sourceId": "claude:sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+      "component": "runtime",
+      "health": "current",
+      "accepted": 1,
+      "remainingMs": 89100
+    },
+    {
+      "sourceId": "claude:sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+      "component": "history",
+      "health": "current",
+      "accepted": 1,
+      "remainingMs": 359100
+    }
+  ],
+  "error": null
+}

@@ -1,0 +1,16 @@
+{
+  "protocol": "mesh-plus.delivery-candidate.v1",
+  "version": 1,
+  "channelId": "11111111-1111-4111-8111-111111111111",
+  "kind": "data",
+  "sequence": 7,
+  "subscriptionId": "s1",
+  "streamSequence": 4,
+  "publisherEpoch": "publisher_1",
+  "deliveryKind": "resync",
+  "cursor": null,
+  "payload": {
+    "synthetic": true,
+    "view": 4
+  }
+}

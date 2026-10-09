@@ -1,0 +1,14 @@
+{
+  "registryProtocol": "mesh-plus.endpoints-candidate.v1",
+  "revision": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "endpointId": "wss_state",
+  "hostId": "fixture-host",
+  "sourceId": "synthetic",
+  "product": "state",
+  "profile": "mesh-plus.synthetic.state.v1",
+  "authRef": "configured_principal",
+  "backend": "wss",
+  "address": {
+    "url": "wss://fixture.example/mesh"
+  }
+}
