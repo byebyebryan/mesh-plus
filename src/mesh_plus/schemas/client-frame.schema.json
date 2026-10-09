@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:delivery:candidate:1:client-frame",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "const": "mesh-plus.delivery-candidate.v1"
+        },
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "kind": {
+          "const": "hello"
+        },
+        "helloNonce": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{32,64}$"
+        },
+        "expectedHost": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16384,
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "sourceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z][a-z0-9_.-]*$"
+        },
+        "product": {
+          "enum": [
+            "state",
+            "events"
+          ]
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z][a-z0-9_.-]*$"
+        },
+        "requiredCapabilities": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "snapshot",
+              "proof",
+              "subscribe",
+              "digest-proof",
+              "status",
+              "replay"
+            ]
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "maxMessageBytes": {
+              "type": "integer",
+              "minimum": 1024,
+              "maximum": 8470528
+            },
+            "maxOutstanding": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "maxSubscriptions": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            }
+          },
+          "required": [
+            "maxMessageBytes",
+            "maxOutstanding",
+            "maxSubscriptions"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "protocol",
+        "version",
+        "sequence",
+        "kind",
+        "helloNonce",
+        "expectedHost",
+        "sourceId",
+        "product",
+        "profile",
+        "requiredCapabilities",
+        "limits"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "const": "mesh-plus.delivery-candidate.v1"
+        },
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "kind": {
+          "const": "request"
+        },
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "operation": {
+          "enum": [
+            "snapshot",
+            "proof",
+            "status"
+          ]
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60000
+        },
+        "parameters": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "protocol",
+        "version",
+        "sequence",
+        "kind",
+        "channelId",
+        "requestId",
+        "operation",
+        "timeoutMs",
+        "parameters"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "const": "mesh-plus.delivery-candidate.v1"
+        },
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "kind": {
+          "const": "subscribe"
+        },
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "start": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "enum": [
+                "baseline",
+                "live",
+                "retained",
+                "after"
+              ]
+            },
+            "cursor": {
+              "anyOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "mode",
+            "cursor"
+          ],
+          "additionalProperties": false
+        },
+        "credit": {
+          "type": "object",
+          "properties": {
+            "frames": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "frames",
+            "bytes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "protocol",
+        "version",
+        "sequence",
+        "kind",
+        "channelId",
+        "subscriptionId",
+        "start",
+        "credit"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "const": "mesh-plus.delivery-candidate.v1"
+        },
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "kind": {
+          "const": "credit"
+        },
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "credit": {
+          "type": "object",
+          "properties": {
+            "frames": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "frames",
+            "bytes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "protocol",
+        "version",
+        "sequence",
+        "kind",
+        "channelId",
+        "subscriptionId",
+        "credit"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "const": "mesh-plus.delivery-candidate.v1"
+        },
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "kind": {
+          "const": "cancel"
+        },
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+        },
+        "handleId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "handleType": {
+          "enum": [
+            "request",
+            "subscription"
+          ]
+        }
+      },
+      "required": [
+        "protocol",
+        "version",
+        "sequence",
+        "kind",
+        "channelId",
+        "handleId",
+        "handleType"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "const": "mesh-plus.delivery-candidate.v1"
+        },
+        "version": {
+          "const": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "kind": {
+          "const": "close"
+        },
+        "channelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+        },
+        "reason": {
+          "enum": [
+            "client_done",
+            "protocol_error"
+          ]
+        }
+      },
+      "required": [
+        "protocol",
+        "version",
+        "sequence",
+        "kind",
+        "channelId",
+        "reason"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

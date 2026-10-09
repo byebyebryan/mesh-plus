@@ -6,8 +6,9 @@ several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
 Status: design candidate, 2026-10-09. This repository contains specifications,
-schemas, examples and executable design checks. It contains no networking
-runtime, selected artifact or deployed migration.
+schemas, examples and executable design checks, plus an experimental runtime
+foundation. No runtime artifact or migration is selected or deployed. See
+[implementation checkpoints](docs/implementation-progress.md).
 
 ## Design package
 
