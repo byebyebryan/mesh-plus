@@ -86,7 +86,7 @@ class Reader:
         current = any(r["health"] in {"current", "partial"} for r in receipts)
         result = {"hostId": endpoint.host, "local": endpoint.local,
                   "delivery": {"path": "ipc" if endpoint.local else "ssh", "status": "ready", "epoch": epoch,
-                               "routeToken": endpoint.route_token, "error": None, "proof": proof},
+                               "routeToken": getattr(client, "route_token", endpoint.route_token), "error": None, "proof": proof},
                   "viewState": "warming" if snapshot is None else "current" if current else "historical",
                   "owner": {"protocol": "tmux-observer.observation.v1" if self.domain == "tmux" else "agent-observer.snapshot",
                             "version": 1 if self.domain == "tmux" else 4, "metadata": metadata, "service": service},
@@ -126,8 +126,10 @@ class Reader:
             try:
                 client = await endpoint.connect()
                 return await self.read_host(client, endpoint)
-            except Exception:
-                return self.unavailable(endpoint), []
+            except Exception as error:
+                outcome = self.unavailable(endpoint, getattr(error, "code", "source_unavailable"))
+                outcome["delivery"]["routeToken"] = getattr(error, "route_token", endpoint.route_token)
+                return outcome, []
             finally:
                 if client:
                     await client.close()
@@ -145,6 +147,7 @@ class Reader:
 
         async def host_loop(endpoint):
             epoch = 0
+            retry = .25
             while True:
                 client, sub, next_frame = None, None, None
                 epoch += 1
@@ -154,6 +157,7 @@ class Reader:
                     # Baseline is a candidate: accept positives only through a cached read/proof.
                     while True:
                         outcomes[endpoint.host] = await self.read_host(client, endpoint, epoch)
+                        retry = .25
                         changed.set()
                         deadline = boottime_ms() + int(interval * 1000)
                         while boottime_ms() < deadline:
@@ -182,7 +186,8 @@ class Reader:
                         await asyncio.gather(next_frame, return_exceptions=True)
                     if client:
                         await client.close()
-                await asyncio.sleep(.25)
+                await asyncio.sleep(retry)
+                retry = min(30, retry * 2)
 
         tasks = [asyncio.create_task(host_loop(endpoint)) for endpoint in selected]
         try:

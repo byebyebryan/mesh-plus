@@ -120,7 +120,11 @@ class Lifecycle:
 
     def _transaction(self, method, *args):
         candidate = copy.copy(self)
-        candidate.handles = copy.deepcopy(self.handles)
+        candidate.handles = self.handles.copy()
+        frame = args[0]
+        key = frame.get("requestId", frame.get("subscriptionId", frame.get("handleId")))
+        if key in candidate.handles:
+            candidate.handles[key] = copy.deepcopy(candidate.handles[key])
         result = method(candidate, *args)
         self.__dict__.update(candidate.__dict__)
         return result
@@ -249,6 +253,7 @@ class Lifecycle:
                     handle["bytes"] += size
                     handle["resync"] = False
                 elif kind == "control":
+                    check(frame["control"] in {"heartbeat", "gap"}, "unsupported_control_codec")
                     if frame["control"] == "heartbeat":
                         check(frame["payload"] == {}, "heartbeat_evidence")
                     elif frame["control"] == "gap":

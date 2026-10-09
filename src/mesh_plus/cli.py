@@ -10,9 +10,13 @@ import tomllib
 from pathlib import Path
 
 from .bridge import Bridge
-from .observer import ObserverAdapter
+from .catalog import SSHPlusAuthority
+from .client import Client
+from .observer import ObserverAdapter, ObserverCodec
 from .protocol import MAX_MESSAGE, check
-from .transport import IPCServer, LineChannel
+from .reader import Endpoint, Reader
+from .remote import connect_catalog_host
+from .transport import IPCServer, LineChannel, connect_ipc
 
 
 def configured_adapter(path, source):
@@ -57,6 +61,35 @@ async def stdio_channel():
 
 
 async def run(args):
+    if args.command == "hosts":
+        catalog = await SSHPlusAuthority().load()
+        print(json.dumps(catalog.payload, separators=(",", ":")))
+        return
+    if args.command in {"read", "watch"}:
+        check(not args.local_host or (args.scope in {"local", "fleet"} and not args.hosts), "standalone_scope")
+        authority = SSHPlusAuthority()
+        catalog = None if args.local_host else await authority.load()
+        local_host = args.local_host or catalog.local_host
+        selected = [{"id": local_host, "local": True}] if catalog is None else catalog.select(args.scope, args.hosts)
+        endpoints = []
+        for host in selected:
+            if host["local"]:
+                async def connect_local(host_id=host["id"]):
+                    codec = ObserverCodec(args.domain, host_id, args.source)
+                    return await Client.connect(await connect_ipc(args.socket), host=host_id, source=args.source,
+                                                profile=args.domain + "-observer.mesh-candidate.v1", codec=codec.validate)
+                endpoints.append(Endpoint(host["id"], True, None, connect_local))
+            else:
+                async def connect_remote(selected_host=host):
+                    return await connect_catalog_host(catalog, selected_host, args.domain, args.source, authority=authority)
+                endpoints.append(Endpoint(host["id"], False, catalog.route_token(host["id"], host["routes"][0]), connect_remote))
+        reader = Reader(args.domain, endpoints, local_host=local_host, catalog_revision=catalog.revision if catalog else None)
+        if args.command == "read":
+            print(json.dumps(await reader.snapshot(), ensure_ascii=False, separators=(",", ":")))
+        else:
+            async for view in reader.watch():
+                print(json.dumps(view, ensure_ascii=False, separators=(",", ":")), flush=True)
+        return
     adapter = configured_adapter(args.config, args.source)
     bridge = Bridge(adapter)
     if args.command == "bridge":
@@ -81,6 +114,15 @@ def main():
             command.add_argument("--stdio", action="store_true", required=True)
         else:
             command.add_argument("--socket", type=Path, required=True)
+    commands.add_parser("hosts")
+    for name in ("read", "watch"):
+        command = commands.add_parser(name)
+        command.add_argument("--domain", choices=("tmux", "agent"), required=True)
+        command.add_argument("--source", required=True)
+        command.add_argument("--socket", type=Path, required=True, help="local Mesh bridge IPC endpoint")
+        command.add_argument("--scope", choices=("local", "fleet", "hosts"), default="fleet")
+        command.add_argument("--hosts", nargs="*", default=[])
+        command.add_argument("--local-host", help="explicit standalone local identity; bypass Host Mesh authority")
     args = parser.parse_args()
     try:
         asyncio.run(run(args))

@@ -3,6 +3,7 @@
 import asyncio
 import contextlib
 import os
+import secrets
 import shlex
 import socket
 import stat
@@ -10,7 +11,7 @@ import struct
 import time
 from pathlib import Path
 
-from .protocol import MAX_MESSAGE, ProtocolError, check, decode, encode, validate
+from .protocol import MAX_CONTROL, MAX_MESSAGE, ProtocolError, check, decode, encode, validate
 
 
 def boottime_ms():
@@ -19,7 +20,7 @@ def boottime_ms():
 
 
 class LineChannel:
-    def __init__(self, reader, writer, incoming, *, process=None, io_timeout=5.0):
+    def __init__(self, reader, writer, incoming, *, process=None, io_timeout=5.0, reached_nonce=None):
         self.reader, self.writer, self.incoming = reader, writer, incoming
         self.outgoing = "server" if incoming == "client" else "client"
         self.process = process
@@ -28,6 +29,7 @@ class LineChannel:
         self.lock = asyncio.Lock()
         self.closed = False
         self.stderr_tail = bytearray()
+        self.reached_nonce = reached_nonce
         self.stderr_task = asyncio.create_task(self._stderr()) if process else None
 
     async def _stderr(self):
@@ -37,15 +39,25 @@ class LineChannel:
 
     async def receive(self):
         try:
-            raw = await self.reader.readuntil(b"\n")
+            first = await self.reader.readexactly(1)
+            started = boottime_ms()
+            raw = first if first == b"\n" else first + await asyncio.wait_for(self.reader.readuntil(b"\n"), self.io_timeout)
+            check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
         except (asyncio.LimitOverrunError, ValueError) as error:
             raise ProtocolError("message_capacity") from error
         except asyncio.IncompleteReadError as error:
             if error.partial:
                 raise ProtocolError("truncated_frame") from error
             raise EOFError("channel_closed") from error
-        check(len(raw) <= self.maximum + 1 and b"\r" not in raw and b"\n" not in raw[:-1], "line_framing")
-        return decode(raw[:-1], self.incoming, self.maximum), len(raw) - 1
+        maximum = min(self.maximum, MAX_CONTROL) if self.incoming == "client" else self.maximum
+        check(len(raw) <= maximum + 1 and b"\r" not in raw and b"\n" not in raw[:-1], "line_framing")
+        return decode(raw[:-1], self.incoming, maximum), len(raw) - 1
+
+    @property
+    def reached(self):
+        if not self.reached_nonce:
+            return False
+        return ("\x1eROFI_PLUS_REACHED_V1:" + self.reached_nonce + "\x1f\n").encode() in self.stderr_tail
 
     async def send(self, value):
         raw = encode(value)
@@ -64,7 +76,8 @@ class LineChannel:
         with contextlib.suppress(Exception):
             await asyncio.wait_for(self.writer.wait_closed(), 1)
         if self.process and self.process.returncode is None:
-            self.process.terminate()
+            with contextlib.suppress(ProcessLookupError):
+                self.process.terminate()
             try:
                 await asyncio.wait_for(self.process.wait(), 1)
             except TimeoutError:
@@ -104,29 +117,41 @@ async def connect_ipc(path, *, timeout=2, maximum=MAX_MESSAGE):
     return LineChannel(reader, writer, "server")
 
 
-async def subprocess_channel(argv):
+async def subprocess_channel(argv, *, reached_nonce=None):
     """Local trusted argv only; never accept executable paths from wire metadata."""
     process = await asyncio.create_subprocess_exec(*argv, stdin=asyncio.subprocess.PIPE,
                                                  stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
                                                  limit=MAX_MESSAGE + 1)
-    return LineChannel(process.stdout, process.stdin, "server", process=process)
+    return LineChannel(process.stdout, process.stdin, "server", process=process, reached_nonce=reached_nonce)
 
 
-def ssh_argv(destination, source_id, *, bridge="mesh-plus", executable="ssh"):
+def ssh_argv(destination, source_id, *, bridge="mesh-plus", executable="ssh", nonce=None,
+             timeout_seconds=2, attempts=1):
     check(isinstance(destination, str) and bool(destination) and not destination.startswith("-") and
           not any(c.isspace() or ord(c) < 32 for c in destination), "ssh_destination")
     check(isinstance(source_id, str) and bool(source_id) and len(source_id) <= 128 and
           all(c.isascii() and (c.isalnum() or c in "_.-") for c in source_id), "source_id")
     check(bridge == "mesh-plus", "bridge_command")
-    command = shlex.join([bridge, "bridge", "--source", source_id, "--stdio"])
+    check(type(timeout_seconds) is int and 1 <= timeout_seconds <= 60 and type(attempts) is int and
+          1 <= attempts <= 10, "ssh_policy")
+    domain = [bridge, "bridge", "--source", source_id, "--stdio"]
+    if nonce is None:
+        command = shlex.join(domain)
+    else:
+        check(len(nonce) == 32 and all(c in "0123456789abcdef" for c in nonce), "reached_nonce")
+        script = 'printf \'\\036ROFI_PLUS_REACHED_V1:%s\\037\\n\' "$1" >&2\nshift\nexec "$@"'
+        command = shlex.join(["sh", "-c", script, "mesh-plus-reached", nonce, *domain])
     return [executable, "-T", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
             "-o", "ClearAllForwardings=yes", "-o", "ForwardAgent=no", "-o", "RequestTTY=no",
-            "-o", "ConnectTimeout=2", "-o", "ServerAliveInterval=5", "-o", "ServerAliveCountMax=2",
+            "-o", f"ConnectTimeout={timeout_seconds}", "-o", f"ConnectionAttempts={attempts}",
+            "-o", "ServerAliveInterval=5", "-o", "ServerAliveCountMax=2",
             "-o", "ControlMaster=no", "-o", "ControlPath=none", "--", destination, command]
 
 
-async def connect_ssh(destination, source_id):
-    return await subprocess_channel(ssh_argv(destination, source_id))
+async def connect_ssh(destination, source_id, *, executable="ssh", timeout_seconds=2, attempts=1):
+    nonce = secrets.token_hex(16)
+    return await subprocess_channel(ssh_argv(destination, source_id, executable=executable, nonce=nonce,
+                                             timeout_seconds=timeout_seconds, attempts=attempts), reached_nonce=nonce)
 
 
 class IPCServer:
@@ -154,7 +179,7 @@ class IPCServer:
             sock.listen(self.max_clients)
             sock.setblocking(False)
             self.inode = self.path.lstat().st_ino
-            self.server = await asyncio.start_unix_server(self._accept, sock=sock, limit=MAX_MESSAGE + 1)
+            self.server = await asyncio.start_unix_server(self._accept, sock=sock, limit=MAX_CONTROL + 1)
         except BaseException:
             sock.close()
             raise

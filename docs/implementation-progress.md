@@ -88,6 +88,31 @@ nonce exclusion, pre-dispatch scope rejection, simulated suspend expiry, live
 reader watch cleanup and Host Mesh identity-collision rejection. Native
 operational and old-client migration gates remain separate.
 
+## CLI and actual SSH runtime acceptance
+
+`mesh-plus hosts`, `read` and `watch` now consume the common catalog/Reader
+boundary. `read/watch --domain tmux|agent --source ID --socket LOCAL_MESH_IPC`
+use the defined fleet by default; `--scope local` or `--scope hosts --hosts ID...`
+select a subset. `--local-host ID` explicitly selects standalone local operation.
+This CLI consumes a configured local Mesh bridge, not the native owner socket.
+
+Remote channels preserve configured SSH policy and use the published reached
+nonce marker. Only clear pre-marker transport failure permits another configured
+route. Authentication/host-key/ambiguous failure and reached-source failure do
+not fall through. Route health reports go through the existing authority with
+revision and observation time; no picker history or connection counter is used.
+Unsuccessful host watches back off independently up to thirty seconds.
+
+Twenty-nine runtime tests pass, including the actual runtime bridge over a
+disposable localhost SSH daemon with private keys, forced command, pinned host
+key and StrictModes enabled. Separate tests execute the POSIX quoting wrapper
+and verify route failover boundaries. The SSH harness's initial escaped marker
+was corrected with a fixed private script; no operational SSH policy changed.
+Framing now has a first-byte deadline, and client-side control input has a
+64 KiB admission bound. Native fleet recovery, physical suspend and production
+costs remain unproved. All endpoints in these tests are disposable synthetic
+publishers using validated native fixture frames.
+
 Reproduce runtime tests after installing the package into a validation venv:
 
 ```sh

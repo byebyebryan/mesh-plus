@@ -2,10 +2,13 @@ import asyncio
 import copy
 import json
 import os
+import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+from ssh_fixture import ssh_channel
 
 from mesh_plus.bridge import Bridge
 from mesh_plus.client import Client
@@ -33,8 +36,8 @@ def native_fixture(domain):
 
 
 class ObserverTests(unittest.IsolatedAsyncioTestCase):
-    async def exercise(self, domain, subprocess=False):
-        with tempfile.TemporaryDirectory() as directory:
+    async def exercise(self, domain, subprocess=False, ssh=False):
+        with tempfile.TemporaryDirectory(dir=sys.prefix if ssh else None, prefix="mesh-runtime-test-") as directory:
             root = Path(directory)
             native = native_fixture(domain)
             host = native["source"]["hostId"] if domain == "tmux" else native["hostScope"]
@@ -67,12 +70,18 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
             owner = await IPCServer(root / "owner.sock", native_handler).start()
             adapter = ObserverAdapter(domain, host, "default", root / "owner.sock")
             mesh = None
-            if subprocess:
+            ssh_context = None
+            if subprocess or ssh:
                 config = root / "sources.toml"
                 config.write_text(f'version = 1\nhost = "{host}"\n[sources.default]\ndomain = "{domain}"\nsocket = "{root / "owner.sock"}"\n')
                 config.chmod(0o600)
-                channel = await subprocess_channel([sys.executable, "-m", "mesh_plus.cli", "bridge", "--source",
-                                                    "default", "--stdio", "--config", str(config)])
+                command = [sys.executable, "-m", "mesh_plus.cli", "bridge", "--source",
+                           "default", "--stdio", "--config", str(config)]
+                if ssh:
+                    ssh_context = ssh_channel(root, command, "default")
+                    channel = await ssh_context.__aenter__()
+                else:
+                    channel = await subprocess_channel(command)
             else:
                 mesh = await IPCServer(root / "mesh.sock", Bridge(adapter).serve).start()
                 channel = await connect_ipc(root / "mesh.sock")
@@ -87,6 +96,8 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
                 proof = await client.request("proof", {"nonce": nonce})
                 self.assertEqual(proof["nonce"], nonce)
                 self.assertTrue(proof["remaining"])
+                if ssh:
+                    self.assertTrue(channel.reached, repr(bytes(channel.stderr_tail)))
                 sub = await client.subscribe()
                 self.assertEqual((await anext(sub))["payload"]["kind"], "candidate")
                 for queue in queues:
@@ -95,7 +106,7 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(pushed["payload"]["ownerFrame"]["viewRevision"], native["viewRevision"] + 1)
                 await sub.close()
                 self.assertEqual(operations, ["status", "status", "watch"])
-                if not subprocess:
+                if not subprocess and not ssh:
                     async def connect():
                         return await Client.connect(await connect_ipc(root / "mesh.sock"), host=host,
                                                     source="default", profile=adapter.profile, codec=adapter.validate)
@@ -121,7 +132,9 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
                 if mesh:
                     await mesh.close()
                 await owner.close()
-            if subprocess:
+                if ssh_context:
+                    await ssh_context.__aexit__(None, None, None)
+            if subprocess or ssh:
                 self.assertIsNotNone(channel.process.returncode)
 
     async def test_tmux_native_cached_adapter(self):
@@ -132,3 +145,8 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_owned_stdio_bridge(self):
         await self.exercise("agent", subprocess=True)
+
+    @unittest.skipUnless(os.getuid() != 0 and all(shutil.which(tool) for tool in ("ssh", "sshd", "ssh-keygen")),
+                         "disposable SSH requires non-root user and OpenSSH tools")
+    async def test_owned_ssh_bridge(self):
+        await self.exercise("agent", ssh=True)
