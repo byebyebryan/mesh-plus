@@ -9,6 +9,9 @@ description = "Bounded fleet delivery for host-local Observer services"
 requires-python = ">=3.11"
 dependencies = ["jsonschema>=4.26,<5"]
 
+[project.scripts]
+mesh-plus = "mesh_plus.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

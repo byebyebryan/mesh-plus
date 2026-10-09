@@ -82,12 +82,16 @@ def peer_uid(writer):
     return struct.unpack("3i", peer.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))[1]
 
 
-async def connect_ipc(path, *, timeout=2):
+async def connect_ipc(path, *, timeout=2, maximum=MAX_MESSAGE):
     path = Path(path)
+    check(path.is_absolute() and path.parent.resolve() == path.parent, "ipc_socket_path")
+    parent = path.parent.lstat()
+    check(stat.S_ISDIR(parent.st_mode) and parent.st_uid == os.getuid() and
+          parent.st_mode & 0o077 == 0, "ipc_directory_policy")
     before = path.lstat()
     check(stat.S_ISSOCK(before.st_mode) and before.st_uid == os.getuid() and
           before.st_mode & 0o077 == 0, "ipc_socket_policy")
-    reader, writer = await asyncio.wait_for(asyncio.open_unix_connection(path, limit=MAX_MESSAGE + 1), timeout)
+    reader, writer = await asyncio.wait_for(asyncio.open_unix_connection(path, limit=maximum + 1), timeout)
     try:
         after = path.lstat()
         check((before.st_dev, before.st_ino) == (after.st_dev, after.st_ino), "ipc_socket_changed")
@@ -135,6 +139,7 @@ class IPCServer:
         self.tasks = set()
         self.server = None
         self.inode = None
+        self.closing = False
 
     async def start(self):
         parent = self.path.parent.lstat()
@@ -158,7 +163,7 @@ class IPCServer:
     async def _accept(self, reader, writer):
         task = asyncio.current_task()
         channel = LineChannel(reader, writer, "client")
-        if len(self.tasks) >= self.max_clients or peer_uid(writer) != os.getuid():
+        if self.closing or len(self.tasks) >= self.max_clients or peer_uid(writer) != os.getuid():
             await channel.close()
             return
         self.tasks.add(task)
@@ -171,13 +176,15 @@ class IPCServer:
             self.tasks.discard(task)
 
     async def close(self):
+        self.closing = True
         if self.server:
             self.server.close()
-            await self.server.wait_closed()
         tasks = list(self.tasks)
         for task in tasks:
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
+        if self.server:
+            await self.server.wait_closed()
         with contextlib.suppress(FileNotFoundError):
             if self.path.lstat().st_ino == self.inode:
                 self.path.unlink()

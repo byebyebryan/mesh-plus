@@ -30,6 +30,41 @@ request deadlines, a 1 MiB frame, source-failure isolation, zero-credit resync a
 packaged-schema parity. Adapter/native and real SSH acceptance remain subsequent
 checkpoints. No publisher polling fallback or provider actions are introduced.
 
+## Cached Observer adapters and bridge command
+
+Eighteen runtime tests now cover Tmux service 1 and Agent service 2 adapters
+against their public pure validators and owned synthetic cached-service sockets.
+Full native snapshots are unchanged, proof requests perform a new cached read
+after the nonce, and remaining leases retain the original source receipts.
+The adapters check same-user IPC, owner host, UID and local clock binding.
+Native heartbeat traffic is not promoted to state change or renewed validity.
+Native gaps terminate explicitly; recovery requires a new subscription.
+
+`mesh-plus bridge --source ID --stdio` resolves ID through a private configured
+source file. `mesh-plus serve --source ID --socket PATH` exposes the same bridge
+on private IPC. There is no executable/plugin path in requester metadata. The
+source file defaults to `$XDG_CONFIG_HOME/mesh-plus/sources.toml` (or the normal
+`~/.config` fallback), must be user-owned mode 0600 and has this format:
+
+```toml
+version = 1
+host = "canonical-host-id"
+
+[sources.tmux_default]
+domain = "tmux"
+socket = "/run/user/1000/tmux-observer/owner.sock"
+
+[sources.agent_default]
+domain = "agent"
+socket = "/explicit/private/agent-service.sock"
+```
+
+Install the selected Observer packages alongside Mesh on bridge/client hosts.
+The validation environment uses editable checkouts; this is not an artifact
+selection or deployment. Source configuration does not start an owner. Tests
+also exposed and fixed Python 3.13 listener shutdown ordering: cancel and close
+owned handlers before waiting for the listener to finish closing.
+
 Reproduce runtime tests after installing the package into a validation venv:
 
 ```sh
