@@ -47,6 +47,12 @@ Old SSH usage remains at SSH Plus's private history path. Moving route health
 must not import usage as reachability or increment connection counts. Preserve
 timestamps, counts, ad-hoc rows and rollback-readable history bytes.
 
+The implementation now provides a source-tested Stage B authority candidate via
+`mesh-plus mesh ... --json`; `hosts/read/watch --authority mesh` selects it
+explicitly. The model/store retains the original paths and bytes. SSH Plus's
+actual facade and operational artifact selection remain at Stage A until their
+paired integration gate. See [checkpoint evidence](implementation-progress.md).
+
 ## Route reporting
 
 The interactive SSH picker can continue recording a server that answers with an

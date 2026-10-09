@@ -1,9 +1,9 @@
 {
   "status": "passed",
-  "checkedAtUtc": "2026-10-09T23:42:04.242873+00:00",
+  "checkedAtUtc": "2026-10-09T23:44:47.559765+00:00",
   "python": "3.13.7",
   "scope": "runtime and owned native/SSH acceptance",
-  "testsRun": 38,
+  "testsRun": 52,
   "failures": 0,
   "errors": 0,
   "skipped": [],
@@ -15,9 +15,11 @@
   },
   "runtimeDigests": {
     "__init__.py": "593059e8ff9a52dd3ba45997d888ad2fd57d797a6af2328d896ff928ad5298bc",
+    "authority.py": "188570bdf706fcd758dae0b94be022645957313aaf7917d2b24fe65d856097b0",
+    "authority_cli.py": "f80c9400720bfb4f02ecafccd9c85834d9e24f2f57c0db35bf8c51dc4d1bd9a6",
     "bridge.py": "f9573122892aaa097deb04b08f934644ba3ef0afde181cdc923e82072bd705ca",
-    "catalog.py": "0f63534338157469a6dbe47ec3e5638251bd6ff81ed2e72fa82922a2bedc76ba",
-    "cli.py": "572a925aede8f6c54596d9c1fafae16eb2d390caf51d06e5aad632fac51cea22",
+    "catalog.py": "bc557aa78dd1705cb628c209ba83acc7ed15114ea4136804d849a14eeadd9661",
+    "cli.py": "daac09ccbe48b3fc839bef9d95fb3c4dbb3145d33c196d16d824cee30b908460",
     "client.py": "d652519c805ff120a459c1e09becad8104c8ce7466d3d3bc04507102a072ce42",
     "observer.py": "a67d141ddb16d919e250bba11db5f72fcf283dbd06aae69d6353fa2150fcc7a3",
     "protocol.py": "e5c50b53bd17a9ab8784175971eb3081a3c91ea8470821e3607cf67ac1790717",
@@ -48,6 +50,7 @@
   },
   "testDigests": {
     "tests/ssh_fixture.py": "d54bc1a0a8d15b505724d78fb1b6317f5dded7b456dc45d285f19b04c1544b1b",
+    "tests/test_authority.py": "60a89aec44893ffeade05dc230f769dbcfbd0aa8819428228f507ee4510c1132",
     "tests/test_delivery.py": "03088cbfe051955b9ff17aebb147435ff67b77fde9bf30adbfa4210d168dc35e",
     "tests/test_native.py": "8e0208c888a13b97201def0fe07c7d9eab73eb437391bacf7e579174a9b54ec7",
     "tests/test_observer.py": "32695974ba6f38550232776c20882d898271c7ae12d5ed9c5ba60ef49f4f8fda",

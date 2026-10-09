@@ -168,3 +168,25 @@ without changing action authority or artifact pins; integrate Agent's current
 native service independently of the intentionally older Agent Plus; and measure
 operational reconnect, suspend and fleet costs. Native ordered events remain
 explicitly unsupported until their producer contracts are accepted.
+
+## Native host authority candidate
+
+`mesh-plus mesh list/report-route --json` now provides the Host Mesh v1 authority
+process boundary. The model/store is a byte-identical extraction of SSH Plus's
+reviewed module, preserving configuration and route-health paths, locks, atomic
+writes, revision digest, aliases and route ordering. Its process facade has no
+picker, launch or history dependency. `hosts/read/watch --authority mesh`
+explicitly selects it; the compatibility default still consumes SSH Plus.
+
+Fourteen frozen-corpus configuration/health/process cases bring the runtime suite
+to fifty-two. The existing SSH Plus suite passes all seventy-six cases with its
+in-process model bound to Mesh. This includes usage/history regressions; old
+subprocess wrapper cases still use the old entry point, while Mesh's own process
+test separately verifies its bounded success/error output. Reproduce the dated
+compatibility report with `scripts/check-authority-compat.py --ssh-plus PATH`.
+
+This prepares Stage B; transferring SSH Plus's imports/facade and selecting the
+paired artifact are still separate gates. There is no config-directory move,
+second registry, history import or automatic switch of operational writers.
+The recorded wheel candidate covers the earlier `fc4c356` transport checkpoint;
+the new authority is currently source-tested and requires a subsequent wheel.

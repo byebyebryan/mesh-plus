@@ -11,7 +11,7 @@ import tomllib
 from pathlib import Path
 
 from .bridge import Bridge
-from .catalog import SSHPlusAuthority
+from .catalog import MeshAuthority, SSHPlusAuthority
 from .client import Client
 from .observer import ObserverAdapter, ObserverCodec
 from .protocol import MAX_MESSAGE, check
@@ -63,13 +63,13 @@ async def stdio_channel():
 
 
 async def run(args):
+    authority = MeshAuthority() if getattr(args, "authority", "ssh-plus") == "mesh" else SSHPlusAuthority()
     if args.command == "hosts":
-        catalog = await SSHPlusAuthority().load()
+        catalog = await authority.load()
         print(json.dumps(catalog.payload, separators=(",", ":")))
         return
     if args.command in {"read", "watch"}:
         check(not args.local_host or (args.scope in {"local", "fleet"} and not args.hosts), "standalone_scope")
-        authority = SSHPlusAuthority()
         catalog = None if args.local_host else await authority.load()
         local_host = args.local_host or catalog.local_host
         selected = [{"id": local_host, "local": True}] if catalog is None else catalog.select(args.scope, args.hosts)
@@ -111,6 +111,9 @@ async def run(args):
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "mesh":
+        from .authority_cli import main as authority_main
+        return authority_main(sys.argv[2:])
     parser = argparse.ArgumentParser(description="Mesh Plus experimental cached-state transport")
     commands = parser.add_subparsers(dest="command", required=True)
     default = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "mesh-plus/sources.toml"
@@ -122,10 +125,12 @@ def main():
             command.add_argument("--stdio", action="store_true", required=True)
         else:
             command.add_argument("--socket", type=Path, required=True)
-    commands.add_parser("hosts")
+    hosts = commands.add_parser("hosts")
+    hosts.add_argument("--authority", choices=("ssh-plus", "mesh"), default="ssh-plus")
     for name in ("read", "watch"):
         command = commands.add_parser(name)
         command.add_argument("--domain", choices=("tmux", "agent"), required=True)
+        command.add_argument("--authority", choices=("ssh-plus", "mesh"), default="ssh-plus")
         command.add_argument("--source", required=True)
         command.add_argument("--socket", type=Path, required=True, help="local Mesh bridge IPC endpoint")
         command.add_argument("--scope", choices=("local", "fleet", "hosts"), default="fleet")

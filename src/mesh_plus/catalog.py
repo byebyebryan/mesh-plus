@@ -112,3 +112,10 @@ class SSHPlusAuthority:
                                          "--mesh-revision", revision, "--observed-at", str(observed_at)])
         host_validator("report-route").validate(payload)
         return payload["accepted"]
+
+
+class MeshAuthority(SSHPlusAuthority):
+    """Explicit native authority selection using the same bounded process API."""
+
+    def __init__(self, executable="mesh-plus"):
+        super().__init__(executable)
