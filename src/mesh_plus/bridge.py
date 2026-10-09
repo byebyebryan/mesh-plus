@@ -42,7 +42,7 @@ class _Connection:
         self.emit_lock = asyncio.Lock()
         self.changed = asyncio.Condition()
 
-    async def emit(self, kind, *, credited=False, **fields):
+    async def emit(self, kind, *, credited=False, on_admit=None, **fields):
         async with self.emit_lock:
             frame = {"protocol": PROTOCOL, "version": 1, "channelId": self.guard.channel,
                      "sequence": self.guard.server_sequence + 1, "kind": kind, **fields}
@@ -54,6 +54,8 @@ class _Connection:
                 if handle["frames"] + 1 > handle["credit"]["frames"] or handle["bytes"] + size > handle["credit"]["bytes"]:
                     return False
             self.guard.received(frame, size)
+            if on_admit:
+                on_admit()
             write = asyncio.create_task(self.channel.send(frame))
             try:
                 await asyncio.shield(write)
@@ -78,7 +80,7 @@ class _Connection:
         self.channel.maximum = self.guard.limits["maxMessageBytes"]
         while True:
             frame, _ = await self.channel.receive()
-            self.guard.sent(frame, boottime_ms())
+            self.guard.sent(frame, boottime_ms(), allow_late_cancel=True)
             kind = frame["kind"]
             if kind == "close":
                 return
@@ -160,14 +162,16 @@ class _Connection:
                                         control="gap", payload={"reason": "state_coalesced"})
                         skipped = False
                     handle = self.guard.handles[key]
-                    sent = await self.emit("data", credited=True, subscriptionId=key,
+                    def admitted():
+                        nonlocal latest, skipped
+                        if latest is publication:
+                            latest = None
+                            skipped = False
+                    sent = await self.emit("data", credited=True, on_admit=admitted, subscriptionId=key,
                                            streamSequence=handle["stream"] + 1, publisherEpoch=publication.epoch,
                                            deliveryKind="resync" if handle["resync"] else "view",
                                            cursor=None, payload=publication.payload)
                     if sent:
-                        # A newer publication may have arrived during the bounded write.
-                        if latest is publication:
-                            latest = None
                         continue
                 if finished:
                     if producer.done() and producer.exception():

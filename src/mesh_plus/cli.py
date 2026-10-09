@@ -27,7 +27,8 @@ def configured_adapter(path, source):
     check(node.st_size <= 65536, "source_config_capacity")
     with path.open("rb") as stream:
         config = tomllib.load(stream)
-    check(set(config) == {"version", "host", "sources"} and config["version"] == 1, "source_config_shape")
+    check(set(config) == {"version", "host", "sources"} and type(config["version"]) is int and
+          config["version"] == 1, "source_config_shape")
     sources = config["sources"]
     check(isinstance(sources, dict) and len(sources) <= 32 and source in sources, "source_not_configured")
     selected = sources[source]

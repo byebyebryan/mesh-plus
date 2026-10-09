@@ -75,6 +75,12 @@ timeout/cancel does not prove a provider operation stopped; these methods do
 not collect or dispatch actions. A terminal result/ended barrier prohibits
 further messages for that handle.
 
+Because the two directions have independent order, a cancellation already in
+flight may cross a terminal result. The server drains a correctly typed cancel
+for a known terminal handle without reopening it or emitting another terminal
+frame. Unknown/reused handles remain invalid. This exception applies to incoming
+cancellation, not to any post-terminal result, data or control publication.
+
 ## Subscription and cancellation
 
 `subscribe` provides a unique subscription ID, start mode and initial credit.

@@ -1,9 +1,9 @@
 {
   "status": "passed",
-  "checkedAtUtc": "2026-10-09T22:57:47.367445+00:00",
+  "checkedAtUtc": "2026-10-09T23:28:40.267249+00:00",
   "validationScope": "schemas, adversarial design model, frozen producer projection; no native/network/runtime acceptance",
   "sourceParityChecked": true,
-  "checksPassed": 116,
+  "checksPassed": 117,
   "checks": [
     {
       "name": "frozen source digests and current checkout parity",
@@ -392,6 +392,10 @@
     },
     {
       "name": "earliest provider component expires only affected provider",
+      "result": "passed"
+    },
+    {
+      "name": "mesh expiry downgrade cannot bypass provider invalidation",
       "result": "passed"
     },
     {

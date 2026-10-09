@@ -1,6 +1,7 @@
 __pycache__/
 .venv/
 .venv-design/
+.venv-*/
 *.egg-info/
 build/
 dist/

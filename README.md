@@ -69,5 +69,23 @@ It does not query providers or start services. The checked-in result is in
 
 The second candidate adds [delivery validation](docs/evidence/delivery-validation.json)
 and an optional [owned carrier study](docs/transport-validation.md#results-and-reproduction).
-Current suites pass 116 read checks and 161 delivery checks. The carrier study
+Current suites pass 117 read checks with source parity (116 offline) and 161
+delivery checks. The carrier study
 uses temporary synthetic IPC/SSH/WSS endpoints, not ordinary Observer services.
+
+## Experimental runtime
+
+Install Mesh into a dedicated environment; install the selected Observer packages
+alongside it for domain adapters. The generic protocol/client package imports no
+provider collectors or desktop tools.
+
+```sh
+rtk proxy uv pip install --python .venv-design/bin/python --no-deps -e .
+rtk proxy .venv-design/bin/python scripts/check-runtime.py --core-only
+```
+
+`mesh-plus bridge` and `serve` export explicitly configured cached sources.
+`mesh-plus read` and `watch` use the same fleet Reader; `hosts` consumes the
+published SSH Plus catalog. See [configuration and acceptance](docs/implementation-progress.md)
+for commands, the private source file and recorded runtime evidence. Existing
+Observer/Plus interfaces and deployed services have not been switched.

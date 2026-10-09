@@ -47,14 +47,20 @@ class Subscription:
         if self.closed:
             return
         self.closed = True
-        if self.client.guard.handles[self.key]["phase"] != "done":
-            await self.client._send("cancel", handleId=self.key, handleType="subscription")
-            await asyncio.wait_for(self.ended.wait(), self.client.close_timeout)
-        while not self.queue.empty():
-            item = self.queue.get_nowait()
-            if isinstance(item, tuple):
-                self.client.buffered_bytes -= item[1]
-        self.client.subscriptions.pop(self.key, None)
+        try:
+            if self.client.guard.handles[self.key]["phase"] != "done":
+                await self.client._send("cancel", handleId=self.key, handleType="subscription")
+                try:
+                    await asyncio.wait_for(self.ended.wait(), self.client.close_timeout)
+                except TimeoutError:
+                    await self.client.close()
+                    raise
+        finally:
+            while not self.queue.empty():
+                item = self.queue.get_nowait()
+                if isinstance(item, tuple):
+                    self.client.buffered_bytes -= item[1]
+            self.client.subscriptions.pop(self.key, None)
 
 
 class Client:
@@ -91,7 +97,7 @@ class Client:
                 raise self.failure
             frame = {"protocol": PROTOCOL, "version": 1, "channelId": self.guard.channel,
                      "sequence": self.guard.client_sequence + 1, "kind": kind, **fields}
-            self.guard.sent(frame, boottime_ms())
+            self.guard.sent(frame, boottime_ms(), allow_late_cancel=kind == "cancel")
             try:
                 await self.channel.send(frame)
             except BaseException:
@@ -138,6 +144,10 @@ class Client:
                 with contextlib.suppress(Exception):
                     await sub.close()
             self.subscriptions.pop(key, None)
+            if sub.ready.done() and not sub.ready.cancelled():
+                sub.ready.exception()
+            else:
+                sub.ready.cancel()
             raise
 
     async def _read(self):
@@ -181,26 +191,30 @@ class Client:
         except asyncio.CancelledError:
             raise
         except Exception as error:
-            self.failure = error
-            for future in self.requests.values():
-                if not future.done():
-                    future.set_exception(error)
-            for sub in self.subscriptions.values():
-                if not sub.ready.done():
-                    sub.ready.set_exception(error)
-                sub.ended.set()
-                while not sub.queue.empty():
-                    item = sub.queue.get_nowait()
-                    if isinstance(item, tuple):
-                        self.buffered_bytes -= item[1]
-                sub.queue.put_nowait(error)
+            self._fail(error)
         finally:
             await self.channel.close()
+
+    def _fail(self, error):
+        self.failure = error
+        for future in self.requests.values():
+            if not future.done():
+                future.set_exception(error)
+        for sub in self.subscriptions.values():
+            if not sub.ready.done():
+                sub.ready.set_exception(error)
+            sub.ended.set()
+            while not sub.queue.empty():
+                item = sub.queue.get_nowait()
+                if isinstance(item, tuple):
+                    self.buffered_bytes -= item[1]
+            sub.queue.put_nowait(error)
 
     async def close(self):
         if not self.channel.closed and not self.guard.closed:
             with contextlib.suppress(Exception):
                 await self._send("close", reason="client_done")
+        self._fail(self.failure or DeliveryError("channel_closed"))
         self.reader_task.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await self.reader_task

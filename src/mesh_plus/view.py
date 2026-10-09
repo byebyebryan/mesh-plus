@@ -151,11 +151,14 @@ def current_sessions(response, now_ms, clock):
     for host in response["mesh"]["hosts"]:
         if host["viewState"] != "current" or host["delivery"]["status"] != "ready":
             continue
+        codec = ObserverCodec(domain, host["hostId"], "default")
+        native = codec.receipts(reconstructed(response, host))
         for row in response["sessions"]:
             if row_host(domain, row) != host["hostId"]:
                 continue
             source = "default" if domain == "tmux" else row["identity"]["provider"] + ":" + row["identity"]["namespace"]
             active = [r for r in host["receipts"] if r["sourceId"] == source and r["health"] in {"current", "partial"}]
-            if active and all(r["expiresAtMs"] > now_ms for r in active):
+            expected = {r["component"] for r in native if r["sourceId"] == source and r["health"] in {"current", "partial"}}
+            if active and {r["component"] for r in active} == expected and all(r["expiresAtMs"] > now_ms for r in active):
                 rows.append(copy.deepcopy(row))
     return rows

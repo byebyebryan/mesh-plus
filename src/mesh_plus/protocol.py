@@ -3,6 +3,7 @@
 import copy
 import json
 import math
+import re
 from functools import lru_cache
 from importlib.resources import files
 
@@ -13,6 +14,7 @@ PROTOCOL = "mesh-plus.delivery-candidate.v1"
 MAX_MESSAGE = 8 * 1024 * 1024 + 80 * 1024
 MAX_CONTROL = 64 * 1024
 MAX_HANDLES = 4096
+UNSAFE_STRING = re.compile("[\x00\ud800-\udfff]")
 
 
 class ProtocolError(ValueError):
@@ -36,7 +38,7 @@ def validator(direction):
 def tree(value, depth=0):
     check(depth <= 64, "tree_depth")
     if isinstance(value, str):
-        check("\x00" not in value and not any(0xD800 <= ord(c) <= 0xDFFF for c in value), "unicode")
+        check(UNSAFE_STRING.search(value) is None, "unicode")
     elif isinstance(value, float):
         check(math.isfinite(value), "nonfinite")
     elif isinstance(value, dict):
@@ -129,13 +131,13 @@ class Lifecycle:
         self.__dict__.update(candidate.__dict__)
         return result
 
-    def sent(self, frame, now_ms):
-        return self._transaction(Lifecycle._sent, frame, now_ms)
+    def sent(self, frame, now_ms, *, allow_late_cancel=False):
+        return self._transaction(Lifecycle._sent, frame, now_ms, allow_late_cancel)
 
     def received(self, frame, size):
         return self._transaction(Lifecycle._received, frame, size)
 
-    def _sent(self, frame, now_ms):
+    def _sent(self, frame, now_ms, allow_late_cancel):
         validate(frame, "client", maximum=self.limits["maxMessageBytes"])
         check(not self.closed and self.channel is not None, "session_not_ready")
         check(frame["channelId"] == self.channel, "channel_binding")
@@ -164,14 +166,15 @@ class Lifecycle:
             key = frame["handleId"] if kind == "cancel" else frame["subscriptionId"]
             check(key in self.handles, "unknown_handle")
             handle = self.handles[key]
-            check(handle["phase"] != "done", "terminal_barrier")
+            check(handle["phase"] != "done" or (kind == "cancel" and allow_late_cancel), "terminal_barrier")
             if kind == "credit":
                 check(handle["kind"] == "subscribe", "handle_type")
                 self._credit(handle, frame["credit"])
             else:
                 check(frame["handleType"] == ("request" if handle["kind"] == "request" else "subscription"),
                       "handle_type")
-                handle["phase"] = "closing"
+                if handle["phase"] != "done":
+                    handle["phase"] = "closing"
         elif kind == "close":
             self.closed = True
         self.client_sequence = frame["sequence"]

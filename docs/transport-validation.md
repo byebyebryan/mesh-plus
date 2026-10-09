@@ -16,7 +16,7 @@ Agent's `8776cc6` state-push documentation checkpoint changes no production wire
 
 ## Results and reproduction
 
-Read/profile validation passes **116 checks**, including existing pure producer
+Read/profile validation passes **117 checks**, including existing pure producer
 validators against nine reconstructed owners per domain. Delivery validation
 passes **161 checks** against four schemas and twenty-five examples. Together
 the two suites cover fourteen schemas and forty-seven examples. Ruff passes.

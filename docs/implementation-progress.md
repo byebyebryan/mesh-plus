@@ -113,6 +113,32 @@ Framing now has a first-byte deadline, and client-side control input has a
 costs remain unproved. All endpoints in these tests are disposable synthetic
 publishers using validated native fixture frames.
 
+## Lifecycle hardening and owned tmux proof
+
+Thirty-two runtime tests now include shutdown waking pending handles, deterministic
+native watch closure, an 8 MiB request response, and per-provider expiry after Mesh
+downgrades an active component to stale. The latter also corrected the independent
+design oracle; read checks now total 117 plus 161 delivery checks.
+
+An actual owned tmux server and Observer process passed three Mesh subscriptions
+and fifteen cached reads: native identities, hooks and attachment counts stayed
+unchanged, collection attempts stayed within the owner's normal two-second
+cadence, and the native server disappeared with Mesh watches still connected.
+This establishes bounded local passivity for that disposable test, not ordinary
+fleet selection, Agent provider behavior or physical suspend.
+
+Use `scripts/check-runtime.py --report docs/evidence/runtime-validation.json`
+for the full runtime report with Observer packages installed. `--core-only`
+explicitly excludes Observer/native tests and is suitable for standalone package
+checks; it must not be reported as adapter or native acceptance.
+
+The latest review adds a deterministic crossing-cancel test: an incoming cancel
+already in flight after the server's result cannot close sibling operations or
+reopen the completed handle. Runtime tests now total thirty-three. Reports bind
+the tested package and test bytes by SHA-256. Standalone CI explicitly runs only
+the core suite on Python 3.11/3.13; full native/adapter acceptance remains a
+separately recorded local gate.
+
 Reproduce runtime tests after installing the package into a validation venv:
 
 ```sh

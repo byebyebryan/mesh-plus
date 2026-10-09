@@ -25,6 +25,7 @@ graphical, resource and operational acceptance belong to implementation stages.
 | Missing history receipts could bypass conservative expiry | Require the full component receipt map before a source view is accepted |
 | Full heartbeats repeatedly transmit large Agent inventories | Small controls carry liveness/gap; only views and resyncs carry records |
 | Agent receipts do not expose full field dependencies | Conservative per-provider expiry; no runtime refresh of history/activity |
+| Mesh downgrading an expired active receipt could hide its provider dependency | Compare against original native positive components; revoke affected provider claims while preserving healthy siblings |
 | Unsaved retirement deadlines are not fully public | Omit historical unsaved rows conservatively; exact retention parity needs a future receipt |
 | Tmux fleet contains desktop and refresh authority | Keep that coordinator and compatibility projection separate from reusable transport |
 | A common default payload limit could truncate Agent data | Profile owner limits plus an explicit aggregate cap; no silent roster truncation |
@@ -59,7 +60,7 @@ Plus or obsolete Observer state classifiers is part of the plan.
 ## Design validation result
 
 The second pass retains the original read projection and adds backend-independent
-delivery. Current read validation passes 116 checks against ten schemas and
+delivery. Current read validation passes 117 checks against ten schemas and
 twenty-two examples, including WSS projection parity. The existing pure producer
 validators accept nine reconstructed owners each for Tmux and Agent. Delivery
 validation adds 161 checks against four schemas and twenty-five examples. Ruff

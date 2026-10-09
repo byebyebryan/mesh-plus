@@ -71,6 +71,23 @@ class ViewTests(unittest.TestCase):
         with self.assertRaisesRegex(ProtocolError, "remote_proof_binding"):
             validate_response(response)
 
+    def test_one_expired_component_revokes_its_provider_only(self):
+        response = json.loads((ROOT / "contracts/mesh-read-v1/examples/agent-local.json").read_text())
+        host = response["mesh"]["hosts"][0]
+        codex = host["owner"]["service"]["sources"][0]
+        history = next(c for c in codex["components"] if c["name"] == "history")
+        history["expiresBoottimeMs"] = 2500
+        receipt = next(r for r in host["receipts"] if r["sourceId"].startswith("codex:") and r["component"] == "history")
+        receipt.update(expiresAtMs=2500, remainingMs=500)
+        rows = current_sessions(response, 3000, response["mesh"]["reader"]["clock"])
+        self.assertTrue(rows)
+        self.assertTrue(all(row["identity"]["provider"] == "claude" for row in rows))
+        receipt.update(health="stale", expiresAtMs=None, remainingMs=0)
+        response["mesh"]["reader"]["encodedAtMs"] = 3000
+        rows = current_sessions(response, 3000, response["mesh"]["reader"]["clock"])
+        self.assertTrue(rows)
+        self.assertTrue(all(row["identity"]["provider"] == "claude" for row in rows))
+
     def test_catalog_fixture_parity_and_identity_collision(self):
         path = ROOT / "reference/rofi-ssh-plus/contracts/host-mesh-v1/fixtures/valid/list-multi-route.json"
         payload = json.loads(path.read_text())

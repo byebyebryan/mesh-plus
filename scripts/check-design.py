@@ -292,12 +292,15 @@ def effective_current(value, now, clock):
     for host in value["mesh"]["hosts"]:
         if host["viewState"] != "current" or host["delivery"]["status"] != "ready":
             continue
+        original = source_receipts(domain, reconstructed_frame(value, host))
         for row in value["sessions"]:
             if row_host(domain, row) != host["hostId"]:
                 continue
             source = "default" if domain == "tmux" else row["identity"]["provider"] + ":" + row["identity"]["namespace"]
             receipts = [r for r in host["receipts"] if r["sourceId"] == source and r["health"] in ["current", "partial"]]
-            if receipts and all(r["expiresAtMs"] > now for r in receipts):
+            expected = {component for (source_id, component), receipt in original.items()
+                        if source_id == source and receipt["health"] in ["current", "partial"]}
+            if receipts and {r["component"] for r in receipts} == expected and all(r["expiresAtMs"] > now for r in receipts):
                 rows.append(row)
     return rows
 
@@ -600,6 +603,14 @@ def main():
         if receipt["sourceId"].startswith("claude:") and receipt["component"]=="history":
             receipt.update(expiresAtMs=3000,remainingMs=1000)
     test("earliest provider component expires only affected provider",lambda: require(all(r["identity"]["provider"]=="codex" for r in effective_current(agent,3001,agent["mesh"]["reader"]["clock"])) and bool(effective_current(agent,3001,agent["mesh"]["reader"]["clock"])),"provider_expiry_isolation"))
+    agent["mesh"]["reader"]["encodedAtMs"] = 3001
+    for receipt in agent["mesh"]["hosts"][0]["receipts"]:
+        if receipt["sourceId"].startswith("claude:") and receipt["component"] == "history":
+            receipt.update(health="stale", expiresAtMs=None, remainingMs=0)
+    test("mesh expiry downgrade cannot bypass provider invalidation", lambda: require(
+        bool(effective_current(agent, 3001, agent["mesh"]["reader"]["clock"])) and
+        all(r["identity"]["provider"] == "codex" for r in effective_current(agent, 3001, agent["mesh"]["reader"]["clock"])),
+        "provider_expiry_downgrade"))
     future_error=copy.deepcopy(responses["tmux-partial-host"])
     future_error["mesh"]["hosts"][1]["delivery"]["error"]["code"]="future_transport_condition"
     test("unfamiliar bounded diagnostic accepted",lambda: validate_response(future_error))

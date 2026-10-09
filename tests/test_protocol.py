@@ -63,6 +63,10 @@ class ProtocolTests(unittest.TestCase):
         from importlib.resources import files
         for source in (ROOT / "contracts/mesh-delivery-v1").glob("*.schema.json"):
             self.assertEqual(files("mesh_plus").joinpath("schemas", source.name).read_bytes(), source.read_bytes())
+        for source in (ROOT / "contracts/mesh-read-v1").glob("*.json"):
+            self.assertEqual(files("mesh_plus").joinpath("schemas", "read-" + source.name).read_bytes(), source.read_bytes())
+        for source in (ROOT / "reference/rofi-ssh-plus/contracts/host-mesh-v1/schemas").glob("*.json"):
+            self.assertEqual(files("mesh_plus").joinpath("schemas", "host-" + source.name).read_bytes(), source.read_bytes())
 
 
 if __name__ == "__main__":

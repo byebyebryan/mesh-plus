@@ -206,7 +206,11 @@ class ObserverAdapter(ObserverCodec):
             await iterator.aclose()
 
     async def watch(self):
-        async for frame in self.frames("watch"):
-            if frame["kind"] == "heartbeat":
-                continue
-            yield Publication(self.wrap(frame), self.epoch(frame), {"viewRevision": frame["viewRevision"]})
+        iterator = self.frames("watch")
+        try:
+            async for frame in iterator:
+                if frame["kind"] == "heartbeat":
+                    continue
+                yield Publication(self.wrap(frame), self.epoch(frame), {"viewRevision": frame["viewRevision"]})
+        finally:
+            await iterator.aclose()
