@@ -70,6 +70,12 @@ def validate(value, direction, size=None, maximum=MAX_MESSAGE):
 
 
 def decode(raw, direction, maximum=MAX_MESSAGE):
+    value = decode_json(raw, maximum)
+    return validate(value, direction, len(raw), maximum)
+
+
+def decode_json(raw, maximum=MAX_MESSAGE):
+    """Strict bounded JSON, independent of any outer protocol discriminator."""
     check(type(raw) is bytes and len(raw) <= maximum, "message_capacity")
     check(not raw.startswith(b"\xef\xbb\xbf"), "bom")
 
@@ -87,7 +93,8 @@ def decode(raw, direction, maximum=MAX_MESSAGE):
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=pairs, parse_constant=constant)
     except (UnicodeError, json.JSONDecodeError, RecursionError) as error:
         raise ProtocolError("invalid_json") from error
-    return validate(value, direction, len(raw), maximum)
+    tree(value)
+    return value
 
 
 class Lifecycle:

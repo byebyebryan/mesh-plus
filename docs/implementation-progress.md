@@ -65,6 +65,29 @@ selection or deployment. Source configuration does not start an owner. Tests
 also exposed and fixed Python 3.13 listener shutdown ordering: cancel and close
 owned handlers before waiting for the listener to finish closing.
 
+## Fleet reader and pure domain facade
+
+The Reader SDK now composes local/fleet responses with the candidate domain
+profile, lossless owner reconstruction, per-host outcomes and independent
+recovery. Remote reads require full nonce proofs; local reads use the checked
+owner clock. Watches consume native state subscriptions and schedule cached
+proofs independently of collection. Lease deadlines wake the reader even with
+no publication; no periodic full-view output loop is used.
+
+The pure `validate_response` and `current_sessions` facade applies the same
+schema, scope and conservative receipt rules locally and across hosts. Original
+records remain available in attributable snapshots; consumers use the facade
+for current claims, preserving unknown and partial native facts. SSH Plus is
+accessed through its published process contract. Catalog identity/route parsing
+and route-report forwarding now have a Mesh-owned boundary, while SSH Plus
+remains the sole configuration/health writer. No history operation is added.
+
+Twenty-five runtime tests pass, including all fourteen frozen profiles,
+lossless local/remote reconstruction, an independently unavailable host, wrong
+nonce exclusion, pre-dispatch scope rejection, simulated suspend expiry, live
+reader watch cleanup and Host Mesh identity-collision rejection. Native
+operational and old-client migration gates remain separate.
+
 Reproduce runtime tests after installing the package into a validation venv:
 
 ```sh

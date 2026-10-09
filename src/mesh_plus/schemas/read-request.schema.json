@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:read:1:request",
+  "type": "object",
+  "properties": {
+    "meshProtocol": {
+      "const": 1
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{32,64}$"
+    },
+    "profile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "operation": {
+      "enum": [
+        "snapshot",
+        "watch"
+      ]
+    },
+    "access": {
+      "const": "cached"
+    },
+    "selection": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enum": [
+            "local",
+            "fleet",
+            "hosts"
+          ]
+        },
+        "hostIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "mode",
+        "hostIds"
+      ],
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "meshProtocol",
+    "requestId",
+    "profile",
+    "operation",
+    "access",
+    "selection",
+    "extensions"
+  ],
+  "additionalProperties": false
+}

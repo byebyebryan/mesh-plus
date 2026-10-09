@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:read:1:agent-stream",
+  "anyOf": [
+    {
+      "$ref": "urn:mesh-plus:read:1:agent-profile"
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "urn:mesh-plus:read:1:control"
+        },
+        {
+          "properties": {
+            "protocol": {
+              "const": "agent-observer.mesh-candidate.v1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "$ref": "urn:mesh-plus:read:1:error"
+    }
+  ]
+}

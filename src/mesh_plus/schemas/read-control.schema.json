@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:read:1:control",
+  "type": "object",
+  "properties": {
+    "protocol": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "mesh": {
+      "type": "object",
+      "properties": {
+        "meshProtocol": {
+          "const": 1
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{32,64}$"
+        },
+        "operation": {
+          "const": "watch"
+        },
+        "access": {
+          "const": "cached"
+        },
+        "reader": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+            },
+            "clock": {
+              "type": "object",
+              "properties": {
+                "bootId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 36,
+                  "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                },
+                "timeNamespace": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^time:[0-9]+$"
+                }
+              },
+              "required": [
+                "bootId",
+                "timeNamespace"
+              ],
+              "additionalProperties": false
+            },
+            "encodedAtMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sequence": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "id",
+            "clock",
+            "encodedAtMs",
+            "sequence",
+            "revision"
+          ],
+          "additionalProperties": false
+        },
+        "kind": {
+          "enum": [
+            "heartbeat",
+            "gap"
+          ]
+        }
+      },
+      "required": [
+        "meshProtocol",
+        "requestId",
+        "operation",
+        "access",
+        "reader",
+        "kind"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "protocol",
+    "schemaVersion",
+    "mesh"
+  ],
+  "additionalProperties": false
+}

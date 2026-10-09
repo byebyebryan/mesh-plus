@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:read:1:tmux-profile",
+  "type": "object",
+  "properties": {
+    "protocol": {
+      "const": "tmux-observer.mesh-candidate.v1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "mesh": {
+      "$ref": "urn:mesh-plus:read:1:mesh"
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "$ref": "https://tmux-observer.invalid/contracts/observation-v1/schema.json#/$defs/Session"
+      },
+      "minItems": 0,
+      "maxItems": 65536
+    }
+  },
+  "required": [
+    "protocol",
+    "schemaVersion",
+    "mesh",
+    "sessions"
+  ],
+  "additionalProperties": false
+}

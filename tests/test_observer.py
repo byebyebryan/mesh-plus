@@ -10,6 +10,7 @@ from pathlib import Path
 from mesh_plus.bridge import Bridge
 from mesh_plus.client import Client
 from mesh_plus.observer import ObserverAdapter, clock_domain
+from mesh_plus.reader import Endpoint, Reader
 from mesh_plus.transport import IPCServer, connect_ipc, subprocess_channel
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -94,6 +95,21 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(pushed["payload"]["ownerFrame"]["viewRevision"], native["viewRevision"] + 1)
                 await sub.close()
                 self.assertEqual(operations, ["status", "status", "watch"])
+                if not subprocess:
+                    async def connect():
+                        return await Client.connect(await connect_ipc(root / "mesh.sock"), host=host,
+                                                    source="default", profile=adapter.profile, codec=adapter.validate)
+                    reader = Reader(domain, [Endpoint(host, True, None, connect)], local_host=host)
+                    watch = reader.watch(proof_interval=.1)
+                    try:
+                        for _ in range(5):
+                            view = await asyncio.wait_for(anext(watch), 2)
+                            if view["mesh"]["status"] == "complete":
+                                break
+                        self.assertEqual(view["mesh"]["status"], "complete")
+                        self.assertEqual(view["sessions"], native["snapshot"]["sessions"])
+                    finally:
+                        await watch.aclose()
                 for forbidden in ("agent_observer.collection", "agent_observer.adapters", "agent_observer.service_runtime",
                                   "tmux_observer.core", "tmux_observer.owner"):
                     self.assertNotIn(forbidden, sys.modules)

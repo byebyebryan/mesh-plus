@@ -1,0 +1,473 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:read:1:mesh",
+  "type": "object",
+  "properties": {
+    "meshProtocol": {
+      "const": 1
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{32,64}$"
+    },
+    "operation": {
+      "enum": [
+        "snapshot",
+        "watch"
+      ]
+    },
+    "access": {
+      "const": "cached"
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "hostIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          },
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "hostIds"
+      ],
+      "additionalProperties": false
+    },
+    "catalog": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "enum": [
+            "ready",
+            "local_only"
+          ]
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "localHostId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16384,
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        }
+      },
+      "required": [
+        "state",
+        "revision",
+        "localHostId"
+      ],
+      "additionalProperties": false
+    },
+    "reader": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+        },
+        "clock": {
+          "type": "object",
+          "properties": {
+            "bootId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+            },
+            "timeNamespace": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^time:[0-9]+$"
+            }
+          },
+          "required": [
+            "bootId",
+            "timeNamespace"
+          ],
+          "additionalProperties": false
+        },
+        "encodedAtMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "id",
+        "clock",
+        "encodedAtMs",
+        "sequence",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "kind": {
+      "enum": [
+        "view",
+        "resync"
+      ]
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "partial",
+        "pending",
+        "unavailable"
+      ]
+    },
+    "hosts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hostId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          },
+          "local": {
+            "type": "boolean"
+          },
+          "delivery": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "enum": [
+                  "ipc",
+                  "ssh",
+                  "wss"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "ready",
+                  "connecting",
+                  "unavailable",
+                  "incompatible",
+                  "invalid"
+                ]
+              },
+              "epoch": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "routeToken": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 71,
+                    "pattern": "^sha256:[0-9a-f]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "error": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                      },
+                      "message": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "proof": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "nonce": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64,
+                        "pattern": "^[0-9a-f]{32,64}$"
+                      },
+                      "bridgeId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 36,
+                        "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                      },
+                      "bridgeClock": {
+                        "type": "object",
+                        "properties": {
+                          "bootId": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 36,
+                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                          },
+                          "timeNamespace": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 128,
+                            "pattern": "^time:[0-9]+$"
+                          }
+                        },
+                        "required": [
+                          "bootId",
+                          "timeNamespace"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "bridgeEncodedAtMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "sentAtMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "receivedAtMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "marginMs": {
+                        "type": "integer",
+                        "minimum": 100,
+                        "maximum": 2000
+                      },
+                      "payloadDigest": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 71,
+                        "pattern": "^sha256:[0-9a-f]{64}$"
+                      }
+                    },
+                    "required": [
+                      "nonce",
+                      "bridgeId",
+                      "bridgeClock",
+                      "bridgeEncodedAtMs",
+                      "sentAtMs",
+                      "receivedAtMs",
+                      "marginMs",
+                      "payloadDigest"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "status",
+              "epoch",
+              "routeToken",
+              "error",
+              "proof"
+            ],
+            "additionalProperties": false
+          },
+          "viewState": {
+            "enum": [
+              "current",
+              "historical",
+              "warming",
+              "unavailable"
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "protocol": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "metadata": {
+                    "anyOf": [
+                      {
+                        "type": "object"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "service": {
+                    "anyOf": [
+                      {
+                        "type": "object"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "protocol",
+                  "version",
+                  "metadata",
+                  "service"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "receipts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sourceId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "component": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                },
+                "health": {
+                  "enum": [
+                    "current",
+                    "partial",
+                    "stale",
+                    "warming",
+                    "unavailable"
+                  ]
+                },
+                "accepted": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "remainingMs": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "expiresAtMs": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "sourceId",
+                "component",
+                "health",
+                "accepted",
+                "remainingMs",
+                "expiresAtMs"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0,
+            "maxItems": 32
+          }
+        },
+        "required": [
+          "hostId",
+          "local",
+          "delivery",
+          "viewState",
+          "owner",
+          "receipts"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 16
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "meshProtocol",
+    "requestId",
+    "operation",
+    "access",
+    "scope",
+    "catalog",
+    "reader",
+    "kind",
+    "status",
+    "hosts",
+    "extensions"
+  ],
+  "additionalProperties": false
+}

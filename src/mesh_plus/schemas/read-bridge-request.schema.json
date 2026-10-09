@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:read:1:bridge-request",
+  "type": "object",
+  "properties": {
+    "meshProtocol": {
+      "const": 1
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{32,64}$"
+    },
+    "sourceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9_]{0,127}$"
+    },
+    "operation": {
+      "enum": [
+        "proof",
+        "watch"
+      ]
+    },
+    "expectedHost": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16384,
+      "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+    }
+  },
+  "required": [
+    "meshProtocol",
+    "nonce",
+    "sourceId",
+    "operation",
+    "expectedHost"
+  ],
+  "additionalProperties": false
+}

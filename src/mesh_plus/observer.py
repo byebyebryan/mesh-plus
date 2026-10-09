@@ -114,12 +114,25 @@ class ObserverAdapter(ObserverCodec):
         self.profile = domain + "-observer.mesh-candidate.v1"
         self.bridge_id = str(uuid.uuid4())
         self.sequence = 0
+        self.accepted = {}
+        self.owner_binding = None
 
     def wrap(self, frame, nonce=None):
         self.native(frame)
         check(self.clock(frame) == clock_domain(), "source_clock_context")
         now = boottime_ms()
         check(self.emitted(frame) <= now, "source_future_frame")
+        binding = (self.epoch(frame), tuple(sorted(self.clock(frame).items())))
+        receipts = self.receipts(frame)
+        if binding == self.owner_binding:
+            for receipt in receipts:
+                key = receipt["sourceId"], receipt["component"]
+                previous = self.accepted.get(key)
+                if previous:
+                    check(receipt["accepted"] >= previous[0], "source_receipt_regression")
+                    check(receipt["accepted"] != previous[0] or receipt["expiry"] == previous[1], "source_lease_renewal")
+        self.owner_binding = binding
+        self.accepted = {(r["sourceId"], r["component"]): (r["accepted"], r["expiry"]) for r in receipts}
         self.sequence += 1
         remaining = []
         if nonce is not None:
