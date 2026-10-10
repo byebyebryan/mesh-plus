@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0a3 (unreleased)
+
+- Add `doctor` and bounded, explicitly requested snapshot/push `probe` commands;
+  probes close owned connections and never write route-health state.
+- Add redacted client and completed application-frame counters outside the wire
+  contract. Source configuration is opened without following symlinks and read
+  with a size bound after validating the opened private regular file.
+- Add a producer-free synthetic IPC/SSH fault and resource lab, isolated workload
+  measurements, CI fault checks and an optional connection-pool design proposal.
+- Preserve the frozen contract, shared authority bytes and deployed a1 selection.
+
 ## 0.1.0a2 (unreleased)
 
 - Keep completed and failed subscription iterators exhausted after their terminal

@@ -47,6 +47,7 @@ class LineChannel:
         self.io_timeout = io_timeout
         self.lock = asyncio.Lock()
         self.closed = False
+        self._metrics = {"receivedFrames": 0, "sentFrames": 0, "receivedBytes": 0, "sentBytes": 0}
         self.stderr_tail = bytearray()
         self.reached_nonce = reached_nonce
         self._reached = False
@@ -113,7 +114,13 @@ class LineChannel:
         value = decode(raw[:-1], self.incoming, maximum)
         check(self.reached_count <= 1, "duplicate_reached_marker")
         check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
+        self._metrics["receivedFrames"] += 1
+        self._metrics["receivedBytes"] += len(raw)
         return value, len(raw) - 1
+
+    def inspect(self):
+        """Completed application frames including LF; excludes encryption and failed writes."""
+        return {**self._metrics, "closed": self.closed, "byteScope": "completed-json-lines"}
 
     @property
     def reached(self):
@@ -128,6 +135,8 @@ class LineChannel:
             started = boottime_ms()
             await asyncio.wait_for(self.writer.drain(), self.io_timeout)
             check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
+            self._metrics["sentFrames"] += 1
+            self._metrics["sentBytes"] += len(raw) + 1
         return len(raw)
 
     async def close(self):

@@ -13,6 +13,7 @@ from pathlib import Path
 from .bridge import Bridge
 from .catalog import MeshAuthority, SSHPlusAuthority
 from .client import Client
+from .diagnostics import doctor, failure_code, probe
 from .observer import ObserverAdapter, ObserverCodec
 from .protocol import MAX_MESSAGE, check
 from .reader import Endpoint, Reader
@@ -20,21 +21,31 @@ from .remote import connect_catalog_host
 from .transport import IPCServer, LineChannel, connect_ipc
 
 
-def configured_adapter(path, source):
+def configured_descriptor(path, source):
     path = Path(path)
-    node = path.lstat()
-    check(stat.S_ISREG(node.st_mode) and node.st_uid == os.getuid() and node.st_mode & 0o077 == 0,
-          "source_config_policy")
-    check(node.st_size <= 65536, "source_config_capacity")
-    with path.open("rb") as stream:
-        config = tomllib.load(stream)
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(descriptor, "rb") as stream:
+        node = os.fstat(stream.fileno())
+        check(stat.S_ISREG(node.st_mode) and node.st_uid == os.getuid() and node.st_mode & 0o077 == 0,
+              "source_config_policy")
+        check(node.st_size <= 65536, "source_config_capacity")
+        data = stream.read(65537)
+        check(len(data) <= 65536, "source_config_capacity")
+        config = tomllib.loads(data.decode("utf-8"))
     check(set(config) == {"version", "host", "sources"} and type(config["version"]) is int and
           config["version"] == 1, "source_config_shape")
     sources = config["sources"]
     check(isinstance(sources, dict) and len(sources) <= 32 and source in sources, "source_not_configured")
     selected = sources[source]
-    check(set(selected) == {"domain", "socket"}, "source_descriptor_shape")
-    return ObserverAdapter(selected["domain"], config["host"], source, selected["socket"])
+    check(isinstance(selected, dict) and set(selected) == {"domain", "socket"}, "source_descriptor_shape")
+    check(selected["domain"] in {"tmux", "agent"} and isinstance(selected["socket"], str) and
+          Path(selected["socket"]).is_absolute() and isinstance(config["host"], str), "source_descriptor_shape")
+    return config["host"], selected["domain"], selected["socket"]
+
+
+def configured_adapter(path, source):
+    host, domain, socket = configured_descriptor(path, source)
+    return ObserverAdapter(domain, host, source, socket)
 
 
 async def stdio_channel():
@@ -63,6 +74,30 @@ async def stdio_channel():
 
 
 async def run(args):
+    if args.command == "doctor":
+        report = doctor()
+        if args.config:
+            try:
+                configured_descriptor(args.config, args.source)
+                report["checks"]["sourceConfiguration"] = "accepted"
+            except Exception as error:
+                report["ok"] = False
+                report["checks"]["sourceConfiguration"] = failure_code(error)
+        print(json.dumps(report, separators=(",", ":")))
+        return 0 if report["ok"] else 1
+    if args.command == "probe":
+        async def connect():
+            codec = ObserverCodec(args.domain, args.host, args.source)
+            if args.socket:
+                return await Client.connect(await connect_ipc(args.socket), host=args.host, source=args.source,
+                                            profile=args.domain + "-observer.mesh-candidate.v1", codec=codec.validate)
+            catalog = await MeshAuthority().load()
+            selected = catalog.select("hosts", [args.host])[0]
+            check(not selected["local"], "probe_local_requires_socket")
+            return await connect_catalog_host(catalog, selected, args.domain, args.source, authority=None)
+        report = await probe(connect, mode=args.mode, timeout_ms=args.timeout_ms)
+        print(json.dumps(report, separators=(",", ":")))
+        return 0 if report["ok"] else 1
     authority = MeshAuthority() if getattr(args, "authority", "ssh-plus") == "mesh" else SSHPlusAuthority()
     if args.command == "hosts":
         catalog = await authority.load()
@@ -120,6 +155,16 @@ def main():
     parser = argparse.ArgumentParser(description="Mesh Plus experimental cached-state transport")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("mesh", help="Host Mesh authority: list/report-route --json")
+    diagnostic = commands.add_parser("doctor", help="inspect packages and optional source config without contacting hosts")
+    diagnostic.add_argument("--config", type=Path)
+    diagnostic.add_argument("--source")
+    diagnostic = commands.add_parser("probe", help="explicit cached-state IPC or catalog SSH probe; no health writes")
+    diagnostic.add_argument("--domain", choices=("tmux", "agent"), required=True)
+    diagnostic.add_argument("--host", required=True)
+    diagnostic.add_argument("--source", required=True)
+    diagnostic.add_argument("--socket", type=Path, help="local IPC; omit for an explicit remote catalog host")
+    diagnostic.add_argument("--mode", choices=("snapshot", "subscribe"), default="snapshot")
+    diagnostic.add_argument("--timeout-ms", type=int, choices=range(1, 60001), default=5000, metavar="1..60000")
     default = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "mesh-plus/sources.toml"
     for name in ("bridge", "serve"):
         command = commands.add_parser(name)
@@ -141,8 +186,10 @@ def main():
         command.add_argument("--hosts", nargs="*", default=[])
         command.add_argument("--local-host", help="explicit standalone local identity; bypass Host Mesh authority")
     args = parser.parse_args()
+    if args.command == "doctor" and bool(args.config) != bool(args.source):
+        parser.error("doctor --config and --source must be supplied together")
     try:
-        asyncio.run(run(args))
+        return asyncio.run(run(args)) or 0
     except KeyboardInterrupt:
         return 130
     except Exception as error:

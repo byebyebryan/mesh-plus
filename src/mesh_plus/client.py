@@ -85,6 +85,16 @@ class Client:
         self.buffered_control_bytes = 0
         self.reader_task = asyncio.create_task(self._read())
 
+    def inspect(self):
+        """Local diagnostic summary; no producer payloads or exception text."""
+        return {"closed": self.channel.closed, "failed": self.failure is not None,
+                "capabilities": sorted(self.guard.capabilities),
+                "activeHandles": sum(handle["phase"] != "done" for handle in self.guard.handles.values()),
+                "pendingRequests": len(self.requests), "subscriptions": len(self.subscriptions),
+                "retainedHandles": len(self.guard.handles), "bufferedBytes": self.buffered_bytes,
+                "bufferedControlBytes": self.buffered_control_bytes,
+                "channel": self.channel.inspect() if hasattr(self.channel, "inspect") else None}
+
     @classmethod
     async def connect(cls, channel, *, host, source, profile, codec, required=("snapshot", "subscribe"), timeout=3):
         hello = {"protocol": PROTOCOL, "version": 1, "kind": "hello", "sequence": 1,

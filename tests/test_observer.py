@@ -150,6 +150,21 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
                         self.assertEqual(view["sessions"], native["snapshot"]["sessions"])
                     finally:
                         await watch.aclose()
+                    for mode in ("snapshot", "subscribe"):
+                        diagnostic = await asyncio.create_subprocess_exec(
+                            sys.executable, "-m", "mesh_plus.cli", "probe", "--domain", domain,
+                            "--host", host, "--source", "default", "--socket", str(root / "mesh.sock"),
+                            "--mode", mode, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+                        try:
+                            stdout, stderr = await asyncio.wait_for(diagnostic.communicate(), 5)
+                            self.assertEqual(diagnostic.returncode, 0, stderr.decode())
+                            report = json.loads(stdout)
+                            self.assertTrue(report["ok"])
+                            self.assertNotIn("ownerFrame", stdout.decode())
+                        finally:
+                            if diagnostic.returncode is None:
+                                diagnostic.kill()
+                                await diagnostic.wait()
                 for forbidden in ("agent_observer.collection", "agent_observer.adapters", "agent_observer.service_runtime",
                                   "tmux_observer.core", "tmux_observer.owner"):
                     self.assertNotIn(forbidden, sys.modules)
