@@ -16,6 +16,9 @@
   native validation, proof/receipt checks and current-time expiry always run.
 - Check metadata bounds through a read-only view excluding native bodies,
   avoiding a deep copy of complete session inventories before discarding them.
+- Reduce JSON safety-walk overhead for ordinary decoded values and serialize
+  validated frames without walking the same tree twice. Unicode, nesting and
+  finite-number checks retain their existing bounds.
 
 ## 0.1.0a5 (unreleased)
 

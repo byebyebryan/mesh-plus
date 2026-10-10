@@ -36,24 +36,49 @@ def validator(direction):
 
 
 def tree(value, depth=0):
-    check(depth <= 64, "tree_depth")
-    if isinstance(value, str):
-        check(UNSAFE_STRING.search(value) is None, "unicode")
-    elif isinstance(value, float):
-        check(math.isfinite(value), "nonfinite")
-    elif isinstance(value, dict):
+    if depth > 64:
+        raise ProtocolError("tree_depth")
+    kind = type(value)
+    if kind is str:
+        # JSON-decoded strings are ordinary str objects. ASCII has no surrogate
+        # code points, so its only forbidden character is NUL.
+        if ("\x00" in value if value.isascii() else UNSAFE_STRING.search(value)):
+            raise ProtocolError("unicode")
+    elif kind is dict:
         for key, child in value.items():
             tree(key, depth + 1)
             tree(child, depth + 1)
-    elif isinstance(value, list):
+    elif kind is list:
         for child in value:
             tree(child, depth + 1)
+    elif kind is float:
+        if not math.isfinite(value):
+            raise ProtocolError("nonfinite")
+    elif kind not in (int, bool, type(None)):
+        # Preserve admission for subclasses and other values; JSON encoding and
+        # the schema still decide whether they are supported.
+        if isinstance(value, str):
+            check(UNSAFE_STRING.search(value) is None, "unicode")
+        elif isinstance(value, float):
+            check(math.isfinite(value), "nonfinite")
+        elif isinstance(value, dict):
+            for key, child in value.items():
+                tree(key, depth + 1)
+                tree(child, depth + 1)
+        elif isinstance(value, list):
+            for child in value:
+                tree(child, depth + 1)
+
+
+def _encode_json(value):
+    """Serialize a tree already checked by this module."""
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
 
 
 def encode(value):
     try:
         tree(value)
-        return json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
+        return _encode_json(value)
     except (RecursionError, UnicodeError, TypeError, ValueError) as error:
         raise ProtocolError("invalid_json") from error
 
@@ -64,7 +89,11 @@ def validate(value, direction, size=None, maximum=MAX_MESSAGE):
     except (ValidationError, RecursionError) as error:
         raise ProtocolError("frame_schema") from error
     tree(value)
-    size = len(encode(value)) if size is None else size
+    if size is None:
+        try:
+            size = len(_encode_json(value))
+        except (RecursionError, UnicodeError, TypeError, ValueError) as error:
+            raise ProtocolError("invalid_json") from error
     check(type(size) is int and 0 <= size <= maximum, "message_capacity")
     if direction == "client" or value["kind"] not in {"data", "result"}:
         check(size <= MAX_CONTROL, "control_capacity")

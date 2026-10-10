@@ -3,7 +3,7 @@ import json
 import unittest
 from pathlib import Path
 
-from mesh_plus.protocol import Lifecycle, ProtocolError, decode, encode
+from mesh_plus.protocol import Lifecycle, ProtocolError, decode, encode, tree, validate
 from mesh_plus.transport import ssh_argv
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +33,34 @@ class ProtocolTests(unittest.TestCase):
                     b'{"v":' + b'9' * 5000 + b'}']:
             with self.subTest(raw=raw), self.assertRaises(ProtocolError):
                 decode(raw, "client")
+
+    def test_tree_safety_covers_ascii_unicode_subclasses_and_depth(self):
+        class Text(str):
+            def isascii(self):
+                return True
+
+        class Mapping(dict):
+            pass
+
+        class Array(list):
+            pass
+
+        for value in ("a\x00b", "snowman \u2603\x00", "\ud800", Text("\udfff"), float("nan"), float("inf")):
+            for body in ({"nested": [value]}, Mapping(nested=Array([value]))):
+                with self.subTest(body=repr(body)), self.assertRaises(ProtocolError):
+                    tree(body)
+        tree({"ascii": [0, True, None, 1.25], "unicode": "snowman \u2603"})
+        value = "safe"
+        for _ in range(64):
+            value = [value]
+        tree(value)
+        with self.assertRaisesRegex(ProtocolError, "tree_depth"):
+            tree([value])
+        frame = example("client-request")
+        validate(frame, "client")
+        frame["requestId"] = "bad\x00"
+        with self.assertRaises(ProtocolError):
+            validate(frame, "client")
 
     def test_late_result_quarantined_and_terminal_enforced(self):
         request = example("client-request")
