@@ -1,0 +1,10 @@
+{
+  "immutableCandidateSoakSha256": "3d5f96115d326ede2d28ba0fb9c6ad948bf91deb4c38f644ac5204bc2b8d1034",
+  "candidateRefreshExecutedSha256": "b64f5f2c6d5c11d9b2dc581f2700aa2fb2269235b974a1d104361e2d10228fb8",
+  "limits": [
+    "Candidate refresh loaded captured pre-format bytes; its reported pathname digest reads later formatting",
+    "Initial refresh-mesh-installed harness bytes were not archived; only its recorded digest survives",
+    "Checkpoint 504 and executed copies preserve distinct matrix and diagnostic versions",
+    "The private native replay inputs are never copied into this evidence"
+  ]
+}

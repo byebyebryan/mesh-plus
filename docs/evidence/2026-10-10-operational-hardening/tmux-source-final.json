@@ -1,0 +1,14 @@
+{
+  "state": "passed",
+  "testsRun": 383,
+  "skipped": [],
+  "sourceCheckpoint": "1a2b3eb59e5778b27e3f52fed93a2684e29d58a3",
+  "sourceLog": "tmux-source-refined.log",
+  "meshIntegrationTests": 7,
+  "meshIntegrationReport": "tmux-source-mesh-a10-refined.json",
+  "limits": [
+    "Source runtime only; released a4 wheel unchanged",
+    "Real IPC/SSH fixtures; no ordinary collection or desktop actions",
+    "Prior isolated fixture failure retained separately"
+  ]
+}

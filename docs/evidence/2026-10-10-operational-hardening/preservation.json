@@ -1,0 +1,24 @@
+{
+  "snap": {
+    "state": "unchanged",
+    "beforeSha256": "1dfddd15ffbdae2c7bc77465541ce21d126102ff778b50bc3e7e84279e171b0b",
+    "afterSha256": "1dfddd15ffbdae2c7bc77465541ce21d126102ff778b50bc3e7e84279e171b0b",
+    "scope": "Recorded Python/JSON runtime files, protected controls and service incarnations",
+    "excludes": [
+      "Python bytecode",
+      "Unlisted launchers and dependency binaries",
+      "Native provider records"
+    ]
+  },
+  "starship": {
+    "state": "unchanged",
+    "beforeSha256": "197e7e35605db8cab5a0b23a2a5e471b6dad57097090f273f31692449a6fcc08",
+    "afterSha256": "197e7e35605db8cab5a0b23a2a5e471b6dad57097090f273f31692449a6fcc08",
+    "scope": "Recorded Python/JSON runtime files, protected controls and service incarnations",
+    "excludes": [
+      "Python bytecode",
+      "Unlisted launchers and dependency binaries",
+      "Native provider records"
+    ]
+  }
+}

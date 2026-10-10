@@ -1,0 +1,37 @@
+{
+  "format": "agent-observer.validator-comparison.v1",
+  "state": "passed",
+  "rows": 128,
+  "measurements": [
+    {
+      "variant": "before",
+      "validations": 100,
+      "cpuMs": 1477.65
+    },
+    {
+      "variant": "after",
+      "validations": 100,
+      "cpuMs": 1026.594
+    },
+    {
+      "variant": "after",
+      "validations": 100,
+      "cpuMs": 1012.475
+    },
+    {
+      "variant": "before",
+      "validations": 100,
+      "cpuMs": 1485.161
+    }
+  ],
+  "beforeSha256": "a775ee3cd8b1dd20e6890f3fe35b5bbf5ed4f8bf287cce23df2a4c750985db10",
+  "afterSha256": "516fb837cc9f491426f7b6b785a905eed2b2b4098e621f3477cc4d1228943303",
+  "inputSha256": "064bd217e44c17023bedba9a1441f1d7d45052458e610bf825f9c434f95ae52c",
+  "harnessSha256": "27ce01e6506de200380f963ddf7d1637352a3b3563b33d2915e8867a7e8f2dec",
+  "schemaParity": true,
+  "limits": [
+    "Pure snapshot validation only; not complete Reader or collector cost",
+    "ABBA process CPU with identical immutable cached input; host load uncontrolled",
+    "No input records published; no source receipts or native facts renewed"
+  ]
+}

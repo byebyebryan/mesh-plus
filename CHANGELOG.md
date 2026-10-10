@@ -10,6 +10,9 @@
   concurrent monitors cannot share that adapter's single admitted read job.
 - Add observed per-host production-budget rotation/recovery gates to profiling.
   This candidate does not change released a9 artifacts or deployed selections.
+- Compare cached-input watch and polling in independent processes; retain failed
+  soaks and exact executed harness bytes. Profiling bridges reserve bounded
+  retirement headroom, and interrupted matrix workers get graceful owned cleanup.
 
 ## 0.1.0a9 (2026-10-10)
 

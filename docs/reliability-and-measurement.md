@@ -5,6 +5,14 @@ Tmux and Agent read delivery cohort. The frozen state and Delivery inputs are
 unchanged. The [adoption record](evidence/2026-10-10-fleet-adoption/README.md)
 separates a8 measurements from final a9 acceptance.
 
+The next [operational hardening record](evidence/2026-10-10-operational-hardening/README.md)
+binds the a10 subscription-admission candidate, Tmux control-binding source fix,
+bounded Tmux bridge retirement headroom, and Agent pure text-validator improvement.
+These source changes are not a new
+deployed cohort. Matched private cached-input watch/poll and independent-process
+reports support retaining IPC/SSH and prioritizing compatible validation work;
+they do not accept pooling, digest-proof or WSS.
+
 ## Baseline and ownership
 
 The a7 catalog descriptor/read race is closed. Tmux Observer 0.6.0a2 / Plus

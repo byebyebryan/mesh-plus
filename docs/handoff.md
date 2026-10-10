@@ -15,6 +15,16 @@ All frozen schema, lock and authority inputs retain their reviewed bytes.
 Installed standalone acceptance passes 74 tests without Observer packages;
 installed native/SSH acceptance passes 106 tests on Python 3.14.
 
+Current source additionally contains an **a10 candidate** subscription-admission
+cancellation fix. Its isolated wheel passes 75 standalone and 107 native/SSH
+tests; it has not replaced the released a9 artifact or consumer pins. The
+[operational hardening record](evidence/2026-10-10-operational-hardening/README.md)
+separates source fixes, private-input measurements and pending adoption gates.
+Tmux source additionally rejects stale control bindings and reserves one retiring
+local bridge handler alongside its active Reader; seven owned a10 integration
+tests pass. Agent source has a compatible ASCII validator fast path. Exact new
+Observer/picker artifacts and paired deployment remain separate acceptance.
+
 Snap and Starship select a9 for the public CLI/catalog authority and Tmux
 Observer 0.6.0a4 / Plus 0.12.0a4. Agent uses new private a9 environments with
 the same a13 reader and a12 bridge Observer artifacts. Its a15 collector and

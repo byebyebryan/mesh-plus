@@ -1,0 +1,19 @@
+{
+  "state": "checkpoint",
+  "soaks": {
+    "tmux": {
+      "report": "candidate-rotation-tmux.json",
+      "state": "failed",
+      "rotationCoverage": true,
+      "completeMetricsAndCleanup": false
+    },
+    "agent": {
+      "state": "pending"
+    }
+  },
+  "releasedSelection": "0.1.0a9",
+  "candidateSelected": false,
+  "limits": [
+    "No release, managed selection or physical desktop acceptance"
+  ]
+}
