@@ -9,8 +9,9 @@ Status: state-delivery core ready for integration, 2026-10-09. Polling and pushe
 state over local IPC and SSH stdio are implemented against a frozen contract.
 Ordered events/replay, WSS and a shared fleet broker remain deferred. Source is
 the unreleased `0.1.0a4` candidate; Snap and Starship continue selecting the
-released `0.1.0a1` shared host authority through SSH Plus. Observer transport and
-consumer migrations remain independent and undeployed.
+released `0.1.0a1` shared host authority through SSH Plus. Agent Observer's
+independent gate now selects its a12 read client/a4 bridge on both hosts.
+Tmux transport and downstream Plus/device migrations remain separate.
 
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The

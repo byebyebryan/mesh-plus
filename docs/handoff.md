@@ -15,7 +15,9 @@ The a3 diagnostics/resource work is retained. The frozen wire contract and
 authority bytes remain unchanged. The released **0.1.0a1**
 wheel remains the selected shared host authority for SSH Plus on Snap and
 Starship. Authority code and Host Mesh v1 bytes are unchanged by this review.
-Observer transport services and Plus consumers have not migrated to Mesh.
+Agent Observer's independent integration gate selects the a12 state reader and
+a4 Agent bridge on Snap and Starship, preserving its a11 collection services and
+a16 writer. Tmux transport and Plus/device consumers remain separate migrations.
 
 The [changelog](../CHANGELOG.md) records version differences. The
 [Agent SDK checkpoint](agent-integration.md) records the a4 source checks and
