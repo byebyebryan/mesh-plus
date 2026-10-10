@@ -1,0 +1,44 @@
+{
+  "state": "passed",
+  "scope": "Actual archived filesystem/control restoration after partial apply or post-start rejection; live units/apply/verifiers mocked; not live adoption acceptance",
+  "helperSha256": "1df9174d5722425a2bd652281cb619a64cbc89a71cc46ffb8c0a0c9537f529b3",
+  "cases": [
+    {
+      "failureStage": "none",
+      "state": "passed",
+      "trace": [
+        "select-dry-run",
+        "select",
+        "select-apply",
+        "select",
+        "selected"
+      ]
+    },
+    {
+      "failureStage": "partial-apply",
+      "state": "passed",
+      "trace": [
+        "select-dry-run",
+        "select",
+        "select-apply",
+        "failed-select",
+        "failed-select-restored",
+        "failed-select-restored"
+      ]
+    },
+    {
+      "failureStage": "post-start",
+      "state": "passed",
+      "trace": [
+        "select-dry-run",
+        "select",
+        "select-apply",
+        "select",
+        "selected",
+        "failed-select",
+        "failed-select-restored",
+        "failed-select-restored"
+      ]
+    }
+  ]
+}

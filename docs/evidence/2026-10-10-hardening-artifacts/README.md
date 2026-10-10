@@ -149,3 +149,20 @@ selectors are prepared; the ordinary collector/writer configuration is unchanged
 
 Checksums bind this checkpoint's evidence files. Original replay inputs and raw
 native frames stay in private scratch space and are excluded from the repository.
+
+## Scoped adoption harness review
+
+`adopt10.py` captures exact baseline controls and payloads, protects the collector,
+writer and foreign managed source, and preserves each endpoint's captured desktop
+topology. Its selection failure path restores baseline payloads and changed
+controls before restarting. Its intentional rollback keeps selected payload
+backups until restored-cohort verification succeeds; a rejected restored cohort
+returns payloads and controls to the verified selection before restart.
+
+Owned filesystem tests pass normal selection, partial-apply rejection and
+post-start rejection; separate cases pass normal rollback and rollback
+verification failure. These use real archived payload/control restoration, with
+unit operations and live verifiers mocked. They certify transaction handling,
+not live cutover, recovery, rollback/reselection, GUI or physical suspend.
+Raw controls, native frames and source contents remain private. The helper hash
+is bound by both test receipts and this directory's checksum index.
