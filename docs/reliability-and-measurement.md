@@ -6,12 +6,15 @@ unchanged. The [adoption record](evidence/2026-10-10-fleet-adoption/README.md)
 separates a8 measurements from final a9 acceptance.
 
 The next [operational hardening record](evidence/2026-10-10-operational-hardening/README.md)
-binds the a10 subscription-admission candidate, Tmux control-binding source fix,
+binds the a10 subscription-admission fix, Tmux control-binding source fix,
 bounded Tmux bridge retirement headroom, and Agent pure text-validator improvement.
 These source changes are not a new
 deployed cohort. Matched private cached-input watch/poll and independent-process
 reports support retaining IPC/SSH and prioritizing compatible validation work;
 they do not accept pooling, digest-proof or WSS.
+The [published artifact checkpoint](evidence/2026-10-10-hardening-artifacts/README.md)
+adds exact new package gates and refresh attribution. A10 live selection remains
+gated on sustained Agent coverage, followed by recovery and rollback/reselection.
 
 ## Baseline and ownership
 
@@ -30,8 +33,8 @@ collector performance and provider semantics remain producer-owned.
 | R0 | Baseline/doc sync | Catalog fix and Tmux adaptation accepted; Agent collector savings and independent transport selections recorded separately. |
 | R1 | Core channel lifetime | Released a8/a9: proactive admission boundary and Reader rotation, visible revocation/resync, original receipt/proof semantics, independent healthy hosts, owned cleanup. |
 | R2 | Transport measurements | Released a8/a9: cumulative Reader/Client/channel counters and owned native-profile IPC/SSH matrix. Operational and synthetic large-payload measurements are recorded in the adoption evidence. |
-| R3 | Select optimization | Decide from matched operational measurements whether duplicate channels justify optional pooling or repeated full proofs justify separately negotiated digest-proof. Neither is advertised or implemented here. |
-| R4 | Artifact adoption | Fresh candidate wheel parity and isolated core/native tests precede any release. Exact consumer pins and two-host cached resource gates pass; native recovery/rollback and additional Reader reports bind their own final evidence. |
+| R3 | Select optimization | Matched watch/poll and independent-process reports support retaining IPC/SSH. Agent's compatible validator refinement reduces pure validation CPU by 31.2% in its matched ABBA study; it does not establish whole-fleet savings. Pooling, digest-proof and WSS remain deferred. |
+| R4 | Artifact adoption | A9 has its accepted exact deployment record. A10 and paired Observer/picker artifacts are published with isolated package gates and committed pins; sustained Agent coverage and a10 live recovery/rollback remain pending. |
 
 Keep direct IPC/SSH as the default. WSS authorization/deployment, shared daemon
 leases and ordered event replay remain separately reviewed work. Rotation is
@@ -153,6 +156,13 @@ Select `--seconds 600 --report /tmp/profile.json`; the Tmux switch owns a privat
 local bridge around the native cache. It does not alter collection or route health.
 The report includes runtime and harness digests, frame/status counters, final
 cleanup metrics and sampled owned resource totals, with no native records.
+For a lifetime gate, set `--minimum-host-rotations 2 --stop-after-rotations`.
+`--seconds` remains a hard maximum; the tool stops early only after every
+selected host has the required observed revocations and matching fresh resyncs.
+Reaching the maximum without that coverage fails the gate, even with clean
+connection counters. This stress profile does not establish normal-cadence
+resource acceptance. Per-host delivery-transition counts distinguish observed
+gap recovery from rotation without retaining native records.
 
 `measure-reader.py --rows 256` scales synthetic native envelopes for the IPC/SSH
 matrix. This measures serialization/proof amplification, not real native large

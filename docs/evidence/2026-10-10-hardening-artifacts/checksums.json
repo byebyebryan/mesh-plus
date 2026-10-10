@@ -1,5 +1,5 @@
 {
-  "README.md": "e8cb098c3cc0796d690cb8dd1602ba38e039f62bcc5a7790c092e2ab61fc066c",
+  "README.md": "20dc7a6550e19a3a82b48dd2388de75352e62815e4c08ff531eea0b5b0dba6a4",
   "adopt10.py": "1df9174d5722425a2bd652281cb619a64cbc89a71cc46ffb8c0a0c9537f529b3",
   "adoption-rollback-owned.json": "74350de9bc08213c73a72d46912505c66e4aba3c104248741f4ab331fa13ad2e",
   "adoption-select-owned.json": "48489f9d005927f4da5ea26378cc2c7b854301269c164eb629b0eb2c172f057c",
@@ -9,6 +9,7 @@
   "check-adoption-rollback.py": "0f16d5c65899e837833945ea60dd9ba5b69cd19efb678a7135476ed95ddbab79",
   "check-adoption-select.py": "22c67b6633b51fd6badb3928887bdb3a1350462308c9c504fbcaadd5751c2605",
   "check-profile-stop.py": "9599e04d973e0caf9f236c7033b363906cdf00b38a2b1ba91f3956f0d516810c",
+  "completion-audit.md": "71b029206cb9bcbd66adbf9b14230b1ebce4a41cec4409d3d0f07f22d1bbce9c",
   "deleted-bridge-interpreter-starship.json": "2411dafbece74e1292aa9aa9cef67f1fdae717e281769e7be6a06b38e896dbee",
   "dependency-inputs.json": "4c100c4cbe963dc438cd698e705914527cfc54d4837ad02a86d74c8b99f5c1a4",
   "investigate-refresh-attributed.py": "47d6dc1be3a3f028423adda886dc44cb4da00a30e24962fb8d615dd243ec2af0",

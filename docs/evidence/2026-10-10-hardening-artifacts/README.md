@@ -6,6 +6,8 @@ The selected a9 cohort remains installed. The following fresh artifacts were
 built into separate private output directories and published as new prereleases;
 GitHub asset digests match all five accepted payloads. Old artifacts retain
 their bytes. Publication does not select or deploy them.
+The [completion audit](completion-audit.md) lists the required remaining live
+gates and distinguishes their status from source and artifact acceptance.
 
 | Package | Candidate source | SHA-256 |
 | --- | --- | --- |
