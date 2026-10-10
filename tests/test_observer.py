@@ -3,6 +3,7 @@ import copy
 import json
 import os
 import shutil
+import signal
 import sys
 import tempfile
 import unittest
@@ -150,6 +151,32 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
                         self.assertEqual(view["sessions"], native["snapshot"]["sessions"])
                     finally:
                         await watch.aclose()
+                    for operation in ("read", "watch"):
+                        measured = await asyncio.create_subprocess_exec(
+                            sys.executable, "-m", "mesh_plus.cli", operation, "--domain", domain,
+                            "--source", "default", "--socket", str(root / "mesh.sock"),
+                            "--local-host", host, "--metrics",
+                            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+                        try:
+                            if operation == "watch":
+                                while True:
+                                    first = json.loads(await asyncio.wait_for(measured.stdout.readline(), 5))
+                                    if first["mesh"]["status"] == "complete":
+                                        break
+                                measured.send_signal(signal.SIGINT)
+                            stdout, stderr = await asyncio.wait_for(measured.communicate(), 5)
+                            self.assertEqual(measured.returncode, 130 if operation == "watch" else 0, stderr.decode())
+                            metrics = json.loads(stderr)
+                            self.assertEqual(metrics["format"], "mesh-plus.reader-metrics.v1")
+                            self.assertEqual(metrics["activeConnections"], 0)
+                            self.assertGreater(metrics["receivedBytes"], 0)
+                            self.assertNotIn("ownerFrame", stderr.decode())
+                            if operation == "read":
+                                self.assertEqual(json.loads(stdout)["mesh"]["status"], "complete")
+                        finally:
+                            if measured.returncode is None:
+                                measured.kill()
+                                await measured.wait()
                     for mode in ("snapshot", "subscribe"):
                         diagnostic = await asyncio.create_subprocess_exec(
                             sys.executable, "-m", "mesh_plus.cli", "probe", "--domain", domain,

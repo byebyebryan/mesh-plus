@@ -8,6 +8,11 @@ wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
 broader design studies and reserved schema variants.
 
+Source **0.1.0a8** is an unreleased reliability/measurement candidate. The
+[current plan](reliability-and-measurement.md) promotes channel rotation to core
+reliability work and gates pooling/digest-proof on actual costs. Existing a7
+selection and its acceptance below remain separate.
+
 The released **0.1.0a7** wheel is frozen from
 `01da59e2df75a133b617ff2da466221144ed2e4d`, SHA-256
 `2bee4d9e77b18c6049a80e848c930ec65abaf60ec40a8341648da93a25a1fd81`.
@@ -106,6 +111,13 @@ state requires a nonce-bound cached read/proof before granting positive validity
 Heartbeats, polling and new connections never renew original source receipts.
 
 ## Integration work and gates
+
+Tmux's producer/coordinator integration and paired a7 selection are accepted in
+the bound-fix record above. Agent's independently selected a4 transport already
+uses the frozen profile; its a15 collector performance work is producer-owned
+and does not establish lower transport cost. The gates below remain applicable
+to changed artifacts and further consumers; they are not a claim that either
+Observer is still awaiting initial Mesh adaptation.
 
 1. **Tmux Observer and coordinator:** bind the owned cached publisher through
    Mesh, retain native source and desktop separation, compare the existing

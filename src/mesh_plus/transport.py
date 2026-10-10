@@ -48,6 +48,7 @@ class LineChannel:
         self.lock = asyncio.Lock()
         self.closed = False
         self._metrics = {"receivedFrames": 0, "sentFrames": 0, "receivedBytes": 0, "sentBytes": 0}
+        self._by_kind = {"received": {}, "sent": {}}
         self.stderr_tail = bytearray()
         self.reached_nonce = reached_nonce
         self._reached = False
@@ -116,11 +117,20 @@ class LineChannel:
         check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
         self._metrics["receivedFrames"] += 1
         self._metrics["receivedBytes"] += len(raw)
+        self._count_kind("received", value["kind"], len(raw))
         return value, len(raw) - 1
 
     def inspect(self):
         """Completed application frames including LF; excludes encryption and failed writes."""
-        return {**self._metrics, "closed": self.closed, "byteScope": "completed-json-lines"}
+        return {**self._metrics, "closed": self.closed, "byteScope": "completed-json-lines",
+                "byKind": {direction: {kind: counts.copy() for kind, counts in kinds.items()}
+                           for direction, kinds in self._by_kind.items()}}
+
+    def _count_kind(self, direction, kind, size):
+        # Kinds come only from validated protocol frames, never producer keys.
+        counts = self._by_kind[direction].setdefault(kind, {"frames": 0, "bytes": 0})
+        counts["frames"] += 1
+        counts["bytes"] += size
 
     @property
     def reached(self):
@@ -137,6 +147,7 @@ class LineChannel:
             check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
             self._metrics["sentFrames"] += 1
             self._metrics["sentBytes"] += len(raw) + 1
+            self._count_kind("sent", value["kind"], len(raw) + 1)
         return len(raw)
 
     async def close(self):

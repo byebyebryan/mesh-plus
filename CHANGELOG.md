@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0a8 (unreleased)
+
+- Stop new Client handle admission at 4,080 retained handles, leaving the frozen
+  4,096-handle no-reuse bound intact. Existing requests, credit and cancellation
+  remain usable; direct Client owners receive `channel_rotation_required`.
+- Rotate Reader watch connections at that boundary. Publish a revoked host view
+  before reconnecting, advance the delivery epoch and require fresh cached
+  read/proof before accepting replacement state. Healthy hosts remain independent.
+- Retire owned clients even if watch cancellation crosses normal channel cleanup.
+- Add cumulative Reader measurements, operation/result byte counters, completed
+  frame counts by kind and per-client/subscription queue high-water marks.
+  CLI `read/watch --metrics` sends final redacted measurements to stderr.
+- Add native-profile fixture measurements over owned IPC/SSH, production-budget
+  admission coverage and repeated rotation/cleanup regressions. Deployed a7,
+  authority behavior and frozen wire/schema inputs remain unchanged.
+
 ## 0.1.0a7 (2026-10-10)
 
 - Read library authority inputs from the same checked regular-file descriptor,

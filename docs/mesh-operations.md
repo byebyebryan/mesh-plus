@@ -1,5 +1,10 @@
 # Mesh operations and optional pooling
 
+For the current a8 candidate and next gates, see the
+[reliability and measurement plan](reliability-and-measurement.md). Rotation is
+now core lifetime work, implemented independently of pooling. The a3 report and
+measurements below are historical evidence for their recorded inputs.
+
 This pass implements diagnostics and a reproducible synthetic lab. Source a3 is
 an unreleased candidate; the deployed SSH Plus authority remains a1. The
 [frozen contract](contract-freeze.md) and its lock are unchanged. This work is

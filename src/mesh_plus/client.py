@@ -4,8 +4,12 @@ import asyncio
 import contextlib
 import secrets
 
-from .protocol import MAX_CONTROL, MAX_MESSAGE, PROTOCOL, Lifecycle, ProtocolError, check
+from .protocol import MAX_CONTROL, MAX_HANDLES, MAX_MESSAGE, PROTOCOL, Lifecycle, ProtocolError, check
 from .transport import boottime_ms, within_deadline
+
+# Retain the protocol's tombstones. Reserve room rather than weakening its
+# no-reuse rule; the connection owner replaces channels, never this Client.
+ROTATION_HANDLES = MAX_HANDLES - 16
 
 
 class DeliveryError(Exception):
@@ -83,17 +87,40 @@ class Client:
         self.failure = None
         self.buffered_bytes = 0
         self.buffered_control_bytes = 0
+        self.peak_buffered_bytes = 0
+        self.peak_buffered_control_bytes = 0
+        self.peak_queue_frames = 0
+        self.operations = {}
+        self.metrics = {"snapshotRequests": 0, "proofRequests": 0,
+                        "snapshotResultBytes": 0, "proofResultBytes": 0,
+                        "otherResultBytes": 0, "requestTimeouts": 0,
+                        "requestCancellations": 0, "rotationRejections": 0}
         self.reader_task = asyncio.create_task(self._read())
+
+    def rotation_due(self):
+        """Stop admitting handles while existing work can still drain/cancel."""
+        return len(self.guard.handles) >= ROTATION_HANDLES
 
     def inspect(self):
         """Local diagnostic summary; no producer payloads or exception text."""
+        channel = self.channel.inspect() if hasattr(self.channel, "inspect") else None
+        operations = self.metrics.copy()
+        if channel is not None and "byKind" in channel:
+            received = channel["byKind"]["received"].get("result", {}).get("bytes", 0)
+            attributed = sum(operations[key] for key in ("snapshotResultBytes", "proofResultBytes", "otherResultBytes"))
+            # A decoded line may precede codec rejection or task cancellation.
+            operations["unprocessedResultBytes"] = max(0, received - attributed)
         return {"closed": self.channel.closed, "failed": self.failure is not None,
                 "capabilities": sorted(self.guard.capabilities),
                 "activeHandles": sum(handle["phase"] != "done" for handle in self.guard.handles.values()),
                 "pendingRequests": len(self.requests), "subscriptions": len(self.subscriptions),
                 "retainedHandles": len(self.guard.handles), "bufferedBytes": self.buffered_bytes,
                 "bufferedControlBytes": self.buffered_control_bytes,
-                "channel": self.channel.inspect() if hasattr(self.channel, "inspect") else None}
+                "rotationDue": self.rotation_due(), "rotationHandles": ROTATION_HANDLES,
+                "peakBufferedBytes": self.peak_buffered_bytes,
+                "peakBufferedControlBytes": self.peak_buffered_control_bytes,
+                "peakQueueFrames": self.peak_queue_frames, "operations": operations,
+                "channel": channel}
 
     @classmethod
     async def connect(cls, channel, *, host, source, profile, codec, required=("snapshot", "subscribe"), timeout=3):
@@ -121,6 +148,9 @@ class Client:
         async with self.send_lock:
             if self.failure:
                 raise self.failure
+            if kind in {"request", "subscribe"} and self.rotation_due():
+                self.metrics["rotationRejections"] += 1
+                raise DeliveryError("channel_rotation_required")
             if kind == "credit" and self.guard.handles[fields["subscriptionId"]]["phase"] == "done":
                 return
             if deadline_ms is not None:
@@ -131,6 +161,8 @@ class Client:
             frame = {"protocol": PROTOCOL, "version": 1, "channelId": self.guard.channel,
                      "sequence": self.guard.client_sequence + 1, "kind": kind, **fields}
             self.guard.sent(frame, boottime_ms(), allow_late_cancel=kind == "cancel")
+            if kind == "request":
+                self.metrics[fields["operation"] + "Requests"] += 1
             try:
                 await self.channel.send(frame)
             except BaseException:
@@ -143,6 +175,7 @@ class Client:
         key = secrets.token_hex(16)
         future = asyncio.get_running_loop().create_future()
         self.requests[key] = future
+        self.operations[key] = operation
         deadline = boottime_ms() + timeout_ms
         try:
             await within_deadline(self._send("request", requestId=key, operation=operation,
@@ -157,7 +190,8 @@ class Client:
             if boottime_ms() >= deadline:
                 raise TimeoutError("request_deadline")
             return future.result()
-        except (TimeoutError, asyncio.CancelledError):
+        except (TimeoutError, asyncio.CancelledError) as error:
+            self.metrics["requestTimeouts" if isinstance(error, TimeoutError) else "requestCancellations"] += 1
             handle = self.guard.handles.get(key)
             if handle and handle["phase"] != "done" and not self.channel.closed:
                 with contextlib.suppress(Exception):
@@ -165,6 +199,7 @@ class Client:
             raise
         finally:
             self.requests.pop(key, None)
+            self.operations.pop(key, None)
             if not future.done():
                 future.cancel()
             elif not future.cancelled():
@@ -204,6 +239,8 @@ class Client:
                 if outcome == "error":
                     raise DeliveryError(frame["error"]["code"], frame["error"]["message"])
                 if frame["kind"] == "result":
+                    operation = self.operations.get(frame["requestId"], "other")
+                    self.metrics[operation + "ResultBytes"] += size + 1
                     future = self.requests.get(frame["requestId"])
                     if future and not future.done() and outcome != "quarantined":
                         if frame["outcome"] == "ok":
@@ -234,8 +271,12 @@ class Client:
                                     check(self.buffered_control_bytes + size <= MAX_CONTROL, "control_reserve")
                                 sub.queue.put_nowait((frame, size))
                                 self.buffered_bytes += size
+                                self.peak_buffered_bytes = max(self.peak_buffered_bytes, self.buffered_bytes)
+                                self.peak_queue_frames = max(self.peak_queue_frames, sub.queue.qsize())
                                 if frame["kind"] == "control":
                                     self.buffered_control_bytes += size
+                                    self.peak_buffered_control_bytes = max(self.peak_buffered_control_bytes,
+                                                                          self.buffered_control_bytes)
                             except asyncio.QueueFull:
                                 # Control congestion is a bounded channel failure, not unlimited buffering.
                                 raise ProtocolError("reader_queue_capacity") from None

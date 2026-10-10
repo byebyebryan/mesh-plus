@@ -13,7 +13,8 @@ from mesh_plus.transport import ssh_argv, subprocess_channel
 
 
 @contextlib.asynccontextmanager
-async def ssh_channel(directory, command, source):
+async def ssh_server(directory, command, source):
+    """One owned daemon with independently owned reconnectable channels."""
     for name in ("host", "client"):
         child = await asyncio.create_subprocess_exec("ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", str(directory / name))
         if await child.wait() != 0:
@@ -42,7 +43,6 @@ async def ssh_channel(directory, command, source):
     daemon = await asyncio.create_subprocess_exec(shutil.which("sshd"), "-D", "-f", str(config), "-E", str(log),
                                                  stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.DEVNULL,
                                                  stderr=asyncio.subprocess.DEVNULL)
-    channel = None
     try:
         for _ in range(80):
             if daemon.returncode is not None:
@@ -60,11 +60,20 @@ async def ssh_channel(directory, command, source):
         argv[1:1] = ["-F", "/dev/null", "-p", str(port), "-i", str(directory / "client"),
                       "-o", "IdentitiesOnly=yes", "-o", "IdentityAgent=none", "-o", "GlobalKnownHostsFile=/dev/null",
                       "-o", "UserKnownHostsFile=" + str(known)]
-        channel = await subprocess_channel(argv, reached_nonce=nonce)
-        yield channel
+        async def connect():
+            return await subprocess_channel(argv, reached_nonce=nonce)
+        yield connect
     finally:
-        if channel:
-            await channel.close()
         if daemon.returncode is None:
             daemon.terminate()
             await asyncio.wait_for(daemon.wait(), 3)
+
+
+@contextlib.asynccontextmanager
+async def ssh_channel(directory, command, source):
+    async with ssh_server(directory, command, source) as connect:
+        channel = await connect()
+        try:
+            yield channel
+        finally:
+            await channel.close()

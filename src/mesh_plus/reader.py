@@ -7,6 +7,7 @@ import secrets
 import uuid
 from dataclasses import dataclass
 
+from .client import DeliveryError
 from .observer import clock_domain, digest
 from .protocol import check
 from .transport import boottime_ms, within_deadline
@@ -48,6 +49,84 @@ class Reader:
         self.id = str(uuid.uuid4())
         self.setup_slots = asyncio.Semaphore(4)
         self.catalog_check = catalog_check
+        self._clients = {}
+        self._totals = self._empty_metrics()
+        self._counts = {"connectionAttempts": 0, "connectionsOpened": 0, "connectionsClosed": 0,
+                        "connectionFailures": 0, "rotations": 0, "cleanupFailures": 0,
+                        "peakConnections": 0, "catalogChecks": 0, "catalogCheckMs": 0}
+
+    @staticmethod
+    def _empty_metrics():
+        return {"instrumentedConnections": 0, "uninstrumentedConnections": 0,
+                "receivedFrames": 0, "sentFrames": 0, "receivedBytes": 0, "sentBytes": 0,
+                "operations": {}, "byKind": {"received": {}, "sent": {}},
+                "peakClientBufferedBytes": 0, "peakClientBufferedControlBytes": 0,
+                "peakSubscriptionQueueFrames": 0, "peakRetainedHandles": 0}
+
+    @staticmethod
+    def _merge_metrics(total, client):
+        inspection = client.inspect() if callable(getattr(client, "inspect", None)) else {}
+        channel = inspection.get("channel") or {}
+        measured = "operations" in inspection and "byKind" in channel
+        total["instrumentedConnections" if measured else "uninstrumentedConnections"] += 1
+        for key in ("receivedFrames", "sentFrames", "receivedBytes", "sentBytes"):
+            total[key] += channel.get(key, 0)
+        for key, value in inspection.get("operations", {}).items():
+            total["operations"][key] = total["operations"].get(key, 0) + value
+        for direction, kinds in channel.get("byKind", {}).items():
+            for kind, counts in kinds.items():
+                target = total["byKind"][direction].setdefault(kind, {"frames": 0, "bytes": 0})
+                for key in ("frames", "bytes"):
+                    target[key] += counts[key]
+        for target, source in (("peakClientBufferedBytes", "peakBufferedBytes"),
+                               ("peakClientBufferedControlBytes", "peakBufferedControlBytes"),
+                               ("peakSubscriptionQueueFrames", "peakQueueFrames"),
+                               ("peakRetainedHandles", "retainedHandles")):
+            total[target] = max(total[target], inspection.get(source, 0))
+
+    def inspect(self):
+        """Cumulative local measurements, including retired channels; no native data.
+
+        Queue peaks are maxima per Client/subscription, not simultaneous fleet
+        peaks. Uninstrumented adapters are counted explicitly, never as zero IO.
+        """
+        total = copy.deepcopy(self._totals)
+        for client in self._clients.values():
+            self._merge_metrics(total, client)
+        return {"format": "mesh-plus.reader-metrics.v1", "domain": self.domain,
+                "byteScope": "completed-json-lines", "activeConnections": len(self._clients),
+                "partial": total["uninstrumentedConnections"] > 0 or self._counts["connectionFailures"] > 0,
+                **self._counts, **total}
+
+    async def _connect(self, endpoint):
+        self._counts["connectionAttempts"] += 1
+        try:
+            client = await endpoint.connect()
+        except BaseException:
+            self._counts["connectionFailures"] += 1
+            raise
+        self._clients[id(client)] = client
+        self._counts["connectionsOpened"] += 1
+        self._counts["peakConnections"] = max(self._counts["peakConnections"], len(self._clients))
+        return client
+
+    async def _close(self, client):
+        cleanup = asyncio.create_task(client.close())
+        try:
+            try:
+                await asyncio.shield(cleanup)
+            except asyncio.CancelledError:
+                # Cancellation of a Reader must still retire its owned channel.
+                await cleanup
+                raise
+        except BaseException:
+            if cleanup.cancelled() or (cleanup.done() and cleanup.exception() is not None):
+                self._counts["cleanupFailures"] += 1
+            raise
+        finally:
+            self._merge_metrics(self._totals, client)
+            self._clients.pop(id(client), None)
+            self._counts["connectionsClosed"] += 1
 
     async def execute(self, request):
         """Validated Read 1 request -> one snapshot or replacement watch stream."""
@@ -180,7 +259,7 @@ class Reader:
                 async def dispatch():
                     nonlocal client
                     async with self.setup_slots:
-                        client = await endpoint.connect()
+                        client = await self._connect(endpoint)
                         return await self.read_host(client, endpoint)
                 return await within_deadline(dispatch(), deadline)
             except Exception as error:
@@ -190,7 +269,7 @@ class Reader:
                 return outcome, []
             finally:
                 if client:
-                    await client.close()
+                    await self._close(client)
 
         values = await asyncio.gather(*(one(endpoint) for endpoint in selected))
         return self.compose(selected, {e.host: value for e, value in zip(selected, values)}, request_id)
@@ -215,11 +294,13 @@ class Reader:
         changed = asyncio.Event()
         fatal = None
         resync = False
+        rotation_barriers = {}
 
         async def monitor_catalog():
             nonlocal fatal
             while True:
                 started = boottime_ms()
+                self._counts["catalogChecks"] += 1
                 try:
                     revision = await within_deadline(self.catalog_check(), started + 5000)
                     check(revision == self.catalog_revision, "scope_changed")
@@ -229,6 +310,8 @@ class Reader:
                     fatal = "scope_changed" if getattr(error, "code", None) == "scope_changed" else "catalog_unavailable"
                     changed.set()
                     return
+                finally:
+                    self._counts["catalogCheckMs"] += max(0, boottime_ms() - started)
                 await asyncio.sleep(max(0, catalog_interval - (boottime_ms() - started) / 1000))
 
         async def host_loop(endpoint):
@@ -237,16 +320,19 @@ class Reader:
             retry = .25
             while True:
                 client, sub, next_frame = None, None, None
+                rotation_barrier = None
                 epoch += 1
                 try:
                     async def setup():
                         nonlocal client, sub
                         async with self.setup_slots:
-                            client = await endpoint.connect()
+                            client = await self._connect(endpoint)
                             sub = await client.subscribe()
                     await within_deadline(setup(), boottime_ms() + 15000)
                     # Baseline is a candidate: accept positives only through a cached read/proof.
                     while True:
+                        if callable(getattr(client, "rotation_due", None)) and client.rotation_due():
+                            raise DeliveryError("channel_rotation_required")
                         previous = outcomes[endpoint.host][0]["owner"]
                         replacement = await self.read_host(client, endpoint, epoch)
                         current = replacement[0]["owner"]
@@ -278,15 +364,26 @@ class Reader:
                     raise
                 except Exception as error:
                     code = outcome_code(error)
+                    if code == "channel_rotation_required":
+                        self._counts["rotations"] += 1
+                        rotation_barrier = asyncio.Event()
+                        rotation_barriers[endpoint.host] = rotation_barrier
                     outcomes[endpoint.host] = self.unavailable(endpoint, code, epoch), []
                     resync = True
                     changed.set()
                 finally:
-                    if next_frame:
-                        next_frame.cancel()
-                        await asyncio.gather(next_frame, return_exceptions=True)
-                    if client:
-                        await client.close()
+                    try:
+                        if next_frame:
+                            next_frame.cancel()
+                            await asyncio.gather(next_frame, return_exceptions=True)
+                    finally:
+                        if client:
+                            await self._close(client)
+                if rotation_barrier is not None:
+                    # A consumer must receive revocation before fresh proof can
+                    # overwrite it, even while it is paused between frames.
+                    await rotation_barrier.wait()
+                    continue
                 await asyncio.sleep(retry)
                 retry = min(30, retry * 2)
 
@@ -320,6 +417,9 @@ class Reader:
                 response = self.compose(selected, outcomes, request_id, "watch", state=state,
                                         kind="resync" if resync else "view")
                 resync = False
+                for barrier in rotation_barriers.values():
+                    barrier.set()
+                rotation_barriers.clear()
                 yield response
         finally:
             for task in tasks:

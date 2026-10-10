@@ -8,7 +8,7 @@ from test_protocol import example
 
 from mesh_plus.bridge import Bridge, Publication, _Connection
 from mesh_plus.client import Client, DeliveryError
-from mesh_plus.protocol import ProtocolError, check
+from mesh_plus.protocol import MAX_HANDLES, ProtocolError, check
 from mesh_plus.transport import IPCServer, connect_ipc
 
 
@@ -113,6 +113,108 @@ class DeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(raised.exception.code, "source_unavailable")
         self.assertNotIn("private", str(raised.exception))
         self.assertEqual((await self.client.request())["value"], 0)
+
+    async def test_rotation_admission_preserves_pending_work_and_subscription(self):
+        sub = await self.client.subscribe()
+        await anext(sub)
+        pending = asyncio.create_task(self.client.request(parameters={"delay": .05}))
+        while len(self.client.guard.handles) < 2:
+            await asyncio.sleep(.001)
+        with patch("mesh_plus.client.ROTATION_HANDLES", 2):
+            self.assertTrue(self.client.rotation_due())
+            sequence = self.client.guard.client_sequence
+            for admission in (self.client.request(), self.client.subscribe()):
+                with self.assertRaises(DeliveryError) as error:
+                    await admission
+                self.assertEqual(error.exception.code, "channel_rotation_required")
+            self.assertEqual(self.client.guard.client_sequence, sequence)
+            self.assertEqual((await pending)["value"], 0)
+            await self.source.publish(1)
+            self.assertEqual((await anext(sub))["payload"]["value"], 1)
+            await sub.close()
+        self.assertFalse(self.client.requests)
+        self.assertFalse(self.client.operations)
+        self.assertEqual(self.client.inspect()["operations"]["rotationRejections"], 2)
+
+    async def test_rotation_check_is_serialized_with_queued_admissions(self):
+        await self.client.send_lock.acquire()
+        tasks = [asyncio.create_task(self.client.request()) for _ in range(3)]
+        try:
+            await asyncio.sleep(.01)
+            with patch("mesh_plus.client.ROTATION_HANDLES", 2):
+                self.client.send_lock.release()
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+            self.assertEqual(sum(isinstance(result, dict) for result in results), 2)
+            rejected = [result for result in results if isinstance(result, DeliveryError)]
+            self.assertEqual([result.code for result in rejected], ["channel_rotation_required"])
+            self.assertEqual(len(self.client.guard.handles), 2)
+        finally:
+            if self.client.send_lock.locked():
+                self.client.send_lock.release()
+            await asyncio.gather(*tasks, return_exceptions=True)
+
+    async def test_actual_production_handle_budget_with_a_live_subscription(self):
+        from mesh_plus.client import ROTATION_HANDLES
+
+        sub = await self.client.subscribe()
+        await anext(sub)
+        remaining = ROTATION_HANDLES - 1
+        while remaining:
+            count = min(8, remaining)
+            await asyncio.gather(*(self.client.request() for _ in range(count)))
+            remaining -= count
+        self.assertEqual(len(self.client.guard.handles), MAX_HANDLES - 16)
+        with self.assertRaises(DeliveryError) as error:
+            await self.client.request()
+        self.assertEqual(error.exception.code, "channel_rotation_required")
+        self.assertFalse(self.client.failure)
+        await self.source.publish(2)
+        while True:
+            pushed = await anext(sub)
+            if pushed["kind"] == "data":
+                break
+        self.assertEqual(pushed["payload"]["value"], 2)
+        await sub.close()
+
+    async def test_operation_and_frame_metrics_include_lf_and_retain_queue_peaks(self):
+        result = await self.client.request()
+        sub = await self.client.subscribe()
+        await anext(sub)
+        await sub.close()
+        metrics = self.client.inspect()
+        self.assertEqual(result["value"], 0)
+        self.assertEqual(metrics["operations"]["snapshotRequests"], 1)
+        channel = metrics["channel"]
+        self.assertEqual(metrics["operations"]["snapshotResultBytes"],
+                         channel["byKind"]["received"]["result"]["bytes"])
+        for direction in ("received", "sent"):
+            for key, suffix in (("frames", "Frames"), ("bytes", "Bytes")):
+                self.assertEqual(sum(count[key] for count in channel["byKind"][direction].values()),
+                                 channel[direction + suffix])
+        self.assertGreater(metrics["peakBufferedBytes"], 0)
+        self.assertGreater(metrics["peakQueueFrames"], 0)
+        self.assertEqual(metrics["bufferedBytes"], 0)
+        channel["byKind"]["sent"]["request"]["bytes"] = -1
+        self.assertGreater(self.client.inspect()["channel"]["byKind"]["sent"]["request"]["bytes"], 0)
+
+    async def test_rejected_result_bytes_are_explicitly_unprocessed(self):
+        def reject(_payload):
+            raise ProtocolError("fixture_rejection")
+        self.client.codec = reject
+        try:
+            await self.client.request()
+        except ProtocolError as error:
+            self.assertEqual(error.code, "fixture_rejection")
+        else:
+            self.fail("Rejected payload reached its caller")
+        # Python 3.11 assertRaises clears traceback frames; do not clear the
+        # shared failure's still-running reader coroutine during cleanup.
+        await self.client.reader_task
+        metrics = self.client.inspect()
+        self.assertGreater(metrics["operations"]["unprocessedResultBytes"], 0)
+        self.assertEqual(metrics["operations"]["snapshotResultBytes"], 0)
+        self.assertEqual(metrics["operations"]["unprocessedResultBytes"],
+                         metrics["channel"]["byKind"]["received"]["result"]["bytes"])
 
     async def test_request_terminal_wakes_caller_without_closing_siblings(self):
         original = _Connection.request

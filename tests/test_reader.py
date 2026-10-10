@@ -318,6 +318,8 @@ class ReaderTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response["mesh"]["hosts"][1]["delivery"]["error"]["code"], "timeout")
         self.assertTrue(cancelled.is_set())
         self.assertTrue(healthy.closed)
+        self.assertTrue(reader.inspect()["partial"])
+        self.assertEqual(reader.inspect()["connectionFailures"], 1)
     async def test_same_local_and_fleet_shape_with_independent_failure(self):
         for domain in ("tmux", "agent"):
             clients = []
@@ -344,6 +346,8 @@ class ReaderTests(unittest.IsolatedAsyncioTestCase):
                 original = next(client.frame for client in clients if client.adapter.host == host["hostId"])
                 self.assertEqual(reconstructed(fleet, host), original)
             self.assertTrue(all(client.closed for client in clients))
+            self.assertTrue(reader.inspect()["partial"])
+            self.assertGreater(reader.inspect()["uninstrumentedConnections"], 0)
 
     async def test_nonce_mismatch_excludes_one_host(self):
         client = CachedClient("agent", "remote", wrong_nonce=True)

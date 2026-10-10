@@ -119,11 +119,19 @@ async def run(args):
         reader = await configured_reader(args.domain, source=args.source, socket=args.socket,
                                          scope=args.scope, hosts=args.hosts, local_host=args.local_host,
                                          authority=authority, report_routes=True)
-        if args.command == "read":
-            print(json.dumps(await reader.snapshot(), ensure_ascii=False, separators=(",", ":")))
-        else:
-            async for view in reader.watch():
-                print(json.dumps(view, ensure_ascii=False, separators=(",", ":")), flush=True)
+        iterator = None
+        try:
+            if args.command == "read":
+                print(json.dumps(await reader.snapshot(), ensure_ascii=False, separators=(",", ":")))
+            else:
+                iterator = reader.watch()
+                async for view in iterator:
+                    print(json.dumps(view, ensure_ascii=False, separators=(",", ":")), flush=True)
+        finally:
+            if iterator is not None:
+                await iterator.aclose()
+            if args.metrics:
+                print(json.dumps(reader.inspect(), separators=(",", ":")), file=sys.stderr, flush=True)
         return
     import asyncio
 
@@ -189,6 +197,7 @@ def main():
         command.add_argument("--scope", choices=("local", "fleet", "hosts"), default="fleet")
         command.add_argument("--hosts", nargs="*", default=[])
         command.add_argument("--local-host", help="explicit standalone local identity; bypass Host Mesh authority")
+        command.add_argument("--metrics", action="store_true", help="emit final local transport counters on stderr")
     args = parser.parse_args()
     if args.command == "doctor" and bool(args.config) != bool(args.source):
         parser.error("doctor --config and --source must be supplied together")

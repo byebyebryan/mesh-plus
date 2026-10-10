@@ -14,6 +14,11 @@ and paired rollback gates. Agent's reader/collector/writer and private SDK a4
 resident bridge remain independently selected and verified. Ordered events/replay,
 WSS, a shared fleet broker and further Plus/device migrations remain deferred.
 
+Source **0.1.0a8 is an unreleased candidate** for proactive watch connection
+rotation and cumulative local transport measurements. See the
+[reliability and measurement plan](docs/reliability-and-measurement.md).
+It does not replace the selected a7 artifacts or expand the frozen capabilities.
+
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The
 [implementation checkpoints](docs/implementation-progress.md) preserve history.
@@ -128,3 +133,7 @@ Probes own and close their connections and do not write route health.
 
 The [Mesh operations pass](docs/mesh-operations.md) describes diagnostic limits,
 the synthetic fault/resource lab and the proposed optional connection pool.
+Candidate a8 adds `read --metrics` and `watch --metrics`: final redacted Reader
+counters go to stderr, leaving protocol stdout unchanged. Watch reports on
+Ctrl-C after owned cleanup. Python consumers may call `Reader.inspect()` while
+running or after completion; totals include retired channels.
