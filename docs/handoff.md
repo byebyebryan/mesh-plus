@@ -8,15 +8,18 @@ wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
 broader design studies and reserved schema variants.
 
-The source candidate is **0.1.0a2, unreleased**. It fixes terminal handling in the
-Delivery client without changing the wire contract. The released **0.1.0a1**
+The source candidate is **0.1.0a3, unreleased**. It adds explicit diagnostics and
+local runtime summaries after the a2 terminal fixes, without changing the wire
+contract. The released **0.1.0a1**
 wheel remains the selected shared host authority for SSH Plus on Snap and
 Starship. Authority code and Host Mesh v1 bytes are unchanged by this review.
 Observer transport services and Plus consumers have not migrated to Mesh.
 
 The [changelog](../CHANGELOG.md) records version differences. The
-[review evidence](evidence/handoff-review.json) binds this pass to source,
-tests, candidate package bytes and the unchanged contract lock. Older evidence
+[review evidence](evidence/handoff-review.json) binds the prior a2 pass to source,
+tests, candidate package bytes and the unchanged contract lock. The
+[operations pass](mesh-operations.md) and [lab evidence](evidence/mesh-lab.json)
+describe a3 diagnostics, synthetic workloads and the optional pool proposal. Older evidence
 files describe their own checkpoints; they do not certify changed source bytes.
 
 ## Ownership and implementation entry points
@@ -144,7 +147,7 @@ replace the deployed authority wheel until an explicit paired release/deploy.
 
 ## Evidence and historical documents
 
-- [Handoff review](evidence/handoff-review.json): this source/refinement pass and
+- [Handoff review](evidence/handoff-review.json): the prior a2 refinement pass and
   its candidate wheel, with explicit exclusions.
 - [Source baseline manifest](evidence/source-baselines.json): reviewed producer
   source inputs; [initial design tuple](evidence/read-design-baselines.json)

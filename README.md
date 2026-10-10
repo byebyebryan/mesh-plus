@@ -8,7 +8,7 @@ host outcomes, delivery provenance and conservative validity information.
 Status: state-delivery core ready for integration, 2026-10-09. Polling and pushed
 state over local IPC and SSH stdio are implemented against a frozen contract.
 Ordered events/replay, WSS and a shared fleet broker remain deferred. Source is
-the unreleased `0.1.0a2` candidate; Snap and Starship continue selecting the
+the unreleased `0.1.0a3` candidate; Snap and Starship continue selecting the
 released `0.1.0a1` shared host authority through SSH Plus. Observer transport and
 consumer migrations remain independent and undeployed.
 
@@ -114,3 +114,13 @@ rtk proxy .venv-design/bin/python scripts/check-runtime.py --core-only
 published SSH Plus catalog. See [configuration and acceptance](docs/implementation-progress.md)
 for commands, the private source file and recorded runtime evidence. Existing
 Observer/Plus interfaces and deployed services have not been switched.
+
+`mesh-plus doctor` checks package availability without contacting hosts. Add
+`--config /absolute/sources.toml --source tmux` to check a private source descriptor.
+`mesh-plus probe --domain tmux --host HOST --source tmux --socket /private/bridge.sock`
+exercises one cached snapshot; add `--mode subscribe` to require a pushed baseline.
+Omit `--socket` to probe one explicit remote Host Mesh catalog host over SSH.
+Probes own and close their connections and do not write route health.
+
+The [Mesh operations pass](docs/mesh-operations.md) describes diagnostic limits,
+the synthetic fault/resource lab and the proposed optional connection pool.
