@@ -1,0 +1,15 @@
+{
+  "state": "failed_checker_readiness",
+  "hostId": "snap",
+  "helperSha256": "1df9174d5722425a2bd652281cb619a64cbc89a71cc46ffb8c0a0c9537f529b3",
+  "selectionVerificationFailure": "FileNotFoundError_before_native_ready_gate",
+  "rollbackVerificationFailure": "same_peer_before_ready_order",
+  "baselineControlsVerified": true,
+  "baselinePayloadMembersVerified": 700,
+  "baselineAgentLiveGate": "accepted",
+  "baselineNativeReceipt": "ready",
+  "nativeGenerationSessionsAndHooksPreserved": true,
+  "canonicalHeadedInstalledGate": "excluded_snap_desktop_inactive",
+  "starshipSelectionUnchanged": true,
+  "runtimeDefectEstablished": false
+}

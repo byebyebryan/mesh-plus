@@ -1,0 +1,20 @@
+{
+  "state": "passed",
+  "scope": "extracted actual verification prefix; owned unpublished peer, native-ready and PID reads mocked; no native IO or live acceptance",
+  "cases": [
+    {
+      "input": "adopt10-pre-readiness-executed.py",
+      "helperSha256": "1df9174d5722425a2bd652281cb619a64cbc89a71cc46ffb8c0a0c9537f529b3",
+      "expectedFailure": "FileNotFoundError",
+      "observedFailure": "FileNotFoundError",
+      "readyBeforePeer": false
+    },
+    {
+      "input": "adopt10.py",
+      "helperSha256": "a67e33d0248d865c5eabc07fc1fea2fc11b9fb2f5ffeebdebb07a01e2f098ae8",
+      "expectedFailure": null,
+      "observedFailure": null,
+      "readyBeforePeer": true
+    }
+  ]
+}

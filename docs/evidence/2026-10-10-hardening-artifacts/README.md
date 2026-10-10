@@ -203,3 +203,21 @@ success report. These baseline receipts do not accept the a10 cohort or prove
 actual recovery. Repeat this probe after each live phase; keep original selected
 receipts before reselection overwrites the adoption helper's fixed report paths.
 Native Agent responses remain private and only their hashes/counts are published.
+
+The first Snap selection attempt rejected socket absence immediately after
+systemd start; its baseline-restoration verification encountered the same order.
+The restored a9 controls, all 700 pinned payload members, Agent bridge/artifact,
+ready native cache and native generation/references/hooks were subsequently
+verified. Starship was not selected during this attempt. The headed canonical
+installed check rejects Snap's deliberately inactive desktop prerequisite;
+explicit headless payload/kernel/cache gates certify that endpoint instead.
+`first-select-readiness-negative.json` retains the rejected attempt.
+
+The original `adopt10.py` bytes and original offline receipts remain preserved.
+The refined `adopt10-ready.py` uses the existing bounded native-ready gate before
+checking the kernel IPC peer; its timeout budget is unchanged. An owned
+unpublished-peer regression rejects the original order and passes the refined
+order. All five archived selection/rollback filesystem cases pass on the new
+helper hash. These mocked ordering/transaction checks do not establish a runtime
+defect, actual adoption or live rollback acceptance. The private executed helper
+uses the scratch name `adopt10.py`; its digest matches `adopt10-ready.py` here.
