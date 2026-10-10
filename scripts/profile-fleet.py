@@ -148,6 +148,16 @@ async def profile(args):
                 if task.done():
                     await task
                     raise RuntimeError("fleet_watch_ended")
+            if args.stop_after_rotations and all(
+                all(
+                    frame["hostRotations"].get(endpoint.host, 0) >= args.minimum_host_rotations
+                    and frame["hostRecoveries"].get(endpoint.host, 0)
+                    == frame["hostRotations"].get(endpoint.host, 0)
+                    for endpoint in reader.endpoints
+                )
+                for frame, reader in zip(frames, readers, strict=True)
+            ):
+                break
             tree = process_tree()
             peak_rss = max(peak_rss, sum(row["rssBytes"] for row in tree.values()))
             peak_processes = max(peak_processes, len(tree))
@@ -212,6 +222,8 @@ async def profile(args):
         "ownedLocalBridge": args.native_socket,
         "proofIntervalSeconds": args.proof_interval or (3 if args.domain == "tmux" else 10),
         "minimumHostRotations": args.minimum_host_rotations,
+        "stopAfterRotations": args.stop_after_rotations,
+        "maximumDurationSeconds": args.seconds,
         "elapsedSeconds": round(elapsed, 3),
         "frames": frames,
         "readerMetrics": metrics,
@@ -264,6 +276,11 @@ def main():
         default=0,
         help="require observed revocation and fresh resync per rotating host",
     )
+    parser.add_argument(
+        "--stop-after-rotations",
+        action="store_true",
+        help="stop after the required per-host recoveries; seconds remains a hard maximum",
+    )
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--progress-report", type=Path, help="optional redacted 60-second counters")
     args = parser.parse_args()
@@ -273,6 +290,8 @@ def main():
         parser.error("proof interval must be .1..60 seconds")
     if not 0 <= args.minimum_host_rotations <= 100:
         parser.error("minimum host rotations must be 0..100")
+    if args.stop_after_rotations and not args.minimum_host_rotations:
+        parser.error("stop after rotations requires a positive minimum")
     report = asyncio.run(profile(args))
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     print(

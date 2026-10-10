@@ -8,7 +8,10 @@
       "completeMetricsAndCleanup": true
     },
     "agent": {
-      "state": "pending"
+      "report": "candidate-rotation-agent.json",
+      "state": "failed",
+      "rotationCoverage": false,
+      "completeMetricsAndCleanup": true
     }
   },
   "releasedSelection": "0.1.0a9",

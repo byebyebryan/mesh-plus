@@ -183,7 +183,11 @@ Agent pure validation is checkpoint `3986474bd8d0d841a742b47ed2dfcd0f04cf0dd2`.
 The corrected 30-minute Tmux soak passes seven production-budget rotations
 (Snap four, Starship three), with matching fresh resync recoveries, complete
 metrics, no failed setup and no live connections or cleanup failures afterward.
-The longer Agent soak remains in progress. Neither result certifies ordinary
+The longer Agent soak completed two hours with clean counters and cleanup,
+but missed required Starship coverage: Snap rotated twice, Starship once.
+A separately bounded follow-up is recorded in the
+[artifact continuation](../2026-10-10-hardening-artifacts/README.md).
+Neither result certifies ordinary
 proof cadence, desktop input or physical suspend.
 
 Fresh installed pairing exposed a CLI startup race: socket publication could
@@ -209,3 +213,9 @@ prerequisite. A separately labeled `headless-cached-delivery` resource scope
 excludes desktop/viewer readiness while retaining the 600-second measurement
 and original CPU/RSS limits. Managed adoption must preserve this headless state;
 Starship desktop acceptance remains endpoint-specific.
+
+The final original-baseline capture was repeated after these owned jobs completed,
+before controlled managed recovery. Both endpoints retained all captured package
+bytes, controls and service incarnations. A subsequent Starship Mesh bridge
+restart repairs deleted-interpreter drift; it is separately recorded in the
+artifact continuation and is not covered by that earlier preservation claim.

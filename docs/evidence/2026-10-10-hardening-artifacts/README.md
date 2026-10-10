@@ -121,13 +121,29 @@ Mesh imports; it is not acceptance of the selected shared authority.
 
 ## Remaining before adoption
 
-The Agent production-budget lifetime soak is still running, with one observed
-rotation and fresh recovery per host at this checkpoint. Starship's baseline
+The two-hour Agent production-budget run finished without runtime failure or
+connection/cleanup failure, with complete counters and all six opened channels
+closed. It fails required coverage: Snap has two rotations/recoveries, Starship
+one. `agent-two-hour-coverage.json` preserves this negative gate. A follow-up uses
+released Mesh a10 and Agent a16 in an owned local bridge and explicit private
+remote stdio bridge. Ordinary collector/writer selection stays unchanged. It
+retains the 4,080 admission threshold, records per-host delivery transitions,
+and stops only after two rotations/recoveries on both hosts, with a four-hour
+hard maximum. Its fixture-only remote executable override leaves public launchers
+and routes untouched. `run-agent-followup.py` and `profile-fleet-followup.py` bind
+executed bytes; source/root inputs match the released artifacts.
+
+A two-host owned IPC check validates coverage-driven stop and owned cleanup
+with a small synthetic handle budget. The canonical native gate still passes
+108 tests, no skips; this does not substitute for actual production-budget
+follow-up coverage. Starship's baseline
 live-artifact gate rejects a bridge still running a deleted Python executable
 whose hash differs from the current interpreter. Its selected package files are
-unchanged. `deleted-bridge-interpreter-starship.json` retains this drift. Recovery
-will restart only the Mesh bridge after the soak ends, followed by a new baseline;
-ordinary collector/writer incarnations remain protected. Scoped paired selection, recovery, rollback/reselection and exact
+unchanged. `deleted-bridge-interpreter-starship.json` retains this drift. After the old soak completed and original baseline preservation was confirmed,
+only the Starship Mesh bridge was restarted. A fresh baseline now passes its
+canonical interpreter/artifact, unit, endpoint, desktop service and cached-read
+gates; ordinary collector/writer incarnations remain protected. Original negative
+drift evidence is retained. Scoped paired selection, recovery, rollback/reselection and exact
 final live selection are pending. Managed source URL/checksum and private role
 selectors are prepared; the ordinary collector/writer configuration is unchanged.
 
