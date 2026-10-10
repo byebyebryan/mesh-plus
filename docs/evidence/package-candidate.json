@@ -1,24 +1,22 @@
 {
   "status": "candidate validated",
-  "sourceCommit": "18359c80e8be9fbec75ebed0097bb9080635726c",
+  "sourceCommit": "ae9fa0a911c810fcdf243be00ef9bd898de89cd1",
   "version": "0.1.0a1",
   "wheel": {
     "file": "mesh_plus-0.1.0a1-py3-none-any.whl",
-    "sha256": "64f23468711f9cb164bd841c1479a4c6b2c482d5ce1ddbd11103a66533517eb9",
+    "sha256": "e266493a068bdbf0c2c24d152decfc7203789e7e601c630a1c0cb350c33f2560",
     "moduleDigests": {
       "mesh_plus/__init__.py": "593059e8ff9a52dd3ba45997d888ad2fd57d797a6af2328d896ff928ad5298bc",
       "mesh_plus/authority.py": "188570bdf706fcd758dae0b94be022645957313aaf7917d2b24fe65d856097b0",
       "mesh_plus/authority_cli.py": "f80c9400720bfb4f02ecafccd9c85834d9e24f2f57c0db35bf8c51dc4d1bd9a6",
-      "mesh_plus/bridge.py": "f9573122892aaa097deb04b08f934644ba3ef0afde181cdc923e82072bd705ca",
+      "mesh_plus/bridge.py": "2dffd540f575ddb5eb292d487eaa35793e5b1463760fd673fedb2331e27a47c3",
       "mesh_plus/catalog.py": "bc557aa78dd1705cb628c209ba83acc7ed15114ea4136804d849a14eeadd9661",
-      "mesh_plus/cli.py": "daac09ccbe48b3fc839bef9d95fb3c4dbb3145d33c196d16d824cee30b908460",
-      "mesh_plus/client.py": "d652519c805ff120a459c1e09becad8104c8ce7466d3d3bc04507102a072ce42",
+      "mesh_plus/cli.py": "f3a7acb9108e1160d0d98ca2782dbcac183cddec0d4c43cbb4f4e617b162505b",
+      "mesh_plus/client.py": "af84f6e3186fbc32be3546a6c85b160f31b0bc9c86826f9222e8f58324d9ca5b",
       "mesh_plus/observer.py": "a67d141ddb16d919e250bba11db5f72fcf283dbd06aae69d6353fa2150fcc7a3",
-      "mesh_plus/protocol.py": "e5c50b53bd17a9ab8784175971eb3081a3c91ea8470821e3607cf67ac1790717",
-      "mesh_plus/reader.py": "0a6797b784eb5143d1654de7a28cce41d04266c33bd6d3572bf303ec788ba45c",
-      "mesh_plus/remote.py": "f466bb64cf953ae4dde6318b43c60dab367bb365cd08fd5ced11c0c6d933eed5",
-      "mesh_plus/transport.py": "23c0ca0347c29a31df1455a0f69e7b00e69bfa35149c4191456e3223c1500d17",
-      "mesh_plus/view.py": "9e0e693e1b4ff9f6fdf262c787d138e1d7653e5e4722198c26b1e32ad8e96427",
+      "mesh_plus/protocol.py": "492650e873e8f2d2b3b268daee24592686518128500ec171611ea0c3726aae9e",
+      "mesh_plus/reader.py": "573ab6ff7e76069a3aaa5dfcc425cad201e91d13da4bb76d8f726b5bc3c70be0",
+      "mesh_plus/remote.py": "180c6d50cf8ee3ff3fe9758936a4d471c6ad9419a8dda19c21624dd6ac30f317",
       "mesh_plus/schemas/bridge-reply.schema.json": "25c4ff3720eb40426c5ba86df86b1ba81169197b91c10e7aa21481d7431561d5",
       "mesh_plus/schemas/client-frame.schema.json": "eaf51f8b062c89dc6a0b3e39e30afd8363705f9471856bf5ff42d38062b3a673",
       "mesh_plus/schemas/digest-proof.schema.json": "fa7937de408fe7b24becb323a4f5916b2697401379060bbfbb2fe43dd236b620",
@@ -33,12 +31,14 @@
       "mesh_plus/schemas/read-bridge-request.schema.json": "6cda6cd9b2b2b339ab4b2cacf9b1b30a8c1c00110bf7469be9850e7693148403",
       "mesh_plus/schemas/read-control.schema.json": "81fd56e8916b57026b56e595310cd8e12c1e8f00fe066af820b056b121bec2f6",
       "mesh_plus/schemas/read-error.schema.json": "4eadff42befb518c2dd8eb156b10e837bd34e477c441a7dfe72a06362213a435",
-      "mesh_plus/schemas/read-request.schema.json": "ee15e02005b440b926b804591a988d8135d7025649471e44a2afae822e8dab76",
+      "mesh_plus/schemas/read-request.schema.json": "b983a69932d41c1b7ddf0935ed51981f0cb4da120c3a417a8d9f71b765f83eb0",
       "mesh_plus/schemas/read-schema.json": "8da7bd0ea618bafbc3a1866d08914822bf1a3e5772139ea74ba3fe2aa25fbbfb",
       "mesh_plus/schemas/read-tmux.profile.schema.json": "49169be091510b9afd85dd6eaa099298280cc8177f7e426f433ceb091ef3eafc",
       "mesh_plus/schemas/read-tmux.stream.schema.json": "e529b284e1ed365daddaa14e3eee5ced28d778f82aa0fc5be376f86886f44bd7",
-      "mesh_plus/schemas/server-frame.schema.json": "0b9a9443561247dac8e459e168367bea6de373d41eb024d59d7fe412023b6175",
-      "mesh_plus/schemas/tmux-native.schema.json": "b79b26cddc4363e43dbc73265f880115570afa9fa5f9851aed947ebb6f0c8c8c"
+      "mesh_plus/schemas/server-frame.schema.json": "02bca97857fc548a5aeb49de89cd104f842e88d035206ea92bda6205ec22b3e3",
+      "mesh_plus/schemas/tmux-native.schema.json": "b79b26cddc4363e43dbc73265f880115570afa9fa5f9851aed947ebb6f0c8c8c",
+      "mesh_plus/transport.py": "8570cfa9086b7ef0cd0f9504b9b13d91b4d0a3c666e099ec2dc55956a160de6b",
+      "mesh_plus/view.py": "53c30ab1dda8dfc1383674841c5c2436c7825d9cf8d1b671890b067c89350fa0"
     }
   },
   "producerInputs": [
@@ -70,5 +70,18 @@
     "selection": "ROFI_SSH_PLUS_MESH_BACKEND=mesh-plus",
     "evidence": "authority-native-selection.json",
     "limits": "Source selection tested; no SSH artifact or operational deployment selected"
+  },
+  "checkedAtUtc": "2026-10-10T00:38:56.649479+00:00",
+  "previousSourceCommit": "18359c80e8be9fbec75ebed0097bb9080635726c",
+  "contractLock": {
+    "file": "contracts/LOCK.json",
+    "sha256": "2b93e1c1e0b533be00e6646ea0ef62aefec357ba00e1e8a51489578ccde38489"
+  },
+  "validation": {
+    "fullWheelTests": 71,
+    "standaloneWheelTests": 44,
+    "nativeAuthorityCompatibilityTests": 80,
+    "wheelModulesMatchSource": 33,
+    "standaloneNativeDependenciesAbsent": true
   }
 }

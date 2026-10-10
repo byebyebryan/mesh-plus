@@ -241,3 +241,10 @@ Neither is the deferred shared fleet broker. Queue limits are per Delivery clien
 IPC bridge connection admission is separately bounded. Independent package and
 CI evidence follow this source checkpoint; operational selection, GUI, resource
 and physical suspend gates remain distinct.
+
+The reviewed source and isolated Python 3.11 wheel each pass all seventy-one
+runtime checks. A separate wheel environment with no Observer packages passes
+all forty-four core checks. Read/delivery oracles pass 117/169 checks; SSH Plus
+selected Mesh compatibility passes all eighty checks. Every wheel module and
+schema matches the reviewed source. The package report binds the source commit,
+wheel checksum, contract lock and unchanged producer wheel inputs.
