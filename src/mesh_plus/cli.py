@@ -143,15 +143,19 @@ async def run(args):
     if args.command == "bridge":
         await bridge.serve(await stdio_channel())
     else:
-        server = await IPCServer(args.socket, bridge.serve).start()
+        server = None
         stopped = asyncio.Event()
         loop = asyncio.get_running_loop()
         for selected in (signal.SIGTERM, signal.SIGINT):
             loop.add_signal_handler(selected, stopped.set)
         try:
+            # Socket publication may yield. Install shutdown ownership before
+            # a supervisor can observe and stop the new endpoint.
+            server = await IPCServer(args.socket, bridge.serve).start()
             await stopped.wait()
         finally:
-            await server.close()
+            if server is not None:
+                await server.close()
             for selected in (signal.SIGTERM, signal.SIGINT):
                 loop.remove_signal_handler(selected)
 

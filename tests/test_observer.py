@@ -38,14 +38,34 @@ def native_fixture(domain):
 
 class ObserverTests(unittest.IsolatedAsyncioTestCase):
     async def test_cli_server_sigterm_removes_only_owned_endpoint(self):
+        await self.cli_sigterm()
+
+    async def test_cli_server_sigterm_during_publication_retires_endpoint(self):
+        await self.cli_sigterm(delayed_start=True)
+
+    async def cli_sigterm(self, *, delayed_start=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             config = root / "sources.toml"
             config.write_text(f'version = 1\nhost = "test-host"\n[sources.default]\ndomain = "tmux"\nsocket = "{root / "absent-owner.sock"}"\n')
             config.chmod(0o600)
             path = root / "mesh.sock"
+            entry = [sys.executable, "-m", "mesh_plus.cli"]
+            if delayed_start:
+                code = (
+                    "import asyncio; from mesh_plus.transport import IPCServer; "
+                    "original = IPCServer.start\n"
+                    "async def delayed(server):\n"
+                    " result = await original(server)\n"
+                    " await asyncio.sleep(.25)\n"
+                    " return result\n"
+                    "IPCServer.start = delayed\n"
+                    "from mesh_plus.cli import main\n"
+                    "raise SystemExit(main())\n"
+                )
+                entry = [sys.executable, "-c", code]
             process = await asyncio.create_subprocess_exec(
-                sys.executable, "-m", "mesh_plus.cli", "serve", "--source", "default",
+                *entry, "serve", "--source", "default",
                 "--config", str(config), "--socket", str(path),
                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
             try:
