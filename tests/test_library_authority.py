@@ -24,6 +24,12 @@ class LibraryAuthorityTests(unittest.IsolatedAsyncioTestCase):
                             "XDG_STATE_HOME": str(self.root / "state")}
         self.environment_patch = patch.dict(os.environ, self.environment)
         self.environment_patch.start()
+        hostname_patch = patch("mesh_plus.authority.socket.gethostname", return_value="fixture.local")
+        hostname_patch.start()
+        self.addCleanup(hostname_patch.stop)
+        fqdn_patch = patch("mesh_plus.authority.socket.getfqdn", return_value="fixture.local")
+        fqdn_patch.start()
+        self.addCleanup(fqdn_patch.stop)
         self.addCleanup(self.environment_patch.stop)
         self.addCleanup(self.temporary.cleanup)
         self.config = self.root / "config/rofi-ssh-plus/config.toml"

@@ -216,6 +216,19 @@ replace the deployed authority wheel until an explicit paired release/deploy.
   with counts and pending gates as they stood at each checkpoint.
 - [SSH integration](ssh-plus-integration.md): current authority selection and
   retained configuration/history ownership. Managed deployment evidence lives
-  in dotfiles `docs/evidence/2026-10-09-ssh-mesh-default.json`.
+  in [SSH Plus evidence](https://github.com/byebyebryan/rofi-ssh-plus/blob/main/docs/evidence/2026-10-09-ssh-mesh-default.json).
 - [Design review](design-review.md), transport studies and older package reports:
   dated design/candidate evidence, including deferred features.
+
+## Owner operations and relocated deployment evidence
+
+Agent's bridge/reader selection procedure is now owned by
+[Agent Observer](https://github.com/byebyebryan/agent-observer/blob/main/docs/mesh-read-client.md).
+Paired Tmux installed recovery and rollback are owned by
+[Tmux Observer](https://github.com/byebyebryan/tmux-observer/blob/main/docs/managed-operations.md),
+with a public Tmux Plus frontend verifier. Mesh retains generic transport
+`doctor`/`probe`, frozen authority and its existing artifact gates.
+The [SSH default adoption](https://github.com/byebyebryan/rofi-ssh-plus/blob/main/docs/evidence/2026-10-09-ssh-mesh-default.json)
+and [SSH facade adoption](https://github.com/byebyebryan/rofi-ssh-plus/blob/main/docs/evidence/2026-10-09-ssh-mesh-facade.json)
+records have moved byte-for-byte to their authority consumer. They remain dated
+acceptance, not proof of later runtime changes.
