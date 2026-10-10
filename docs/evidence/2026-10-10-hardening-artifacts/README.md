@@ -126,7 +126,7 @@ Mesh imports; it is not acceptance of the selected shared authority.
 The two-hour Agent production-budget run finished without runtime failure or
 connection/cleanup failure, with complete counters and all six opened channels
 closed. It fails required coverage: Snap has two rotations/recoveries, Starship
-one. `agent-two-hour-coverage.json` preserves this negative gate. A follow-up uses
+one. `agent-two-hour-coverage.json` preserves this negative gate. The accepted follow-up uses
 released Mesh a10 and Agent a16 in an owned local bridge and explicit private
 remote stdio bridge. Ordinary collector/writer selection stays unchanged. It
 retains the 4,080 admission threshold, records per-host delivery transitions,
@@ -135,10 +135,20 @@ hard maximum. Its fixture-only remote executable override leaves public launcher
 and routes untouched. `run-agent-followup.py` and `profile-fleet-followup.py` bind
 executed bytes; source/root inputs match the released artifacts.
 
+`agent-followup-accepted.json` closes the production-budget lifetime gate after
+6,150.429 seconds: Snap two / Starship two observed revocations and fresh
+recoveries, complete counters, six opened/six closed channels, zero active
+connections and zero connection/cleanup failures. Peak retained handles is
+exactly 4,080; all 36 runtime module/schema digests match the released a10 wheel.
+The owned process has exited. Source-gap recovery is recorded separately from
+rotation recovery. Its 99.786% sampled owned CPU is stress consumer/local-child
+accounting, excludes remote bridges and ordinary publishers, and does not
+establish normal-cadence resource acceptance.
+
 A two-host owned IPC check validates coverage-driven stop and owned cleanup
 with a small synthetic handle budget. The canonical native gate still passes
 108 tests, no skips; this does not substitute for actual production-budget
-follow-up coverage. Starship's baseline
+follow-up coverage by itself. Starship's baseline
 live-artifact gate rejects a bridge still running a deleted Python executable
 whose hash differs from the current interpreter. Its selected package files are
 unchanged. `deleted-bridge-interpreter-starship.json` retains this drift. After the old soak completed and original baseline preservation was confirmed,
