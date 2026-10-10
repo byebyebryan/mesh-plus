@@ -1,0 +1,27 @@
+{
+  "state": "passed",
+  "scope": "altered private baseline inputs against passive native reads; no native mutation",
+  "harnessSha256": "5f16d7509c4f2b1515d7199e4ecefcc6868395985f2ef1b6d670c8f153a4a03b",
+  "cases": [
+    {
+      "case": "changed_generation",
+      "rejected": true,
+      "publishedSuccessReport": false
+    },
+    {
+      "case": "lost_reference",
+      "rejected": true,
+      "publishedSuccessReport": false
+    },
+    {
+      "case": "changed_global_hooks",
+      "rejected": true,
+      "publishedSuccessReport": false
+    },
+    {
+      "case": "changed_session_hooks",
+      "rejected": true,
+      "publishedSuccessReport": false
+    }
+  ]
+}

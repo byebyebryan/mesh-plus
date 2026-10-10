@@ -168,3 +168,16 @@ unit operations and live verifiers mocked. They certify transaction handling,
 not live cutover, recovery, rollback/reselection, GUI or physical suspend.
 Raw controls, native frames and source contents remain private. The helper hash
 is bound by both test receipts and this directory's checksum index.
+
+The adoption helper's original reference guard compares session IDs and creation
+times. It does not independently prove server generation or hook preservation
+across cutover. `check-native-preservation.py` adds a passive default-server
+baseline on each endpoint before selection. It compares generation and boot
+identity, preserves all baseline references, and compares global and preexisting
+session hooks. Added sessions are allowed; lost or replaced references fail.
+Baseline definitions stay private with exclusive creation and mode 0600;
+published receipts contain only hashes and counts. The two pre-cutover checks
+pass. Four altered private inputs are rejected without producing a success
+report: generation, missing reference, global hooks and session hooks.
+These receipts certify the baseline/checker, not completed cutover. Repeating
+verification after selection, recovery, rollback and reselection remains required.
