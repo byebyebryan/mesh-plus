@@ -1,3 +1,3 @@
 """Mesh Plus candidate delivery runtime. No provider or desktop dependencies."""
 
-__version__ = "0.1.0a5"
+__version__ = "0.1.0a6"

@@ -8,7 +8,9 @@ wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
 broader design studies and reserved schema variants.
 
-The source candidate is **0.1.0a5, unreleased**. It dispatches catalog authority
+The source candidate is **0.1.0a6, unreleased**. It adds explicit same-package
+`LibraryMeshAuthority` reads with bounded jobs and lock waits. The a5 work
+dispatches catalog authority
 commands without loading the state SDK. The a4 work adds a reusable configured
 Reader binding, uses Agent Observer's public service frame limit, and excludes
 unsaved stale runtime rows from the effective view without changing raw frames.
@@ -120,6 +122,19 @@ separate producer/transport acceptance before being advertised as capabilities.
 `mesh-plus serve` is a single host-local bridge, not a fleet broker.
 
 ## Validation
+
+Services that explicitly select the imported Mesh authority may use
+`library_authority.LibraryMeshAuthority`. It reuses the unchanged native config
+parser, route-health model/read method and bounded process encoder. The default
+`MeshAuthority` remains the process facade; route reports retain its writer.
+Library reads reject special files and config/health inputs above four MiB,
+admit at most one job per adapter, and enforce a five-second caller budget with
+nonblocking health locks. Cancellation cannot deliver a late catalog or enqueue
+replacement jobs while the old read runs. The owner must call `close()`; it
+reports an unretired filesystem job instead of claiming completed cleanup.
+These input limits belong to the explicit library adapter, not Host Mesh wire v1.
+Failure does not fall back to a process authority or synthesize a local catalog.
+No source facts, receipts, leases or collection are cached by this adapter.
 
 Use Linux and Python 3.11+ with the declared package dependencies. Install into a
 dedicated environment; the standalone gate needs no Observer packages:

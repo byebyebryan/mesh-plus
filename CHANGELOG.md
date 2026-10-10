@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0a6 (unreleased)
+
+- Add explicit `LibraryMeshAuthority` reads for services selecting the same
+  imported authority package. Reuse the canonical config parser, route-health
+  model/store and bounded catalog encoder without repeatedly starting a CLI.
+- Bound read jobs to one per adapter, reject special/oversized source files,
+  use deadline-bound nonblocking health locks and report incomplete shutdown.
+  Route reports retain the existing process writer; default process authority,
+  extracted authority bytes and frozen wire schemas remain unchanged.
+
 ## 0.1.0a5 (unreleased)
 
 - Dispatch Host Mesh authority commands before importing delivery or native
