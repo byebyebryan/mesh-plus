@@ -120,7 +120,7 @@ rtk proxy .venv-design/bin/python scripts/check-runtime.py --core-only
 `mesh-plus read` and `watch` use the same fleet Reader; `hosts` consumes the
 published SSH Plus catalog. See [configuration and acceptance](docs/implementation-progress.md)
 for commands, the private source file and recorded runtime evidence. Tmux
-Observer 0.6.0a2 and Tmux Plus 0.12.0a2 select the shared Mesh transport on Snap
+Observer 0.6.0a4 and Tmux Plus 0.12.0a4 select the shared Mesh a9 transport on Snap
 and Starship. Agent Observer retains its independently selected reader and
 bridge packages; producer and consumer acceptance remain separate gates.
 

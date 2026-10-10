@@ -2,7 +2,7 @@
 
 ## Current disposition
 
-The cached-state core is ready for Observer integration. It supports polling and
+The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The
 wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
@@ -97,8 +97,8 @@ Heartbeats, polling and new connections never renew original source receipts.
 
 ## Integration work and gates
 
-Tmux's producer/coordinator integration and historical paired a7 selection are accepted in
-the bound-fix record above. Agent's independently selected a4 transport already
+Tmux's producer/coordinator integration and paired a9 selection are accepted in
+the coordinated adoption record above. Agent's independently selected a9 transport
 uses the frozen profile; its a15 collector performance work is producer-owned
 and does not establish lower transport cost. The gates below remain applicable
 to changed artifacts and further consumers; they are not a claim that either
@@ -116,7 +116,7 @@ Observer is still awaiting initial Mesh adaptation.
    and native-service acceptance remain producer-owned.
 3. **Consumers:** adopt the new explicit profile and the pure validity facade;
    preserve complete host-qualified record identities. Agent Plus remains
-   deferred until the current producer integration is accepted. Its older
+   deferred to its own consumer implementation and acceptance pass. Its older
    backend is not a reference for Agent observation semantics.
 4. **Operations:** select exact Mesh/Observer/client artifacts, then validate
    real-host disconnect/reconnect, owner and reader restart, route/catalog

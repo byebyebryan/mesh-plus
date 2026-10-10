@@ -12,14 +12,16 @@ import os
 import sys
 import tempfile
 import time
+import uuid
 from pathlib import Path
 
 import mesh_plus
 from mesh_plus.bridge import Bridge
 from mesh_plus.configured_read import configured_reader
 from mesh_plus.library_authority import LibraryMeshAuthority
-from mesh_plus.observer import ObserverAdapter
-from mesh_plus.transport import IPCServer
+from mesh_plus.observer import ObserverAdapter, clock_domain
+from mesh_plus.transport import IPCServer, boottime_ms
+from mesh_plus.view import ReadGuard, row_host
 
 
 def process_tree():
@@ -46,9 +48,11 @@ def process_tree():
 
 async def profile(args):
     authority = LibraryMeshAuthority()
+    authorities = [authority]
     readers, streams, tasks = [], [], []
     frames = [{"total": 0, "kinds": {}, "statuses": {}, "rotationRevocations": 0,
-               "maxRows": 0, "firstCompleteMs": None} for _ in range(args.readers)]
+               "maxRows": 0, "firstCompleteMs": None, "hostRotations": {},
+               "hostRecoveries": {}} for _ in range(args.readers)]
     started = time.monotonic()
     peak_rss = peak_processes = 0
     initial = sum(row["cpuTicks"] for row in process_tree().values())
@@ -64,26 +68,46 @@ async def profile(args):
             adapter = ObserverAdapter(args.domain, catalog.local_host, args.source, args.socket)
             server = await IPCServer(socket, Bridge(adapter).serve, max_clients=args.readers).start()
         for _ in frames:
+            reader_authority = LibraryMeshAuthority()
+            authorities.append(reader_authority)
             readers.append(await configured_reader(args.domain, source=args.source, socket=socket,
-                                                   scope=args.scope, authority=authority, report_routes=False))
+                                                   scope=args.scope, authority=reader_authority, report_routes=False))
 
         async def consume(index, reader):
-            stream = reader.watch()
+            request = uuid.uuid4().hex
+            guard = ReadGuard(args.domain, request)
+            revoked = {}
+            stream = reader.watch(proof_interval=args.proof_interval, request_id=request)
             streams.append(stream)
             try:
                 async for frame in stream:
                     if "mesh" not in frame:
                         raise RuntimeError("fleet_terminal_error")
                     mesh, counters = frame["mesh"], frames[index]
+                    guard.accept(frame)
+                    current = guard.current(boottime_ms(), clock_domain())
                     counters["total"] += 1
                     for key, value in (("kinds", mesh["kind"]), ("statuses", mesh["status"])):
                         counters[key][value] = counters[key].get(value, 0) + 1
                     counters["maxRows"] = max(counters["maxRows"], len(frame["sessions"]))
                     if mesh["status"] == "complete" and counters["firstCompleteMs"] is None:
                         counters["firstCompleteMs"] = round((time.monotonic() - started) * 1000, 3)
-                    counters["rotationRevocations"] += sum(
-                        (host["delivery"].get("error") or {}).get("code") == "channel_rotation_required"
-                        for host in mesh["hosts"])
+                    for host in mesh["hosts"]:
+                        identity, delivery = host["hostId"], host["delivery"]
+                        if (delivery.get("error") or {}).get("code") == "channel_rotation_required":
+                            if any(row_host(args.domain, row) == identity for row in current):
+                                raise RuntimeError("rotation_retained_current_rows")
+                            if revoked.get(identity) != delivery["epoch"]:
+                                counters["rotationRevocations"] += 1
+                                rotations = counters["hostRotations"]
+                                rotations[identity] = rotations.get(identity, 0) + 1
+                                revoked[identity] = delivery["epoch"]
+                        elif identity in revoked and delivery["status"] == "ready":
+                            if delivery["epoch"] <= revoked[identity] or mesh["kind"] != "resync":
+                                raise RuntimeError("rotation_missing_fresh_resync")
+                            recovered = counters["hostRecoveries"]
+                            recovered[identity] = recovered.get(identity, 0) + 1
+                            del revoked[identity]
             finally:
                 await stream.aclose()
 
@@ -108,21 +132,30 @@ async def profile(args):
             failure = failure or "ConsumerFailure"
         if server is not None:
             await server.close()
-        try:
-            authority.close()
-        except Exception as error:
-            failure = failure or type(error).__name__
+        for owned in authorities:
+            try:
+                owned.close()
+            except Exception as error:
+                failure = failure or type(error).__name__
         temporary.cleanup()
     elapsed = time.monotonic() - started
     metrics = [reader.inspect() for reader in readers]
     accepted = (failure is None and all(frame["firstCompleteMs"] is not None for frame in frames)
                 and all(not m["partial"] and not m["activeConnections"] and not m["cleanupFailures"] for m in metrics))
+    if args.minimum_host_rotations:
+        accepted = accepted and all(
+            set(frame["hostRotations"]) == {endpoint.host for endpoint in reader.endpoints} and
+            all(count >= args.minimum_host_rotations and frame["hostRecoveries"].get(host, 0) == count
+                for host, count in frame["hostRotations"].items())
+            for frame, reader in zip(frames, readers, strict=True))
     package = Path(mesh_plus.__file__).parent
     return {
         "format": "mesh-plus.operational-profile.v1", "state": "passed" if accepted else "failed",
         "failureType": failure, "meshVersion": mesh_plus.__version__, "python": sys.version.split()[0],
         "domain": args.domain, "scope": args.scope, "readers": args.readers,
         "ownedLocalBridge": args.native_socket,
+        "proofIntervalSeconds": args.proof_interval or (3 if args.domain == "tmux" else 10),
+        "minimumHostRotations": args.minimum_host_rotations,
         "elapsedSeconds": round(elapsed, 3), "frames": frames, "readerMetrics": metrics,
         "ownedCpuPercent": round(max(0, latest - initial) / os.sysconf("SC_CLK_TCK") / elapsed * 100, 3),
         "sampledPeakRssBytes": peak_rss, "sampledPeakProcesses": peak_processes,
@@ -147,10 +180,17 @@ def main():
     parser.add_argument("--scope", choices=("local", "fleet"), default="fleet")
     parser.add_argument("--readers", type=int, choices=range(1, 5), default=1)
     parser.add_argument("--seconds", type=int, default=600)
+    parser.add_argument("--proof-interval", type=float, help="additional Reader only; default is domain cadence")
+    parser.add_argument("--minimum-host-rotations", type=int, default=0,
+                        help="require observed revocation and fresh resync per rotating host")
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
     if not 10 <= args.seconds <= 86400:
         parser.error("seconds must be 10..86400")
+    if args.proof_interval is not None and not .1 <= args.proof_interval <= 60:
+        parser.error("proof interval must be .1..60 seconds")
+    if not 0 <= args.minimum_host_rotations <= 100:
+        parser.error("minimum host rotations must be 0..100")
     report = asyncio.run(profile(args))
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({key: report[key] for key in ("state", "meshVersion", "domain", "elapsedSeconds",

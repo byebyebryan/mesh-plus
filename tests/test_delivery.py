@@ -1,4 +1,5 @@
 import asyncio
+import gc
 import tempfile
 import unittest
 from pathlib import Path
@@ -81,6 +82,37 @@ class DeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await delayed)["value"], 2)
         self.assertEqual((await self.client.request())["value"], 2)
         await two.close()
+
+    async def test_cancelled_subscription_admission_observes_late_terminal(self):
+        entered = asyncio.Event()
+        release = asyncio.Event()
+
+        async def delayed():
+            entered.set()
+            await release.wait()
+            yield Publication({"value": 0}, "epoch_1", {"value": 0})
+
+        self.source.watch = delayed
+        loop = asyncio.get_running_loop()
+        previous = loop.get_exception_handler()
+        errors = []
+        loop.set_exception_handler(lambda _loop, context: errors.append(context))
+        try:
+            pending = asyncio.create_task(self.client.subscribe())
+            await asyncio.wait_for(entered.wait(), 1)
+            await asyncio.sleep(0)
+            pending.cancel()
+            with self.assertRaises(asyncio.CancelledError):
+                await pending
+            await asyncio.sleep(0)
+            gc.collect()
+            await asyncio.sleep(0)
+            self.assertFalse(errors, [context.get("message") for context in errors])
+            self.assertFalse(self.client.subscriptions)
+            self.assertEqual((await self.client.request())["value"], 0)
+        finally:
+            release.set()
+            loop.set_exception_handler(previous)
 
     async def test_terminal_arriving_while_credit_waits_for_send_lock(self):
         finish = asyncio.Event()

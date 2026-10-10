@@ -8,6 +8,7 @@ import argparse
 import asyncio
 import contextlib
 import copy
+import cProfile
 import hashlib
 import importlib.util
 import json
@@ -34,8 +35,13 @@ spec.loader.exec_module(lab)
 
 
 class Publisher(CachedPublisher):
-    def __init__(self, domain, updates, rows=0):
-        super().__init__(domain, "remote")
+    def __init__(self, domain, updates, rows=0, frame=None):
+        native = json.loads(frame.read_bytes()) if frame else None
+        host = (native["source"]["hostId"] if domain == "tmux" else native["hostScope"]) if native else "remote"
+        super().__init__(domain, host)
+        if native is not None:
+            self.cached.frame = native
+            self.cached.adapter.native(native)
         self.updates = updates
         if not rows:
             return
@@ -70,14 +76,16 @@ class Publisher(CachedPublisher):
 async def measure(args):
     resources = lab.OwnedResources()
     sampling = asyncio.create_task(resources.watch())
-    publisher = Publisher(args.domain, args.updates, args.rows)
+    publisher = Publisher(args.domain, args.updates, args.rows, args.frame)
     try:
         with tempfile.TemporaryDirectory(prefix=".mesh-reader-lab-", dir=Path.home()) as name:
             root = Path(name)
             async with contextlib.AsyncExitStack() as stack:
                 if args.carrier == "ssh":
                     command = [sys.executable, "-B", str(Path(__file__).resolve()), "--stdio",
-                               "--domain", args.domain, "--rows", str(args.rows), *(["--updates"] if args.updates else [])]
+                               "--domain", args.domain, "--rows", str(args.rows),
+                               *(["--frame", str(args.frame)] if args.frame else []),
+                               *(["--updates"] if args.updates else [])]
                     channel = await stack.enter_async_context(ssh_server(root, command, "default"))
                 else:
                     server = await IPCServer(root / "mesh.sock", Bridge(publisher).serve).start()
@@ -86,11 +94,11 @@ async def measure(args):
                         return await connect_ipc(root / "mesh.sock")
 
                 async def connect():
-                    return await Client.connect(await channel(), host="remote", source="default",
+                    return await Client.connect(await channel(), host=publisher.host, source="default",
                                                 profile=publisher.profile, codec=publisher.validate)
                 async def catalog():
                     return "sha256:" + "b" * 64
-                readers = [Reader(args.domain, [Endpoint("remote", False, "sha256:" + "a" * 64, connect)],
+                readers = [Reader(args.domain, [Endpoint(publisher.host, False, "sha256:" + "a" * 64, connect)],
                                   local_host="local", catalog_revision=await catalog(), catalog_check=catalog)
                            for _ in range(args.readers)]
                 ready = [asyncio.Event() for _ in readers]
@@ -111,7 +119,12 @@ async def measure(args):
                     await asyncio.wait_for(asyncio.gather(*(event.wait() for event in ready)), 20)
                     start = time.monotonic()
                     cpu_start = resource.getrusage(resource.RUSAGE_SELF)
+                    profiler = cProfile.Profile() if args.profile else None
+                    if profiler:
+                        profiler.enable()
                     await asyncio.sleep(args.seconds)
+                    if profiler:
+                        profiler.disable()
                     elapsed = time.monotonic() - start
                     cpu_end = resource.getrusage(resource.RUSAGE_SELF)
                     failure = [task.exception() for task in tasks if task.done() and not task.cancelled()]
@@ -130,6 +143,13 @@ async def measure(args):
                         "steadySeconds": round(elapsed, 3), "views": views, "readerMetrics": summaries,
                         "steadyWorkerCpuMs": round(1000 * (cpu_end.ru_utime + cpu_end.ru_stime -
                                                              cpu_start.ru_utime - cpu_start.ru_stime), 3),
+                        "profile": None if profiler is None else sorted(
+                            [{"function": (entry.code.co_name if hasattr(entry.code, "co_name") else
+                                           str(entry.code)), "calls": entry.callcount,
+                              "selfSeconds": round(entry.inlinetime, 6),
+                              "totalSeconds": round(entry.totaltime, 6)}
+                             for entry in profiler.getstats()], key=lambda row: row["selfSeconds"],
+                            reverse=True)[:20],
                         **resources.report()}
     finally:
         sampling.cancel()
@@ -139,18 +159,20 @@ async def measure(args):
 async def main(args):
     if args.stdio:
         from mesh_plus.cli import stdio_channel
-        await Bridge(Publisher(args.domain, args.updates, args.rows)).serve(await stdio_channel())
+        await Bridge(Publisher(args.domain, args.updates, args.rows, args.frame)).serve(await stdio_channel())
         return
     if args.case:
         print(json.dumps(await measure(args)))
         return
     cases = []
-    for domain in ("tmux", "agent"):
+    for domain in ((args.domain,) if args.frame else ("tmux", "agent")):
         for readers in (1, 4):
             for updates in (False, True):
                 command = [sys.executable, "-B", str(Path(__file__).resolve()), "--case", "--domain", domain,
                            "--carrier", args.carrier, "--readers", str(readers), "--seconds", str(args.seconds),
-                           "--proof-interval", str(args.proof_interval), "--rows", str(args.rows), *(["--updates"] if updates else [])]
+                           "--proof-interval", str(args.proof_interval), "--rows", str(args.rows),
+                           *(["--frame", str(args.frame)] if args.frame else []),
+                           *(["--profile"] if args.profile else []), *(["--updates"] if updates else [])]
                 process = await asyncio.create_subprocess_exec(*command, stdout=asyncio.subprocess.PIPE,
                                                                stderr=asyncio.subprocess.PIPE)
                 try:
@@ -165,6 +187,10 @@ async def main(args):
     package = Path(mesh_plus.__file__).parent
     report = {"format": "mesh-plus.reader-lab.v1", "sourceVersion": mesh_plus.__version__,
               "python": sys.version.split()[0], "cases": cases,
+              "input": None if args.frame is None else {
+                  "kind": "private cached native replay", "bytes": args.frame.stat().st_size,
+                  "sha256": hashlib.sha256(args.frame.read_bytes()).hexdigest(),
+                  "receiptTimesPreserved": True, "providerCollection": False},
               "runtimeDigests": {str(path.relative_to(package)): hashlib.sha256(path.read_bytes()).hexdigest()
                                  for path in sorted(package.rglob("*")) if path.suffix in {".py", ".json"}},
               "harnessDigests": {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -200,9 +226,13 @@ if __name__ == "__main__":
     parser.add_argument("--updates", action="store_true")
     parser.add_argument("--rows", type=int, choices=range(0, 2049), default=0,
                         help="synthetic unique rows; zero preserves the original native fixture")
+    parser.add_argument("--frame", type=Path, help="private cached native replay input; never written into reports")
+    parser.add_argument("--profile", action="store_true", help="instrumented worker trace; adds profiling overhead")
     parser.add_argument("--case", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--stdio", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if not .1 <= args.proof_interval <= 60:
         parser.error("proof interval must be .1..60 seconds")
+    if args.frame and (args.rows or not args.frame.is_absolute() or args.frame.stat().st_mode & 0o077):
+        parser.error("frame must be an absolute private file and cannot be scaled")
     asyncio.run(main(args))

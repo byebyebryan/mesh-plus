@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0a10 (candidate)
+
+- Cancel subscription admission without an abandoned shield future. A real IPC
+  regression reproduces the late `ended(cancelled)` diagnostic on deployed a9
+  with Python 3.14 and verifies cleanup plus independent request usability.
+- Add redacted refresh investigation, private cached-input replay and independent
+  process measurements. Each operational Reader owns its library authority;
+  concurrent monitors cannot share that adapter's single admitted read job.
+- Add observed per-host production-budget rotation/recovery gates to profiling.
+  This candidate does not change released a9 artifacts or deployed selections.
+
 ## 0.1.0a9 (2026-10-10)
 
 - Retire owned bridge sends and Reader cleanup through repeated cancellation,

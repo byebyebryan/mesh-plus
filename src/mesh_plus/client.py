@@ -214,7 +214,12 @@ class Client:
             async def admission():
                 await self._send("subscribe", subscriptionId=key, start={"mode": "baseline", "cursor": None},
                                  credit={"frames": 32, "bytes": self.guard.limits["maxMessageBytes"]})
-                return await asyncio.shield(sub.ready)
+                # Cancellation retires admission through the except block below.
+                # Wait without cancelling ready or creating a shield wrapper:
+                # Python 3.14 reports a late ended error through that wrapper
+                # even when cleanup subsequently observes ready's exception.
+                await asyncio.wait({sub.ready})
+                return sub.ready.result()
             await within_deadline(admission(), boottime_ms() + int(self.close_timeout * 1000))
             return sub
         except BaseException:
