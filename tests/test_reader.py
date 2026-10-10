@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from jsonschema.exceptions import ValidationError
 from test_observer import native_fixture
 
 from mesh_plus.catalog import Catalog
@@ -53,6 +54,24 @@ class CachedClient:
 
 
 class ViewTests(unittest.TestCase):
+    def test_repeated_structure_never_bypasses_native_checks_or_python_types(self):
+        response = json.loads((ROOT / "contracts/mesh-read-v1/examples/tmux-local.json").read_text())
+        validate_response(response)
+        validate_response(copy.deepcopy(response))
+        with patch("mesh_plus.view.ObserverCodec.native", side_effect=ProtocolError("native_rejected")):
+            with self.assertRaisesRegex(ProtocolError, "native_rejected"):
+                validate_response(response)
+        changed = copy.deepcopy(response)
+        changed["sessions"] = tuple(changed["sessions"])
+        with self.assertRaises(ValidationError):
+            validate_response(changed)
+        changed = copy.deepcopy(response)
+        changed["mesh"]["hosts"][0]["receipts"][0]["expiresAtMs"] += 1
+        with self.assertRaisesRegex(ProtocolError, "local_expiry_changed"):
+            validate_response(changed)
+        clock = response["mesh"]["reader"]["clock"]
+        self.assertEqual(current_sessions(response, 2**52, clock), [])
+
     def test_stream_guard_quarantines_cross_request_and_requires_gap_resync(self):
         view = json.loads((ROOT / "contracts/mesh-read-v1/examples/tmux-local.json").read_text())
         view["mesh"].update(operation="watch", requestId="a" * 32)

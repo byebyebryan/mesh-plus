@@ -1,6 +1,7 @@
 """Pure mesh-aware domain facade. Original records remain owner attributable."""
 
 import copy
+import hashlib
 import json
 from functools import lru_cache
 from importlib.resources import files
@@ -10,6 +11,18 @@ from referencing import Registry, Resource
 
 from .observer import ObserverCodec, digest
 from .protocol import check, encode, metadata_bounds
+
+_PROFILE_DIGESTS = {}
+
+
+def plain_json(value):
+    """Cache only ordinary JSON types; tuples and coercible keys are distinct."""
+    kind = type(value)
+    if kind is dict:
+        return all(type(key) is str and plain_json(child) for key, child in value.items())
+    if kind is list:
+        return all(plain_json(child) for child in value)
+    return kind in (str, int, float, bool, type(None))
 
 
 @lru_cache(maxsize=2)
@@ -43,8 +56,21 @@ def reconstructed(response, host):
 
 def validate_response(response):
     domain = "tmux" if response.get("protocol") == "tmux-observer.mesh-candidate.v1" else "agent"
-    profile_validator(domain).validate(response)
-    check(len(encode(response)) + 1 <= 16 * 1024 * 1024, "aggregate_capacity")
+    # A composed response passes several independent consumers in one process.
+    # Reuse only static schema success for identical complete JSON bytes. Native
+    # validation, proofs, receipts, chronology and current-time checks still run.
+    # Keep one digest per frozen profile, rather than retaining response bodies.
+    try:
+        encoded = encode(response)
+    except ValueError:
+        profile_validator(domain).validate(response)
+        raise
+    key = hashlib.sha256(encoded).digest() if plain_json(response) else None
+    if key is None or _PROFILE_DIGESTS.get(domain) != key:
+        profile_validator(domain).validate(response)
+        if key is not None:
+            _PROFILE_DIGESTS[domain] = key
+    check(len(encoded) + 1 <= 16 * 1024 * 1024, "aggregate_capacity")
     mesh = response["mesh"]
     hosts = mesh["hosts"]
     scope = mesh["scope"]["hostIds"]

@@ -11,6 +11,9 @@
   extracted authority bytes and frozen wire schemas remain unchanged.
 - Measure the catalog watch interval between check starts so read cost does not
   extend the configured scope-recheck cadence.
+- Reuse static profile-schema success for identical full JSON bytes across
+  independent in-process consumers. Retain only one SHA-256 digest per domain;
+  native validation, proof/receipt checks and current-time expiry always run.
 
 ## 0.1.0a5 (unreleased)
 
