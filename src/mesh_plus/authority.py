@@ -60,6 +60,7 @@ _ALLOWED_SSH = {
     "route_health_ttl_seconds",
 }
 _ALLOWED_HOST = {"id", "display", "routes", "aliases"}
+_SOURCE_UNREAD = object()
 
 
 class MeshError(ValueError):
@@ -405,12 +406,16 @@ def load_config(
     *,
     hostname: tuple[str, str] | None = None,
     environ: Mapping[str, str] | None = None,
+    _source_bytes=_SOURCE_UNREAD,
 ) -> MeshConfig:
     """Load strict TOML configuration, or synthesize the local-only mesh."""
 
     source = Path(path).expanduser() if path is not None else config_path(environ)
     full_hostname, short_hostname = hostname or _hostname_parts()
-    if not source.exists():
+    # The explicit library adapter supplies one bounded descriptor read. Do not
+    # reopen that pathname or recheck existence after its bytes were captured.
+    missing = _source_bytes is None if _source_bytes is not _SOURCE_UNREAD else not source.exists()
+    if missing:
         # The no-file path is the only fallback.  Hostname APIs normally
         # return RFC-style tokens, but a compromised or unusual local value
         # must not leak controls into Rofi output or become an option-like ID.
@@ -433,8 +438,11 @@ def load_config(
             )
         )
     try:
-        with source.open("rb") as stream:
-            payload = tomllib.load(stream) if tomllib is not None else {}
+        if _source_bytes is _SOURCE_UNREAD:
+            with source.open("rb") as stream:
+                payload = tomllib.load(stream) if tomllib is not None else {}
+        else:
+            payload = tomllib.loads(_source_bytes.decode("utf-8")) if tomllib is not None else {}
     except MeshError:
         raise
     except (OSError, ValueError, TypeError) as exc:
@@ -674,12 +682,16 @@ class RouteHealthStore:
                 fcntl.flock(fd, fcntl.LOCK_UN)
             os.close(fd)
 
-    def _read_unlocked(self) -> dict[tuple[str, str], RouteHealth]:
-        if not self.path.exists():
+    def _read_unlocked(self, *, _source_bytes=_SOURCE_UNREAD) -> dict[tuple[str, str], RouteHealth]:
+        missing = _source_bytes is None if _source_bytes is not _SOURCE_UNREAD else not self.path.exists()
+        if missing:
             return {}
         try:
-            with self.path.open("r", encoding="utf-8") as stream:
-                payload = json.load(stream)
+            if _source_bytes is _SOURCE_UNREAD:
+                with self.path.open("r", encoding="utf-8") as stream:
+                    payload = json.load(stream)
+            else:
+                payload = json.loads(_source_bytes.decode("utf-8"))
         except (OSError, ValueError, TypeError) as exc:
             raise MeshPersistenceError(str(exc)) from exc
         version = payload.get("version") if isinstance(payload, dict) else None

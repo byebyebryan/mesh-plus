@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 from mesh_plus.authority import route_health_path
 from mesh_plus.authority_cli import main
-from mesh_plus.library_authority import LibraryMeshAuthority
+from mesh_plus.library_authority import MAX_SOURCE_BYTES, LibraryMeshAuthority, source_file
 from mesh_plus.protocol import ProtocolError
 
 
@@ -74,6 +74,86 @@ class LibraryAuthorityTests(unittest.IsolatedAsyncioTestCase):
         self.config.write_bytes(b" " * (4 * 1024 * 1024 + 1))
         with self.assertRaisesRegex(ProtocolError, "catalog_source_capacity"):
             await authority.load()
+
+    async def test_growth_after_descriptor_stat_is_rejected_for_config_and_health(self):
+        authority = self.authority()
+        health = route_health_path(self.environment)
+        health.parent.mkdir(parents=True, exist_ok=True)
+        health.write_text('{"version":1,"routes":{}}')
+        original = os.fstat
+        for path in (self.config, health):
+            saved = path.read_bytes()
+            grown = False
+            def grow(fd):
+                nonlocal grown
+                node = original(fd)
+                if not grown and Path(os.readlink(f"/proc/self/fd/{fd}")) == path:
+                    grown = True
+                    with path.open("ab") as stream:
+                        stream.write(b" " * (MAX_SOURCE_BYTES + 1))
+                return node
+            try:
+                with self.subTest(source=path.name), patch("mesh_plus.library_authority.os.fstat", side_effect=grow):
+                    with self.assertRaisesRegex(ProtocolError, "catalog_source_capacity"):
+                        await authority.load()
+                self.assertTrue(grown)
+            finally:
+                path.write_bytes(saved)
+
+    async def test_path_replacement_after_open_keeps_the_checked_descriptor(self):
+        authority = self.authority()
+        original = os.open
+        replaced = False
+        def replace(path, *args, **kwargs):
+            nonlocal replaced
+            fd = original(path, *args, **kwargs)
+            if Path(path) == self.config and not replaced:
+                replaced = True
+                self.config.unlink()
+                os.mkfifo(self.config)
+            return fd
+        with patch("mesh_plus.library_authority.os.open", side_effect=replace):
+            catalog = await authority.load()
+        self.assertTrue(replaced)
+        self.assertEqual(catalog.local_host, "snap")
+        self.assertEqual([h["id"] for h in catalog.hosts], ["snap", "starship"])
+
+    async def test_parser_uses_captured_bytes_after_source_path_changes(self):
+        authority = self.authority()
+        from mesh_plus.authority import load_config
+        def replace(*args, **kwargs):
+            self.config.write_text('schema_version = 1\nlocal_id = "replacement"\n')
+            return load_config(*args, **kwargs)
+        with patch("mesh_plus.library_authority.load_config", side_effect=replace):
+            self.assertEqual((await authority.load()).local_host, "snap")
+        self.assertEqual((await authority.load()).local_host, "replacement")
+
+    async def test_exact_limit_and_missing_source_match_native_semantics(self):
+        authority = self.authority()
+        raw = self.config.read_bytes()
+        self.config.write_bytes(raw + b"#" + b" " * (MAX_SOURCE_BYTES - len(raw) - 1))
+        self.assertEqual((await authority.load()).local_host, "snap")
+        self.config.unlink()
+        catalog = await authority.load()
+        self.assertEqual(len(catalog.hosts), 1)
+        self.assertTrue(catalog.hosts[0]["local"])
+
+    def test_growth_read_stops_at_limit_plus_one_byte(self):
+        original = os.fstat
+        descriptor = os.open(self.config, os.O_RDONLY)
+        try:
+            node = original(descriptor)
+        finally:
+            os.close(descriptor)
+        supplied = 0
+        def read(_fd, size):
+            nonlocal supplied
+            supplied += size
+            return b" " * size
+        with patch("mesh_plus.library_authority.os.fstat", return_value=node), patch("mesh_plus.library_authority.os.read", side_effect=read):
+            with self.assertRaisesRegex(ProtocolError, "catalog_source_capacity"):
+                source_file(self.config)
+        self.assertEqual(supplied, MAX_SOURCE_BYTES + 1)
 
     async def test_health_lock_deadline_reaps_job_and_keeps_event_loop_responsive(self):
         authority = self.authority(timeout_ms=150)

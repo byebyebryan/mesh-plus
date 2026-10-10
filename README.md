@@ -114,8 +114,10 @@ rtk proxy .venv-design/bin/python scripts/check-runtime.py --core-only
 `mesh-plus bridge` and `serve` export explicitly configured cached sources.
 `mesh-plus read` and `watch` use the same fleet Reader; `hosts` consumes the
 published SSH Plus catalog. See [configuration and acceptance](docs/implementation-progress.md)
-for commands, the private source file and recorded runtime evidence. Existing
-Observer/Plus interfaces and deployed services have not been switched.
+for commands, the private source file and recorded runtime evidence. Tmux
+Observer 0.6.0a1 and Tmux Plus 0.12.0a1 select the shared Mesh transport on Snap
+and Starship. Agent Observer retains its independently selected reader and
+bridge packages; producer and consumer acceptance remain separate gates.
 
 `mesh-plus doctor` checks package availability without contacting hosts. Add
 `--config /absolute/sources.toml --source tmux` to check a private source descriptor.

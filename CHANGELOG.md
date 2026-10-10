@@ -1,6 +1,17 @@
 # Changelog
 
-## 0.1.0a6 (unreleased)
+## 0.1.0a7 (unreleased)
+
+- Read library authority inputs from the same checked regular-file descriptor,
+  with a hard four MiB read limit even when the file grows after inspection.
+  The canonical config and health parsers consume those captured bytes without
+  reopening a pathname that could have been replaced.
+- Cover growth of both inputs, pathname replacement, exact-limit acceptance,
+  missing-file behavior and the maximum number of bytes read.
+- Preserve the default Host Mesh process reader and writer semantics, route
+  health locking and frozen wire schemas.
+
+## 0.1.0a6 (2026-10-10)
 
 - Add explicit `LibraryMeshAuthority` reads for services selecting the same
   imported authority package. Reuse the canonical config parser, route-health
@@ -28,7 +39,7 @@
 - Keep the frozen contract, packaged schemas and independently selected Agent
   reader unchanged. Tmux operational resource acceptance remains a separate gate.
 
-## 0.1.0a4 (unreleased)
+## 0.1.0a4 (2026-10-10)
 
 - Bind Agent frame limits through its supported pure service descriptor.
 - Conservatively omit stale unsaved runtime rows from current selection while

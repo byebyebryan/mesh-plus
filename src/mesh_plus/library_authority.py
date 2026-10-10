@@ -24,15 +24,25 @@ MAX_SOURCE_BYTES = 4 * 1024 * 1024
 
 
 def source_file(path):
-    """Reject special and oversized configured inputs before the native parser."""
+    """Read bounded bytes from the same regular descriptor that was checked."""
     try:
         fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
     except FileNotFoundError:
-        return
+        return None
     try:
         node = os.fstat(fd)
         check(stat.S_ISREG(node.st_mode), "catalog_source_policy")
         check(node.st_size <= MAX_SOURCE_BYTES, "catalog_source_capacity")
+        chunks = []
+        size = 0
+        while size <= MAX_SOURCE_BYTES:
+            chunk = os.read(fd, min(65536, MAX_SOURCE_BYTES + 1 - size))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            size += len(chunk)
+        check(size <= MAX_SOURCE_BYTES, "catalog_source_capacity")
+        return b"".join(chunks)
     finally:
         os.close(fd)
 
@@ -41,6 +51,11 @@ class _ReadStore(RouteHealthStore):
     def __init__(self, path, deadline):
         super().__init__(path)
         self.deadline = deadline
+
+    def _read_unlocked(self):
+        # Called under the canonical health lock; its parser consumes exactly
+        # these checked bytes rather than opening the pathname a second time.
+        return super()._read_unlocked(_source_bytes=source_file(self.path))
 
     @contextlib.contextmanager
     def _locked(self):
@@ -52,7 +67,6 @@ class _ReadStore(RouteHealthStore):
         try:
             check(stat.S_ISREG(os.fstat(fd).st_mode), "catalog_source_policy")
             os.fchmod(fd, 0o600)
-            source_file(self.path)
             if self.path.exists():
                 os.chmod(self.path, 0o600)
             check(fcntl is not None, "catalog_lock_unsupported")
@@ -63,7 +77,6 @@ class _ReadStore(RouteHealthStore):
                     break
                 except BlockingIOError:
                     time.sleep(.01)
-            source_file(self.path)
             yield
         finally:
             if fcntl is not None:
@@ -88,9 +101,8 @@ executable replacement. Config/health inputs above four MiB fail explicitly.
         self.closed = False
 
     def _read(self, environ, deadline):
-        source_file(config_path(environ))
-        source_file(route_health_path(environ))
-        config = load_config(environ=environ)
+        raw = source_file(config_path(environ))
+        config = load_config(environ=environ, _source_bytes=raw)
         health = _ReadStore(route_health_path(environ), deadline).load()
         # The canonical process encoder still owns stdout capacity and UTF-8
         # representation. Catalog admission retains the same pure validation.
