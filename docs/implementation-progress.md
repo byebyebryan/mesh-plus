@@ -193,20 +193,29 @@ the new authority is currently source-tested and requires a subsequent wheel.
 
 ## SSH compatibility selection
 
-SSH Plus `f677491` now provides `ROFI_SSH_PLUS_MESH_BACKEND=mesh-plus`, aliasing
-the common model/store for its picker and public commands. `legacy` remains the
-standalone default and preserves the original implementation bytes. Missing or
-incompatible selected Mesh packages and unknown selections produce typed load
-failure; selection never silently falls back. Configuration/history paths and
-the published Host Mesh bundle checksum are unchanged.
+SSH Plus `e01f89c` selects Mesh authority by default for the picker and public
+commands; `ROFI_SSH_PLUS_MESH_BACKEND=legacy` explicitly selects rollback. The
+original legacy implementation bytes, configuration/history paths and published
+Host Mesh bundle checksum remain unchanged. Missing or incompatible Mesh and
+unknown selectors produce typed load failure without implicit fallback.
 
-All eighty SSH checks pass with Mesh selected, including the actual process
-entry point. The standalone check passes with only the optional Mesh-specific
-case skipped. Mesh's fifty-two checks also pass from an isolated Python 3.11
-wheel with isolated producer wheels. Reports identify the exact source inputs;
-operational artifact selection and paired rollback remain unperformed.
+All 82 SSH source checks pass with Mesh selected, including default module
+identity, subprocess commands, missing-dependency failure and explicit rollback.
+See [source evidence](evidence/ssh-default-authority-compat.json). SSH CI pins
+and verifies the released wheel and exercises both selections.
 
-Reproduce native selection with
+The wheel `mesh_plus-0.1.0a1-py3-none-any.whl` is published as a prerelease with
+SHA-256 `e266493a068bdbf0c2c24d152decfc7203789e7e601c630a1c0cb350c33f2560`.
+Chezmoi selects it on Snap and Starship under `~/.local/share/mesh-plus/python`;
+the public launcher adds that directory only to the child process. The Rofi
+script uses that public launcher. Both endpoints pass default managed-authority
+imports, explicit legacy catalog parity, recent-only callbacks, recursive scoped
+verification, and all 38 wheel plus 70 SSH archive file/mode comparisons. Current
+managed deployment evidence is in dotfiles
+`docs/evidence/2026-10-09-ssh-mesh-default.json`; Observer transport, GUI and
+physical-suspend acceptance remain independent.
+
+Reproduce source selection with
 `scripts/check-authority-compat.py --ssh-plus PATH --backend mesh-plus`.
 The current source baseline records the reviewed selector and original legacy
 bytes; the initial design tuple remains in `read-design-baselines.json`.

@@ -47,17 +47,18 @@ Old SSH usage remains at SSH Plus's private history path. Moving route health
 must not import usage as reachability or increment connection counts. Preserve
 timestamps, counts, ad-hoc rows and rollback-readable history bytes.
 
-The implementation now provides a source-tested Stage B authority candidate via
-`mesh-plus mesh ... --json`; `hosts/read/watch --authority mesh` selects it
-explicitly. The model/store retains the original paths and bytes. SSH Plus's
-actual facade and operational artifact selection remain at Stage A until their
-paired integration gate. See [checkpoint evidence](implementation-progress.md).
+The Stage B authority is now selected by default in SSH Plus
+`e01f89cfdb7b068f6b2150b33a96dbce1b5c328f`. Picker and process commands share
+Mesh's model/store module; `ROFI_SSH_PLUS_MESH_BACKEND=legacy` explicitly selects
+the original implementation for rollback. Missing Mesh is a typed load failure,
+never implicit fallback. The model/store retains the original paths and bytes.
 
-SSH Plus now exposes an explicit optional Stage B selection through
-`ROFI_SSH_PLUS_MESH_BACKEND=mesh-plus`; picker and process commands share Mesh's
-model/store module. Its standard-library legacy default remains available for
-standalone use and rollback. Both selections passed their source gate; managed
-selection remains at Stage A. The extraction creates no new live state directory.
+Snap and Starship use the independently pinned Mesh `0.1.0a1` wheel through a
+chezmoi-managed public launcher. Rofi uses the same launcher. This authority
+selection adds no Observer services or transport migration and creates no new
+live authority state directory. Eighty-two source checks, exact candidate gates,
+and installed catalog/callback, artifact-byte and rollback checks validate the
+paired selection. See [checkpoint evidence](implementation-progress.md).
 
 ## Route reporting
 

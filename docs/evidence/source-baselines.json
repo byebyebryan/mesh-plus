@@ -185,7 +185,7 @@
       ]
     },
     "rofi-ssh-plus": {
-      "head": "f677491f4f3b78eb154dd0563220a871dd09bb90",
+      "head": "e01f89cfdb7b068f6b2150b33a96dbce1b5c328f",
       "worktreeClean": true,
       "files": [
         {
@@ -393,11 +393,11 @@
         },
         {
           "path": "rofi_ssh_plus/mesh.py",
-          "sha256": "b6fb47c36e0f68a7c8e06cd12bbf902390c3fa53852446bb0a14d46db64cdedd"
+          "sha256": "455d7bcf42c938989da79e98428f25b9df35fc867ceed2e109bd838eea51ab26"
         },
         {
           "path": "tests/test_mesh_backend.py",
-          "sha256": "c79c04d1069ebc09bf86e7166cd6a6bbb48a806853e5504d5b61f08bc1cd6461"
+          "sha256": "1883f1bac65630829e0d8d0a652c8d8dc554d5f9a2d33c282fd5d487e2855658"
         }
       ],
       "previousHead": "a69bd751d2219f97dac5bbc8443db5e477198833",

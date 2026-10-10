@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "checkedAtUtc": "2026-10-10T01:26:06.933830+00:00",
+  "sourceProject": "rofi-ssh-plus",
+  "sourceCommit": "e01f89cfdb7b068f6b2150b33a96dbce1b5c328f",
+  "sourceFile": "rofi_ssh_plus/_legacy_mesh.py",
+  "sourceSha256": "188570bdf706fcd758dae0b94be022645957313aaf7917d2b24fe65d856097b0",
+  "extractedFile": "src/mesh_plus/authority.py",
+  "testsRun": 82,
+  "failures": 0,
+  "errors": 0,
+  "backend": "mesh-plus",
+  "skipped": [],
+  "method": "Byte-identical model/store extraction; process-only CLI isolated from picker",
+  "limits": [
+    "Canonical Mesh authority selected in SSH imports and subprocesses",
+    "Mesh process is separately tested in runtime suite",
+    "No operational authority selection, history migration or SSH facade deployment"
+  ]
+}

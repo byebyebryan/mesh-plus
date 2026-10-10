@@ -7,7 +7,9 @@ host outcomes, delivery provenance and conservative validity information.
 
 Status: design candidate, 2026-10-09. This repository contains specifications,
 schemas, examples and executable design checks, plus an experimental runtime
-foundation. No runtime artifact or migration is selected or deployed. See
+foundation. The state contract is frozen for independent implementation. SSH Plus now selects
+the released Mesh 0.1.0a1 shared host authority on Snap and Starship; Observer
+transport and consumer migrations remain independent and undeployed. See
 [implementation checkpoints](docs/implementation-progress.md).
 
 The [state contract freeze](docs/contract-freeze.md) defines the interfaces ready
