@@ -219,8 +219,9 @@ class Reader:
         async def monitor_catalog():
             nonlocal fatal
             while True:
+                started = boottime_ms()
                 try:
-                    revision = await within_deadline(self.catalog_check(), boottime_ms() + 5000)
+                    revision = await within_deadline(self.catalog_check(), started + 5000)
                     check(revision == self.catalog_revision, "scope_changed")
                 except asyncio.CancelledError:
                     raise
@@ -228,7 +229,7 @@ class Reader:
                     fatal = "scope_changed" if getattr(error, "code", None) == "scope_changed" else "catalog_unavailable"
                     changed.set()
                     return
-                await asyncio.sleep(catalog_interval)
+                await asyncio.sleep(max(0, catalog_interval - (boottime_ms() - started) / 1000))
 
         async def host_loop(endpoint):
             nonlocal resync

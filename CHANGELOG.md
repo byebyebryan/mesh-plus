@@ -9,6 +9,8 @@
   use deadline-bound nonblocking health locks and report incomplete shutdown.
   Route reports retain the existing process writer; default process authority,
   extracted authority bytes and frozen wire schemas remain unchanged.
+- Measure the catalog watch interval between check starts so read cost does not
+  extend the configured scope-recheck cadence.
 
 ## 0.1.0a5 (unreleased)
 
