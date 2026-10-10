@@ -2,10 +2,10 @@
   "state": "checkpoint",
   "soaks": {
     "tmux": {
-      "report": "candidate-rotation-tmux.json",
-      "state": "failed",
+      "report": "candidate-rotation-tmux-retry.json",
+      "state": "passed",
       "rotationCoverage": true,
-      "completeMetricsAndCleanup": false
+      "completeMetricsAndCleanup": true
     },
     "agent": {
       "state": "pending"

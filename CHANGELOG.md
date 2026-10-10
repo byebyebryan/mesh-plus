@@ -5,6 +5,8 @@
 - Cancel subscription admission without an abandoned shield future. A real IPC
   regression reproduces the late `ended(cancelled)` diagnostic on deployed a9
   with Python 3.14 and verifies cleanup plus independent request usability.
+- Install CLI shutdown handlers before publishing the IPC endpoint, so a
+  supervisor SIGTERM during startup retires only the owned socket cleanly.
 - Add redacted refresh investigation, private cached-input replay and independent
   process measurements. Each operational Reader owns its library authority;
   concurrent monitors cannot share that adapter's single admitted read job.

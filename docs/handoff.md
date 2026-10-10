@@ -25,6 +25,14 @@ local bridge handler alongside its active Reader; seven owned a10 integration
 tests pass. Agent source has a compatible ASCII validator fast path. Exact new
 Observer/picker artifacts and paired deployment remain separate acceptance.
 
+The refined a10 candidate at `3684fe083c0ab5af3c74aa27dff169e5764489f5`
+also installs CLI shutdown handlers before socket publication. Its new wheel
+SHA-256 is `c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d`.
+Fresh installed acceptance passes 75 standalone tests and 108 native tests
+against Tmux Observer a5 / Agent Observer a16, with no skips. The original a10
+wheel and its measurements remain separate evidence; only the unchanged
+Reader/Client/transport bytes are shared with the long rotation soaks.
+
 Snap and Starship select a9 for the public CLI/catalog authority and Tmux
 Observer 0.6.0a4 / Plus 0.12.0a4. Agent uses new private a9 environments with
 the same a13 reader and a12 bridge Observer artifacts. Its a15 collector and

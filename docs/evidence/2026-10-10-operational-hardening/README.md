@@ -1,5 +1,9 @@
 # Operational hardening and measured next decision
 
+The narrative below records the initial source checkpoint. Subsequent candidate
+and adoption work is recorded separately so earlier acceptance retains its
+exact runtime bytes.
+
 This pass follows the coordinated a9 adoption. Mesh source checkpoint
 `504a176d9d9037634465ef1ab7a71988f317ca60` introduces an **a10 candidate**, not
 a released or deployed cohort. Snap and Starship retain the accepted Mesh a9,
@@ -173,3 +177,35 @@ run failed one isolated deferred-session fixture with `server exited
 unexpectedly`; the targeted retry and subsequent full gates pass. The failure
 is retained separately and is not attributed to the SDK admission change.
 Agent pure validation is checkpoint `3986474bd8d0d841a742b47ed2dfcd0f04cf0dd2`.
+
+## Refined candidate continuation
+
+The corrected 30-minute Tmux soak passes seven production-budget rotations
+(Snap four, Starship three), with matching fresh resync recoveries, complete
+metrics, no failed setup and no live connections or cleanup failures afterward.
+The longer Agent soak remains in progress. Neither result certifies ordinary
+proof cadence, desktop input or physical suspend.
+
+Fresh installed pairing exposed a CLI startup race: socket publication could
+precede installation of SIGTERM/SIGINT handlers. A deterministic publication
+delay reproduces the failure on the original a10 candidate; source checkpoint
+`3684fe083c0ab5af3c74aa27dff169e5764489f5` fixes shutdown ownership before
+publication. The refined a10 wheel has SHA-256
+`c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d` and passes
+fresh installed 75-test core / 108-test native gates. It does not overwrite the
+original candidate. Reader, Client and transport modules are byte-identical;
+the long soaks do not certify the changed CLI startup path.
+
+The new pure-domain tuple is Tmux Observer a5 / Agent Observer a16. An initial
+Agent wheel was rejected because an ignored build directory retained the
+deleted `service_scheduler.py` module. A clean committed export produces exact
+runtime parity; the rejected artifact is retained. Tmux Plus a5 pins all 83
+Observer Python modules across the three package roots and passes its installed
+headless frame/callback gate. These are candidate gates, not managed adoption.
+
+Snap is headless in this operational baseline: no Niri socket or managed desktop
+context is active. The captured-desktop resource gate records that failed
+prerequisite. A separately labeled `headless-cached-delivery` resource scope
+excludes desktop/viewer readiness while retaining the 600-second measurement
+and original CPU/RSS limits. Managed adoption must preserve this headless state;
+Starship desktop acceptance remains endpoint-specific.

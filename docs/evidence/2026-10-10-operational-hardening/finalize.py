@@ -109,10 +109,15 @@ with zipfile.ZipFile(wheel) as archive:
         for name in archive.namelist()
         if name.startswith("mesh_plus/") and name.endswith((".py", ".json"))
     }
+# The original candidate and measurements retain their historical checkpoint.
+# A later CLI startup fix has its own wheel and acceptance; never compare old
+# acceptance to moving HEAD or silently substitute its runtime bytes.
+checkpoint = "504a176d9d9037634465ef1ab7a71988f317ca60"
 source = {
-    "mesh_plus/" + str(path.relative_to(root / "src/mesh_plus")): sha(path)
-    for path in (root / "src/mesh_plus").rglob("*")
-    if path.suffix in {".py", ".json"}
+    name: hashlib.sha256(
+        subprocess.check_output(["git", "show", checkpoint + ":src/" + name], cwd=root)
+    ).hexdigest()
+    for name in members
 }
 assert members == source
 protected = [
