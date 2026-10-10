@@ -7,6 +7,8 @@
 - Wake pending request callers on a valid request `ended` frame without closing
   sibling work.
 - Add a shared standalone CI/local validation command and integration handoff.
+- Keep disposable SSH key paths private independently of the validation
+  environment location, preserving StrictModes in isolated wheel acceptance.
 - Separate current readiness, historical checkpoints, candidate package evidence
   and deployed authority selection. The frozen contract is unchanged.
 

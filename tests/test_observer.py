@@ -65,7 +65,8 @@ class ObserverTests(unittest.IsolatedAsyncioTestCase):
                     await process.wait()
 
     async def exercise(self, domain, subprocess=False, ssh=False):
-        with tempfile.TemporaryDirectory(dir=sys.prefix if ssh else None, prefix="mesh-runtime-test-") as directory:
+        # OpenSSH StrictModes checks key-path ancestry; a venv can live under /tmp.
+        with tempfile.TemporaryDirectory(dir=Path.home() if ssh else None, prefix=".mesh-runtime-test-") as directory:
             root = Path(directory)
             native = native_fixture(domain)
             host = native["source"]["hostId"] if domain == "tmux" else native["hostScope"]

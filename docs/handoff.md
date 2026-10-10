@@ -129,6 +129,8 @@ Install the exact reviewed Observer packages to run
 not the managed operational tuple. The full suite uses owned disposable tmux and
 SSH endpoints; `tmux`, `ssh`, `sshd` and Linux clock/IPC support are required.
 Inspect skipped tests before claiming native acceptance.
+The SSH fixture owns a disposable private directory under the user's home so
+OpenSSH StrictModes remains enabled even when the environment lives under `/tmp`.
 
 Add `--check-sources` only with reviewed sibling checkouts present. It compares
 [source baselines](evidence/source-baselines.json) and supported pure producer
