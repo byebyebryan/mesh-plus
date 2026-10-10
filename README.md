@@ -5,10 +5,10 @@ mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
-Status: **0.1.0a6 released and selected**, 2026-10-10. Polling and pushed state
+Status: **0.1.0a7 released and selected**, 2026-10-10. Polling and pushed state
 over local IPC and SSH stdio are implemented against a frozen contract. Snap and
-Starship select SDK a6 for the shared public CLI/authority and Tmux Observer's
-fleet transport. The [accepted Tmux rollout](https://github.com/byebyebryan/tmux-observer/blob/main/docs/evidence/2026-10-10-mesh-rollout/README.md)
+Starship select SDK a7 for the shared public CLI/authority and Tmux Observer's
+fleet transport. The [accepted Tmux rollout](https://github.com/byebyebryan/tmux-observer/blob/main/docs/evidence/2026-10-10-catalog-bound-fix/README.md)
 records exact package/native, headless, resource, capacity, installed recovery
 and paired rollback gates. Agent's reader/collector/writer and private SDK a4
 resident bridge remain independently selected and verified. Ordered events/replay,
@@ -115,7 +115,7 @@ rtk proxy .venv-design/bin/python scripts/check-runtime.py --core-only
 `mesh-plus read` and `watch` use the same fleet Reader; `hosts` consumes the
 published SSH Plus catalog. See [configuration and acceptance](docs/implementation-progress.md)
 for commands, the private source file and recorded runtime evidence. Tmux
-Observer 0.6.0a1 and Tmux Plus 0.12.0a1 select the shared Mesh transport on Snap
+Observer 0.6.0a2 and Tmux Plus 0.12.0a2 select the shared Mesh transport on Snap
 and Starship. Agent Observer retains its independently selected reader and
 bridge packages; producer and consumer acceptance remain separate gates.
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0a7 (unreleased)
+## 0.1.0a7 (2026-10-10)
 
 - Read library authority inputs from the same checked regular-file descriptor,
   with a hard four MiB read limit even when the file grows after inspection.

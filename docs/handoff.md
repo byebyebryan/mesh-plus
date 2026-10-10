@@ -8,31 +8,34 @@ wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
 broader design studies and reserved schema variants.
 
-The released **0.1.0a6** wheel is frozen from
-`74b9e54c1fc433aaeb5db29683faf65f6b61016a`, SHA-256
-`d5989b80b84bca8f6bb14062e8f75a133978666336dd27c833338a50c8748b3f`.
-It adds explicit same-package
-`LibraryMeshAuthority` reads with bounded jobs and lock waits. The a5 work
-dispatches catalog authority
-commands without loading the state SDK. The a4 work adds a reusable configured
-Reader binding, uses Agent Observer's public service frame limit, and excludes
-unsaved stale runtime rows from the effective view without changing raw frames.
-The a3 diagnostics/resource work is retained. The frozen wire contract and
-authority bytes remain unchanged. The final a6 also avoids duplicate JSON safety
-walks and repeated schema validation for bit-identical full JSON; every current
-native/proof/receipt/expiry check still runs. Its source and exact installed
-native/SSH gates both pass 91 tests.
+The released **0.1.0a7** wheel is frozen from
+`01da59e2df75a133b617ff2da466221144ed2e4d`, SHA-256
+`2bee4d9e77b18c6049a80e848c930ec65abaf60ec40a8341648da93a25a1fd81`.
+Library config and health reads use the same
+checked regular-file descriptor through parsing, with actual reads capped at
+four MiB plus one overflow-detection byte. Growth and pathname replacement
+cannot bypass that bound. The canonical authority has a reviewed private
+captured-byte parser extension; its default process reader/writer behavior
+remains compatible. All 21 frozen wire/schema inputs retain their a6 bytes.
 
-Snap and Starship now select a6 for the shared public CLI/catalog authority and
-Tmux fleet transport, with Observer 0.6.0a1 / Plus 0.12.0a1. The
-[accepted rollout record](https://github.com/byebyebryan/tmux-observer/blob/main/docs/evidence/2026-10-10-mesh-rollout/README.md)
-binds exact releases, normal 600-second resources, declared capacity, headless
-picker callbacks, installed selection, recovery and serial paired rollback.
-It separately verifies both Agent and Tmux domains over local IPC and remote SSH.
-Agent retains its independently selected a13 reader, a14 collector, a16 writer
-and a12 native facade/private SDK a4 resident bridge; their installed bytes and
-process incarnations survived this rollout. Further Plus/device migrations
-remain separate. Graphical input and physical suspend are optional and unrun.
+Source and installed native/SSH gates pass 96 tests. Standalone wheel acceptance
+passes 67 tests without either Observer package. Host Mesh compatibility passes
+82 SSH Plus regressions against the actual candidate authority. This is semantic
+compatibility evidence; the authority extraction is no longer byte-identical.
+The preceding a6 JSON/schema optimizations and bounded job/lock behavior remain.
+
+Snap and Starship select a7 for the shared public CLI/catalog authority and
+Tmux fleet transport, with Observer 0.6.0a2 / Plus 0.12.0a2. The
+[accepted bound-fix record](https://github.com/byebyebryan/tmux-observer/blob/main/docs/evidence/2026-10-10-catalog-bound-fix/README.md)
+binds exact releases, 600-second ordinary
+resources, declared capacity, installed headless frames/callbacks, managed
+recovery and serial paired rollback. SDK a6 remains at its old managed root;
+rollback restores the prior Observer/Plus pair and controls selecting it.
+The record separately verifies both Agent and Tmux domains over IPC and SSH.
+Agent retains its independent reader, collector, writer and resident bridge,
+with package bytes and process incarnations verified unchanged. Further
+Plus/device migrations remain separate. Graphical input and physical suspend
+are optional and unrun for this wiring change.
 
 The [changelog](../CHANGELOG.md) records version differences. The
 [Agent SDK checkpoint](agent-integration.md) records the a4 source checks and
@@ -136,8 +139,9 @@ separate producer/transport acceptance before being advertised as capabilities.
 ## Validation
 
 Services that explicitly select the imported Mesh authority may use
-`library_authority.LibraryMeshAuthority`. It reuses the unchanged native config
-parser, route-health model/read method and bounded process encoder. The default
+`library_authority.LibraryMeshAuthority`. It reuses the canonical config
+parser, route-health model/read method and bounded process encoder. Both parsers
+consume the captured bytes without reopening their pathname. The default
 `MeshAuthority` remains the process facade; route reports retain its writer.
 Library reads reject special files and config/health inputs above four MiB,
 admit at most one job per adapter, and enforce a five-second caller budget with
