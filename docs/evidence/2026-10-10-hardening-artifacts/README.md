@@ -181,3 +181,15 @@ pass. Four altered private inputs are rejected without producing a success
 report: generation, missing reference, global hooks and session hooks.
 These receipts certify the baseline/checker, not completed cutover. Repeating
 verification after selection, recovery, rollback and reselection remains required.
+
+The canonical Agent live-artifact gate reads the local cache. The supplementary
+`check-selected-delivery.py` requires complete local and actual SSH fleet cached
+Agent delivery, the frozen Agent profile and the captured two-host scope order.
+It also compares headed Tmux prepared-reader reports with the original desktop
+context; supplying a before-recovery report requires a changed reader ID.
+The baseline and prepared inputs are bound by hashes. Both current a9 endpoint
+probes pass. An unchanged-reader negative case is rejected without publishing a
+success report. These baseline receipts do not accept the a10 cohort or prove
+actual recovery. Repeat this probe after each live phase; keep original selected
+receipts before reselection overwrites the adoption helper's fixed report paths.
+Native Agent responses remain private and only their hashes/counts are published.
