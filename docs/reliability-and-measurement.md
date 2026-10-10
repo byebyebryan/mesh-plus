@@ -1,6 +1,6 @@
 # Reliability and measured transport efficiency
 
-Updated 2026-10-10. Mesh a10 is released; a9 remains selected across the coordinated
+Updated 2026-10-10. Mesh a10 is released and selected across the coordinated
 Tmux and Agent read delivery cohort. The frozen state and Delivery inputs are
 unchanged. The [adoption record](evidence/2026-10-10-fleet-adoption/README.md)
 separates a8 measurements from final a9 acceptance.
@@ -8,14 +8,14 @@ separates a8 measurements from final a9 acceptance.
 The next [operational hardening record](evidence/2026-10-10-operational-hardening/README.md)
 binds the a10 subscription-admission fix, Tmux control-binding source fix,
 bounded Tmux bridge retirement headroom, and Agent pure text-validator improvement.
-These source changes are not a new
-deployed cohort. Matched private cached-input watch/poll and independent-process
+These changes are selected in the new paired cohort. Matched private cached-input watch/poll and independent-process
 reports support retaining IPC/SSH and prioritizing compatible validation work;
 they do not accept pooling, digest-proof or WSS.
 The [published artifact checkpoint](evidence/2026-10-10-hardening-artifacts/README.md)
 adds exact new package gates and refresh attribution. Sustained Agent coverage
-now passes; a10 live adoption still requires scoped selection, recovery and
-rollback/reselection.
+now passes; [a10 live adoption](evidence/2026-10-10-hardening-adoption/README.md)
+passes scoped selection, recovery, paired rollback/reselection, final cached
+resources and installed SSH/Tmux lifecycle. Agent Plus migration remains separate.
 
 ## Baseline and ownership
 
@@ -35,7 +35,7 @@ collector performance and provider semantics remain producer-owned.
 | R1 | Core channel lifetime | Released a8/a9: proactive admission boundary and Reader rotation, visible revocation/resync, original receipt/proof semantics, independent healthy hosts, owned cleanup. |
 | R2 | Transport measurements | Released a8/a9: cumulative Reader/Client/channel counters and owned native-profile IPC/SSH matrix. Operational and synthetic large-payload measurements are recorded in the adoption evidence. |
 | R3 | Select optimization | Matched watch/poll and independent-process reports support retaining IPC/SSH. Agent's compatible validator refinement reduces pure validation CPU by 31.2% in its matched ABBA study; it does not establish whole-fleet savings. Pooling, digest-proof and WSS remain deferred. |
-| R4 | Artifact adoption | A9 has its accepted exact deployment record. A10 and paired Observer/picker artifacts are published with isolated package gates and committed pins. Sustained Agent coverage passes; a10 live selection, recovery/rollback and final consumer/resource gates remain pending. |
+| R4 | Artifact adoption | A9 has its accepted exact deployment record. A10 and paired Observer/picker artifacts are published with isolated package gates and committed pins. Sustained Agent coverage, a10 live selection, recovery/rollback/reselection, final cached resources and scoped installed SSH/Tmux consumer gates pass. Agent Plus migration remains separate. |
 
 Keep direct IPC/SSH as the default. WSS authorization/deployment, shared daemon
 leases and ordered event replay remain separately reviewed work. Rotation is

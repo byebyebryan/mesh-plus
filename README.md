@@ -5,16 +5,21 @@ mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
-Status: **0.1.0a10 released; a9 remains selected**, 2026-10-10. Polling and pushed
+Status: **0.1.0a10 selected on Snap and Starship**, 2026-10-10. Polling and pushed
 replacement state over local IPC and SSH stdio use the frozen contract. Snap and
-Starship select a9 for the public CLI/authority, Tmux Observer 0.6.0a4 / Tmux
-Plus 0.12.0a4, and separate Agent a13 reader / a12 bridge environments.
-Agent's a15 collector and a16 writer remain independently selected.
+Starship select a10 for the public CLI/transport, Tmux Observer 0.6.0a5 / Tmux
+Plus 0.12.0a5, and separate Agent 0.5.0a16 reader / bridge environments.
+Agent's 0.5.0a15 collector and 0.4.0a16 writer remain independently selected.
+SSH Plus retains its separate shared authority SDK a6 selection.
 
 The [a10 artifact checkpoint](docs/evidence/2026-10-10-hardening-artifacts/README.md)
-records fresh package gates, refresh attribution and pending paired adoption.
-The [coordinated adoption record](docs/evidence/2026-10-10-fleet-adoption/README.md)
-binds exact artifacts, native fleet checks, resources, recovery and rollback.
+records fresh package gates, refresh attribution and production-budget lifetimes.
+The [hardening adoption record](docs/evidence/2026-10-10-hardening-adoption/README.md)
+binds exact selection, live recovery and paired rollback/reselection; final
+resource and installed SSH/Tmux checks pass; Agent cached delivery passes
+separately, with Agent Plus migration excluded.
+The [earlier adoption record](docs/evidence/2026-10-10-fleet-adoption/README.md)
+preserves a9's exact artifacts and its own acceptance.
 A8 introduced proactive watch connection rotation and cumulative measurements;
 a9 makes owned send/close retirement withstand repeated caller cancellation.
 The [reliability plan](docs/reliability-and-measurement.md) records the remaining
@@ -122,7 +127,7 @@ rtk proxy .venv-design/bin/python scripts/check-runtime.py --core-only
 `mesh-plus read` and `watch` use the same fleet Reader; `hosts` consumes the
 published SSH Plus catalog. See [configuration and acceptance](docs/implementation-progress.md)
 for commands, the private source file and recorded runtime evidence. Tmux
-Observer 0.6.0a4 and Tmux Plus 0.12.0a4 select the shared Mesh a9 transport on Snap
+Observer 0.6.0a5 and Tmux Plus 0.12.0a5 select the shared Mesh a10 transport on Snap
 and Starship. Agent Observer retains its independently selected reader and
 bridge packages; producer and consumer acceptance remain separate gates.
 

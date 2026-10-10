@@ -1,0 +1,18 @@
+{
+  "state": "passed",
+  "scope": "installed SSH Host Mesh and Tmux inventory/disposable exact-reference lifecycle only",
+  "gateSha256": "78e50330d1d07953be5a13924ddb16a3da18f911dbb48a409f470b4eebb8f925",
+  "commands": {
+    "rofi-ssh-plus": "/home/bryan/.local/bin/rofi-ssh-plus",
+    "rofi-tmux-plus": "/home/bryan/.local/share/rofi/extensions/tmux-plus/bin/rofi-tmux-plus"
+  },
+  "hosts": [
+    "starship",
+    "snap"
+  ],
+  "localHost": "starship",
+  "revision": "sha256:ef64c3acc214c797c3630b9b16b94dd6828e5637762358f29b8042147d187653",
+  "sshHistoryUnchanged": true,
+  "agentPlusMigration": false,
+  "physicalDesktopAcceptance": false
+}

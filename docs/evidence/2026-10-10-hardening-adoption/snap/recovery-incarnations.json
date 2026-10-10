@@ -1,0 +1,23 @@
+{
+  "before": [
+    {
+      "pid": 1093987,
+      "birth": "1770071"
+    },
+    {
+      "pid": 1093988,
+      "birth": "1770071"
+    }
+  ],
+  "after": [
+    {
+      "pid": 1098272,
+      "birth": "1787270"
+    },
+    {
+      "pid": 1098273,
+      "birth": "1787270"
+    }
+  ],
+  "physicalSuspendAccepted": false
+}

@@ -1,0 +1,32 @@
+{
+  "state": "passed",
+  "hostId": "snap",
+  "label": "restored",
+  "scope": "selected local and SSH fleet cached Agent reads; existing prepared Tmux reader receipts",
+  "harnessSha256": "f990eeb44de5c5a21eff32fd7a4a0ac2af2b1f030680ba0a74116fee6604b46c",
+  "baselineSha256": "6b7463e21cadc07ff006883f6f995ce92acd38c2f9ec3a3f7e2d6c10452a1fc3",
+  "cachedReads": [
+    {
+      "scope": "local",
+      "hostIds": [
+        "snap"
+      ],
+      "rows": 128,
+      "sha256": "e611fae9a41e2ab319b222426775757bb20879cfc21806ce4919efad0d73b965"
+    },
+    {
+      "scope": "fleet",
+      "hostIds": [
+        "snap",
+        "starship"
+      ],
+      "rows": 502,
+      "sha256": "6268033fbddf0fb9a2834290e775b9889e166fcffb2cd77e9aa8b6a75a418ccb"
+    }
+  ],
+  "headedReader": {
+    "applicable": false,
+    "physicalDesktopAcceptance": false
+  },
+  "providerActions": false
+}

@@ -2,7 +2,11 @@
 
 This is a published-artifact checkpoint following the
 [operational hardening study](../2026-10-10-operational-hardening/README.md).
-The selected a9 cohort remains installed. The following fresh artifacts were
+At the original artifact checkpoint the selected a9 cohort remained installed.
+The subsequent [paired adoption](../2026-10-10-hardening-adoption/README.md) now
+selects a10 and closes recovery, rollback/reselection, final cached resources and
+scoped installed SSH/Tmux gates. Statements below about pending live gates record
+their original checkpoint; they do not describe the final installed selection. The following fresh artifacts were
 built into separate private output directories and published as new prereleases;
 GitHub asset digests match all five accepted payloads. Old artifacts retain
 their bytes. Publication does not select or deploy them.

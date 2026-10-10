@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "host": "starship",
+  "operation": "verify",
+  "selectionSha256": "4acea393027a9757fd1d670021f25590c75dc6f7db260953bf4d58940420d243",
+  "installedPayloads": {
+    "core": 178,
+    "frontend": 347,
+    "mesh-plus": 41,
+    "attrs": 35,
+    "jsonschema": 43,
+    "jsonschema-specifications": 28,
+    "referencing": 19,
+    "rpds-py": 9
+  },
+  "prepared": {
+    "readerId": "79daacac-5351-46ce-83b7-c806fc20c597",
+    "contextId": "46ec612a4cf6262be58ecdbbb214752c",
+    "meshState": "ready",
+    "hosts": [
+      {
+        "hostId": "starship",
+        "local": true,
+        "sessions": 6,
+        "publisherId": "6b9c29bc-4cec-48b0-bf0e-25c54a3725a5",
+        "transport": "local"
+      },
+      {
+        "hostId": "snap",
+        "local": false,
+        "sessions": 7,
+        "publisherId": "9ba93149-91f1-4701-85b9-91a97055b271",
+        "transport": "ready"
+      }
+    ],
+    "desktopState": "ready",
+    "localBindingState": "ready"
+  },
+  "freshHosts": [
+    {
+      "hostId": "starship",
+      "sessions": 6
+    },
+    {
+      "hostId": "snap",
+      "sessions": 7
+    }
+  ],
+  "preparedFrameBytes": 10572,
+  "preexistingReferencesSurvive": true,
+  "result": "passed"
+}

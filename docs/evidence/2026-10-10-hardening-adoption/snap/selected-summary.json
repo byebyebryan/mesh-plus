@@ -1,0 +1,26 @@
+{
+  "state": "passed",
+  "host": "snap",
+  "desktopServiceGate": false,
+  "physicalDesktopAcceptance": false,
+  "cachedProbe": {
+    "state": "passed",
+    "kernelPeerMatches": true,
+    "cachedReads": [
+      {
+        "scope": "local",
+        "hosts": 1,
+        "rows": 7
+      },
+      {
+        "scope": "fleet",
+        "hosts": 2,
+        "rows": 13
+      }
+    ]
+  },
+  "installedPayloadsVerified": true,
+  "collectorWriterAndForeignSourcePreserved": true,
+  "nativeReferencesPreserved": true,
+  "nativeOwnerKernelPeerMatches": true
+}

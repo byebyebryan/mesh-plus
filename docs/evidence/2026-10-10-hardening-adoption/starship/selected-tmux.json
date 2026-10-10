@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "host": "starship",
+  "operation": "verify",
+  "selectionSha256": "e6a34e0387a7fe6e7cf765d358eed0e3fa67da2951d2a5c2bedf061f1148554d",
+  "installedPayloads": {
+    "core": 178,
+    "frontend": 347,
+    "mesh-plus": 41,
+    "attrs": 35,
+    "jsonschema": 43,
+    "jsonschema-specifications": 28,
+    "referencing": 19,
+    "rpds-py": 9
+  },
+  "prepared": {
+    "readerId": "6f60d163-ec29-49db-a936-60116990b5c6",
+    "contextId": "46ec612a4cf6262be58ecdbbb214752c",
+    "meshState": "ready",
+    "hosts": [
+      {
+        "hostId": "starship",
+        "local": true,
+        "sessions": 6,
+        "publisherId": "d9d97a74-e404-416d-aef9-3ba86fe5a64d",
+        "transport": "local"
+      },
+      {
+        "hostId": "snap",
+        "local": false,
+        "sessions": 7,
+        "publisherId": "c9dbdfe6-661c-41be-bcdc-25c213e865fa",
+        "transport": "ready"
+      }
+    ],
+    "desktopState": "ready",
+    "localBindingState": "ready"
+  },
+  "freshHosts": [
+    {
+      "hostId": "starship",
+      "sessions": 6
+    },
+    {
+      "hostId": "snap",
+      "sessions": 7
+    }
+  ],
+  "preparedFrameBytes": 10571,
+  "preexistingReferencesSurvive": true,
+  "result": "passed"
+}

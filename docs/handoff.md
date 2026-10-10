@@ -20,8 +20,8 @@ The released **0.1.0a10** wheel at
 cancellation cleanup and CLI shutdown ownership before socket publication.
 Its SHA-256 is `c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d`.
 Fresh installed acceptance passes 75 standalone and 108 native/SSH tests against
-Tmux Observer a5 / Agent Observer a16, with no skips. It has not changed live
-selection. The original private a10 wheel remains separate evidence; only its
+Tmux Observer a5 / Agent Observer a16, with no skips. It is selected on both
+endpoints. The original private a10 wheel remains separate evidence; only its
 unchanged Reader/Client/transport bytes are shared with long rotation soaks.
 
 Tmux rejects stale control bindings and reserves one retiring local bridge
@@ -32,19 +32,24 @@ has a compatible ASCII validator fast path. The
 exact new Observer/picker packages, refresh attribution and headless resource
 acceptance. The [operational study](evidence/2026-10-10-operational-hardening/README.md)
 keeps private-input measurements and production-budget lifetime gates separate.
-Paired live selection, recovery and rollback remain pending.
+Paired live selection, recovery, rollback and reselection pass in the
+[hardening adoption record](evidence/2026-10-10-hardening-adoption/README.md).
+Final resource and installed SSH/Tmux checks pass; Agent cached delivery passes
+separately, with Agent Plus migration excluded.
 
-Snap and Starship select a9 for the public CLI/catalog authority and Tmux
-Observer 0.6.0a4 / Plus 0.12.0a4. Agent uses new private a9 environments with
-the same a13 reader and a12 bridge Observer artifacts. Its a15 collector and
-a16 writer retain their prior selections. Source, installed bytes, collector
+Snap and Starship select a10 for the public CLI/transport and Tmux
+Observer 0.6.0a5 / Plus 0.12.0a5. Agent uses separate a16 reader and bridge
+environments, each with SDK a10. SSH Plus retains its independent shared
+authority SDK a6 root. Agent's 0.5.0a15 collector and 0.4.0a16 writer retain
+their prior selections. Source, installed bytes, collector
 incarnation and foreign managed checkout preservation are separate checks.
 See the [coordinated adoption record](evidence/2026-10-10-fleet-adoption/README.md)
 for dated gates and limits; the [reliability plan](reliability-and-measurement.md)
 records proactive channel rotation, cancellation-safe cleanup and measured costs.
 Earlier managed SDK roots remain available for paired rollback. Graphical input,
-physical suspend, multi-hour production-budget rotation and further consumer
-migrations remain separate acceptance work.
+physical suspend and further consumer migrations remain separate acceptance
+work. Production-budget rotation is accepted only by the explicit per-host
+observations in each dated lifetime report.
 
 The [changelog](../CHANGELOG.md) records version differences. The
 [Agent SDK checkpoint](agent-integration.md) records the a4 source checks and
@@ -116,8 +121,8 @@ Heartbeats, polling and new connections never renew original source receipts.
 
 ## Integration work and gates
 
-Tmux's producer/coordinator integration and paired a9 selection are accepted in
-the coordinated adoption record above. Agent's independently selected a9 transport
+Tmux's producer/coordinator integration and paired a10 selection are accepted in
+the hardening adoption record above. Agent's independently selected a10 transport
 uses the frozen profile; its a15 collector performance work is producer-owned
 and does not establish lower transport cost. The gates below remain applicable
 to changed artifacts and further consumers; they are not a claim that either

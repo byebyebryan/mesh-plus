@@ -1,5 +1,5 @@
 {
-  "README.md": "282b37d5d7ba3953509041596489f77713775f7038f4e340a4192bc222d8168f",
+  "README.md": "04f95ddb5342fcdc644626d836cc5aea24685bda3f1b734fa87b7693bc5ed001",
   "adopt10-ready.py": "a67e33d0248d865c5eabc07fc1fea2fc11b9fb2f5ffeebdebb07a01e2f098ae8",
   "adopt10.py": "1df9174d5722425a2bd652281cb619a64cbc89a71cc46ffb8c0a0c9537f529b3",
   "adoption-readiness-owned.json": "b64c53c77eb276a01f9248a42be411fd0ac975f8bdc92167434421ff414ed2ab",
@@ -17,7 +17,7 @@
   "check-native-preservation.py": "5f16d7509c4f2b1515d7199e4ecefcc6868395985f2ef1b6d670c8f153a4a03b",
   "check-profile-stop.py": "9599e04d973e0caf9f236c7033b363906cdf00b38a2b1ba91f3956f0d516810c",
   "check-selected-delivery.py": "f990eeb44de5c5a21eff32fd7a4a0ac2af2b1f030680ba0a74116fee6604b46c",
-  "completion-audit.md": "69aa58fe8481649fab88ec7460ada828cb83c9d97d30c7508229cf73becbfc35",
+  "completion-audit.md": "da8c184c04885310449a698e503f7853474b368c303389c01eee6d1c68c4e85b",
   "deleted-bridge-interpreter-starship.json": "2411dafbece74e1292aa9aa9cef67f1fdae717e281769e7be6a06b38e896dbee",
   "dependency-inputs.json": "4c100c4cbe963dc438cd698e705914527cfc54d4837ad02a86d74c8b99f5c1a4",
   "first-select-readiness-negative.json": "4d59bf0f3f4e86b1d66ee0bbd4743d997ce70b7e8c876ec552145d439ce03498",

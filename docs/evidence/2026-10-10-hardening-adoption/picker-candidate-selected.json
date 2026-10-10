@@ -1,0 +1,17 @@
+{
+  "state": "passed",
+  "gate": "rofi-plus-candidate",
+  "heldAgentPlus": "6d30f8c71a9e44ba1da19f4102292f6811df50d8",
+  "sshSource": "e01f89cfdb7b068f6b2150b33a96dbce1b5c328f",
+  "tmuxPlusSource": "8d5242ac3b5252028803a982e70d8215613d5010",
+  "selectedObserverVersion": "0.6.0a5",
+  "sourceTests": {
+    "ssh": 82,
+    "tmux": 293,
+    "heldAgent": 320,
+    "heldAgentSkips": 4
+  },
+  "contractSync": "passed",
+  "isolatedPublicPath": "passed",
+  "scope": "clean source checks and disposable synthetic alpha authority; no installed live lifecycle, GUI or held Agent Plus migration acceptance"
+}

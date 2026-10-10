@@ -1,0 +1,171 @@
+{
+  "status": "accepted",
+  "host": "snap",
+  "candidateOnly": false,
+  "artifact": {
+    "status": "accepted",
+    "observer": {
+      "status": "accepted",
+      "prefix": "/home/bryan/.local/share/agent-observer/0.5.0a16-94705baebfa51a96-mesh-a10-reader",
+      "wheelSha256": "94705baebfa51a9664e9dbfa7603dcb932d6301146cf9a59017017c5285b3b17",
+      "sourceRevision": "301b57a6eb12bacde220603d47c21995548bb7b6",
+      "profile": "claude-history",
+      "version": "0.5.0a16",
+      "sdk": "0.2.163",
+      "bundledExecutable": false,
+      "installedWheelBytesVerified": true,
+      "entrypointsVerified": true,
+      "schemaVersionsVerified": true,
+      "serviceProtocolVerified": true,
+      "providerInvocations": 0,
+      "selectedLinksChanged": false
+    },
+    "mesh": {
+      "manifestVersion": 1,
+      "package": "mesh-plus",
+      "version": "0.1.0a10",
+      "wheel": "mesh_plus-0.1.0a10-py3-none-any.whl",
+      "wheelSha256": "c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d",
+      "sourceRevision": "3684fe083c0ab5af3c74aa27dff169e5764489f5",
+      "lockSha256": "2b93e1c1e0b533be00e6646ea0ef62aefec357ba00e1e8a51489578ccde38489",
+      "agentProfile": "agent-observer.mesh-candidate.v1"
+    },
+    "metadata": {
+      "mesh": "0.1.0a10",
+      "observer": "0.5.0a16",
+      "api": {
+        "apiVersion": 2,
+        "schemas": {
+          "snapshot": 4,
+          "watch": 4
+        },
+        "readCommands": [
+          "snapshot",
+          "list",
+          "show",
+          "watch",
+          "schema"
+        ],
+        "hostLocal": true,
+        "nativeEventReplay": false
+      },
+      "service": {
+        "serviceProtocol": 2,
+        "stability": "prerelease",
+        "observationApiVersion": 2,
+        "embeddedSnapshotVersion": 4,
+        "hostLocal": true,
+        "operations": [
+          "status",
+          "snapshot",
+          "watch"
+        ],
+        "nativeEventReplay": false,
+        "durableReplay": false,
+        "limits": {
+          "requestBytes": 16384,
+          "frameBytes": 8404992,
+          "envelopeBytes": 16384
+        }
+      },
+      "dependencies": {
+        "jsonschema": "4.26.0",
+        "attrs": "26.1.0",
+        "referencing": "0.37.0",
+        "rpds-py": "2026.9.1",
+        "jsonschema-specifications": "2025.9.1"
+      }
+    },
+    "installedMeshWheelBytesVerified": true,
+    "collectorImports": 0,
+    "providerInvocations": 0
+  },
+  "bridgeArtifact": {
+    "status": "accepted",
+    "observer": {
+      "status": "accepted",
+      "prefix": "/home/bryan/.local/share/agent-observer/0.5.0a16-94705baebfa51a96-mesh-a10-bridge",
+      "wheelSha256": "94705baebfa51a9664e9dbfa7603dcb932d6301146cf9a59017017c5285b3b17",
+      "sourceRevision": "301b57a6eb12bacde220603d47c21995548bb7b6",
+      "profile": "claude-history",
+      "version": "0.5.0a16",
+      "sdk": "0.2.163",
+      "bundledExecutable": false,
+      "installedWheelBytesVerified": true,
+      "entrypointsVerified": true,
+      "schemaVersionsVerified": true,
+      "serviceProtocolVerified": true,
+      "providerInvocations": 0,
+      "selectedLinksChanged": false
+    },
+    "mesh": {
+      "manifestVersion": 1,
+      "package": "mesh-plus",
+      "version": "0.1.0a10",
+      "wheel": "mesh_plus-0.1.0a10-py3-none-any.whl",
+      "wheelSha256": "c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d",
+      "sourceRevision": "3684fe083c0ab5af3c74aa27dff169e5764489f5",
+      "lockSha256": "2b93e1c1e0b533be00e6646ea0ef62aefec357ba00e1e8a51489578ccde38489",
+      "agentProfile": "agent-observer.mesh-candidate.v1"
+    },
+    "metadata": {
+      "mesh": "0.1.0a10",
+      "observer": "0.5.0a16",
+      "api": {
+        "apiVersion": 2,
+        "schemas": {
+          "snapshot": 4,
+          "watch": 4
+        },
+        "readCommands": [
+          "snapshot",
+          "list",
+          "show",
+          "watch",
+          "schema"
+        ],
+        "hostLocal": true,
+        "nativeEventReplay": false
+      },
+      "service": {
+        "serviceProtocol": 2,
+        "stability": "prerelease",
+        "observationApiVersion": 2,
+        "embeddedSnapshotVersion": 4,
+        "hostLocal": true,
+        "operations": [
+          "status",
+          "snapshot",
+          "watch"
+        ],
+        "nativeEventReplay": false,
+        "durableReplay": false,
+        "limits": {
+          "requestBytes": 16384,
+          "frameBytes": 8404992,
+          "envelopeBytes": 16384
+        }
+      },
+      "dependencies": {
+        "jsonschema": "4.26.0",
+        "attrs": "26.1.0",
+        "referencing": "0.37.0",
+        "rpds-py": "2026.9.1",
+        "jsonschema-specifications": "2025.9.1"
+      }
+    },
+    "installedMeshWheelBytesVerified": true,
+    "collectorImports": 0,
+    "providerInvocations": 0
+  },
+  "serviceSelection": ".local/share/agent-observer/0.5.0a15-073296885c5b67ac",
+  "writerSelection": ".local/share/agent-observer/0.4.0a16-a9c13aee3d04144c",
+  "renderedTargets": 5,
+  "liveBridge": {
+    "pid": 1104683,
+    "startTicks": "1808135",
+    "kernelPeerMatchesUnit": true,
+    "entryAndInterpreterVerified": true
+  },
+  "cachedRows": 128
+}

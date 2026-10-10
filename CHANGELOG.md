@@ -2,6 +2,11 @@
 
 ## 0.1.0a10 (2026-10-10)
 
+- 2026-10-10: paired Snap/Starship adoption, recovery, rollback/reselection,
+  final cached resources and scoped installed SSH/Tmux lifecycle are accepted.
+  Agent reader/bridge delivery is accepted separately; Agent Plus migration and
+  physical desktop/suspend acceptance remain independently gated.
+
 - Cancel subscription admission without an abandoned shield future. A real IPC
   regression reproduces the late `ended(cancelled)` diagnostic on deployed a9
   with Python 3.14 and verifies cleanup plus independent request usability.

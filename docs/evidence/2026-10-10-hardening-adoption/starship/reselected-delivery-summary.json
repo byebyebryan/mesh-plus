@@ -1,0 +1,35 @@
+{
+  "state": "passed",
+  "hostId": "starship",
+  "label": "reselected",
+  "scope": "selected local and SSH fleet cached Agent reads; existing prepared Tmux reader receipts",
+  "harnessSha256": "f990eeb44de5c5a21eff32fd7a4a0ac2af2b1f030680ba0a74116fee6604b46c",
+  "baselineSha256": "286cbb7e4e5ad50a4d9776caa22f7d32d81781b5f561c792bfbc54bcc510ab83",
+  "cachedReads": [
+    {
+      "scope": "local",
+      "hostIds": [
+        "starship"
+      ],
+      "rows": 374,
+      "sha256": "44d2bce0aa3f69bd46098132fdc4a69aee2f98819ecb09badad6fac7f83aa9aa"
+    },
+    {
+      "scope": "fleet",
+      "hostIds": [
+        "starship",
+        "snap"
+      ],
+      "rows": 502,
+      "sha256": "8fa762d09fddc7c627e385e8bf0a28273689c7f0df68a874e4e64890b347f9bd"
+    }
+  ],
+  "headedReader": {
+    "applicable": true,
+    "physicalDesktopAcceptance": false,
+    "capturedContextPreserved": true,
+    "baselinePreparedSha256": "5e54e2faac12d5370d9e8c0eb03b87d25d04d3cb2edd8ff294877bafae529fee",
+    "currentPreparedSha256": "67eaccc6d7436e52fe7efc362648535d2f935407cf6e586b1c3942be10d33b8e"
+  },
+  "providerActions": false
+}

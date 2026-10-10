@@ -1,6 +1,6 @@
 # Operational hardening completion audit
 
-Checkpoint: 2026-10-10. This records required closure, not overall acceptance.
+Checkpoint: 2026-10-10. This records completed operational hardening within the stated endpoint exclusions.
 The frozen contract and the original task scope remain the acceptance boundary.
 
 | Requirement | Evidence / current disposition |
@@ -15,13 +15,15 @@ The frozen contract and the original task scope remain the acceptance boundary.
 | Isolated packages / source gates | Mesh 75 standalone / 108 native tests, Tmux 383 source / eight installed integration tests, Agent 448 source tests, Plus 293 source tests; owned installed Plus headless checks pass on both endpoints. Separate held Agent Plus source check has four skips and does not certify migration. |
 | Immutable publication and exact managed pins | Five payload downloads match accepted hashes. Canonical managed revision 5ff8b412a45b69cac64b8eb356444e6cf0705012 pins coherent artifacts/selectors; role environments are staged independently. Publication and pins do not establish live selection. |
 | Candidate resource gate | Ten-minute headless cached-delivery scope passes original 5% CPU / 96 MiB combined fleet-and-bridge / 64 MiB owner limits on both endpoints. Desktop/viewer acceptance is excluded. |
-| Scoped apply / installed live identity | Nine-target dry run is prepared; actual paired selection remains pending lifetime acceptance. Required proof is exact installed payloads, rendered controls, kernel endpoint owners, live command/interpreter identities and fresh cached local/fleet delivery. |
-| Native owner / reader / bridge recovery | Pending new selected cohort. Require changed owned service/reader incarnations, restored current cache delivery, preserved native server references/generations/hooks and unchanged collector/writer/config/foreign source. Independent passive generation/reference/global-and-session-hook baselines now pass on both endpoints; they must be compared after each live cutover step. Physical suspend is excluded. |
-| Paired rollback / reselection | Pending live exercise. Offline archive/control tests cover partial apply and rejected restored cohort, with unit operations/verifiers mocked; those tests do not close live rollback. |
-| Final cached resources and public consumer checks | Pending selected-cohort pass. Repeat the resource gate after selection; close public PATH/live checks against the selected Observer root. Supplementary actual local/fleet Agent delivery passes on the current a9 baseline; repeat after each cutover phase and require a changed prepared headed-reader identity on recovery. Preserve Snap's headless topology and Starship's captured desktop context. |
-| Source / installed / managed / deployment doc sync | Source and publication checkpoint is committed. Final selected versions, runtime identities, CI/remote synchronization, exclusions, cleanup and evidence hashes must be recorded after live gates. |
+| Scoped apply / installed live identity | Nine intended targets are applied on both hosts. Exact installed payloads, rendered controls, kernel endpoint owners, live command/interpreter identities and fresh cached local/fleet Tmux and Agent delivery pass in the hardening-adoption record. |
+| Native owner / reader / bridge recovery | Live recovery changes owned owner/bridge incarnations on both hosts and the prepared reader on Starship; fresh caches recover with the original desktop context. Native generations/references/hooks, collector/writer/config and foreign source remain preserved after every phase and final consumer probes. Physical suspend is excluded. |
+| Paired rollback / reselection | Actual paired rollback restores exact old a9/Tmux a4/Plus a4/Agent reader a13/bridge a12 payloads and controls; fresh reads pass on both hosts. Reselection restores the new cohort and repeats identity/delivery/preservation gates. Offline partial-apply negatives remain separate evidence. |
+| Final cached resources and public consumer checks | Final 600-second owned headless cached resources pass on both endpoints under original limits (Snap 4.31% CPU; Starship 2.50%). Public PATH synthetic gate passes against Observer a5. Installed SSH/Tmux inventory, callbacks/history and disposable exact-reference lifecycle pass from both hosts. Native/headless Plus checks and actual cached Agent local/fleet delivery are separately accepted. Legacy all-picker/package and retired Tab-presentation checks reject and remain retained; they do not certify the independently selected Agent Plus 0.14.0a1 pilot or its deferred migration. Snap headless topology and Starship context are preserved. |
+| Source / installed / managed / deployment doc sync | README, handoff and measurement plan point to final hardening-adoption receipts, exact versions, runtime identities, exclusions, cleanup and indexed evidence hashes. Source/runtime artifact versions remain distinct; final canonical and remote checks accompany the completion commit. |
 
 Graphical input, positive viewer matching and physical suspend/wake are explicit
 endpoint exclusions. Agent Plus migration, provider semantics, ordinary collector
 and writer upgrades, and changing normative wire capabilities are outside this
-compatible hardening pass. No pending item above is waived by these exclusions.
+compatible hardening pass. Historical negative attempts remain recorded; later evidence closes the applicable
+Mesh/Observer requirements without upgrading those negatives into passes.
+See [paired adoption](../2026-10-10-hardening-adoption/README.md) for final receipts.
