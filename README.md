@@ -5,20 +5,19 @@ mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
-Status: **0.1.0a7 released and selected**, 2026-10-10. Polling and pushed state
-over local IPC and SSH stdio are implemented against a frozen contract. Snap and
-Starship select SDK a7 for the shared public CLI/authority and Tmux Observer's
-fleet transport. The [accepted Tmux rollout](https://github.com/byebyebryan/tmux-observer/blob/main/docs/evidence/2026-10-10-catalog-bound-fix/README.md)
-records exact package/native, headless, resource, capacity, installed recovery
-and paired rollback gates. Agent's reader/collector/writer and private SDK a4
-resident bridge remain independently selected and verified. Ordered events/replay,
-WSS, a shared fleet broker and further Plus/device migrations remain deferred.
+Status: **0.1.0a9 released and selected**, 2026-10-10. Polling and pushed
+replacement state over local IPC and SSH stdio use the frozen contract. Snap and
+Starship select a9 for the public CLI/authority, Tmux Observer 0.6.0a4 / Tmux
+Plus 0.12.0a4, and separate Agent a13 reader / a12 bridge environments.
+Agent's a15 collector and a16 writer remain independently selected.
 
-Source **0.1.0a9 is an unreleased candidate** refining owned IO cancellation
-after the coordinated a8 adoption pass. Released a8 supplies proactive watch
-connection rotation and cumulative local transport measurements. See the
-[reliability and measurement plan](docs/reliability-and-measurement.md).
-It does not replace the selected a7 artifacts or expand the frozen capabilities.
+The [coordinated adoption record](docs/evidence/2026-10-10-fleet-adoption/README.md)
+binds exact artifacts, native fleet checks, resources, recovery and rollback.
+A8 introduced proactive watch connection rotation and cumulative measurements;
+a9 makes owned send/close retirement withstand repeated caller cancellation.
+The [reliability plan](docs/reliability-and-measurement.md) records the remaining
+optimization gates. Ordered events/replay, WSS, a shared fleet broker and further
+Plus/device migrations remain deferred.
 
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The
@@ -134,7 +133,7 @@ Probes own and close their connections and do not write route health.
 
 The [Mesh operations pass](docs/mesh-operations.md) describes diagnostic limits,
 the synthetic fault/resource lab and the proposed optional connection pool.
-Candidate a8 adds `read --metrics` and `watch --metrics`: final redacted Reader
+The a8 measurement interface adds `read --metrics` and `watch --metrics`: final redacted Reader
 counters go to stderr, leaving protocol stdout unchanged. Watch reports on
 Ctrl-C after owned cleanup. Python consumers may call `Reader.inspect()` while
 running or after completion; totals include retired channels.

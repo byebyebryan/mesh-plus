@@ -1,13 +1,13 @@
 # Changelog
 
-## 0.1.0a9
+## 0.1.0a9 (2026-10-10)
 
 - Retire owned bridge sends and Reader cleanup through repeated cancellation,
   preserving admitted-frame ordering and observing late IO failures without
   Python 3.14 shield callback diagnostics. Frozen wire/schema bytes are unchanged.
 - Add operational cached-fleet profiling and synthetic payload scaling tools.
 
-## 0.1.0a8 (unreleased)
+## 0.1.0a8 (2026-10-10)
 
 - Stop new Client handle admission at 4,080 retained handles, leaving the frozen
   4,096-handle no-reuse bound intact. Existing requests, credit and cancellation

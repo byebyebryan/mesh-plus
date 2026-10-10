@@ -1,0 +1,87 @@
+[
+  {
+    "command": [
+      "mesh",
+      "snapshot",
+      "--scope",
+      "local"
+    ],
+    "exit": 0,
+    "bytes": 3521,
+    "profiles": [
+      "agent-observer.mesh-candidate.v1"
+    ],
+    "statuses": [
+      "complete"
+    ],
+    "hosts": [
+      [
+        "starship"
+      ]
+    ]
+  },
+  {
+    "command": [
+      "mesh",
+      "snapshot",
+      "--scope",
+      "fleet"
+    ],
+    "exit": 0,
+    "bytes": 157576,
+    "profiles": [
+      "agent-observer.mesh-candidate.v1"
+    ],
+    "statuses": [
+      "complete"
+    ],
+    "hosts": [
+      [
+        "starship",
+        "snap"
+      ]
+    ]
+  },
+  {
+    "command": [
+      "mesh",
+      "watch",
+      "--scope",
+      "fleet",
+      "--count",
+      "4"
+    ],
+    "exit": 0,
+    "bytes": 166202,
+    "profiles": [
+      "agent-observer.mesh-candidate.v1",
+      "agent-observer.mesh-candidate.v1",
+      "agent-observer.mesh-candidate.v1",
+      "agent-observer.mesh-candidate.v1"
+    ],
+    "statuses": [
+      "pending",
+      "partial",
+      "partial",
+      "complete"
+    ],
+    "hosts": [
+      [
+        "starship",
+        "snap"
+      ],
+      [
+        "starship",
+        "snap"
+      ],
+      [
+        "starship",
+        "snap"
+      ],
+      [
+        "starship",
+        "snap"
+      ]
+    ]
+  }
+]

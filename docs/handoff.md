@@ -8,39 +8,24 @@ wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
 broader design studies and reserved schema variants.
 
-Source **0.1.0a8** is an unreleased reliability/measurement candidate. The
-[current plan](reliability-and-measurement.md) promotes channel rotation to core
-reliability work and gates pooling/digest-proof on actual costs. Existing a7
-selection and its acceptance below remain separate.
+The released **0.1.0a9** wheel is frozen from
+`3b6754312000d1c39a3ab407986130b9c621f0d4`, SHA-256
+`07882909a49cd513b5c114da7890bebfe9b1592da3a08cca69a68c24817164c2`.
+All frozen schema, lock and authority inputs retain their reviewed bytes.
+Installed standalone acceptance passes 74 tests without Observer packages;
+installed native/SSH acceptance passes 106 tests on Python 3.14.
 
-The released **0.1.0a7** wheel is frozen from
-`01da59e2df75a133b617ff2da466221144ed2e4d`, SHA-256
-`2bee4d9e77b18c6049a80e848c930ec65abaf60ec40a8341648da93a25a1fd81`.
-Library config and health reads use the same
-checked regular-file descriptor through parsing, with actual reads capped at
-four MiB plus one overflow-detection byte. Growth and pathname replacement
-cannot bypass that bound. The canonical authority has a reviewed private
-captured-byte parser extension; its default process reader/writer behavior
-remains compatible. All 21 frozen wire/schema inputs retain their a6 bytes.
-
-Source and installed native/SSH gates pass 96 tests. Standalone wheel acceptance
-passes 67 tests without either Observer package. Host Mesh compatibility passes
-82 SSH Plus regressions against the actual candidate authority. This is semantic
-compatibility evidence; the authority extraction is no longer byte-identical.
-The preceding a6 JSON/schema optimizations and bounded job/lock behavior remain.
-
-Snap and Starship select a7 for the shared public CLI/catalog authority and
-Tmux fleet transport, with Observer 0.6.0a2 / Plus 0.12.0a2. The
-[accepted bound-fix record](https://github.com/byebyebryan/tmux-observer/blob/main/docs/evidence/2026-10-10-catalog-bound-fix/README.md)
-binds exact releases, 600-second ordinary
-resources, declared capacity, installed headless frames/callbacks, managed
-recovery and serial paired rollback. SDK a6 remains at its old managed root;
-rollback restores the prior Observer/Plus pair and controls selecting it.
-The record separately verifies both Agent and Tmux domains over IPC and SSH.
-Agent retains its independent reader, collector, writer and resident bridge,
-with package bytes and process incarnations verified unchanged. Further
-Plus/device migrations remain separate. Graphical input and physical suspend
-are optional and unrun for this wiring change.
+Snap and Starship select a9 for the public CLI/catalog authority and Tmux
+Observer 0.6.0a4 / Plus 0.12.0a4. Agent uses new private a9 environments with
+the same a13 reader and a12 bridge Observer artifacts. Its a15 collector and
+a16 writer retain their prior selections. Source, installed bytes, collector
+incarnation and foreign managed checkout preservation are separate checks.
+See the [coordinated adoption record](evidence/2026-10-10-fleet-adoption/README.md)
+for dated gates and limits; the [reliability plan](reliability-and-measurement.md)
+records proactive channel rotation, cancellation-safe cleanup and measured costs.
+Earlier managed SDK roots remain available for paired rollback. Graphical input,
+physical suspend, multi-hour production-budget rotation and further consumer
+migrations remain separate acceptance work.
 
 The [changelog](../CHANGELOG.md) records version differences. The
 [Agent SDK checkpoint](agent-integration.md) records the a4 source checks and
@@ -112,7 +97,7 @@ Heartbeats, polling and new connections never renew original source receipts.
 
 ## Integration work and gates
 
-Tmux's producer/coordinator integration and paired a7 selection are accepted in
+Tmux's producer/coordinator integration and historical paired a7 selection are accepted in
 the bound-fix record above. Agent's independently selected a4 transport already
 uses the frozen profile; its a15 collector performance work is producer-owned
 and does not establish lower transport cost. The gates below remain applicable

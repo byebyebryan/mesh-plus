@@ -1,0 +1,24 @@
+{
+  "mesh-plus": {
+    "head": "3b6754312000d1c39a3ab407986130b9c621f0d4",
+    "sourceWorkingTree": " M CHANGELOG.md\n M README.md\n M docs/handoff.md\n M docs/reliability-and-measurement.md\n?? docs/evidence/2026-10-10-fleet-adoption/\n"
+  },
+  "tmux-observer": {
+    "head": "0e183ebdc56b199ba092f4007c9055dac29487c9",
+    "sourceWorkingTree": ""
+  },
+  "agent-observer": {
+    "head": "3e17a9b33aef43d51c7ce2ef6a4cb51ecd6756cf",
+    "sourceWorkingTree": ""
+  },
+  "rofi-tmux-plus": {
+    "head": "1c5d454f873aeeef7a0246d2d6536c27035e25a3",
+    "sourceWorkingTree": ""
+  },
+  "managedSource": {
+    "head": "1f7ee2e4c296fd000bf3db9913878d3e8a79553d",
+    "preexistingUntracked": [
+      "scripts/__pycache__/"
+    ]
+  }
+}

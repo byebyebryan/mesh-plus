@@ -1,0 +1,20 @@
+test_changed_generation_or_timeout_cannot_reuse_memo (test_claude_memo_transport.ClaudeMemoTransportTest.test_changed_generation_or_timeout_cannot_reuse_memo) ... ok
+test_context_change_accepts_snapshot_but_discards_old_memo (test_claude_memo_transport.ClaudeMemoTransportTest.test_context_change_accepts_snapshot_but_discards_old_memo) ... ok
+test_invalid_private_payload_rejects_receipt_and_clears_memo (test_claude_memo_transport.ClaudeMemoTransportTest.test_invalid_private_payload_rejects_receipt_and_clears_memo) ... ok
+test_real_worker_accepts_sealed_input_and_emits_only_normalized_envelope (test_claude_memo_transport.ClaudeMemoTransportTest.test_real_worker_accepts_sealed_input_and_emits_only_normalized_envelope) ... skipped 'Python lacks Linux memfd support'
+test_valid_reply_retains_metadata_after_normal_snapshot_admission (test_claude_memo_transport.ClaudeMemoTransportTest.test_valid_reply_retains_metadata_after_normal_snapshot_admission) ... ok
+test_worker_without_memfd_uses_normal_snapshot_without_memo (test_claude_memo_transport.ClaudeMemoTransportTest.test_worker_without_memfd_uses_normal_snapshot_without_memo) ... ok
+test_append_truncate_atomic_replace_delete_symlink_and_permission_changes_reparse (test_claude_file_memo.ClaudeMemoTest.test_append_truncate_atomic_replace_delete_symlink_and_permission_changes_reparse) ... ok
+test_bounds_eviction_cold_start_and_budget_flags (test_claude_file_memo.ClaudeMemoTest.test_bounds_eviction_cold_start_and_budget_flags) ... ok
+test_directory_replacement_and_context_change_invalidate (test_claude_file_memo.ClaudeMemoTest.test_directory_replacement_and_context_change_invalidate) ... ok
+test_failed_and_incomplete_metadata_is_not_cached (test_claude_file_memo.ClaudeMemoTest.test_failed_and_incomplete_metadata_is_not_cached) ... ok
+test_frozen_parser_parity_for_seeded_records_and_head_tail_boundaries (test_claude_file_memo.ClaudeMemoTest.test_frozen_parser_parity_for_seeded_records_and_head_tail_boundaries) ... ok
+test_guard_detects_change_during_hit_and_does_not_store_stale_parse (test_claude_file_memo.ClaudeMemoTest.test_guard_detects_change_during_hit_and_does_not_store_stale_parse) ... ok
+test_positive_saved_identity_is_reused_but_never_conceals_changed_conflict (test_claude_file_memo.ClaudeMemoTest.test_positive_saved_identity_is_reused_but_never_conceals_changed_conflict) ... ok
+test_sealed_read_only_roundtrip_and_strict_content_free_admission (test_claude_file_memo.ClaudeMemoTest.test_sealed_read_only_roundtrip_and_strict_content_free_admission) ... skipped 'Python lacks Linux memfd support'
+test_shared_decode_once_and_warm_reuse_without_conversation_clock_renewal (test_claude_file_memo.ClaudeMemoTest.test_shared_decode_once_and_warm_reuse_without_conversation_clock_renewal) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.171s
+
+OK (skipped=2)

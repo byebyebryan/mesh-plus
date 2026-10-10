@@ -1,8 +1,9 @@
 # Reliability and measured transport efficiency
 
-Updated 2026-10-10. Source a8 is an unreleased candidate. Mesh a7 remains the
-accepted shared authority/Tmux transport selection; Agent's private SDK a4
-selection remains independent. The frozen state and Delivery inputs are unchanged.
+Updated 2026-10-10. Mesh a9 is released and selected across the coordinated
+Tmux and Agent read delivery cohort. The frozen state and Delivery inputs are
+unchanged. The [adoption record](evidence/2026-10-10-fleet-adoption/README.md)
+separates a8 measurements from final a9 acceptance.
 
 ## Baseline and ownership
 
@@ -11,17 +12,18 @@ The a7 catalog descriptor/read race is closed. Tmux Observer 0.6.0a2 / Plus
 and rollback evidence. Agent already adapted to the frozen profile; its a15
 Claude collector optimization changes producer cost, not Mesh transport cost.
 The Agent sealing-constant portability finding belongs to that producer's
-runtime/packaging gate. No sibling implementation or deployment is part of this pass.
+runtime/packaging gate. This coordinated pass includes Observer delivery integration and managed selection;
+collector performance and provider semantics remain producer-owned.
 
 ## Updated sequence
 
 | Phase | Scope | Acceptance and disposition |
 | --- | --- | --- |
 | R0 | Baseline/doc sync | Catalog fix and Tmux adaptation accepted; Agent collector savings and independent transport selections recorded separately. |
-| R1 | Core channel lifetime | Candidate a8: proactive admission boundary and Reader rotation, visible revocation/resync, original receipt/proof semantics, independent healthy hosts, owned cleanup. |
-| R2 | Transport measurements | Candidate a8: cumulative Reader/Client/channel counters and owned native-profile IPC/SSH matrix. Operational and large-payload profiling remain adoption gates. |
+| R1 | Core channel lifetime | Released a8/a9: proactive admission boundary and Reader rotation, visible revocation/resync, original receipt/proof semantics, independent healthy hosts, owned cleanup. |
+| R2 | Transport measurements | Released a8/a9: cumulative Reader/Client/channel counters and owned native-profile IPC/SSH matrix. Operational and synthetic large-payload measurements are recorded in the adoption evidence. |
 | R3 | Select optimization | Decide from matched operational measurements whether duplicate channels justify optional pooling or repeated full proofs justify separately negotiated digest-proof. Neither is advertised or implemented here. |
-| R4 | Artifact adoption | Fresh candidate wheel parity and isolated core/native tests precede any release. Exact consumer pins, two-host sustained operation, recovery and rollback are separate adoption gates. |
+| R4 | Artifact adoption | Fresh candidate wheel parity and isolated core/native tests precede any release. Exact consumer pins and two-host cached resource gates pass; native recovery/rollback and additional Reader reports bind their own final evidence. |
 
 Keep direct IPC/SSH as the default. WSS authorization/deployment, shared daemon
 leases and ordered event replay remain separately reviewed work. Rotation is
@@ -52,7 +54,9 @@ rotation; a direct Client still enforces the admission boundary if a wrapper
 omits that method. Custom implementations lacking both behaviors need their own
 bounded lifetime policy. A future pooled lease must preserve this ownership rule.
 
-Watch retirement uses cancellation-safe owned cleanup. Cancellation crossing
+A9 owned sends and closes retire through repeated caller cancellation and observe
+late transport exceptions without abandoned shield futures. Watch retirement uses
+cancellation-safe owned cleanup. Cancellation crossing
 pending-frame cleanup cannot skip closing the client. Planned rotation does not
 count as a connection failure or trigger outage backoff.
 
@@ -118,7 +122,8 @@ verify unchanged stdout and final counters on read and interrupted watch.
 
 See the [dated candidate evidence](evidence/2026-10-10-reliability/README.md)
 for exact source/wheel checks and matrix reports. Counts and observations certify
-only those inputs; they do not supersede a7 operational acceptance.
+only those inputs. The newer coordinated adoption record carries a8 and a9
+operational evidence with their exact runtime and harness bytes.
 
 Before choosing R3, capture identical ordinary workloads and full owned process
 trees for current Agent and Tmux consumers: idle, normal updates, multi-reader,
@@ -129,3 +134,20 @@ per-reader nonces, deadlines, credit and cancellation. Digest-proof requires
 explicit capability negotiation and proof/receipt equivalence review; a reserved
 schema does not grant that capability. No source optimization is made default
 without its own exact artifact/consumer acceptance and rollback.
+
+## Operational profiling
+
+`scripts/profile-fleet.py` adds cached-only consumers to an explicitly selected
+native fleet. Run it with installed Mesh and the pure domain facade, using
+`--domain agent --source agent --socket /run/user/1000/mesh-plus-agent/read.sock`
+or `--domain tmux --source tmux_default --socket /run/user/1000/tmux-observer/owner.sock --native-socket`.
+Select `--seconds 600 --report /tmp/profile.json`; the Tmux switch owns a private
+local bridge around the native cache. It does not alter collection or route health.
+The report includes runtime and harness digests, frame/status counters, final
+cleanup metrics and sampled owned resource totals, with no native records.
+
+`measure-reader.py --rows 256` scales synthetic native envelopes for the IPC/SSH
+matrix. This measures serialization/proof amplification, not real native large
+inventories. Process-local pooling cannot share connections between independent
+CLI processes. Digest-proof requires explicit negotiation and receipt-equivalence
+review. Neither optimization is enabled from these descriptive measurements.

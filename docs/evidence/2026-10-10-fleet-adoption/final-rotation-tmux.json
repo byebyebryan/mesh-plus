@@ -1,0 +1,204 @@
+{
+  "state": "passed",
+  "domain": "tmux",
+  "epochs": {
+    "snap": 7,
+    "starship": 3
+  },
+  "revokedHosts": [
+    "snap",
+    "starship"
+  ],
+  "recoveredHosts": [
+    "snap",
+    "starship"
+  ],
+  "events": [
+    {
+      "host": "snap",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "snap",
+      "event": "revoked",
+      "epoch": 2
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "snap",
+      "event": "revoked",
+      "epoch": 3
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "snap",
+      "event": "revoked",
+      "epoch": 4
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 1
+    },
+    {
+      "host": "snap",
+      "event": "revoked",
+      "epoch": 5
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 2
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 2
+    },
+    {
+      "host": "snap",
+      "event": "revoked",
+      "epoch": 6
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 2
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 2
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 2
+    },
+    {
+      "host": "starship",
+      "event": "revoked",
+      "epoch": 2
+    }
+  ],
+  "metrics": {
+    "format": "mesh-plus.reader-metrics.v1",
+    "domain": "tmux",
+    "byteScope": "completed-json-lines",
+    "activeConnections": 0,
+    "partial": false,
+    "connectionAttempts": 10,
+    "connectionsOpened": 10,
+    "connectionsClosed": 10,
+    "connectionFailures": 0,
+    "rotations": 8,
+    "cleanupFailures": 0,
+    "peakConnections": 2,
+    "catalogChecks": 1,
+    "catalogCheckMs": 10,
+    "instrumentedConnections": 10,
+    "uninstrumentedConnections": 0,
+    "receivedFrames": 58,
+    "sentFrames": 68,
+    "receivedBytes": 149252,
+    "sentBytes": 17473,
+    "operations": {
+      "snapshotRequests": 21,
+      "proofRequests": 7,
+      "snapshotResultBytes": 89139,
+      "proofResultBytes": 15764,
+      "otherResultBytes": 0,
+      "requestTimeouts": 0,
+      "requestCancellations": 0,
+      "rotationRejections": 0,
+      "unprocessedResultBytes": 0
+    },
+    "byKind": {
+      "received": {
+        "hello": {
+          "frames": 10,
+          "bytes": 4162
+        },
+        "subscribed": {
+          "frames": 10,
+          "bytes": 3220
+        },
+        "data": {
+          "frames": 10,
+          "bytes": 36967
+        },
+        "result": {
+          "frames": 28,
+          "bytes": 104903
+        }
+      },
+      "sent": {
+        "hello": {
+          "frames": 10,
+          "bytes": 3736
+        },
+        "subscribe": {
+          "frames": 10,
+          "bytes": 2750
+        },
+        "request": {
+          "frames": 28,
+          "bytes": 7077
+        },
+        "credit": {
+          "frames": 10,
+          "bytes": 2300
+        },
+        "close": {
+          "frames": 10,
+          "bytes": 1610
+        }
+      }
+    },
+    "peakClientBufferedBytes": 4330,
+    "peakClientBufferedControlBytes": 0,
+    "peakSubscriptionQueueFrames": 1,
+    "peakRetainedHandles": 4
+  },
+  "testOnlyHandleBudget": 4,
+  "testOnlyProofIntervalSeconds": 0.1,
+  "ordinaryCollectorCadenceChanged": false,
+  "limits": [
+    "Actual cached services and SSH; private additional Reader with accelerated Client budget and proof interval",
+    "Not prolonged production-budget rotation or independent native provider truth"
+  ]
+}
