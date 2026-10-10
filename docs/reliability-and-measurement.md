@@ -1,6 +1,6 @@
 # Reliability and measured transport efficiency
 
-Updated 2026-10-10. Mesh a9 is released and selected across the coordinated
+Updated 2026-10-10. Mesh a10 is released; a9 remains selected across the coordinated
 Tmux and Agent read delivery cohort. The frozen state and Delivery inputs are
 unchanged. The [adoption record](evidence/2026-10-10-fleet-adoption/README.md)
 separates a8 measurements from final a9 acceptance.

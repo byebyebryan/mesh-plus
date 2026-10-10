@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "checkedAtUtc": "2026-10-10T18:16:49.112242+00:00",
+  "python": "3.14.8",
+  "scope": "runtime and owned native/SSH acceptance",
+  "testsRun": 108,
+  "failures": 0,
+  "errors": 0,
+  "skipped": [],
+  "versions": {
+    "mesh-plus": "0.1.0a10",
+    "tmux-observer": "0.6.0a5",
+    "agent-observer": "0.5.0a16",
+    "jsonschema": "4.26.0"
+  },
+  "command": "scripts/check.py --native",
+  "logSha256": "70132135c21690f34ed6a7d6221f34418f37ae3707b3b560d8239d60e92c0182",
+  "sourceParityOption": "separate historical HEAD limitation; see source-parity-limitation.json"
+}

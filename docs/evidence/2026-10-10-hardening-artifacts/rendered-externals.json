@@ -1,0 +1,162 @@
+{
+  ".local/share/zsh/plugins/zsh-autosuggestions": {
+    "type": "git-repo",
+    "url": "https://github.com/zsh-users/zsh-autosuggestions.git",
+    "refreshPeriod": "168h"
+  },
+  ".local/share/zsh/plugins/zsh-syntax-highlighting": {
+    "type": "git-repo",
+    "url": "https://github.com/zsh-users/zsh-syntax-highlighting.git",
+    "refreshPeriod": "168h"
+  },
+  ".local/share/zsh/plugins/zsh-history-substring-search": {
+    "type": "git-repo",
+    "url": "https://github.com/zsh-users/zsh-history-substring-search.git",
+    "refreshPeriod": "168h"
+  },
+  ".local/share/zsh/themes/powerlevel10k": {
+    "type": "git-repo",
+    "url": "https://github.com/romkatv/powerlevel10k.git",
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/python": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a6/mesh_plus-0.1.0a6-py3-none-any.whl",
+    "checksum": {
+      "sha256": "d5989b80b84bca8f6bb14062e8f75a133978666336dd27c833338a50c8748b3f"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/0.1.0a7/python": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a7/mesh_plus-0.1.0a7-py3-none-any.whl",
+    "checksum": {
+      "sha256": "2bee4d9e77b18c6049a80e848c930ec65abaf60ec40a8341648da93a25a1fd81"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/0.1.0a8/python": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a8/mesh_plus-0.1.0a8-py3-none-any.whl",
+    "checksum": {
+      "sha256": "dea7123182e0e3dfdc150fba8fbd55d32ba10d48f65b8a5578429b3525f604ae"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/0.1.0a9/python": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a9/mesh_plus-0.1.0a9-py3-none-any.whl",
+    "checksum": {
+      "sha256": "07882909a49cd513b5c114da7890bebfe9b1592da3a08cca69a68c24817164c2"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/dependencies/attrs": {
+    "type": "archive",
+    "url": "https://files.pythonhosted.org/packages/64/b4/17d4b0b2a2dc85a6df63d1157e028ed19f90d4cd97c36717afef2bc2f395/attrs-26.1.0-py3-none-any.whl",
+    "checksum": {
+      "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/dependencies/jsonschema": {
+    "type": "archive",
+    "url": "https://files.pythonhosted.org/packages/69/90/f63fb5873511e014207a475e2bb4e8b2e570d655b00ac19a9a0ca0a385ee/jsonschema-4.26.0-py3-none-any.whl",
+    "checksum": {
+      "sha256": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/dependencies/jsonschema-specifications": {
+    "type": "archive",
+    "url": "https://files.pythonhosted.org/packages/41/45/1a4ed80516f02155c51f51e8cedb3c1902296743db0bbc66608a0db2814f/jsonschema_specifications-2025.9.1-py3-none-any.whl",
+    "checksum": {
+      "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/dependencies/referencing": {
+    "type": "archive",
+    "url": "https://files.pythonhosted.org/packages/2c/58/ca301544e1fa93ed4f80d724bf5b194f6e4b945841c5bfd555878eea9fcb/referencing-0.37.0-py3-none-any.whl",
+    "checksum": {
+      "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/dependencies/rpds-py": {
+    "type": "archive",
+    "url": "https://files.pythonhosted.org/packages/22/9d/d08a1128ab199b2f0cf25bfeb0639bd05119fff4b7c47bec24ef9a8ec23f/rpds_py-2026.9.1-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "checksum": {
+      "sha256": "eac2f5dbafd585dfe31f86a23ebf0d3ba480a9d49ebc87947267b5608d4ea0cd"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/rofi/extensions/ssh-plus": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/rofi-ssh-plus/archive/e01f89cfdb7b068f6b2150b33a96dbce1b5c328f.zip",
+    "checksum": {
+      "sha256": "7c9df4dade50ead30924468cdd1ddc0bb7ae12a3f56727c4c92542ef50b30eb1"
+    },
+    "stripComponents": 1,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/rofi/extensions/agent-plus": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/rofi-agent-plus/archive/6d30f8c71a9e44ba1da19f4102292f6811df50d8.zip",
+    "checksum": {
+      "sha256": "8e0f1fc0b5e09a463ed8c9c3c147eb17445fd8e231e731b6b08fbb695182ae85"
+    },
+    "stripComponents": 1,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/rofi/extensions/tmux-plus": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/rofi-tmux-plus/releases/download/v0.12.0a5/rofi-tmux-plus-0.12.0a5-linux_x86_64.zip",
+    "checksum": {
+      "sha256": "07df66c71e0684987dcd10ca524a5ecf72d583b3802be024ab3e64acf73947b6"
+    },
+    "stripComponents": 1,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/tmux-observer/python": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/tmux-observer/releases/download/v0.6.0a5/tmux_observer-0.6.0a5-py3-none-any.whl",
+    "checksum": {
+      "sha256": "958d2f5381d57f172294e35654e19c96770ccd38e7ef8421a23f3dcf00abe536"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  },
+  ".local/share/mesh-plus/0.1.0a10/python": {
+    "type": "archive",
+    "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a10/mesh_plus-0.1.0a10-py3-none-any.whl",
+    "checksum": {
+      "sha256": "c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d"
+    },
+    "stripComponents": 0,
+    "exact": true,
+    "refreshPeriod": "168h"
+  }
+}

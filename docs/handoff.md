@@ -15,23 +15,24 @@ All frozen schema, lock and authority inputs retain their reviewed bytes.
 Installed standalone acceptance passes 74 tests without Observer packages;
 installed native/SSH acceptance passes 106 tests on Python 3.14.
 
-Current source additionally contains an **a10 candidate** subscription-admission
-cancellation fix. Its isolated wheel passes 75 standalone and 107 native/SSH
-tests; it has not replaced the released a9 artifact or consumer pins. The
-[operational hardening record](evidence/2026-10-10-operational-hardening/README.md)
-separates source fixes, private-input measurements and pending adoption gates.
-Tmux source additionally rejects stale control bindings and reserves one retiring
-local bridge handler alongside its active Reader; seven owned a10 integration
-tests pass. Agent source has a compatible ASCII validator fast path. Exact new
-Observer/picker artifacts and paired deployment remain separate acceptance.
+The released **0.1.0a10** wheel at
+`3684fe083c0ab5af3c74aa27dff169e5764489f5` adds subscription-admission
+cancellation cleanup and CLI shutdown ownership before socket publication.
+Its SHA-256 is `c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d`.
+Fresh installed acceptance passes 75 standalone and 108 native/SSH tests against
+Tmux Observer a5 / Agent Observer a16, with no skips. It has not changed live
+selection. The original private a10 wheel remains separate evidence; only its
+unchanged Reader/Client/transport bytes are shared with long rotation soaks.
 
-The refined a10 candidate at `3684fe083c0ab5af3c74aa27dff169e5764489f5`
-also installs CLI shutdown handlers before socket publication. Its new wheel
-SHA-256 is `c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d`.
-Fresh installed acceptance passes 75 standalone tests and 108 native tests
-against Tmux Observer a5 / Agent Observer a16, with no skips. The original a10
-wheel and its measurements remain separate evidence; only the unchanged
-Reader/Client/transport bytes are shared with the long rotation soaks.
+Tmux rejects stale control bindings and reserves one retiring local bridge
+handler alongside its active Reader. Eight installed native Mesh tests pass;
+independent owned fixtures cover successful delivery and gap revocation. Agent
+has a compatible ASCII validator fast path. The
+[artifact checkpoint](evidence/2026-10-10-hardening-artifacts/README.md) records
+exact new Observer/picker packages, refresh attribution and headless resource
+acceptance. The [operational study](evidence/2026-10-10-operational-hardening/README.md)
+keeps private-input measurements and production-budget lifetime gates separate.
+Paired live selection, recovery and rollback remain pending.
 
 Snap and Starship select a9 for the public CLI/catalog authority and Tmux
 Observer 0.6.0a4 / Plus 0.12.0a4. Agent uses new private a9 environments with

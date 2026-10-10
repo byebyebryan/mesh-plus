@@ -5,12 +5,14 @@ mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
-Status: **0.1.0a9 released and selected**, 2026-10-10. Polling and pushed
+Status: **0.1.0a10 released; a9 remains selected**, 2026-10-10. Polling and pushed
 replacement state over local IPC and SSH stdio use the frozen contract. Snap and
 Starship select a9 for the public CLI/authority, Tmux Observer 0.6.0a4 / Tmux
 Plus 0.12.0a4, and separate Agent a13 reader / a12 bridge environments.
 Agent's a15 collector and a16 writer remain independently selected.
 
+The [a10 artifact checkpoint](docs/evidence/2026-10-10-hardening-artifacts/README.md)
+records fresh package gates, refresh attribution and pending paired adoption.
 The [coordinated adoption record](docs/evidence/2026-10-10-fleet-adoption/README.md)
 binds exact artifacts, native fleet checks, resources, recovery and rollback.
 A8 introduced proactive watch connection rotation and cumulative measurements;

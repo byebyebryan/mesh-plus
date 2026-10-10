@@ -1,0 +1,7 @@
+{
+  "state": "passed",
+  "cases": 30,
+  "failures": [],
+  "elapsedSeconds": 53.08392537899999,
+  "scope": "Actual IPC; production budget for initial readiness, synthetic budget 4 for three retirement/rotation overlaps"
+}

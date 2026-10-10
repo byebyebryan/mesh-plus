@@ -1,0 +1,61 @@
+{
+  "mesh-plus": {
+    "tag": "v0.1.0a10",
+    "url": "https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a10",
+    "assets": {
+      "mesh_plus-0.1.0a10-py3-none-any.whl": {
+        "bytes": 76065,
+        "digest": "sha256:c9fecd77e3ea181d43447784824616232874cfc9ead12a30460d0682bdc3684d",
+        "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a10/mesh_plus-0.1.0a10-py3-none-any.whl"
+      }
+    }
+  },
+  "tmux-observer": {
+    "tag": "v0.6.0a5",
+    "url": "https://github.com/byebyebryan/tmux-observer/releases/tag/v0.6.0a5",
+    "assets": {
+      "candidate.json": {
+        "bytes": 54807,
+        "digest": "sha256:fff7cf9f7f8dbe350eca62f27fd67a080df4c78292e5d5cbed47c47942b70825",
+        "url": "https://github.com/byebyebryan/tmux-observer/releases/download/v0.6.0a5/candidate.json"
+      },
+      "tmux_observer-0.6.0a5-py3-none-any.whl": {
+        "bytes": 254071,
+        "digest": "sha256:958d2f5381d57f172294e35654e19c96770ccd38e7ef8421a23f3dcf00abe536",
+        "url": "https://github.com/byebyebryan/tmux-observer/releases/download/v0.6.0a5/tmux_observer-0.6.0a5-py3-none-any.whl"
+      }
+    }
+  },
+  "agent-observer": {
+    "tag": "v0.5.0a16",
+    "url": "https://github.com/byebyebryan/agent-observer/releases/tag/v0.5.0a16",
+    "assets": {
+      "agent_observer-0.5.0a16-py3-none-any.whl": {
+        "bytes": 160334,
+        "digest": "sha256:94705baebfa51a9664e9dbfa7603dcb932d6301146cf9a59017017c5285b3b17",
+        "url": "https://github.com/byebyebryan/agent-observer/releases/download/v0.5.0a16/agent_observer-0.5.0a16-py3-none-any.whl"
+      },
+      "observer-0.5.0a16.json": {
+        "bytes": 800,
+        "digest": "sha256:12325e58302df689bc3ad597fb607471ea3e3b8df985f56cf16b3404884e4d11",
+        "url": "https://github.com/byebyebryan/agent-observer/releases/download/v0.5.0a16/observer-0.5.0a16.json"
+      }
+    }
+  },
+  "rofi-tmux-plus": {
+    "tag": "v0.12.0a5",
+    "url": "https://github.com/byebyebryan/rofi-tmux-plus/releases/tag/v0.12.0a5",
+    "assets": {
+      "rofi-tmux-plus-0.12.0a5-linux_x86_64.zip": {
+        "bytes": 2080352,
+        "digest": "sha256:07df66c71e0684987dcd10ca524a5ecf72d583b3802be024ab3e64acf73947b6",
+        "url": "https://github.com/byebyebryan/rofi-tmux-plus/releases/download/v0.12.0a5/rofi-tmux-plus-0.12.0a5-linux_x86_64.zip"
+      },
+      "rofi_tmux_plus-0.12.0a5-py3-none-linux_x86_64.whl": {
+        "bytes": 80428,
+        "digest": "sha256:61a3a98fae0a72fd94680cea7e7aa774bd1f13b8bb109d037a40f42e62d67ed0",
+        "url": "https://github.com/byebyebryan/rofi-tmux-plus/releases/download/v0.12.0a5/rofi_tmux_plus-0.12.0a5-py3-none-linux_x86_64.whl"
+      }
+    }
+  }
+}

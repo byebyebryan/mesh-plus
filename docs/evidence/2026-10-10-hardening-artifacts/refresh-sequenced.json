@@ -1,0 +1,384 @@
+{
+  "format": "mesh-plus.refresh-investigation.v1",
+  "repetitions": 200,
+  "transport": "mesh",
+  "elapsedSeconds": 431.373,
+  "failed": 4,
+  "counts": {
+    "control_validation_passed": 396,
+    "ticket_receive": 396,
+    "ticket_failure:stale_scope": 200
+  },
+  "failures": [
+    {
+      "iteration": 70,
+      "failures": 1,
+      "errors": 0,
+      "exceptionStages": [
+        {
+          "failureType": "AssertionError",
+          "trace": [
+            {
+              "file": "case.py",
+              "function": "testPartExecutor",
+              "line": 58
+            },
+            {
+              "file": "case.py",
+              "function": "run",
+              "line": 669
+            },
+            {
+              "file": "case.py",
+              "function": "_callTestMethod",
+              "line": 615
+            },
+            {
+              "file": "test_fleet_mesh.py",
+              "function": "test_grouped_refresh_requires_mesh_confirmed_native_attempt",
+              "line": 212
+            },
+            {
+              "file": "case.py",
+              "function": "assertTrue",
+              "line": 762
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "stage": "mesh_delivery",
+          "status": "connecting",
+          "code": null,
+          "epoch": 1
+        },
+        {
+          "stage": "projection_binding",
+          "oldEpoch": 0,
+          "newEpoch": 1,
+          "scopeChanged": false,
+          "scopePresent": false,
+          "delivery": "connecting"
+        },
+        {
+          "stage": "projection_binding",
+          "oldEpoch": 1,
+          "newEpoch": 2,
+          "scopeChanged": true,
+          "scopePresent": true,
+          "delivery": "ready"
+        },
+        {
+          "stage": "control_reply",
+          "kind": "refresh_result",
+          "sequence": 0,
+          "requestMatches": true,
+          "publisherMatches": true,
+          "scopePresent": true,
+          "bindingMatches": true,
+          "scopeMatches": true
+        },
+        {
+          "stage": "ticket_receive",
+          "kind": "refresh_result",
+          "ack": true,
+          "lookup": false,
+          "old": null,
+          "new": [
+            [
+              "pending",
+              null
+            ]
+          ]
+        },
+        {
+          "stage": "ticket_failure",
+          "code": "stale_scope",
+          "reason": "owner association was replaced"
+        }
+      ]
+    },
+    {
+      "iteration": 85,
+      "failures": 1,
+      "errors": 0,
+      "exceptionStages": [
+        {
+          "failureType": "AssertionError",
+          "trace": [
+            {
+              "file": "case.py",
+              "function": "testPartExecutor",
+              "line": 58
+            },
+            {
+              "file": "case.py",
+              "function": "run",
+              "line": 669
+            },
+            {
+              "file": "case.py",
+              "function": "_callTestMethod",
+              "line": 615
+            },
+            {
+              "file": "test_fleet_mesh.py",
+              "function": "test_grouped_refresh_requires_mesh_confirmed_native_attempt",
+              "line": 212
+            },
+            {
+              "file": "case.py",
+              "function": "assertTrue",
+              "line": 762
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "stage": "mesh_delivery",
+          "status": "connecting",
+          "code": null,
+          "epoch": 1
+        },
+        {
+          "stage": "projection_binding",
+          "oldEpoch": 0,
+          "newEpoch": 1,
+          "scopeChanged": false,
+          "scopePresent": false,
+          "delivery": "connecting"
+        },
+        {
+          "stage": "projection_binding",
+          "oldEpoch": 1,
+          "newEpoch": 2,
+          "scopeChanged": true,
+          "scopePresent": true,
+          "delivery": "ready"
+        },
+        {
+          "stage": "control_reply",
+          "kind": "refresh_result",
+          "sequence": 0,
+          "requestMatches": true,
+          "publisherMatches": true,
+          "scopePresent": true,
+          "bindingMatches": true,
+          "scopeMatches": true
+        },
+        {
+          "stage": "ticket_receive",
+          "kind": "refresh_result",
+          "ack": true,
+          "lookup": false,
+          "old": null,
+          "new": [
+            [
+              "pending",
+              null
+            ]
+          ]
+        },
+        {
+          "stage": "ticket_failure",
+          "code": "stale_scope",
+          "reason": "owner association was replaced"
+        }
+      ]
+    },
+    {
+      "iteration": 171,
+      "failures": 1,
+      "errors": 0,
+      "exceptionStages": [
+        {
+          "failureType": "AssertionError",
+          "trace": [
+            {
+              "file": "case.py",
+              "function": "testPartExecutor",
+              "line": 58
+            },
+            {
+              "file": "case.py",
+              "function": "run",
+              "line": 669
+            },
+            {
+              "file": "case.py",
+              "function": "_callTestMethod",
+              "line": 615
+            },
+            {
+              "file": "test_fleet_mesh.py",
+              "function": "test_grouped_refresh_requires_mesh_confirmed_native_attempt",
+              "line": 212
+            },
+            {
+              "file": "case.py",
+              "function": "assertTrue",
+              "line": 762
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "stage": "mesh_delivery",
+          "status": "connecting",
+          "code": null,
+          "epoch": 1
+        },
+        {
+          "stage": "projection_binding",
+          "oldEpoch": 0,
+          "newEpoch": 1,
+          "scopeChanged": false,
+          "scopePresent": false,
+          "delivery": "connecting"
+        },
+        {
+          "stage": "projection_binding",
+          "oldEpoch": 1,
+          "newEpoch": 2,
+          "scopeChanged": true,
+          "scopePresent": true,
+          "delivery": "ready"
+        },
+        {
+          "stage": "control_reply",
+          "kind": "refresh_result",
+          "sequence": 0,
+          "requestMatches": true,
+          "publisherMatches": true,
+          "scopePresent": true,
+          "bindingMatches": true,
+          "scopeMatches": true
+        },
+        {
+          "stage": "ticket_receive",
+          "kind": "refresh_result",
+          "ack": true,
+          "lookup": false,
+          "old": null,
+          "new": [
+            [
+              "pending",
+              null
+            ]
+          ]
+        },
+        {
+          "stage": "ticket_failure",
+          "code": "stale_scope",
+          "reason": "owner association was replaced"
+        }
+      ]
+    },
+    {
+      "iteration": 193,
+      "failures": 1,
+      "errors": 0,
+      "exceptionStages": [
+        {
+          "failureType": "AssertionError",
+          "trace": [
+            {
+              "file": "case.py",
+              "function": "testPartExecutor",
+              "line": 58
+            },
+            {
+              "file": "case.py",
+              "function": "run",
+              "line": 669
+            },
+            {
+              "file": "case.py",
+              "function": "_callTestMethod",
+              "line": 615
+            },
+            {
+              "file": "test_fleet_mesh.py",
+              "function": "test_grouped_refresh_requires_mesh_confirmed_native_attempt",
+              "line": 212
+            },
+            {
+              "file": "case.py",
+              "function": "assertTrue",
+              "line": 762
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "stage": "mesh_delivery",
+          "status": "connecting",
+          "code": null,
+          "epoch": 1
+        },
+        {
+          "stage": "projection_binding",
+          "oldEpoch": 0,
+          "newEpoch": 1,
+          "scopeChanged": false,
+          "scopePresent": false,
+          "delivery": "connecting"
+        },
+        {
+          "stage": "projection_binding",
+          "oldEpoch": 1,
+          "newEpoch": 2,
+          "scopeChanged": true,
+          "scopePresent": true,
+          "delivery": "ready"
+        },
+        {
+          "stage": "control_reply",
+          "kind": "refresh_result",
+          "sequence": 0,
+          "requestMatches": true,
+          "publisherMatches": true,
+          "scopePresent": true,
+          "bindingMatches": true,
+          "scopeMatches": true
+        },
+        {
+          "stage": "ticket_receive",
+          "kind": "refresh_result",
+          "ack": true,
+          "lookup": false,
+          "old": null,
+          "new": [
+            [
+              "pending",
+              null
+            ]
+          ]
+        },
+        {
+          "stage": "ticket_failure",
+          "code": "stale_scope",
+          "reason": "owner association was replaced"
+        }
+      ]
+    }
+  ],
+  "python": "3.14.8",
+  "inputDigests": {
+    "/home/bryan/code/tmux-observer/tests/test_fleet.py": "c4b355ff125a1605ea7982f065463d59c492b7ecef9c19af705e3787b01d5536",
+    "/home/bryan/code/tmux-observer/tests/test_owner.py": "3d803f87894278db69857a1f1f453cc71335400fbcfbe4bff2f15730065113dc",
+    "/home/bryan/code/tmux-observer/tests_mesh/test_fleet_mesh.py": "0f60529ef420fea4767f8765c079f0fffdfd24a5f7dfa644511bcb066c719010",
+    "/tmp/mesh-hardening/adoption/native-env/lib/python3.14/site-packages/tmux_observer_client/_mesh_control.py": "ba90c7ec6bc1d13ecd950c0161edfa139490389740b43a8805ecc126c2ba2087",
+    "/tmp/mesh-hardening/adoption/native-env/lib/python3.14/site-packages/tmux_observer_client/_fleet_tickets.py": "33212a787bc3a469bb37a02ad8bd65dda685280ef83ff2b66e5396ae8959e147"
+  },
+  "harnessSha256": "47d6dc1be3a3f028423adda886dc44cb4da00a30e24962fb8d615dd243ec2af0",
+  "limits": [
+    "Owned synthetic owner/fleet Unix services; no ordinary refresh or native collection",
+    "Bounded ticket state/attempt trace; no session records or arbitrary exception text",
+    "Passing exposure does not explain an unreproduced operational failure"
+  ]
+}

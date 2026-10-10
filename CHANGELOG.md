@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0a10 (candidate)
+## 0.1.0a10 (2026-10-10)
 
 - Cancel subscription admission without an abandoned shield future. A real IPC
   regression reproduces the late `ended(cancelled)` diagnostic on deployed a9
@@ -11,7 +11,7 @@
   process measurements. Each operational Reader owns its library authority;
   concurrent monitors cannot share that adapter's single admitted read job.
 - Add observed per-host production-budget rotation/recovery gates to profiling.
-  This candidate does not change released a9 artifacts or deployed selections.
+  The release preserves prior a9 artifact bytes; paired deployment is separately gated.
 - Compare cached-input watch and polling in independent processes; retain failed
   soaks and exact executed harness bytes. Profiling bridges reserve bounded
   retirement headroom, and interrupted matrix workers get graceful owned cleanup.

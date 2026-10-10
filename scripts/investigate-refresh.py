@@ -32,7 +32,9 @@ def main():
     from test_fleet_mesh import MeshFleetTests
     from tmux_observer_client import _mesh_control
     from tmux_observer_client._fleet_tickets import FleetTickets
+    from tmux_observer_client._mesh_projection import MeshOwnerState
     from tmux_observer_client._mesh_worker import MeshWorker
+    from tmux_observer_client.mesh_fleet import MeshFleetPublisher
 
     counts = collections.Counter()
     recent = collections.deque(maxlen=128)
@@ -41,6 +43,68 @@ def main():
     validate = _mesh_control.validate_service_frame
     poll = _mesh_control.OwnerControl.poll
     put = MeshWorker.put
+    project = MeshOwnerState.accept_mesh
+    catalog_failure = MeshFleetPublisher.catalog_failure
+
+    def inspect_catalog_failure(self, now, code, message):
+        counts["catalog_failure:" + code] += 1
+        recent.append({"stage": "catalog_failure", "code": code})
+        return catalog_failure(self, now, code, message)
+
+    def inspect_project(self, host, rows, **kwargs):
+        before = self.epoch, self.scope, self.selected_route
+        try:
+            result = project(self, host, rows, **kwargs)
+        except (ValueError, TypeError, KeyError) as error:
+            counts["projection_failure:" + type(error).__name__] += 1
+            recent.append(
+                {
+                    "stage": "projection",
+                    "failureType": type(error).__name__,
+                    "trace": [
+                        {"file": Path(frame.filename).name, "function": frame.name, "line": frame.lineno}
+                        for frame in traceback.extract_tb(error.__traceback__)[-6:]
+                    ],
+                }
+            )
+            raise
+        after = self.epoch, self.scope, self.selected_route
+        if before != after:
+            recent.append(
+                {
+                    "stage": "projection_binding",
+                    "oldEpoch": before[0],
+                    "newEpoch": after[0],
+                    "scopeChanged": before[1] != after[1],
+                    "scopePresent": after[1] is not None,
+                    "delivery": host["delivery"]["status"],
+                }
+            )
+        return result
+
+    class DiagnosticResult(unittest.TestResult):
+        def __init__(self):
+            super().__init__()
+            self.exception_stages = []
+
+        def record_exception(self, err):
+            self.exception_stages.append(
+                {
+                    "failureType": err[0].__name__,
+                    "trace": [
+                        {"file": Path(frame.filename).name, "function": frame.name, "line": frame.lineno}
+                        for frame in traceback.extract_tb(err[2])[-8:]
+                    ],
+                }
+            )
+
+        def addFailure(self, test, err):
+            self.record_exception(err)
+            super().addFailure(test, err)
+
+        def addError(self, test, err):
+            self.record_exception(err)
+            super().addError(test, err)
 
     def inspect_put(self, event):
         if event[0] == "view":
@@ -72,6 +136,8 @@ def main():
                         "requestMatches": value.get("requestId") == self.request["requestId"],
                         "publisherMatches": value.get("publisherId") == self.request["publisherId"],
                         "scopePresent": scope is not None,
+                        "bindingMatches": self.binding
+                        == (self.state.epoch, scope, self.state.selected_route),
                         "scopeMatches": scope is not None
                         and (
                             value["source"]["uid"],
@@ -136,6 +202,14 @@ def main():
         counts["control_validation_passed"] += 1
         return result
 
+    paths = [args.tmux_checkout / "tests" / name for name in ("test_fleet.py", "test_owner.py")]
+    paths += [
+        args.tmux_checkout / "tests_mesh/test_fleet_mesh.py",
+        Path(_mesh_control.__file__),
+        Path(sys.modules[FleetTickets.__module__].__file__),
+    ]
+    input_digests = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+    harness_digest = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     started = time.monotonic()
     with (
         patch.object(FleetTickets, "receive", inspect_receive),
@@ -143,6 +217,8 @@ def main():
         patch.object(_mesh_control.OwnerControl, "poll", inspect_poll),
         patch.object(MeshWorker, "put", inspect_put),
         patch.object(_mesh_control, "validate_service_frame", inspect_validation),
+        patch.object(MeshOwnerState, "accept_mesh", inspect_project),
+        patch.object(MeshFleetPublisher, "catalog_failure", inspect_catalog_failure),
     ):
         for index in range(args.repetitions):
             recent.clear()
@@ -151,7 +227,7 @@ def main():
                 if args.transport == "mesh"
                 else FleetTests("test_grouped_refresh_reconciles_desktop_after_actual_owner_sample")
             )
-            result = unittest.TestResult()
+            result = DiagnosticResult()
             test.run(result)
             if not result.wasSuccessful():
                 failures.append(
@@ -159,17 +235,12 @@ def main():
                         "iteration": index + 1,
                         "failures": len(result.failures),
                         "errors": len(result.errors),
+                        "exceptionStages": result.exception_stages,
                         "events": list(recent),
                     }
                 )
             if (index + 1) % 10 == 0:
                 print(json.dumps({"completed": index + 1, "failed": len(failures)}), flush=True)
-    paths = [args.tmux_checkout / "tests" / name for name in ("test_fleet.py", "test_owner.py")]
-    paths += [
-        args.tmux_checkout / "tests_mesh/test_fleet_mesh.py",
-        Path(_mesh_control.__file__),
-        Path(sys.modules[FleetTickets.__module__].__file__),
-    ]
     report = {
         "format": "mesh-plus.refresh-investigation.v1",
         "repetitions": args.repetitions,
@@ -179,8 +250,10 @@ def main():
         "counts": dict(counts),
         "failures": failures,
         "python": sys.version.split()[0],
-        "inputDigests": {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},
-        "harnessSha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "inputDigests": input_digests,
+        "inputPathsUnchangedAtCompletion": input_digests
+        == {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},
+        "harnessSha256": harness_digest,
         "limits": [
             "Owned synthetic owner/fleet Unix services; no ordinary refresh or native collection",
             "Bounded ticket state/attempt trace; no session records or arbitrary exception text",

@@ -1,0 +1,10 @@
+{
+  "state": "built_unaccepted",
+  "sourceRevision": "301b57a6eb12bacde220603d47c21995548bb7b6",
+  "wheel": "agent_observer-0.5.0a16-py3-none-any.whl",
+  "wheelSha256": "94705baebfa51a9664e9dbfa7603dcb932d6301146cf9a59017017c5285b3b17",
+  "sourceRuntimeParity": true,
+  "runtimeFiles": 58,
+  "sourceEpoch": 1791653201,
+  "harnessSha256": "43f423aa86fab4369f0dc52a65ed986318da68ee46962a0610a899105645a990"
+}
