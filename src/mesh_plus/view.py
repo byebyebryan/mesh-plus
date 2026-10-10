@@ -142,6 +142,13 @@ def current_sessions(response, now_ms, clock):
             source = "default" if domain == "tmux" else row["identity"]["provider"] + ":" + row["identity"]["namespace"]
             active = [r for r in host["receipts"] if r["sourceId"] == source and r["health"] in {"current", "partial"}]
             expected = {r["component"] for r in native if r["sourceId"] == source and r["health"] in {"current", "partial"}}
+            if domain == "agent" and not row["hasSavedHistory"]:
+                # Unsaved memory has no public per-row retirement receipt. A
+                # fresh history component cannot extend its runtime authority.
+                # Preserve the original row in the lossless envelope; only this
+                # conservative current selector omits historical runtime rows.
+                if row["runtime"]["health"] != "current" or not any(r["component"] == "runtime" for r in active):
+                    continue
             if active and {r["component"] for r in active} == expected and all(r["expiresAtMs"] > now_ms for r in active):
                 rows.append(copy.deepcopy(row))
     return rows

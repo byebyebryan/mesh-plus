@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0a4 (unreleased)
+
+- Bind Agent frame limits through its supported pure service descriptor.
+- Conservatively omit stale unsaved runtime rows from current selection while
+  preserving the original owner envelope and independently valid saved history.
+- Add `configured_read.configured_reader` for shared client endpoint binding,
+  with explicit route-reporting policy disabled for read-only consumers.
+- Keep the frozen state profile, authority and packaged schema bytes unchanged.
+
 ## 0.1.0a3 (unreleased)
 
 - Add `doctor` and bounded, explicitly requested snapshot/push `probe` commands;

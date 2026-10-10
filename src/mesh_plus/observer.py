@@ -50,11 +50,10 @@ class ObserverCodec:
             self.native_parse = lambda raw: decode_document(raw, limit=FRAME_LIMIT)
             self.maximum = FRAME_LIMIT
         else:
-            from agent_observer.service_contract import MAX_FRAME_BYTES
-            from agent_observer.service_public import parse_frame, validate_frame
+            from agent_observer.service_public import interface, parse_frame, validate_frame
             self.native_validate = validate_frame
             self.native_parse = parse_frame
-            self.maximum = MAX_FRAME_BYTES
+            self.maximum = interface()["limits"]["frameBytes"]
 
     def native(self, frame):
         self.native_validate(frame)

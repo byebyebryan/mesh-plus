@@ -8,14 +8,18 @@ wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
 broader design studies and reserved schema variants.
 
-The source candidate is **0.1.0a3, unreleased**. It adds explicit diagnostics and
-local runtime summaries after the a2 terminal fixes, without changing the wire
-contract. The released **0.1.0a1**
+The source candidate is **0.1.0a4, unreleased**. It adds a reusable configured
+Reader binding, uses Agent Observer's public service frame limit, and excludes
+unsaved stale runtime rows from the effective view without changing raw frames.
+The a3 diagnostics/resource work is retained. The frozen wire contract and
+authority bytes remain unchanged. The released **0.1.0a1**
 wheel remains the selected shared host authority for SSH Plus on Snap and
 Starship. Authority code and Host Mesh v1 bytes are unchanged by this review.
 Observer transport services and Plus consumers have not migrated to Mesh.
 
 The [changelog](../CHANGELOG.md) records version differences. The
+[Agent SDK checkpoint](agent-integration.md) records the a4 source checks and
+the historical exact-HEAD check limitation. The
 [review evidence](evidence/handoff-review.json) binds the prior a2 pass to source,
 tests, candidate package bytes and the unchanged contract lock. The
 [operations pass](mesh-operations.md) and [lab evidence](evidence/mesh-lab.json)
@@ -29,6 +33,7 @@ files describe their own checkpoints; they do not certify changed source bytes.
 | Mesh | `transport.LineChannel`, `IPCServer`, `connect_ipc`, `connect_ssh` | Authenticated bounded delivery, owned lifetime and cleanup |
 | Mesh | `client.Client`, `Subscription`, `bridge.Bridge`, `Publication` | Concurrent request/reply, subscription barriers, credit, gap/resync and terminal handling |
 | Mesh | `reader.Reader`, `Endpoint` | Immutable fleet selection, per-host outcomes, proofs, catalog monitoring and replacement views |
+| Mesh | `configured_read.configured_reader` | Configured local/catalog binding; route reporting requires explicit opt-in |
 | Mesh | `view.validate_response`, `current_sessions`, `ReadGuard` | Validated native reconstruction, expiry and conservative current rows |
 | Mesh | `authority`, `catalog.Catalog`, `MeshAuthority`, `SSHPlusAuthority` | Configured hosts/routes, revisions and route reports; one selected writer |
 | Observer | Supported pure domain codecs and cached publisher hooks | Native identity, state, coverage, original source receipts, expiry and collection scheduling |

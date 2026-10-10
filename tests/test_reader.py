@@ -150,6 +150,34 @@ class ViewTests(unittest.TestCase):
         self.assertTrue(rows)
         self.assertTrue(all(row["identity"]["provider"] == "claude" for row in rows))
 
+    def test_unsaved_stale_runtime_is_not_renewed_by_history(self):
+        response = json.loads((ROOT / "contracts/mesh-read-v1/examples/agent-local.json").read_text())
+        row = response["sessions"][0]
+        row["hasSavedHistory"] = False
+        clock = response["mesh"]["reader"]["clock"]
+        self.assertIn(row, current_sessions(response, 2000, clock))
+        # A detected runtime fault precedes the producer's finite retirement.
+        # Saved metadata remains independently current; the raw row is retained.
+        for name in ("runtime", "phase", "outcome"):
+            if row[name] is not None:
+                row[name].update(value="unknown", health="stale", reason="service_source_expired")
+        row["blockedReasons"] = []
+        host = response["mesh"]["hosts"][0]
+        source = host["owner"]["service"]["sources"][0]
+        metadata = host["owner"]["metadata"]["sources"][0]
+        metadata["coverage"]["runtime"].update(status="unavailable", reason="collection_failed")
+        metadata["sourceHealth"] = "partial"
+        component = next(c for c in source["components"] if c["name"] == "runtime")
+        component.update(health="stale", lastResult="collection_failed")
+        receipt = next(r for r in host["receipts"] if r["sourceId"].startswith("codex:") and r["component"] == "runtime")
+        receipt.update(health="stale", expiresAtMs=None, remainingMs=0)
+        validate_response(response)
+        self.assertNotIn(row, current_sessions(response, 2000, clock))
+        self.assertIn(row, response["sessions"])
+        self.assertTrue(any(r["identity"]["provider"] == "claude" for r in current_sessions(response, 2000, clock)))
+        row["hasSavedHistory"] = True
+        self.assertIn(row, current_sessions(response, 2000, clock))
+
     def test_catalog_fixture_parity_and_identity_collision(self):
         path = ROOT / "reference/rofi-ssh-plus/contracts/host-mesh-v1/fixtures/valid/list-multi-route.json"
         payload = json.loads(path.read_text())

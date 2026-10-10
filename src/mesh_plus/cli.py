@@ -13,10 +13,10 @@ from pathlib import Path
 from .bridge import Bridge
 from .catalog import MeshAuthority, SSHPlusAuthority
 from .client import Client
+from .configured_read import configured_reader
 from .diagnostics import doctor, failure_code, probe
 from .observer import ObserverAdapter, ObserverCodec
 from .protocol import MAX_MESSAGE, check
-from .reader import Endpoint, Reader
 from .remote import connect_catalog_host
 from .transport import IPCServer, LineChannel, connect_ipc
 
@@ -104,26 +104,9 @@ async def run(args):
         print(json.dumps(catalog.payload, separators=(",", ":")))
         return
     if args.command in {"read", "watch"}:
-        check(not args.local_host or (args.scope in {"local", "fleet"} and not args.hosts), "standalone_scope")
-        catalog = None if args.local_host else await authority.load()
-        local_host = args.local_host or catalog.local_host
-        selected = [{"id": local_host, "local": True}] if catalog is None else catalog.select(args.scope, args.hosts)
-        endpoints = []
-        for host in selected:
-            if host["local"]:
-                async def connect_local(host_id=host["id"]):
-                    codec = ObserverCodec(args.domain, host_id, args.source)
-                    return await Client.connect(await connect_ipc(args.socket), host=host_id, source=args.source,
-                                                profile=args.domain + "-observer.mesh-candidate.v1", codec=codec.validate)
-                endpoints.append(Endpoint(host["id"], True, None, connect_local))
-            else:
-                async def connect_remote(selected_host=host):
-                    return await connect_catalog_host(catalog, selected_host, args.domain, args.source, authority=authority)
-                endpoints.append(Endpoint(host["id"], False, catalog.route_token(host["id"], host["routes"][0]), connect_remote))
-        async def catalog_check():
-            return (await authority.load()).revision
-        reader = Reader(args.domain, endpoints, local_host=local_host, catalog_revision=catalog.revision if catalog else None,
-                        catalog_check=catalog_check if catalog else None)
+        reader = await configured_reader(args.domain, source=args.source, socket=args.socket,
+                                         scope=args.scope, hosts=args.hosts, local_host=args.local_host,
+                                         authority=authority, report_routes=True)
         if args.command == "read":
             print(json.dumps(await reader.snapshot(), ensure_ascii=False, separators=(",", ":")))
         else:
