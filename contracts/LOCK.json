@@ -1,0 +1,83 @@
+{
+  "lockId": "mesh-plus-state-core-2026-10-09",
+  "lockRevision": 1,
+  "status": "frozen_for_implementation",
+  "meshProtocol": 1,
+  "deliveryProtocol": "mesh-plus.delivery-candidate.v1",
+  "deliveryVersion": 1,
+  "products": [
+    "state"
+  ],
+  "capabilities": [
+    "snapshot",
+    "proof",
+    "subscribe"
+  ],
+  "backends": [
+    "ipc",
+    "ssh-stdio"
+  ],
+  "profiles": {
+    "tmux": "tmux-observer.mesh-candidate.v1",
+    "agent": "agent-observer.mesh-candidate.v1"
+  },
+  "nativeInputs": {
+    "tmux-observer": {
+      "sourceCommit": "128f7f8ac9f4da44d2bafbb6cacb424215de0afd",
+      "schemas": [
+        {
+          "path": "reference/tmux-observer/contracts/observation-v1/schema.json",
+          "sha256": "b79b26cddc4363e43dbc73265f880115570afa9fa5f9851aed947ebb6f0c8c8c"
+        },
+        {
+          "path": "reference/tmux-observer/contracts/service-v1/schema.json",
+          "sha256": "4002b17b06200907b935da8c7191fc44ba9a41c45061c8f7b4201403cf39bfd0"
+        }
+      ]
+    },
+    "agent-observer": {
+      "sourceCommit": "8776cc670abcbe8d0054a48f5f726cdbbc3598a0",
+      "schemas": [
+        {
+          "path": "reference/agent-observer/agent_observer/contracts/snapshot.schema.json",
+          "sha256": "95ba9e3ef4ad5dc059f7a344b5946ea59193a9b061b7d747927d6aceb2eb0e39"
+        },
+        {
+          "path": "reference/agent-observer/agent_observer/contracts/service-frame.schema.json",
+          "sha256": "f43ebea80a47f9db2379a576ca089fde25994e4229606473e5937f1379cbb984"
+        }
+      ]
+    }
+  },
+  "excluded": [
+    "native-events",
+    "replay",
+    "status",
+    "digest-proof",
+    "wss-runtime",
+    "fleet-broker",
+    "global-memory-pool",
+    "refresh",
+    "actions"
+  ],
+  "normativeDigests": {
+    "contracts/mesh-delivery-v1/client-frame.schema.json": "eaf51f8b062c89dc6a0b3e39e30afd8363705f9471856bf5ff42d38062b3a673",
+    "contracts/mesh-delivery-v1/contract.md": "28e3f22b64469a3993ee07672de89da2a32a18a7750bf720eb5f0293d6a9fda3",
+    "contracts/mesh-delivery-v1/server-frame.schema.json": "02bca97857fc548a5aeb49de89cd104f842e88d035206ea92bda6205ec22b3e3",
+    "contracts/mesh-read-v1/agent.profile.schema.json": "32c6b248ebec4dea5235a0a1e6570ae2b9174892167c1bff7824207f010dd87d",
+    "contracts/mesh-read-v1/agent.stream.schema.json": "1b783ce8b879600f4b59a805c45805c06e2ccb43ec1c13d7d1736730b276264d",
+    "contracts/mesh-read-v1/bridge-reply.schema.json": "25c4ff3720eb40426c5ba86df86b1ba81169197b91c10e7aa21481d7431561d5",
+    "contracts/mesh-read-v1/contract.md": "6367b322e0313c244b5908e6bea6c3d9abaa5c033ad5a5af8f5fd814911cc29d",
+    "contracts/mesh-read-v1/control.schema.json": "81fd56e8916b57026b56e595310cd8e12c1e8f00fe066af820b056b121bec2f6",
+    "contracts/mesh-read-v1/error.schema.json": "4eadff42befb518c2dd8eb156b10e837bd34e477c441a7dfe72a06362213a435",
+    "contracts/mesh-read-v1/request.schema.json": "b983a69932d41c1b7ddf0935ed51981f0cb4da120c3a417a8d9f71b765f83eb0",
+    "contracts/mesh-read-v1/schema.json": "8da7bd0ea618bafbc3a1866d08914822bf1a3e5772139ea74ba3fe2aa25fbbfb",
+    "contracts/mesh-read-v1/tmux.profile.schema.json": "49169be091510b9afd85dd6eaa099298280cc8177f7e426f433ceb091ef3eafc",
+    "contracts/mesh-read-v1/tmux.stream.schema.json": "e529b284e1ed365daddaa14e3eee5ced28d778f82aa0fc5be376f86886f44bd7",
+    "docs/contract-freeze.md": "95cd2d9a5c7b4e656ad5bf276c1c34f2072efa843f7eb0bde1938574f8e9eded",
+    "reference/agent-observer/agent_observer/contracts/service-frame.schema.json": "f43ebea80a47f9db2379a576ca089fde25994e4229606473e5937f1379cbb984",
+    "reference/agent-observer/agent_observer/contracts/snapshot.schema.json": "95ba9e3ef4ad5dc059f7a344b5946ea59193a9b061b7d747927d6aceb2eb0e39",
+    "reference/tmux-observer/contracts/observation-v1/schema.json": "b79b26cddc4363e43dbc73265f880115570afa9fa5f9851aed947ebb6f0c8c8c",
+    "reference/tmux-observer/contracts/service-v1/schema.json": "4002b17b06200907b935da8c7191fc44ba9a41c45061c8f7b4201403cf39bfd0"
+  }
+}

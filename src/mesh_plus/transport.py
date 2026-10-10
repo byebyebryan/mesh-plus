@@ -20,8 +20,26 @@ def boottime_ms():
     return int(time.clock_gettime(time.CLOCK_BOOTTIME) * 1000)
 
 
+async def within_deadline(awaitable, deadline_ms):
+    """Include queue/write/validation time and notice suspend-aware expiry."""
+    task = asyncio.ensure_future(awaitable)
+    try:
+        while not task.done():
+            remaining = deadline_ms - boottime_ms()
+            if remaining <= 0:
+                raise TimeoutError("operation_deadline")
+            await asyncio.wait({task}, timeout=min(.1, remaining / 1000))
+        if boottime_ms() >= deadline_ms:
+            raise TimeoutError("operation_deadline")
+        return task.result()
+    finally:
+        if not task.done():
+            task.cancel()
+        await asyncio.gather(task, return_exceptions=True)
+
+
 class LineChannel:
-    def __init__(self, reader, writer, incoming, *, process=None, io_timeout=5.0, reached_nonce=None):
+    def __init__(self, reader, writer, incoming, *, process=None, io_timeout=2.0, reached_nonce=None):
         self.reader, self.writer, self.incoming = reader, writer, incoming
         self.outgoing = "server" if incoming == "client" else "client"
         self.process = process
@@ -32,16 +50,37 @@ class LineChannel:
         self.stderr_tail = bytearray()
         self.reached_nonce = reached_nonce
         self._reached = False
+        self.reached_count = 0
+        self.reached_observed_at = None
+        self.marker_pending = bytearray()
         self.read_job = None
         self.stderr_task = asyncio.create_task(self._stderr()) if process else None
 
     async def _stderr(self):
         while block := await self.process.stderr.read(4096):
+            self._stderr_block(block)
+        self.stderr_tail.extend(self.marker_pending)
+        self.marker_pending.clear()
+        del self.stderr_tail[:-65536]
+
+    def _stderr_block(self, block):
+        if not self.reached_nonce:
             self.stderr_tail.extend(block)
-            if self.reached_nonce:
-                marker = ("\x1eROFI_PLUS_REACHED_V1:" + self.reached_nonce + "\x1f\n").encode()
-                self._reached = self._reached or marker in self.stderr_tail
-            del self.stderr_tail[:-65536]
+        else:
+            marker = ("\x1eROFI_PLUS_REACHED_V1:" + self.reached_nonce + "\x1f\n").encode()
+            self.marker_pending.extend(block)
+            while (position := self.marker_pending.find(marker)) >= 0:
+                self.stderr_tail.extend(self.marker_pending[:position])
+                del self.marker_pending[:position + len(marker)]
+                self.reached_count = min(2, self.reached_count + 1)
+                if self.reached_observed_at is None:
+                    self.reached_observed_at = int(time.time() * 1000)
+            # Keep only a possible split marker, separately from diagnostics.
+            safe = max(0, len(self.marker_pending) - len(marker) + 1)
+            self.stderr_tail.extend(self.marker_pending[:safe])
+            del self.marker_pending[:safe]
+            self._reached = self.reached_count == 1
+        del self.stderr_tail[:-65536]
 
     async def receive(self):
         check(self.read_job is None, "concurrent_read")
@@ -71,7 +110,10 @@ class LineChannel:
             raise EOFError("channel_closed") from error
         maximum = min(self.maximum, MAX_CONTROL) if self.incoming == "client" else self.maximum
         check(len(raw) <= maximum + 1 and b"\r" not in raw and b"\n" not in raw[:-1], "line_framing")
-        return decode(raw[:-1], self.incoming, maximum), len(raw) - 1
+        value = decode(raw[:-1], self.incoming, maximum)
+        check(self.reached_count <= 1, "duplicate_reached_marker")
+        check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
+        return value, len(raw) - 1
 
     @property
     def reached(self):
@@ -83,7 +125,9 @@ class LineChannel:
         async with self.lock:
             check(not self.closed, "channel_closed")
             self.writer.write(raw + b"\n")
+            started = boottime_ms()
             await asyncio.wait_for(self.writer.drain(), self.io_timeout)
+            check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
         return len(raw)
 
     async def close(self):

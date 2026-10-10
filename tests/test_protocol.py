@@ -29,7 +29,8 @@ class ProtocolTests(unittest.TestCase):
 
     def test_duplicate_keys_nonfinite_unicode_and_truncation(self):
         for raw in [b'{"kind":"hello","kind":"hello"}', b'{"v":NaN}',
-                    b'{"v":"\\ud800"}', b'{"v":"\\u0000"}', b'{"v":1e999}', b'{']:
+                    b'{"v":"\\ud800"}', b'{"v":"\\u0000"}', b'{"v":1e999}', b'{',
+                    b'{"v":' + b'9' * 5000 + b'}']:
             with self.subTest(raw=raw), self.assertRaises(ProtocolError):
                 decode(raw, "client")
 

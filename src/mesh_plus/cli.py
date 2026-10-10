@@ -85,7 +85,10 @@ async def run(args):
                 async def connect_remote(selected_host=host):
                     return await connect_catalog_host(catalog, selected_host, args.domain, args.source, authority=authority)
                 endpoints.append(Endpoint(host["id"], False, catalog.route_token(host["id"], host["routes"][0]), connect_remote))
-        reader = Reader(args.domain, endpoints, local_host=local_host, catalog_revision=catalog.revision if catalog else None)
+        async def catalog_check():
+            return (await authority.load()).revision
+        reader = Reader(args.domain, endpoints, local_host=local_host, catalog_revision=catalog.revision if catalog else None,
+                        catalog_check=catalog_check if catalog else None)
         if args.command == "read":
             print(json.dumps(await reader.snapshot(), ensure_ascii=False, separators=(",", ":")))
         else:
@@ -116,6 +119,7 @@ def main():
         return authority_main(sys.argv[2:])
     parser = argparse.ArgumentParser(description="Mesh Plus experimental cached-state transport")
     commands = parser.add_subparsers(dest="command", required=True)
+    commands.add_parser("mesh", help="Host Mesh authority: list/report-route --json")
     default = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "mesh-plus/sources.toml"
     for name in ("bridge", "serve"):
         command = commands.add_parser(name)

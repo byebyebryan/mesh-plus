@@ -19,6 +19,13 @@ within the same setup budget, then continues with independently bounded host
 recovery. Cancelling either operation stops only owned read resources. Reads do
 not start an owner service or native runtime and never fall back to direct reads.
 
+The implemented SDK entry point is `Reader.execute(request)`, an asynchronous
+iterator yielding one snapshot or a replacement watch stream, followed by at
+most one terminal base error. Valid request IDs remain correlated even when
+selection/profile admission fails; malformed IDs produce null error correlation.
+`Reader.snapshot`/`watch` are conveniences over the same semantics. Diagnostic
+CLI flags construct configured reads; they are not a separate stdin wire server.
+
 ## Common response section
 
 `schema.json` describes `mesh`. A domain profile references it alongside its own
@@ -164,8 +171,10 @@ an immutable backend-specific binding digest, not necessarily an SSH alias;
 WSS uses a separately versioned endpoint registry. The WSS fixture establishes
 parser/validity equivalence only, not an implemented WSS owner adapter.
 
-`bridge-request.schema.json` and `bridge-reply.schema.json` define a fixed-source
-proof exchange. The bridge has configured source IDs and adapters. A request
+`bridge-reply.schema.json` defines the fixed-source payload carried by the
+delivery session's snapshot/proof/data variants. `bridge-request.schema.json`
+is the historical standalone exchange sketch and is outside the freeze. The
+bridge has configured source IDs and adapters. A request
 cannot choose arbitrary executables or paths. The complete original owner
 snapshot/service frame is carried in the reply for independent domain validation;
 the user-facing profile then projects it without changing record contents.
@@ -176,21 +185,24 @@ scope; a new cached probe can legitimately have owner sequence one again. The
 adapter compares owner incarnation, view revision and source counters, rather
 than comparing sequence numbers from different local connections.
 
-A `watch` bridge request first receives a nonce-correlated `proof` reply. It then
-receives `candidate` events containing the original owner frame and its digest,
-with null nonce and no translated remaining map. Material candidates trigger a
-coalesced `proof` request on that same configured channel. Only its correlated
-full reply can renew positives. Bridge heartbeat/gap controls contain no owner
-payload or receipts; a gap revokes source positives until a new full proof.
-An unsolicited `error` has a typed error and no owner payload. A failed proof
-echoes its nonce and carries a typed error. All events keep the channel's fixed
-source/host/bridge/clock binding and consecutive bridge sequence; restart creates
-a new channel guard. Original owner sequences remain independently validated.
+A delivery subscription establishes a barrier and then receives candidate owner
+frames with null nonce and no translated remaining map. The Reader sends a
+separately correlated `proof` request on that configured channel; only its full
+reply can renew positives. Delivery heartbeat/gap controls contain no owner
+payload or receipts. Source/host/bridge/clock bindings remain fixed for the
+adapter incarnation, while outer channel sequences order actual delivery.
+The wrapper's sequence is adapter-scoped and may skip within one client because
+other cached reads share that adapter; it is not another channel-order guard.
+Original owner sequences remain scoped to their native connections.
 
-A watch emits full replacement domain views plus `control.schema.json` records.
+A watch contract accepts full replacement domain views plus `control.schema.json` records.
 The domain stream schemas accept these records and a terminal base error.
 Reader sequence starts at one and
-advances for every frame; view revision advances on material change only. A
+advances for every frame in that request. The guard key is reader incarnation
+plus request ID; concurrent requests never consume another watch's sequence.
+View revision advances on changes to the replacement body, including original
+owner headers, delivery/proof/receipt evidence and resync status. Reader encoding
+time and correlation fields alone do not advance revision. A
 heartbeat carries only request/profile correlation, reader/clock/sequence,
 the same view revision and transport liveness; it carries no owner rows or
 receipts. Gap revokes current claims in the retained view, followed by a
@@ -209,11 +221,26 @@ unsolicited candidate coalescing; blocked protected delivery ends the channel
 within the proof deadline. Reader view revision describes aggregate publication,
 not an atomic cross-host sample or a total order of native events.
 
+That proof bound is the Reader coordinator policy per upstream; the generic
+delivery session's independently bounded requests remain multiplexed. The
+implemented outer delivery session supersedes the earlier standalone
+`bridge-request` watch sketch: subscribe establishes the publisher barrier and
+candidate baseline, then a separately correlated cached request supplies proof.
+`bridge-request` is a historical adapter sketch, not a second supported endpoint.
+
 Loss of catalog authority or a changed immutable selection terminates the watch
 with a correlated base error and closes its guard. Resubscription resolves a
 new scope. Late replies from the old guard never acquire the new authority.
-Candidate bridge/reader heartbeat interval is five seconds and transport silence
-deadline is fifteen seconds, independent of owner lease lengths.
+Fleet watches require a `catalog_check` callback returning the current immutable
+configuration revision. Checks have a five-second budget and at most five seconds
+between a completed check and the next check. Failure or changed revision terminates the request,
+closes owned reads and requires resubscription; route-health-only changes do not
+change that configuration revision. A captured catalog is not perpetual authority.
+Bridge subscription heartbeat interval is five seconds and delivery transport
+silence deadline is fifteen seconds, independent of owner lease lengths. The SDK
+Reader emits replacement views and terminal errors; it does not expose a fleet
+subscriber transport. A consumer adapter must invalidate its `ReadGuard` on EOF,
+validation/liveness failure, and use the pure current view on every display read.
 
 These are candidate admission limits, not performance acceptance claims. The
 catalog retains Host Mesh v1's 128-host limit; an initial prepared reader admits
@@ -231,9 +258,9 @@ at most 16 selected hosts and returns explicit capacity errors beyond that.
 | Setup concurrency | Four attempts, with established streams serviced independently |
 | Setup deadline / snapshot total deadline | 15 seconds, no restarted whole-operation budget |
 | Proof round trip / started-frame deadline | Two seconds through full validation |
-| Reader subscriber limit | 32 |
-| Per-reader output | One started frame and one replacement; slow clients disconnect within bounded progress deadline |
-| Aggregate queued/retained application bytes | 96 MiB per reader, including shared buffers counted once and owned child accounting reported separately |
+| IPC bridge connected client limit | 32 |
+| SDK Reader output | Pull-driven replacement iterator; caller owns closure and its downstream transport; shared fleet broker/output queues are outside this freeze |
+| Generic client queued bytes | 96 MiB per delivery client, including a separate 64 KiB queued-control ceiling |
 
 Unknown extensions count toward byte/depth/node limits. Capacity failure never
 truncates a roster while claiming complete delivery. Local and fleet require
@@ -243,7 +270,8 @@ fleet protocol and must not inherit its 1 MiB cap by accident.
 Host Mesh identifiers retain their existing 16,384-character bound as an
 exception to the common string limit; the metadata byte cap still applies.
 Owner documents and bridge remaining maps are validated independently against
-the selected profile. A bridge reply may add at most 16 KiB to its owner frame's
-native limit. Route tokens are `sha256:` of canonical JSON containing catalog
+the selected profile. A baseline bridge reply uses its native owner limit plus
+the delivery session's 64 KiB wrapping reserve (8 MiB + 80 KiB total maximum).
+Route tokens are `sha256:` of canonical JSON containing catalog
 revision, canonical host ID and configured route index, and are diagnostics only.
 A route token does not authorize an action or replace the catalog's destination.

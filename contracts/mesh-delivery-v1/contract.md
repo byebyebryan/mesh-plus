@@ -1,7 +1,7 @@
 # Mesh delivery candidate 1
 
-This is an experimental outer delivery protocol, not a published Observer API
-or an implemented Mesh server. The protocol discriminator is
+This is the implemented experimental outer delivery protocol, not a published
+Observer API or selected operational runtime. The protocol discriminator is
 `mesh-plus.delivery-candidate.v1`; `version` is 1. Domain profile versions are
 independent. [Transport architecture](../../docs/transport-design.md) defines
 ownership, topology, source integration and backend selection.
@@ -49,8 +49,10 @@ Capabilities are `snapshot`, `proof`, `subscribe`, `digest-proof`, `status` and
 never silently change a subscription into periodic polling. State initially
 supports snapshot/proof/subscribe. Events may support status/subscribe/replay
 only after an accepted producer contract. An initial pre-hello setup failure is
-reported by the backend's typed setup outcome, outside an established frame
-sequence; an established channel uses its error frame.
+reported as `setup-error`: protocol/version, sequence 1, the exact hello nonce
+and a bounded typed error, with no channel ID. This is terminal and cannot
+establish a channel. A wrong nonce or another frame after it is invalid. A malformed
+hello can be closed without a reply; an established channel uses its error frame.
 
 The [endpoint candidate](endpoint.schema.json) binds registry revision,
 endpoint identity, host/source/product/profile, backend address and an opaque
@@ -76,10 +78,13 @@ not collect or dispatch actions. A terminal result/ended barrier prohibits
 further messages for that handle.
 
 Because the two directions have independent order, a cancellation already in
-flight may cross a terminal result. The server drains a correctly typed cancel
-for a known terminal handle without reopening it or emitting another terminal
-frame. Unknown/reused handles remain invalid. This exception applies to incoming
-cancellation, not to any post-terminal result, data or control publication.
+flight may cross a terminal result. Credit for data already consumed can likewise
+cross an ended barrier. The server drains a correctly typed cancel for a known
+terminal handle and a valid cumulative credit for a known terminal subscription,
+without reopening either or emitting another terminal frame. Credit still obeys
+the type, monotonicity and outstanding-window checks. Clients stop creating credit
+once they receive ended. Unknown/reused handles remain invalid. These exceptions
+apply to incoming cancel/credit, not post-terminal results, data or controls.
 
 ## Subscription and cancellation
 
@@ -106,6 +111,13 @@ Each subscription control advances its stream sequence. Channel heartbeat has
 null subscription/stream sequence and an empty payload. A heartbeat carries no
 source receipts. Native source-status and event checkpoint payloads require
 their domain validators; neither supplies work/lifecycle authority.
+
+State gap payload is `{gapKind: "delivery"}` with an optional diagnostic `reason`
+matching `[a-z][a-z0-9_]{0,127}`; it carries no native evidence. Idle state
+subscriptions emit empty heartbeats at most five seconds apart. Heartbeats
+do not consume data credit. A queued state unable to obtain full-frame credit
+for fifteen seconds ends that subscription with reason `deadline`; replacement
+publications and heartbeats cannot reset that wait. Siblings remain independent.
 
 On state gap, revoke current claims and require a full resync with source proof.
 On event gap, report the last accepted cursor and end that subscription; a

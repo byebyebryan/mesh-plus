@@ -9,28 +9,7 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 from .observer import ObserverCodec, digest
-from .protocol import check, encode
-
-
-def metadata_bounds(value):
-    nodes = 0
-
-    def visit(item, depth=0, field=None):
-        nonlocal nodes
-        nodes += 1
-        check(nodes <= 8192 and depth <= 12, "metadata_tree_capacity")
-        if isinstance(item, dict):
-            for key, child in item.items():
-                nodes += 1
-                check(len(key) <= 128, "metadata_key_capacity")
-                visit(child, depth + 1, key)
-        elif isinstance(item, list):
-            for child in item:
-                visit(child, depth + 1, field)
-        elif isinstance(item, str):
-            maximum = 16384 if field in {"hostId", "hostIds", "localHostId", "expectedHost"} else 4096
-            check(len(item) <= maximum and not any(ord(c) < 32 or ord(c) == 127 for c in item), "metadata_string_capacity")
-    visit(value)
+from .protocol import check, encode, metadata_bounds
 
 
 @lru_cache(maxsize=2)
@@ -79,11 +58,14 @@ def validate_response(response):
     else:
         check(mesh["catalog"]["revision"] is not None, "catalog_revision")
     references = []
+    host_positions = []
     for row in response["sessions"]:
         check(row_host(domain, row) in scope, "row_host_scope")
+        host_positions.append(scope.index(row_host(domain, row)))
         references.append(tuple(row[k] for k in ("hostId", "serverGeneration", "sessionId", "createdAt")) if domain == "tmux"
                           else tuple(row["identity"][k] for k in ("hostScope", "provider", "namespace", "nativeIdKind", "nativeId")))
     check(len(references) == len(set(references)), "duplicate_identity")
+    check(host_positions == sorted(host_positions), "row_host_order")
     for host in hosts:
         local = host["hostId"] == local_host
         check(host["local"] == local and (host["delivery"]["path"] == "ipc") == local, "local_binding")
@@ -122,6 +104,7 @@ def validate_response(response):
             if receipt["health"] in {"current", "partial"}:
                 check(delivery["status"] == "ready" and original["health"] in {"current", "partial"} and
                       original["accepted"] > 0, "receipt_native_health")
+                check(receipt["health"] == original["health"], "receipt_health_upgrade")
                 expiry = receipt["expiresAtMs"]
                 check(expiry is not None and expiry > mesh["reader"]["encodedAtMs"], "receipt_expired")
                 if local:
@@ -162,3 +145,86 @@ def current_sessions(response, now_ms, clock):
             if active and {r["component"] for r in active} == expected and all(r["expiresAtMs"] > now_ms for r in active):
                 rows.append(copy.deepcopy(row))
     return rows
+
+
+class ReadGuard:
+    """Per-request replacement stream guard; validity still needs current_sessions."""
+
+    def __init__(self, domain, request_id, *, host_ids=None):
+        check(domain in {"tmux", "agent"}, "observer_domain")
+        self.profile = domain + "-observer.mesh-candidate.v1"
+        self.request_id, self.host_ids = request_id, None if host_ids is None else tuple(host_ids)
+        self.binding, self.sequence, self.revision = None, 0, 0
+        self.encoded_at, self.scope, self.catalog = 0, None, None
+        self.needs_resync, self.closed = False, False
+        self.view = None
+        self.host_bindings = {}
+
+    def accept(self, frame):
+        check(not self.closed, "read_terminal_barrier")
+        if "error" in frame and "mesh" not in frame:
+            schema = json.loads(files("mesh_plus").joinpath("schemas", "read-error.schema.json").read_text())
+            Draft202012Validator(schema).validate(frame)
+            check(len(encode(frame)) <= 16384, "error_capacity")
+            check(frame["requestId"] == self.request_id, "read_request_binding")
+            self.closed = True
+            self.view = None
+            return frame
+        mesh = frame["mesh"]
+        control = mesh["kind"] in {"gap", "heartbeat"}
+        if control:
+            schema = json.loads(files("mesh_plus").joinpath("schemas", "read-control.schema.json").read_text())
+            Draft202012Validator(schema).validate(frame)
+            check(len(encode(frame)) <= 16384, "control_capacity")
+            check(self.binding is not None, "read_baseline_required")
+        else:
+            validate_response(frame)
+        check(frame["protocol"] == self.profile and mesh["requestId"] == self.request_id and
+              mesh["operation"] == "watch", "read_request_binding")
+        reader = mesh["reader"]
+        binding = (reader["id"], reader["clock"])
+        check(self.binding is None or binding == self.binding, "read_incarnation_binding")
+        check(reader["sequence"] == self.sequence + 1 and reader["encodedAtMs"] >= self.encoded_at, "read_order")
+        check(self.revision <= reader["revision"] <= self.revision + 1 and
+              reader["revision"] <= reader["sequence"], "read_revision")
+        if control:
+            check(reader["revision"] == self.revision, "control_revision")
+        else:
+            scope, catalog = tuple(mesh["scope"]["hostIds"]), mesh["catalog"]
+            check(self.host_ids is None or scope == self.host_ids, "read_scope_binding")
+            check(self.scope is None or (scope == self.scope and catalog == self.catalog), "read_scope_binding")
+            check(not self.needs_resync or mesh["kind"] == "resync", "read_resync_required")
+            next_hosts = {}
+            for host in mesh["hosts"]:
+                epoch = host["delivery"]["epoch"]
+                owner = host["owner"]
+                publisher = None if owner is None else owner["service"].get("publisherId", owner["service"].get("serviceId"))
+                previous = self.host_bindings.get(host["hostId"])
+                if previous is not None:
+                    check(epoch >= previous[0], "read_host_epoch_regression")
+                    restart = epoch > previous[0] or (publisher is not None and previous[1] is not None and publisher != previous[1])
+                    check(not restart or mesh["kind"] == "resync", "read_resync_required")
+                    publisher = previous[1] if publisher is None else publisher
+                next_hosts[host["hostId"]] = epoch, publisher
+        # Commit only after every admission check; bad frames cannot advance a guard.
+        self.binding = copy.deepcopy(binding)
+        self.sequence, self.revision, self.encoded_at = reader["sequence"], reader["revision"], reader["encodedAtMs"]
+        if control:
+            self.needs_resync = self.needs_resync or mesh["kind"] == "gap"
+            if self.needs_resync:
+                self.view = None
+        else:
+            self.scope, self.catalog = scope, copy.deepcopy(catalog)
+            self.needs_resync = False
+            self.view = copy.deepcopy(frame)
+            self.host_bindings = next_hosts
+        return frame
+
+    def current(self, now_ms, clock):
+        if self.closed or self.needs_resync or self.view is None:
+            return []
+        return current_sessions(self.view, now_ms, clock)
+
+    def disconnect(self):
+        """EOF/framing/liveness failure revokes cached positives immediately."""
+        self.closed, self.view = True, None

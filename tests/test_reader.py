@@ -1,3 +1,4 @@
+import asyncio
 import copy
 import json
 import unittest
@@ -9,9 +10,9 @@ from test_observer import native_fixture
 from mesh_plus.catalog import Catalog
 from mesh_plus.observer import ObserverAdapter, clock_domain
 from mesh_plus.protocol import ProtocolError
-from mesh_plus.reader import Endpoint, Reader
+from mesh_plus.reader import Endpoint, PublicationState, Reader
 from mesh_plus.transport import boottime_ms
-from mesh_plus.view import current_sessions, reconstructed, validate_response
+from mesh_plus.view import ReadGuard, current_sessions, reconstructed, validate_response
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -52,6 +53,67 @@ class CachedClient:
 
 
 class ViewTests(unittest.TestCase):
+    def test_stream_guard_quarantines_cross_request_and_requires_gap_resync(self):
+        view = json.loads((ROOT / "contracts/mesh-read-v1/examples/tmux-local.json").read_text())
+        view["mesh"].update(operation="watch", requestId="a" * 32)
+        view["mesh"]["reader"].update(sequence=1, revision=1)
+        guard = ReadGuard("tmux", "a" * 32, host_ids=view["mesh"]["scope"]["hostIds"])
+        guard.accept(view)
+        crossed = copy.deepcopy(view)
+        crossed["mesh"].update(requestId="b" * 32)
+        crossed["mesh"]["reader"]["sequence"] = 2
+        with self.assertRaisesRegex(ProtocolError, "read_request_binding"):
+            guard.accept(crossed)
+        self.assertEqual(guard.sequence, 1)
+        control = {"protocol": view["protocol"], "schemaVersion": 1,
+                   "mesh": {key: view["mesh"][key] for key in ("meshProtocol", "requestId", "operation", "access")}}
+        control["mesh"].update(reader={**view["mesh"]["reader"], "sequence": 2}, kind="gap")
+        guard.accept(control)
+        self.assertEqual(guard.current(2000, view["mesh"]["reader"]["clock"]), [])
+        replacement = copy.deepcopy(view)
+        replacement["mesh"]["reader"]["sequence"] = 3
+        with self.assertRaisesRegex(ProtocolError, "read_resync_required"):
+            guard.accept(replacement)
+        replacement["mesh"]["kind"] = "resync"
+        guard.accept(replacement)
+        guard.accept({"meshProtocol": 1, "requestId": "a" * 32,
+                      "error": {"code": "scope_changed", "message": "Resubscribe"}})
+        with self.assertRaisesRegex(ProtocolError, "read_terminal_barrier"):
+            guard.accept(replacement)
+
+    def test_interleaved_host_rows_are_rejected(self):
+        response = json.loads((ROOT / "contracts/mesh-read-v1/examples/agent-fleet.json").read_text())
+        response["sessions"].reverse()
+        with self.assertRaisesRegex(ProtocolError, "row_host_order"):
+            validate_response(response)
+
+    def test_stream_guard_requires_resync_for_host_reconnect_and_no_epoch_regression(self):
+        response = json.loads((ROOT / "contracts/mesh-read-v1/examples/tmux-local.json").read_text())
+        response["mesh"].update(operation="watch", requestId="a" * 32)
+        guard = ReadGuard("tmux", "a" * 32)
+        guard.accept(response)
+        replacement = copy.deepcopy(response)
+        replacement["mesh"]["reader"].update(sequence=2, revision=2)
+        replacement["mesh"]["hosts"][0]["delivery"]["epoch"] += 1
+        with self.assertRaisesRegex(ProtocolError, "read_resync_required"):
+            guard.accept(replacement)
+        self.assertEqual(guard.sequence, 1)
+        replacement["mesh"]["kind"] = "resync"
+        guard.accept(replacement)
+        replacement["mesh"]["reader"].update(sequence=3, revision=3)
+        replacement["mesh"]["hosts"][0]["delivery"]["epoch"] -= 1
+        with self.assertRaisesRegex(ProtocolError, "read_host_epoch_regression"):
+            guard.accept(replacement)
+        self.assertTrue(guard.current(2000, response["mesh"]["reader"]["clock"]))
+        guard.disconnect()
+        self.assertEqual(guard.current(2000, response["mesh"]["reader"]["clock"]), [])
+
+    def test_native_receipt_health_cannot_be_reclassified(self):
+        response = json.loads((ROOT / "contracts/mesh-read-v1/examples/agent-local.json").read_text())
+        response["mesh"]["hosts"][0]["receipts"][0]["health"] = "partial"
+        with self.assertRaisesRegex(ProtocolError, "receipt_health_upgrade"):
+            validate_response(response)
+
     def test_all_frozen_profiles_and_expiry(self):
         for path in (ROOT / "contracts/mesh-read-v1/examples").glob("*.json"):
             if path.name.startswith(("tmux-", "agent-")):
@@ -102,6 +164,113 @@ class ViewTests(unittest.TestCase):
 
 
 class ReaderTests(unittest.IsolatedAsyncioTestCase):
+    async def test_setup_concurrency_is_four_across_selected_hosts(self):
+        active, maximum = 0, 0
+        def endpoint(index):
+            host = "host" + str(index)
+            async def connect():
+                nonlocal active, maximum
+                active += 1
+                maximum = max(maximum, active)
+                try:
+                    await asyncio.sleep(.02)
+                    return CachedClient("tmux", host)
+                finally:
+                    active -= 1
+            return Endpoint(host, index == 0, None if index == 0 else "sha256:" + "a" * 64, connect)
+        reader = Reader("tmux", [endpoint(i) for i in range(8)], local_host="host0",
+                        catalog_revision="sha256:" + "b" * 64)
+        response = await reader.snapshot()
+        self.assertEqual(response["mesh"]["status"], "complete")
+        self.assertEqual(maximum, 4)
+    async def test_wire_request_preserves_correlation_and_rejects_before_dispatch(self):
+        calls = []
+        async def connect():
+            calls.append(True)
+            return CachedClient("tmux", "local")
+        reader = Reader("tmux", [Endpoint("local", True, None, connect)], local_host="local")
+        request = {"meshProtocol": 1, "requestId": "a" * 32, "profile": "tmux-observer.mesh-candidate.v1",
+                   "operation": "snapshot", "access": "cached", "selection": {"mode": "local", "hostIds": []},
+                   "extensions": {}}
+        frames = [frame async for frame in reader.execute(request)]
+        self.assertEqual(len(frames), 1)
+        self.assertEqual(frames[0]["mesh"]["requestId"], request["requestId"])
+        calls.clear()
+        request["selection"] = {"mode": "hosts", "hostIds": ["unknown"]}
+        frames = [frame async for frame in reader.execute(request)]
+        self.assertEqual(frames[0]["requestId"], request["requestId"])
+        self.assertEqual(frames[0]["error"]["code"], "unknown_host")
+        self.assertFalse(calls)
+    async def test_publication_sequence_is_per_request_and_revision_excludes_encoding_time(self):
+        client = CachedClient("tmux", "local")
+        async def connect():
+            return client
+        endpoint = Endpoint("local", True, None, connect)
+        reader = Reader("tmux", [endpoint], local_host="local")
+        snapshot = await reader.snapshot()
+        other = await reader.snapshot()
+        self.assertEqual(snapshot["mesh"]["reader"]["sequence"], 1)
+        self.assertEqual(other["mesh"]["reader"]["sequence"], 1)
+        outcome = (snapshot["mesh"]["hosts"][0], snapshot["sessions"])
+        state = PublicationState()
+        one = reader.compose([endpoint], {"local": outcome}, "a" * 32, "watch", state=state)
+        two = reader.compose([endpoint], {"local": outcome}, "a" * 32, "watch", state=state)
+        self.assertEqual(two["mesh"]["reader"]["sequence"], 2)
+        self.assertEqual(two["mesh"]["reader"]["revision"], one["mesh"]["reader"]["revision"])
+    async def test_catalog_replacement_terminates_watch_without_late_publication(self):
+        cancelled = asyncio.Event()
+        async def blocked():
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.set()
+        async def replaced():
+            return "sha256:" + "c" * 64
+        reader = Reader("tmux", [Endpoint("remote", False, "sha256:" + "a" * 64, blocked)],
+                        local_host="local", catalog_revision="sha256:" + "b" * 64, catalog_check=replaced)
+        watch = reader.watch(request_id="a" * 32)
+        try:
+            baseline = await anext(watch)
+            self.assertEqual(baseline["mesh"]["status"], "pending")
+            error = await asyncio.wait_for(anext(watch), .5)
+            self.assertEqual(error["requestId"], "a" * 32)
+            self.assertEqual(error["error"]["code"], "scope_changed")
+            with self.assertRaises(StopAsyncIteration):
+                await anext(watch)
+            self.assertTrue(cancelled.is_set())
+        finally:
+            await watch.aclose()
+
+    async def test_fleet_watch_requires_explicit_catalog_monitor(self):
+        calls = []
+        async def connect():
+            calls.append(True)
+        reader = Reader("tmux", [Endpoint("local", True, None, connect)],
+                        local_host="local", catalog_revision="sha256:" + "b" * 64)
+        frames = [frame async for frame in reader.watch()]
+        self.assertEqual(len(frames), 1)
+        self.assertEqual(frames[0]["error"]["code"], "catalog_monitor_required")
+        self.assertFalse(calls)
+
+    async def test_snapshot_total_budget_preserves_healthy_sibling_and_correlation(self):
+        healthy = CachedClient("tmux", "local")
+        cancelled = asyncio.Event()
+        async def good():
+            return healthy
+        async def blocked():
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.set()
+        reader = Reader("tmux", [Endpoint("local", True, None, good),
+                                  Endpoint("remote", False, "sha256:" + "a" * 64, blocked)],
+                        local_host="local", catalog_revision="sha256:" + "b" * 64)
+        response = await asyncio.wait_for(reader.snapshot(timeout_ms=50, request_id="a" * 32), .5)
+        self.assertEqual(response["mesh"]["status"], "partial")
+        self.assertEqual(response["mesh"]["requestId"], "a" * 32)
+        self.assertEqual(response["mesh"]["hosts"][1]["delivery"]["error"]["code"], "timeout")
+        self.assertTrue(cancelled.is_set())
+        self.assertTrue(healthy.closed)
     async def test_same_local_and_fleet_shape_with_independent_failure(self):
         for domain in ("tmux", "agent"):
             clients = []

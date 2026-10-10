@@ -10,6 +10,10 @@ schemas, examples and executable design checks, plus an experimental runtime
 foundation. No runtime artifact or migration is selected or deployed. See
 [implementation checkpoints](docs/implementation-progress.md).
 
+The [state contract freeze](docs/contract-freeze.md) defines the interfaces ready
+for independent implementation. [The checked lock](contracts/LOCK.json) binds
+normative inputs and native schema baselines; CI rejects unreviewed drift.
+
 ## Design package
 
 - [Architecture and decisions](docs/architecture.md)
@@ -69,7 +73,7 @@ It does not query providers or start services. The checked-in result is in
 
 The second candidate adds [delivery validation](docs/evidence/delivery-validation.json)
 and an optional [owned carrier study](docs/transport-validation.md#results-and-reproduction).
-Current suites pass 117 read checks with source parity (116 offline) and 161
+Current suites pass 117 read checks with source parity (116 offline) and 169
 delivery checks. The carrier study
 uses temporary synthetic IPC/SSH/WSS endpoints, not ordinary Observer services.
 

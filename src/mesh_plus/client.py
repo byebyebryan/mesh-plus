@@ -4,8 +4,8 @@ import asyncio
 import contextlib
 import secrets
 
-from .protocol import MAX_MESSAGE, PROTOCOL, Lifecycle, ProtocolError, check
-from .transport import boottime_ms
+from .protocol import MAX_CONTROL, MAX_MESSAGE, PROTOCOL, Lifecycle, ProtocolError, check
+from .transport import boottime_ms, within_deadline
 
 
 class DeliveryError(Exception):
@@ -35,12 +35,16 @@ class Subscription:
             raise StopAsyncIteration
         frame, size = item
         self.client.buffered_bytes -= size
-        if frame["kind"] == "data" and not self.closed:
+        if frame["kind"] == "control":
+            self.client.buffered_control_bytes -= size
+        if frame["kind"] == "data" and not self.closed and self.client.guard.handles[self.key]["phase"] != "done":
             handle = self.client.guard.handles[self.key]
             credit = handle["credit"].copy()
             credit["frames"] += 1
             credit["bytes"] += size
             await self.client._send("credit", subscriptionId=self.key, credit=credit)
+        if self.closed:
+            raise StopAsyncIteration
         return frame
 
     async def close(self):
@@ -60,6 +64,9 @@ class Subscription:
                 item = self.queue.get_nowait()
                 if isinstance(item, tuple):
                     self.client.buffered_bytes -= item[1]
+                    if item[0]["kind"] == "control":
+                        self.client.buffered_control_bytes -= item[1]
+            self.queue.put_nowait(None)
             self.client.subscriptions.pop(self.key, None)
 
 
@@ -72,6 +79,7 @@ class Client:
         self.subscriptions = {}
         self.failure = None
         self.buffered_bytes = 0
+        self.buffered_control_bytes = 0
         self.reader_task = asyncio.create_task(self._read())
 
     @classmethod
@@ -82,19 +90,31 @@ class Client:
                  "limits": {"maxMessageBytes": MAX_MESSAGE, "maxOutstanding": 8, "maxSubscriptions": 8}}
         guard = Lifecycle(hello, host)
         try:
-            await channel.send(hello)
-            frame, size = await asyncio.wait_for(channel.receive(), timeout)
-            guard.received(frame, size)
+            async def handshake():
+                await channel.send(hello)
+                frame, size = await channel.receive()
+                outcome = guard.received(frame, size)
+                if outcome == "setup_error":
+                    raise DeliveryError(frame["error"]["code"], frame["error"]["message"])
+                return outcome
+            await within_deadline(handshake(), boottime_ms() + int(timeout * 1000))
             channel.maximum = guard.limits["maxMessageBytes"]
             return cls(channel, guard, codec)
         except BaseException:
             await channel.close()
             raise
 
-    async def _send(self, kind, **fields):
+    async def _send(self, kind, *, deadline_ms=None, **fields):
         async with self.send_lock:
             if self.failure:
                 raise self.failure
+            if kind == "credit" and self.guard.handles[fields["subscriptionId"]]["phase"] == "done":
+                return
+            if deadline_ms is not None:
+                remaining = deadline_ms - boottime_ms()
+                if remaining <= 0:
+                    raise TimeoutError("request_deadline")
+                fields["timeoutMs"] = min(fields["timeoutMs"], remaining)
             frame = {"protocol": PROTOCOL, "version": 1, "channelId": self.guard.channel,
                      "sequence": self.guard.client_sequence + 1, "kind": kind, **fields}
             self.guard.sent(frame, boottime_ms(), allow_late_cancel=kind == "cancel")
@@ -105,39 +125,49 @@ class Client:
                 raise
 
     async def request(self, operation="snapshot", parameters=None, *, timeout_ms=2000):
+        check(type(timeout_ms) is int and 1 <= timeout_ms <= 60000, "request_budget")
+        check(len(self.requests) < self.guard.limits["maxOutstanding"], "handle_capacity")
         key = secrets.token_hex(16)
         future = asyncio.get_running_loop().create_future()
         self.requests[key] = future
         deadline = boottime_ms() + timeout_ms
         try:
-            await self._send("request", requestId=key, operation=operation, parameters=parameters or {},
-                             timeoutMs=timeout_ms)
+            await within_deadline(self._send("request", requestId=key, operation=operation,
+                                             parameters={} if parameters is None else parameters,
+                                             timeoutMs=timeout_ms, deadline_ms=deadline), deadline)
             while not future.done():
                 remaining = deadline - boottime_ms()
                 if remaining <= 0:
                     raise TimeoutError("request_deadline")
                 # Short waits ensure BOOTTIME expiry is noticed promptly after suspend.
                 await asyncio.wait({future}, timeout=min(remaining / 1000, .1))
-            check(boottime_ms() < deadline, "request_deadline")
+            if boottime_ms() >= deadline:
+                raise TimeoutError("request_deadline")
             return future.result()
         except (TimeoutError, asyncio.CancelledError):
             handle = self.guard.handles.get(key)
-            if handle and handle["phase"] != "done":
-                await self._send("cancel", handleId=key, handleType="request")
+            if handle and handle["phase"] != "done" and not self.channel.closed:
+                with contextlib.suppress(Exception):
+                    await self._send("cancel", handleId=key, handleType="request")
             raise
         finally:
             self.requests.pop(key, None)
             if not future.done():
                 future.cancel()
+            elif not future.cancelled():
+                future.exception()
 
     async def subscribe(self):
+        check(len(self.subscriptions) < self.guard.limits["maxSubscriptions"], "handle_capacity")
         key = secrets.token_hex(16)
         sub = Subscription(self, key)
         self.subscriptions[key] = sub
         try:
-            await self._send("subscribe", subscriptionId=key, start={"mode": "baseline", "cursor": None},
-                             credit={"frames": 32, "bytes": self.guard.limits["maxMessageBytes"]})
-            await asyncio.wait_for(asyncio.shield(sub.ready), self.close_timeout)
+            async def admission():
+                await self._send("subscribe", subscriptionId=key, start={"mode": "baseline", "cursor": None},
+                                 credit={"frames": 32, "bytes": self.guard.limits["maxMessageBytes"]})
+                return await asyncio.shield(sub.ready)
+            await within_deadline(admission(), boottime_ms() + int(self.close_timeout * 1000))
             return sub
         except BaseException:
             if key in self.guard.handles:
@@ -183,8 +213,12 @@ class Client:
                         else:
                             try:
                                 check(self.buffered_bytes + size <= 96 * 1024 * 1024, "reader_byte_capacity")
+                                if frame["kind"] == "control":
+                                    check(self.buffered_control_bytes + size <= MAX_CONTROL, "control_reserve")
                                 sub.queue.put_nowait((frame, size))
                                 self.buffered_bytes += size
+                                if frame["kind"] == "control":
+                                    self.buffered_control_bytes += size
                             except asyncio.QueueFull:
                                 # Control congestion is a bounded channel failure, not unlimited buffering.
                                 raise ProtocolError("reader_queue_capacity") from None
@@ -208,6 +242,8 @@ class Client:
                 item = sub.queue.get_nowait()
                 if isinstance(item, tuple):
                     self.buffered_bytes -= item[1]
+                    if item[0]["kind"] == "control":
+                        self.buffered_control_bytes -= item[1]
             sub.queue.put_nowait(error)
 
     async def close(self):

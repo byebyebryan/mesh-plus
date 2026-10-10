@@ -93,9 +93,52 @@ def decode_json(raw, maximum=MAX_MESSAGE):
 
     try:
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=pairs, parse_constant=constant)
-    except (UnicodeError, json.JSONDecodeError, RecursionError) as error:
+    except ProtocolError:
+        raise
+    except (UnicodeError, ValueError, RecursionError) as error:
         raise ProtocolError("invalid_json") from error
     tree(value)
+    return value
+
+
+def metadata_bounds(value):
+    nodes = 0
+
+    def visit(item, depth=0, field=None):
+        nonlocal nodes
+        nodes += 1
+        check(nodes <= 8192 and depth <= 12, "metadata_tree_capacity")
+        if isinstance(item, dict):
+            for key, child in item.items():
+                nodes += 1
+                check(len(key) <= 128, "metadata_key_capacity")
+                visit(child, depth + 1, key)
+        elif isinstance(item, list):
+            for child in item:
+                visit(child, depth + 1, field)
+        elif isinstance(item, str):
+            maximum = 16384 if field in {"hostId", "hostIds", "localHostId", "expectedHost"} else 4096
+            check(len(item) <= maximum and not any(ord(c) < 32 or ord(c) == 127 for c in item), "metadata_string_capacity")
+    visit(value)
+
+
+@lru_cache(maxsize=1)
+def read_request_validator():
+    schema = json.loads(files("mesh_plus").joinpath("schemas", "read-request.schema.json").read_text())
+    return Draft202012Validator(schema)
+
+
+def validate_read_request(value, profile):
+    """Pure request admission; selectors never become executable/path inputs."""
+    try:
+        read_request_validator().validate(value)
+    except (ValidationError, RecursionError) as error:
+        raise ProtocolError("invalid_request") from error
+    check(len(encode(value)) <= 16384, "request_capacity")
+    metadata_bounds(value)
+    check(value["profile"] == profile, "unsupported_contract")
+    selection = value["selection"]
+    check((selection["mode"] == "hosts") == bool(selection["hostIds"]), "selection_shape")
     return value
 
 
@@ -131,13 +174,13 @@ class Lifecycle:
         self.__dict__.update(candidate.__dict__)
         return result
 
-    def sent(self, frame, now_ms, *, allow_late_cancel=False):
-        return self._transaction(Lifecycle._sent, frame, now_ms, allow_late_cancel)
+    def sent(self, frame, now_ms, *, allow_late_cancel=False, allow_late_credit=False):
+        return self._transaction(Lifecycle._sent, frame, now_ms, allow_late_cancel, allow_late_credit)
 
     def received(self, frame, size):
         return self._transaction(Lifecycle._received, frame, size)
 
-    def _sent(self, frame, now_ms, allow_late_cancel):
+    def _sent(self, frame, now_ms, allow_late_cancel, allow_late_credit):
         validate(frame, "client", maximum=self.limits["maxMessageBytes"])
         check(not self.closed and self.channel is not None, "session_not_ready")
         check(frame["channelId"] == self.channel, "channel_binding")
@@ -166,7 +209,8 @@ class Lifecycle:
             key = frame["handleId"] if kind == "cancel" else frame["subscriptionId"]
             check(key in self.handles, "unknown_handle")
             handle = self.handles[key]
-            check(handle["phase"] != "done" or (kind == "cancel" and allow_late_cancel), "terminal_barrier")
+            check(handle["phase"] != "done" or (kind == "cancel" and allow_late_cancel) or
+                  (kind == "credit" and allow_late_credit), "terminal_barrier")
             if kind == "credit":
                 check(handle["kind"] == "subscribe", "handle_type")
                 self._credit(handle, frame["credit"])
@@ -198,6 +242,11 @@ class Lifecycle:
         check(not self.closed, "session_closed")
         check(frame["sequence"] == self.server_sequence + 1, "server_order")
         if self.channel is None:
+            if frame["kind"] == "setup-error":
+                check(frame["helloNonce"] == self.hello["helloNonce"], "hello_binding")
+                self.closed = True
+                self.server_sequence = frame["sequence"]
+                return "setup_error"
             check(frame["kind"] == "hello", "initial_hello")
             for returned, requested in [("hostId", "expectedHost"), ("sourceId", "sourceId"),
                                         ("product", "product"), ("profile", "profile"), ("helloNonce", "helloNonce")]:
@@ -260,6 +309,10 @@ class Lifecycle:
                     if frame["control"] == "heartbeat":
                         check(frame["payload"] == {}, "heartbeat_evidence")
                     elif frame["control"] == "gap":
+                        payload = frame["payload"]
+                        check(set(payload) <= {"gapKind", "reason"} and payload.get("gapKind") == "delivery" and
+                              ("reason" not in payload or isinstance(payload["reason"], str) and
+                               re.fullmatch(r"[a-z][a-z0-9_]{0,127}", payload["reason"])), "state_gap_payload")
                         handle["resync"] = True
                 handle["stream"] = frame["streamSequence"]
         self.server_sequence = frame["sequence"]

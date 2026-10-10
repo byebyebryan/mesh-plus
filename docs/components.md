@@ -19,19 +19,17 @@ owns bridge/transport lifecycle. Installing an Agent adapter must not force a
 Codex or Claude collector import in the pure Mesh parser. A future source requires
 an explicit adapter/profile, not generic arbitrary remote argv.
 
-## Proposed interfaces
+## Current interfaces
 
-Names are implementation targets, not currently installed commands:
+Commands exist in the candidate package; no operational installation is selected:
 
 ```text
-mesh-plus hosts --json
-mesh-plus report-route --json ...
-mesh-plus read --profile PROFILE --scope local|fleet --json
-mesh-plus watch --profile PROFILE --hosts HOST... --json
+mesh-plus hosts --authority ssh-plus|mesh
+mesh-plus mesh list|report-route --json ...
+mesh-plus read --domain tmux|agent --source ID --socket LOCAL_MESH_IPC --scope local|fleet|hosts
+mesh-plus watch --domain tmux|agent --source ID --socket LOCAL_MESH_IPC --scope local|fleet|hosts
 mesh-plus bridge --source SOURCE --stdio
-mesh-plus request --source SOURCE --operation OPERATION --hosts HOST... --json
-mesh-plus subscribe --source SOURCE --product state|events --hosts HOST... --json
-mesh-plus serve --ipc ENDPOINT
+mesh-plus serve --source SOURCE --socket HOST_BRIDGE_IPC
 ```
 
 Domain-facing CLIs retain their own names and adopt the new profile via an
@@ -39,6 +37,12 @@ explicit option or endpoint. They may call a pure local adapter or the reusable
 reader. The public process interface is independently callable without Rofi.
 Remote bridge source IDs resolve through installed owner configuration; neither
 the requester nor metadata text supplies an executable path.
+
+`serve` publishes one configured host-local source; it is not the deferred
+shared fleet-reader broker. The public SDK uses `Reader.execute(request)` for
+the Mesh Read envelope, `Client.request`/`subscribe` for delivery, and
+`ReadGuard.accept`/`current` for safe consumer adoption. See the
+[contract freeze and work boundaries](contract-freeze.md) for exact scope.
 
 The configured SSH destination plus existing SSH authentication/host-key policy
 is the trusted route binding. Source host labels are checked against it but are

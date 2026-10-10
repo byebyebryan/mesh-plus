@@ -107,6 +107,10 @@ def schemas_and_parser():
 
 def lifecycle():
     client = sample("client-hello")
+    check("typed nonce-bound setup rejection", lambda: require(
+        Session(client).receive(sample("server-setup-error")) == "setup_error", "setup_rejection"))
+    rejects("setup rejection wrong nonce", lambda: Session(client).receive(
+        sample("server-setup-error", helloNonce="0" * 32)), "hello_binding")
     for key, replacement in [("helloNonce", "2" * 32), ("hostId", "wrong-host"), ("sourceId", "other"), ("product", "events"), ("profile", "other.v1")]:
         rejects("hello binding: " + key, lambda k=key, r=replacement: Session(client).receive(sample("server-hello", **{k: r})), "hello_binding")
     rejects("route-authenticated host differs", lambda: Session(client, authenticated_host="other-host").receive(sample("server-hello")), "authenticated_host_binding")
@@ -146,6 +150,13 @@ def lifecycle():
     send(session, "client-request")
     check("cancelled sibling does not close request", lambda: receive(session, "server-result"))
     rejects("data after ended barrier", lambda: receive(session, "server-data", streamSequence=2), "terminal_barrier")
+    check("in-flight cancel crosses terminal without reopening", lambda: session.send(
+        sample("client-cancel", channelId=session.channel, sequence=session.client_sequence + 1), receive_late=True))
+    check("late cancel keeps terminal phase", lambda: require(session.handles["s1"]["phase"] == "done", "terminal_reopened"))
+    check("in-flight valid credit crosses terminal without reopening", lambda: session.send(
+        sample("client-credit", channelId=session.channel, sequence=session.client_sequence + 1,
+               credit=session.handles["s1"]["credit"].copy()), receive_late=True))
+    check("late credit keeps terminal phase", lambda: require(session.handles["s1"]["phase"] == "done", "terminal_reopened"))
     session = subscribed(); send(session, "client-cancel")
     rejects("duplicate subscription acknowledgment during cancel", lambda: receive(session, "server-subscribed"), "subscription_barrier")
     session = opened(); send(session, "client-request"); session.expire(2000)

@@ -210,3 +210,34 @@ Reproduce native selection with
 `scripts/check-authority-compat.py --ssh-plus PATH --backend mesh-plus`.
 The current source baseline records the reviewed selector and original legacy
 bytes; the initial design tuple remains in `read-design-baselines.json`.
+
+## State contract review and freeze
+
+The [state contract freeze](contract-freeze.md) and [checked lock](../contracts/LOCK.json)
+now define the accepted boundary for independent work. The freeze covers cached
+snapshots, nonce proofs and pushed state over IPC/SSH. Event replay/status,
+digest-proof, WSS authorization/runtime and a shared fleet broker remain separate
+gates. The lock checks eighteen normative inputs and twenty packaged schema
+copies; CI rejects unreviewed contract drift.
+
+The review corrected whole-operation BOOTTIME budgets, shared setup concurrency,
+request-local publication sequence/revision, typed nonce-bound setup rejection,
+terminal credit races, idle heartbeat and credit starvation, and catalog lifetime.
+`Reader.execute` admits Read requests before source dispatch. Fleet watches
+require a revision monitor and terminate with a correlated error after an
+observed catalog change or monitoring failure. Host errors preserve healthy
+siblings. Source health remains producer-attributable.
+
+The pure `ReadGuard` verifies request/incarnation/scope/order, revokes positives
+on gaps or terminal errors, requires resync after reconnect, and rejects host
+epoch regression. Its transport caller must invoke `disconnect()` on EOF,
+validation or liveness failure. Local and fleet use the same validator and
+conservative expiry facade. SSH marker handling preserves the original observed
+timestamp, removes matching markers from diagnostics and rejects observed
+duplicates without fallback or route demotion.
+
+The SDK Reader is a pull-driven iterator, and `serve` exports one host source.
+Neither is the deferred shared fleet broker. Queue limits are per Delivery client;
+IPC bridge connection admission is separately bounded. Independent package and
+CI evidence follow this source checkpoint; operational selection, GUI, resource
+and physical suspend gates remain distinct.

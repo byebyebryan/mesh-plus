@@ -106,7 +106,7 @@ class Session:
         self.limits = hello["limits"]
         self.capabilities = set()
 
-    def send(self, frame, now=0):
+    def send(self, frame, now=0, *, receive_late=False):
         validate(frame, "client-frame")
         require(not self.closed and self.channel is not None, "session_not_ready")
         require(frame.get("channelId") == self.channel, "channel_binding")
@@ -135,11 +135,12 @@ class Session:
                 self.handles[key] = {"type": kind, "phase": "pending", "start": start, "credit": credit.copy(), "frames": 0, "bytes": 0, "stream": 0, "resync": False, "cursor": None}
         elif kind in ["credit", "cancel"]:
             key = frame["subscriptionId"] if kind == "credit" else frame["handleId"]
-            require(key in self.handles and self.handles[key]["phase"] != "done", "unknown_handle")
+            require(key in self.handles and (self.handles[key]["phase"] != "done" or receive_late), "unknown_handle")
             handle = self.handles[key]
             if kind == "cancel":
                 require(handle["type"] == ("request" if frame["handleType"] == "request" else "subscribe"), "handle_type")
-                handle["phase"] = "closing"
+                if handle["phase"] != "done":
+                    handle["phase"] = "closing"
             else:
                 require(handle["type"] == "subscribe", "handle_type")
                 credit = frame["credit"]
@@ -162,6 +163,10 @@ class Session:
         require(not self.closed, "session_closed")
         require(frame["sequence"] == self.server_sequence + 1, "server_order")
         if self.channel is None:
+            if frame["kind"] == "setup-error":
+                require(frame["helloNonce"] == self.hello["helloNonce"], "hello_binding")
+                self.closed, self.server_sequence = True, 1
+                return "setup_error"
             require(frame["kind"] == "hello" and frame["sequence"] == 1, "initial_hello")
             for returned, requested in [("hostId", "expectedHost"), ("sourceId", "sourceId"), ("product", "product"), ("profile", "profile"), ("helloNonce", "helloNonce")]:
                 require(frame[returned] == self.hello[requested], "hello_binding")

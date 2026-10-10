@@ -23,11 +23,13 @@ class Bridge:
     Adapters expose explicit capabilities and a fixed host/source/profile.
     """
 
-    def __init__(self, adapter):
+    def __init__(self, adapter, *, heartbeat_interval=5, credit_timeout=15):
         self.adapter = adapter
+        check(.01 <= heartbeat_interval <= 5 and .01 <= credit_timeout <= 15, "delivery_timing")
+        self.heartbeat_interval, self.credit_timeout = heartbeat_interval, credit_timeout
 
     async def serve(self, channel):
-        connection = _Connection(channel, self.adapter)
+        connection = _Connection(channel, self.adapter, self.heartbeat_interval, self.credit_timeout)
         try:
             await connection.run()
         finally:
@@ -35,12 +37,13 @@ class Bridge:
 
 
 class _Connection:
-    def __init__(self, channel, adapter):
+    def __init__(self, channel, adapter, heartbeat_interval, credit_timeout):
         self.channel, self.adapter = channel, adapter
         self.guard = None
         self.tasks = {}
         self.emit_lock = asyncio.Lock()
-        self.changed = asyncio.Condition()
+        self.wakes = {}
+        self.heartbeat_interval, self.credit_timeout = heartbeat_interval, credit_timeout
 
     async def emit(self, kind, *, credited=False, on_admit=None, **fields):
         async with self.emit_lock:
@@ -67,6 +70,21 @@ class _Connection:
 
     async def run(self):
         hello, _ = await asyncio.wait_for(self.channel.receive(), 3)
+        if hello["kind"] == "hello":
+            code = None
+            if hello["product"] != "state":
+                code = "unsupported_product"
+            elif hello["expectedHost"] != self.adapter.host:
+                code = "scope_mismatch"
+            elif hello["sourceId"] != self.adapter.source or hello["profile"] != self.adapter.profile:
+                code = "unsupported_contract"
+            elif not set(hello["requiredCapabilities"]) <= set(self.adapter.capabilities):
+                code = "unsupported_capability"
+            if code:
+                await self.channel.send({"protocol": PROTOCOL, "version": 1, "sequence": 1,
+                                         "kind": "setup-error", "helloNonce": hello["helloNonce"],
+                                         "error": {"code": code, "message": "Configured source/profile unavailable"}})
+                return
         self.guard = Lifecycle(hello, self.adapter.host)
         check(hello["expectedHost"] == self.adapter.host and hello["sourceId"] == self.adapter.source and
               hello["profile"] == self.adapter.profile, "source_binding")
@@ -80,7 +98,7 @@ class _Connection:
         self.channel.maximum = self.guard.limits["maxMessageBytes"]
         while True:
             frame, _ = await self.channel.receive()
-            self.guard.sent(frame, boottime_ms(), allow_late_cancel=True)
+            self.guard.sent(frame, boottime_ms(), allow_late_cancel=True, allow_late_credit=True)
             kind = frame["kind"]
             if kind == "close":
                 return
@@ -99,8 +117,8 @@ class _Connection:
                 if self.guard.handles[key]["phase"] != "done":
                     await self.emit("ended", handleId=key, handleType=frame["handleType"], reason="cancelled", cursor=None)
             elif kind == "credit":
-                async with self.changed:
-                    self.changed.notify_all()
+                if frame["subscriptionId"] in self.wakes:
+                    self.wakes[frame["subscriptionId"]].set()
 
     def finished(self, key, task):
         self.tasks.pop(key, None)
@@ -132,6 +150,9 @@ class _Connection:
         skipped = False
         finished = False
         wake = asyncio.Event()
+        self.wakes[key] = wake
+        last_progress = boottime_ms()
+        blocked_since = None
         try:
             first = await asyncio.wait_for(anext(iterator), 3)
             self.adapter.validate(first.payload)
@@ -154,12 +175,14 @@ class _Connection:
 
             producer = asyncio.create_task(collect())
             while True:
+                wake.clear()
                 if latest is not None:
                     publication = latest
                     if skipped and not self.guard.handles[key]["resync"]:
                         stream = self.guard.handles[key]["stream"] + 1
                         await self.emit("control", subscriptionId=key, streamSequence=stream,
-                                        control="gap", payload={"reason": "state_coalesced"})
+                                        control="gap", payload={"gapKind": "delivery", "reason": "state_coalesced"})
+                        last_progress = boottime_ms()
                         skipped = False
                     handle = self.guard.handles[key]
                     def admitted():
@@ -172,18 +195,29 @@ class _Connection:
                                            deliveryKind="resync" if handle["resync"] else "view",
                                            cursor=None, payload=publication.payload)
                     if sent:
+                        last_progress = boottime_ms()
+                        blocked_since = None
                         continue
+                    blocked_since = boottime_ms() if blocked_since is None else blocked_since
+                    if boottime_ms() - blocked_since >= int(self.credit_timeout * 1000):
+                        await self.emit("ended", handleId=key, handleType="subscription", reason="deadline", cursor=None)
+                        return
                 if finished:
                     if producer.done() and producer.exception():
                         raise producer.exception()
                     if latest is None:
                         await self.emit("ended", handleId=key, handleType="subscription", reason="completed", cursor=None)
                         return
-                wake.clear()
-                # Credit updates and source updates share bounded wake latency.
-                async with self.changed:
-                    with contextlib.suppress(TimeoutError):
-                        await asyncio.wait_for(self.changed.wait(), .05)
+                if boottime_ms() - last_progress >= int(self.heartbeat_interval * 1000):
+                    await self.emit("control", subscriptionId=key,
+                                    streamSequence=self.guard.handles[key]["stream"] + 1,
+                                    control="heartbeat", payload={})
+                    last_progress = boottime_ms()
+                wait_ms = max(1, int(self.heartbeat_interval * 1000) - (boottime_ms() - last_progress))
+                if blocked_since is not None:
+                    wait_ms = min(wait_ms, max(1, int(self.credit_timeout * 1000) - (boottime_ms() - blocked_since)))
+                with contextlib.suppress(TimeoutError):
+                    await asyncio.wait_for(wake.wait(), wait_ms / 1000)
         except asyncio.CancelledError:
             raise
         except Exception as error:
@@ -191,6 +225,7 @@ class _Connection:
             if self.guard.handles[key]["phase"] != "done":
                 await self.emit("ended", handleId=key, handleType="subscription", reason=reason, cursor=None)
         finally:
+            self.wakes.pop(key, None)
             if producer:
                 producer.cancel()
                 await asyncio.gather(producer, return_exceptions=True)

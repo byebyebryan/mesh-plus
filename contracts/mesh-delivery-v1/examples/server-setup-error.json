@@ -1,0 +1,11 @@
+{
+  "protocol": "mesh-plus.delivery-candidate.v1",
+  "version": 1,
+  "sequence": 1,
+  "kind": "setup-error",
+  "helloNonce": "11111111111111111111111111111111",
+  "error": {
+    "code": "unsupported_contract",
+    "message": "Configured source/profile unavailable"
+  }
+}

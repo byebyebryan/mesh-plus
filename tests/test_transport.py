@@ -9,10 +9,27 @@ from pathlib import Path
 from test_protocol import example
 
 from mesh_plus.protocol import ProtocolError
-from mesh_plus.transport import IPCServer, connect_ipc, subprocess_channel
+from mesh_plus.transport import IPCServer, LineChannel, connect_ipc, subprocess_channel
 
 
 class TransportTests(unittest.IsolatedAsyncioTestCase):
+    async def test_reached_marker_split_removed_and_duplicate_revokes(self):
+        channel = LineChannel(None, None, "server", reached_nonce="a" * 32)
+        marker = ("\x1eROFI_PLUS_REACHED_V1:" + "a" * 32 + "\x1f\n").encode()
+        wrong = marker.replace(b"aaa", b"bbb", 1)
+        channel._stderr_block(b"diagnostic" + wrong + marker[:11])
+        self.assertFalse(channel.reached)
+        channel._stderr_block(marker[11:] + b"after" * 20)
+        self.assertTrue(channel.reached)
+        observed = channel.reached_observed_at
+        self.assertIsInstance(observed, int)
+        self.assertNotIn(marker, channel.stderr_tail)
+        self.assertIn(wrong, channel.stderr_tail)
+        channel._stderr_block(marker)
+        self.assertFalse(channel.reached)
+        self.assertEqual(channel.reached_count, 2)
+        self.assertEqual(channel.reached_observed_at, observed)
+
     async def test_duplex_ipc_and_owned_cleanup(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "mesh.sock"

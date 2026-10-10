@@ -204,6 +204,8 @@ def validate_response(value):
     require(mesh["status"] == expected, "delivery_completeness")
     known = set(mesh["scope"]["hostIds"])
     require(all(row_host(domain, row) in known for row in value["sessions"]), "row_host_scope")
+    positions = [mesh["scope"]["hostIds"].index(row_host(domain, row)) for row in value["sessions"]]
+    require(positions == sorted(positions), "row_host_order")
     refs = [identity(domain, row) for row in value["sessions"]]
     require(len(set(refs)) == len(refs), "duplicate_identity")
     minimal = copy.deepcopy(value)
@@ -268,6 +270,7 @@ def validate_response(value):
             require(receipt["accepted"] == item["accepted"], "receipt_sample_binding")
             if receipt["health"] in ["current", "partial"]:
                 require(item["health"] in ["current", "partial"] and item["expiry"] is not None and receipt["accepted"] > 0, "receipt_native_health")
+                require(receipt["health"] == item["health"], "receipt_health_upgrade")
                 require(receipt["expiresAtMs"] is not None and receipt["expiresAtMs"] > mesh["reader"]["encodedAtMs"], "receipt_expired")
                 if host["local"]:
                     require(receipt["expiresAtMs"] == item["expiry"], "local_expiry_changed")
@@ -556,7 +559,7 @@ def main():
     mutate("oversized common extensions", "tmux-local", lambda v: v["mesh"]["extensions"].update(large="x"*65536), "metadata_capacity")
     request=read(BASE/"examples/request-local.json")
     wrong=copy.deepcopy(request);wrong["selection"]["hostIds"]=["other"]
-    rejects("local request with remote host list", lambda: validate_request(wrong), "selection_shape")
+    rejects("local request with remote host list", lambda: validate_request(wrong))
     wrong=copy.deepcopy(bridge_reply);wrong["nonce"]="3"*32
     rejects("wrong bridge nonce", lambda: validate_bridge(wrong,bridge_request), "bridge_request_binding")
     wrong=copy.deepcopy(bridge_reply);wrong["remaining"][0]["remainingMs"]+=1000

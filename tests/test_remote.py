@@ -8,6 +8,7 @@ from unittest.mock import AsyncMock, patch
 from test_reader import ROOT
 
 from mesh_plus.catalog import Catalog
+from mesh_plus.client import DeliveryError
 from mesh_plus.remote import SetupError, connect_catalog_host
 from mesh_plus.transport import ssh_argv
 
@@ -40,6 +41,7 @@ class RouteTests(unittest.IsolatedAsyncioTestCase):
             calls.append(destination)
             channel = AsyncMock()
             channel.reached = False
+            channel.reached_count = 0
             channel.stderr_tail = bytearray(b"Connection refused")
             channels.append(channel)
             return channel
@@ -52,16 +54,32 @@ class RouteTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(client.route_token, self.catalog.route_token("beta", self.host["routes"][1]))
 
     async def test_policy_and_reached_failures_do_not_fallback(self):
-        for reached, diagnostic, code in [(False, b"Permission denied", "setup_policy_failure"),
-                                          (True, b"tool missing", "source_unavailable")]:
+        for reached, diagnostic, code, count in [(False, b"Permission denied", "setup_policy_failure", 0),
+                                                 (False, b"Host key verification failed; connection reset by peer", "setup_policy_failure", 0),
+                                                 (False, b"Connection refused", "setup_policy_failure", 2),
+                                                 (True, b"tool missing", "source_unavailable", 1)]:
             calls = []
             async def connector(destination, *_args, **_kwargs):
                 calls.append(destination)
                 channel = AsyncMock()
                 channel.reached = reached
+                channel.reached_count = count
+                channel.reached_observed_at = 1000 if reached else None
                 channel.stderr_tail = bytearray(diagnostic)
                 return channel
             with patch("mesh_plus.remote.Client.connect", side_effect=EOFError()), self.assertRaises(SetupError) as raised:
                 await connect_catalog_host(self.catalog, self.host, "tmux", "default", connector=connector)
             self.assertEqual(raised.exception.code, code)
             self.assertEqual(len(calls), 1)
+
+    async def test_reached_setup_error_keeps_original_observation_and_domain_code(self):
+        channel = AsyncMock()
+        channel.reached, channel.reached_count, channel.reached_observed_at = True, 1, 1000
+        channel.stderr_tail = bytearray()
+        authority = AsyncMock()
+        with patch("mesh_plus.remote.Client.connect", side_effect=DeliveryError("unsupported_contract")), self.assertRaises(SetupError) as raised:
+            await connect_catalog_host(self.catalog, self.host, "tmux", "default", authority=authority,
+                                       connector=AsyncMock(return_value=channel))
+        self.assertEqual(raised.exception.code, "unsupported_contract")
+        self.assertEqual(authority.report_route.await_args.kwargs["observed_at"], 1000)
+        self.assertEqual(authority.report_route.await_args.kwargs["status"], "reachable")

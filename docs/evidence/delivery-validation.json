@@ -1,9 +1,9 @@
 {
   "status": "passed",
-  "checkedAtUtc": "2026-10-09T22:57:46.926280+00:00",
-  "checksPassed": 161,
+  "checkedAtUtc": "2026-10-10T00:37:01.896385+00:00",
+  "checksPassed": 169,
   "schemas": 4,
-  "examples": 25,
+  "examples": 26,
   "validationScope": "offline schemas, synthetic lifecycle/cursor/credit/proof/sharing oracles; no producer event wire or deployed runtime acceptance",
   "checks": [
     {
@@ -207,6 +207,14 @@
       "result": "passed"
     },
     {
+      "name": "schema example: server-setup-error",
+      "result": "passed"
+    },
+    {
+      "name": "carrier-neutral roundtrip: server-setup-error",
+      "result": "passed"
+    },
+    {
       "name": "duplicate JSON key",
       "result": "passed",
       "expectation": "reject"
@@ -273,6 +281,15 @@
     {
       "name": "maximum Agent owner frame leaves separate Mesh wrapping room",
       "result": "passed"
+    },
+    {
+      "name": "typed nonce-bound setup rejection",
+      "result": "passed"
+    },
+    {
+      "name": "setup rejection wrong nonce",
+      "result": "passed",
+      "expectation": "reject"
     },
     {
       "name": "hello binding: helloNonce",
@@ -400,6 +417,22 @@
       "name": "data after ended barrier",
       "result": "passed",
       "expectation": "reject"
+    },
+    {
+      "name": "in-flight cancel crosses terminal without reopening",
+      "result": "passed"
+    },
+    {
+      "name": "late cancel keeps terminal phase",
+      "result": "passed"
+    },
+    {
+      "name": "in-flight valid credit crosses terminal without reopening",
+      "result": "passed"
+    },
+    {
+      "name": "late credit keeps terminal phase",
+      "result": "passed"
     },
     {
       "name": "duplicate subscription acknowledgment during cancel",
