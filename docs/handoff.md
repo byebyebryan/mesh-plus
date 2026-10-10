@@ -8,19 +8,31 @@ wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
 broader design studies and reserved schema variants.
 
-The source candidate is **0.1.0a6, unreleased**. It adds explicit same-package
+The released **0.1.0a6** wheel is frozen from
+`74b9e54c1fc433aaeb5db29683faf65f6b61016a`, SHA-256
+`d5989b80b84bca8f6bb14062e8f75a133978666336dd27c833338a50c8748b3f`.
+It adds explicit same-package
 `LibraryMeshAuthority` reads with bounded jobs and lock waits. The a5 work
 dispatches catalog authority
 commands without loading the state SDK. The a4 work adds a reusable configured
 Reader binding, uses Agent Observer's public service frame limit, and excludes
 unsaved stale runtime rows from the effective view without changing raw frames.
 The a3 diagnostics/resource work is retained. The frozen wire contract and
-authority bytes remain unchanged. The released **0.1.0a1**
-wheel remains the selected shared host authority for SSH Plus on Snap and
-Starship. Authority code and Host Mesh v1 bytes are unchanged by this review.
-Agent Observer's independent integration gate selects the a12 state reader and
-a4 Agent bridge on Snap and Starship, preserving its a11 collection services and
-a16 writer. Tmux transport and Plus/device consumers remain separate migrations.
+authority bytes remain unchanged. The final a6 also avoids duplicate JSON safety
+walks and repeated schema validation for bit-identical full JSON; every current
+native/proof/receipt/expiry check still runs. Its source and exact installed
+native/SSH gates both pass 91 tests.
+
+Snap and Starship now select a6 for the shared public CLI/catalog authority and
+Tmux fleet transport, with Observer 0.6.0a1 / Plus 0.12.0a1. The
+[accepted rollout record](https://github.com/byebyebryan/tmux-observer/blob/main/docs/evidence/2026-10-10-mesh-rollout/README.md)
+binds exact releases, normal 600-second resources, declared capacity, headless
+picker callbacks, installed selection, recovery and serial paired rollback.
+It separately verifies both Agent and Tmux domains over local IPC and remote SSH.
+Agent retains its independently selected a13 reader, a14 collector, a16 writer
+and a12 native facade/private SDK a4 resident bridge; their installed bytes and
+process incarnations survived this rollout. Further Plus/device migrations
+remain separate. Graphical input and physical suspend are optional and unrun.
 
 The [changelog](../CHANGELOG.md) records version differences. The
 [Agent SDK checkpoint](agent-integration.md) records the a4 source checks and

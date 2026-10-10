@@ -5,13 +5,14 @@ mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
-Status: state-delivery core ready for integration, 2026-10-09. Polling and pushed
-state over local IPC and SSH stdio are implemented against a frozen contract.
-Ordered events/replay, WSS and a shared fleet broker remain deferred. Source is
-the unreleased `0.1.0a4` candidate; Snap and Starship continue selecting the
-released `0.1.0a1` shared host authority through SSH Plus. Agent Observer's
-independent gate now selects its a12 read client/a4 bridge on both hosts.
-Tmux transport and downstream Plus/device migrations remain separate.
+Status: **0.1.0a6 released and selected**, 2026-10-10. Polling and pushed state
+over local IPC and SSH stdio are implemented against a frozen contract. Snap and
+Starship select SDK a6 for the shared public CLI/authority and Tmux Observer's
+fleet transport. The [accepted Tmux rollout](https://github.com/byebyebryan/tmux-observer/blob/main/docs/evidence/2026-10-10-mesh-rollout/README.md)
+records exact package/native, headless, resource, capacity, installed recovery
+and paired rollback gates. Agent's reader/collector/writer and private SDK a4
+resident bridge remain independently selected and verified. Ordered events/replay,
+WSS, a shared fleet broker and further Plus/device migrations remain deferred.
 
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The
