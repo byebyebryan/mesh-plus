@@ -1,7 +1,6 @@
 """Explicit host bridge; configured source IDs never resolve wire-supplied argv."""
 
 import argparse
-import asyncio
 import json
 import os
 import signal
@@ -10,18 +9,10 @@ import sys
 import tomllib
 from pathlib import Path
 
-from .bridge import Bridge
-from .catalog import MeshAuthority, SSHPlusAuthority
-from .client import Client
-from .configured_read import configured_reader
-from .diagnostics import doctor, failure_code, probe
-from .observer import ObserverAdapter, ObserverCodec
-from .protocol import MAX_MESSAGE, check
-from .remote import connect_catalog_host
-from .transport import IPCServer, LineChannel, connect_ipc
-
 
 def configured_descriptor(path, source):
+    from .protocol import check
+
     path = Path(path)
     descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     with os.fdopen(descriptor, "rb") as stream:
@@ -44,11 +35,18 @@ def configured_descriptor(path, source):
 
 
 def configured_adapter(path, source):
+    from .observer import ObserverAdapter
+
     host, domain, socket = configured_descriptor(path, source)
     return ObserverAdapter(domain, host, source, socket)
 
 
 async def stdio_channel():
+    import asyncio
+
+    from .protocol import MAX_MESSAGE
+    from .transport import LineChannel
+
     loop = asyncio.get_running_loop()
     reader = asyncio.StreamReader(limit=MAX_MESSAGE + 1)
     await loop.connect_read_pipe(lambda: asyncio.StreamReaderProtocol(reader), sys.stdin.buffer)
@@ -75,6 +73,8 @@ async def stdio_channel():
 
 async def run(args):
     if args.command == "doctor":
+        from .diagnostics import doctor, failure_code
+
         report = doctor()
         if args.config:
             try:
@@ -86,6 +86,14 @@ async def run(args):
         print(json.dumps(report, separators=(",", ":")))
         return 0 if report["ok"] else 1
     if args.command == "probe":
+        from .catalog import MeshAuthority
+        from .client import Client
+        from .diagnostics import probe
+        from .observer import ObserverCodec
+        from .protocol import check
+        from .remote import connect_catalog_host
+        from .transport import connect_ipc
+
         async def connect():
             codec = ObserverCodec(args.domain, args.host, args.source)
             if args.socket:
@@ -98,12 +106,16 @@ async def run(args):
         report = await probe(connect, mode=args.mode, timeout_ms=args.timeout_ms)
         print(json.dumps(report, separators=(",", ":")))
         return 0 if report["ok"] else 1
-    authority = MeshAuthority() if getattr(args, "authority", "ssh-plus") == "mesh" else SSHPlusAuthority()
-    if args.command == "hosts":
-        catalog = await authority.load()
-        print(json.dumps(catalog.payload, separators=(",", ":")))
-        return
-    if args.command in {"read", "watch"}:
+    if args.command in {"hosts", "read", "watch"}:
+        from .catalog import MeshAuthority, SSHPlusAuthority
+
+        authority = MeshAuthority() if args.authority == "mesh" else SSHPlusAuthority()
+        if args.command == "hosts":
+            catalog = await authority.load()
+            print(json.dumps(catalog.payload, separators=(",", ":")))
+            return
+        from .configured_read import configured_reader
+
         reader = await configured_reader(args.domain, source=args.source, socket=args.socket,
                                          scope=args.scope, hosts=args.hosts, local_host=args.local_host,
                                          authority=authority, report_routes=True)
@@ -113,6 +125,11 @@ async def run(args):
             async for view in reader.watch():
                 print(json.dumps(view, ensure_ascii=False, separators=(",", ":")), flush=True)
         return
+    import asyncio
+
+    from .bridge import Bridge
+    from .transport import IPCServer
+
     adapter = configured_adapter(args.config, args.source)
     bridge = Bridge(adapter)
     if args.command == "bridge":
@@ -132,9 +149,13 @@ async def run(args):
 
 
 def main():
+    # Catalog polling is a stdlib authority operation. Loading the state SDK
+    # here would add its dependency import cost to every catalog recheck.
     if len(sys.argv) > 1 and sys.argv[1] == "mesh":
         from .authority_cli import main as authority_main
         return authority_main(sys.argv[2:])
+    import asyncio
+
     parser = argparse.ArgumentParser(description="Mesh Plus experimental cached-state transport")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("mesh", help="Host Mesh authority: list/report-route --json")

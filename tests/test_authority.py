@@ -49,6 +49,30 @@ aliases = ["beta-native"]
 
 
 class MeshConfigTests(unittest.TestCase):
+    def test_public_catalog_cli_does_not_import_delivery_or_native_packages(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_config(root)
+            program = """
+import importlib.abc, json, sys
+class AuthorityOnly(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname.split('.')[0] in {'jsonschema', 'tmux_observer', 'agent_observer'}:
+            raise ImportError('catalog command imported state dependency: ' + fullname)
+sys.meta_path.insert(0, AuthorityOnly())
+from mesh_plus.cli import main
+sys.argv = ['mesh-plus', 'mesh', 'list', '--json']
+raise SystemExit(main())
+"""
+            result = subprocess.run(
+                [sys.executable, "-c", program], capture_output=True,
+                env={**os.environ, "XDG_CONFIG_HOME": str(root / "config"),
+                     "XDG_STATE_HOME": str(root / "state")}, check=True,
+            )
+            catalog = json.loads(result.stdout)
+            self.assertEqual(catalog["localHostId"], "alpha")
+            self.assertEqual([host["id"] for host in catalog["hosts"]], ["alpha", "beta"])
+
     def test_missing_config_synthesizes_local_only_mesh(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             mesh = load_config(Path(directory) / "missing.toml", hostname=("alpha.example", "alpha"))

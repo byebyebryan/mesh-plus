@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0a5 (unreleased)
+
+- Dispatch Host Mesh authority commands before importing delivery or native
+  dependencies. Catalog rechecks retain the same authority and wire behavior
+  while avoiding the state SDK's repeated import cost.
+- Keep the frozen contract, packaged schemas and independently selected Agent
+  reader unchanged. Tmux operational resource acceptance remains a separate gate.
+
 ## 0.1.0a4 (unreleased)
 
 - Bind Agent frame limits through its supported pure service descriptor.

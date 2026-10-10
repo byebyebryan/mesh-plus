@@ -8,7 +8,8 @@ wire boundary is frozen by [the state contract](contract-freeze.md) and
 [`contracts/LOCK.json`](../contracts/LOCK.json). The lock takes precedence over
 broader design studies and reserved schema variants.
 
-The source candidate is **0.1.0a4, unreleased**. It adds a reusable configured
+The source candidate is **0.1.0a5, unreleased**. It dispatches catalog authority
+commands without loading the state SDK. The a4 work adds a reusable configured
 Reader binding, uses Agent Observer's public service frame limit, and excludes
 unsaved stale runtime rows from the effective view without changing raw frames.
 The a3 diagnostics/resource work is retained. The frozen wire contract and
