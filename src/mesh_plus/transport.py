@@ -20,6 +20,24 @@ def boottime_ms():
     return int(time.clock_gettime(time.CLOCK_BOOTTIME) * 1000)
 
 
+async def finish_owned(task):
+    """Retire bounded owned IO despite repeated caller cancellation.
+
+    Waiting does not cancel the task or leave a shield callback that reports an
+    already observed IO failure. The operation's own IO budget remains in force.
+    """
+    cancelled = False
+    while not task.done():
+        try:
+            await asyncio.wait({task})
+        except asyncio.CancelledError:
+            cancelled = True
+    result = task.result()
+    if cancelled:
+        raise asyncio.CancelledError
+    return result
+
+
 async def within_deadline(awaitable, deadline_ms):
     """Include queue/write/validation time and notice suspend-aware expiry."""
     task = asyncio.ensure_future(awaitable)

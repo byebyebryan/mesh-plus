@@ -14,8 +14,9 @@ and paired rollback gates. Agent's reader/collector/writer and private SDK a4
 resident bridge remain independently selected and verified. Ordered events/replay,
 WSS, a shared fleet broker and further Plus/device migrations remain deferred.
 
-Source **0.1.0a8 is an unreleased candidate** for proactive watch connection
-rotation and cumulative local transport measurements. See the
+Source **0.1.0a9 is an unreleased candidate** refining owned IO cancellation
+after the coordinated a8 adoption pass. Released a8 supplies proactive watch
+connection rotation and cumulative local transport measurements. See the
 [reliability and measurement plan](docs/reliability-and-measurement.md).
 It does not replace the selected a7 artifacts or expand the frozen capabilities.
 

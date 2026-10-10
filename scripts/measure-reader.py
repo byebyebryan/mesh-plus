@@ -7,6 +7,7 @@ semantics are identical for both carriers, including nonce-bound full proofs.
 import argparse
 import asyncio
 import contextlib
+import copy
 import hashlib
 import importlib.util
 import json
@@ -33,8 +34,25 @@ spec.loader.exec_module(lab)
 
 
 class Publisher(CachedPublisher):
-    def __init__(self, domain, updates):
+    def __init__(self, domain, updates, rows=0):
         super().__init__(domain, "remote")
+        self.updates = updates
+        if not rows:
+            return
+        template = self.cached.frame["snapshot"]["sessions"][0]
+        sessions = []
+        for index in range(rows):
+            row = copy.deepcopy(template)
+            if domain == "tmux":
+                row["sessionId"] = "$" + str(index + 1)
+            else:
+                identity = f"00000000-0000-0000-0000-{index + 1:012d}"
+                row["identity"]["nativeId"] = identity
+                row["nativeIds"]["threadId"] = identity
+                row["nativeIds"]["sessionTreeRootId"] = identity
+            sessions.append(row)
+        self.cached.frame["snapshot"]["sessions"] = sessions
+        self.cached.adapter.native(self.cached.frame)
         self.updates = updates
 
     async def watch(self):
@@ -52,14 +70,14 @@ class Publisher(CachedPublisher):
 async def measure(args):
     resources = lab.OwnedResources()
     sampling = asyncio.create_task(resources.watch())
-    publisher = Publisher(args.domain, args.updates)
+    publisher = Publisher(args.domain, args.updates, args.rows)
     try:
         with tempfile.TemporaryDirectory(prefix=".mesh-reader-lab-", dir=Path.home()) as name:
             root = Path(name)
             async with contextlib.AsyncExitStack() as stack:
                 if args.carrier == "ssh":
                     command = [sys.executable, "-B", str(Path(__file__).resolve()), "--stdio",
-                               "--domain", args.domain, *(["--updates"] if args.updates else [])]
+                               "--domain", args.domain, "--rows", str(args.rows), *(["--updates"] if args.updates else [])]
                     channel = await stack.enter_async_context(ssh_server(root, command, "default"))
                 else:
                     server = await IPCServer(root / "mesh.sock", Bridge(publisher).serve).start()
@@ -108,7 +126,7 @@ async def measure(args):
                        for summary in summaries):
                     raise AssertionError("Incomplete instrumentation or cleanup")
                 return {"domain": args.domain, "carrier": args.carrier, "readers": args.readers,
-                        "updatesEverySeconds": 1 if args.updates else None, "proofIntervalSeconds": args.proof_interval,
+                        "fixtureRows": len(publisher.cached.frame["snapshot"]["sessions"]), "updatesEverySeconds": 1 if args.updates else None, "proofIntervalSeconds": args.proof_interval,
                         "steadySeconds": round(elapsed, 3), "views": views, "readerMetrics": summaries,
                         "steadyWorkerCpuMs": round(1000 * (cpu_end.ru_utime + cpu_end.ru_stime -
                                                              cpu_start.ru_utime - cpu_start.ru_stime), 3),
@@ -121,7 +139,7 @@ async def measure(args):
 async def main(args):
     if args.stdio:
         from mesh_plus.cli import stdio_channel
-        await Bridge(Publisher(args.domain, args.updates)).serve(await stdio_channel())
+        await Bridge(Publisher(args.domain, args.updates, args.rows)).serve(await stdio_channel())
         return
     if args.case:
         print(json.dumps(await measure(args)))
@@ -132,7 +150,7 @@ async def main(args):
             for updates in (False, True):
                 command = [sys.executable, "-B", str(Path(__file__).resolve()), "--case", "--domain", domain,
                            "--carrier", args.carrier, "--readers", str(readers), "--seconds", str(args.seconds),
-                           "--proof-interval", str(args.proof_interval), *(["--updates"] if updates else [])]
+                           "--proof-interval", str(args.proof_interval), "--rows", str(args.rows), *(["--updates"] if updates else [])]
                 process = await asyncio.create_subprocess_exec(*command, stdout=asyncio.subprocess.PIPE,
                                                                stderr=asyncio.subprocess.PIPE)
                 try:
@@ -161,7 +179,7 @@ async def main(args):
                          "CPU includes the measurement consumer; not an Observer collector cost",
                          "IPC exercises remote validity semantics for like-for-like carriage comparison",
                          "Application bytes exclude encryption, partial writes and failed handshakes",
-                         "No large-native-payload or prolonged operational soak acceptance"]}
+                         "Payload scaling uses duplicated synthetic records, not large native inventory truth or prolonged operational soak acceptance"]}
     text = json.dumps(report, indent=2) + "\n"
     if args.report:
         args.report.write_text(text)
@@ -180,6 +198,8 @@ if __name__ == "__main__":
     parser.add_argument("--domain", choices=("tmux", "agent"), default="tmux")
     parser.add_argument("--readers", type=int, choices=range(1, 9), default=1)
     parser.add_argument("--updates", action="store_true")
+    parser.add_argument("--rows", type=int, choices=range(0, 2049), default=0,
+                        help="synthetic unique rows; zero preserves the original native fixture")
     parser.add_argument("--case", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--stdio", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()

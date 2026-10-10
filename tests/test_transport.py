@@ -9,10 +9,55 @@ from pathlib import Path
 from test_protocol import example
 
 from mesh_plus.protocol import ProtocolError
-from mesh_plus.transport import IPCServer, LineChannel, connect_ipc, subprocess_channel
+from mesh_plus.transport import IPCServer, LineChannel, connect_ipc, finish_owned, subprocess_channel
 
 
 class TransportTests(unittest.IsolatedAsyncioTestCase):
+    async def test_repeated_cancellation_retires_owned_io_before_propagating(self):
+        released = asyncio.Event()
+        finished = asyncio.Event()
+        async def io():
+            await released.wait()
+            finished.set()
+        operation = asyncio.create_task(io())
+        owner = asyncio.create_task(finish_owned(operation))
+        await asyncio.sleep(0)
+        for _ in range(3):
+            owner.cancel()
+            await asyncio.sleep(0)
+            self.assertFalse(operation.done())
+            self.assertFalse(owner.done())
+        released.set()
+        with self.assertRaises(asyncio.CancelledError):
+            await owner
+        self.assertTrue(finished.is_set())
+        self.assertFalse(operation.cancelled())
+
+    async def test_cancelled_owner_observes_late_io_failure_without_background_log(self):
+        loop = asyncio.get_running_loop()
+        errors = []
+        previous = loop.get_exception_handler()
+        loop.set_exception_handler(lambda _loop, context: errors.append(context))
+        released = asyncio.Event()
+        async def io():
+            await released.wait()
+            raise ConnectionResetError("owned fixture reset")
+        try:
+            operation = asyncio.create_task(io())
+            owner = asyncio.create_task(finish_owned(operation))
+            await asyncio.sleep(0)
+            owner.cancel()
+            await asyncio.sleep(0)
+            released.set()
+            with self.assertRaises(ConnectionResetError):
+                await owner
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            self.assertTrue(operation.done())
+            self.assertEqual(errors, [])
+        finally:
+            loop.set_exception_handler(previous)
+
     async def test_reached_marker_split_removed_and_duplicate_revokes(self):
         channel = LineChannel(None, None, "server", reached_nonce="a" * 32)
         marker = ("\x1eROFI_PLUS_REACHED_V1:" + "a" * 32 + "\x1f\n").encode()

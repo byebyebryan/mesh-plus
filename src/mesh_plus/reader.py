@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from .client import DeliveryError
 from .observer import clock_domain, digest
 from .protocol import check
-from .transport import boottime_ms, within_deadline
+from .transport import boottime_ms, finish_owned, within_deadline
 from .view import remote_expiry, validate_response
 
 
@@ -113,12 +113,7 @@ class Reader:
     async def _close(self, client):
         cleanup = asyncio.create_task(client.close())
         try:
-            try:
-                await asyncio.shield(cleanup)
-            except asyncio.CancelledError:
-                # Cancellation of a Reader must still retire its owned channel.
-                await cleanup
-                raise
+            await finish_owned(cleanup)
         except BaseException:
             if cleanup.cancelled() or (cleanup.done() and cleanup.exception() is not None):
                 self._counts["cleanupFailures"] += 1

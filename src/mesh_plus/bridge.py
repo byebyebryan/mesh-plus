@@ -6,7 +6,7 @@ import uuid
 from dataclasses import dataclass
 
 from .protocol import PROTOCOL, Lifecycle, ProtocolError, check, encode
-from .transport import boottime_ms
+from .transport import boottime_ms, finish_owned
 
 
 @dataclass(frozen=True)
@@ -60,12 +60,8 @@ class _Connection:
             if on_admit:
                 on_admit()
             write = asyncio.create_task(self.channel.send(frame))
-            try:
-                await asyncio.shield(write)
-            except asyncio.CancelledError:
-                # Finish a frame already admitted to the wire before the ended barrier.
-                await write
-                raise
+            # Finish an admitted frame before releasing the ended barrier lock.
+            await finish_owned(write)
             return True
 
     async def run(self):
