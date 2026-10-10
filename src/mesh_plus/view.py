@@ -141,10 +141,10 @@ def validate_response(response):
                         proof["sentAtMs"], proof["receivedAtMs"], remaining, proof["marginMs"]), "remaining_lease_changed")
             else:
                 check(receipt["expiresAtMs"] is None and receipt["remainingMs"] == 0, "stale_expiry")
-    metadata = copy.deepcopy(response)
-    metadata["sessions"] = []
-    for host in metadata["mesh"]["hosts"]:
-        host["owner"] = None
+    # The bound checks below only read this metadata view. Native bodies are
+    # already validated and excluded, so avoid copying them just to discard them.
+    metadata = {**response, "sessions": [],
+                "mesh": {**mesh, "hosts": [{**host, "owner": None} for host in hosts]}}
     check(len(encode(metadata)) + 1 <= 65536, "metadata_capacity")
     metadata_bounds(metadata)
     return response

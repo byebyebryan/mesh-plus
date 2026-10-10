@@ -14,6 +14,8 @@
 - Reuse static profile-schema success for identical full JSON bytes across
   independent in-process consumers. Retain only one SHA-256 digest per domain;
   native validation, proof/receipt checks and current-time expiry always run.
+- Check metadata bounds through a read-only view excluding native bodies,
+  avoiding a deep copy of complete session inventories before discarding them.
 
 ## 0.1.0a5 (unreleased)
 
