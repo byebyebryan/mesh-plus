@@ -1,5 +1,10 @@
 # Mesh Plus design review
 
+This records design resolutions and study findings. A resolved design does not
+advertise its deferred feature as runtime support. The
+[frozen state contract](contract-freeze.md) defines the supported subset; the
+[handoff](handoff.md) records current implementation and acceptance status.
+
 ## Candidate disposition
 
 The candidate establishes a common mesh-aware read shape with unchanged domain

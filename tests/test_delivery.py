@@ -2,10 +2,11 @@ import asyncio
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from test_protocol import example
 
-from mesh_plus.bridge import Bridge, Publication
+from mesh_plus.bridge import Bridge, Publication, _Connection
 from mesh_plus.client import Client, DeliveryError
 from mesh_plus.protocol import ProtocolError, check
 from mesh_plus.transport import IPCServer, connect_ipc
@@ -113,6 +114,23 @@ class DeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("private", str(raised.exception))
         self.assertEqual((await self.client.request())["value"], 0)
 
+    async def test_request_terminal_wakes_caller_without_closing_siblings(self):
+        original = _Connection.request
+
+        async def end_request(connection, frame):
+            if frame["parameters"].get("end"):
+                await connection.emit("ended", handleId=frame["requestId"], handleType="request",
+                                      reason="deadline", cursor=None)
+            else:
+                await original(connection, frame)
+
+        with patch.object(_Connection, "request", end_request):
+            with self.assertRaises(DeliveryError) as raised:
+                await asyncio.wait_for(self.client.request(parameters={"end": True}), .5)
+            self.assertEqual(raised.exception.code, "deadline")
+            self.assertFalse(self.client.requests)
+            self.assertEqual((await self.client.request())["value"], 0)
+
     async def test_setup_rejections_are_nonce_bound_and_typed(self):
         for updates, code in [({"profile": "unsupported.v1"}, "unsupported_contract"),
                               ({"required": ("snapshot", "proof")}, "unsupported_capability"),
@@ -195,8 +213,32 @@ class DeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await anext(sub))["payload"]["value"], 17)
         with self.assertRaises(StopAsyncIteration):
             await anext(sub)
+        with self.assertRaises(StopAsyncIteration):
+            await asyncio.wait_for(anext(sub), .2)
         self.assertEqual((await self.client.request())["value"], 0)
         await sub.close()
+
+    async def test_failed_subscription_stays_exhausted_after_error(self):
+        fail = asyncio.Event()
+
+        async def failing():
+            yield Publication({"value": 17}, "epoch_1", {})
+            await fail.wait()
+            raise ValueError("private publisher detail")
+
+        self.source.watch = failing
+        sub = await self.client.subscribe()
+        self.assertEqual((await anext(sub))["payload"]["value"], 17)
+        fail.set()
+        with self.assertRaises(DeliveryError) as raised:
+            await asyncio.wait_for(anext(sub), .5)
+        self.assertEqual(raised.exception.code, "gap")
+        with self.assertRaises(StopAsyncIteration):
+            await asyncio.wait_for(anext(sub), .2)
+        self.assertEqual((await self.client.request())["value"], 0)
+        await sub.close()
+        self.assertNotIn(sub.key, self.client.subscriptions)
+        self.assertEqual(self.client.buffered_bytes, 0)
 
     async def test_independent_subscription_close_wakes_waiting_consumer(self):
         sub = await self.client.subscribe()

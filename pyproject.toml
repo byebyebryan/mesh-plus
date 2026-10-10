@@ -4,10 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mesh-plus"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "Bounded fleet delivery for host-local Observer services"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["jsonschema>=4.26,<5"]
+
+[project.urls]
+Repository = "https://github.com/byebyebryan/mesh-plus"
+Issues = "https://github.com/byebyebryan/mesh-plus/issues"
 
 [project.scripts]
 mesh-plus = "mesh_plus.cli:main"

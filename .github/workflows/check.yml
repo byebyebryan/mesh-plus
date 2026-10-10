@@ -14,8 +14,4 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m pip install -e . jsonschema==4.26.0 ruff==0.16.10
-      - run: python scripts/check-design.py
-      - run: python scripts/check-delivery.py
-      - run: python scripts/check-contract-lock.py
-      - run: python scripts/check-runtime.py --core-only
-      - run: ruff check src tests scripts
+      - run: python scripts/check.py

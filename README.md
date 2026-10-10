@@ -1,16 +1,20 @@
-# Mesh Plus design
+# Mesh Plus
 
 Mesh Plus owns request/reply and subscription delivery across a configured fleet. A
 mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
-Status: design candidate, 2026-10-09. This repository contains specifications,
-schemas, examples and executable design checks, plus an experimental runtime
-foundation. The state contract is frozen for independent implementation. SSH Plus now selects
-the released Mesh 0.1.0a1 shared host authority on Snap and Starship; Observer
-transport and consumer migrations remain independent and undeployed. See
-[implementation checkpoints](docs/implementation-progress.md).
+Status: state-delivery core ready for integration, 2026-10-09. Polling and pushed
+state over local IPC and SSH stdio are implemented against a frozen contract.
+Ordered events/replay, WSS and a shared fleet broker remain deferred. Source is
+the unreleased `0.1.0a2` candidate; Snap and Starship continue selecting the
+released `0.1.0a1` shared host authority through SSH Plus. Observer transport and
+consumer migrations remain independent and undeployed.
+
+Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
+acceptance gates and current evidence. The
+[implementation checkpoints](docs/implementation-progress.md) preserve history.
 
 The [state contract freeze](docs/contract-freeze.md) defines the interfaces ready
 for independent implementation. [The checked lock](contracts/LOCK.json) binds
@@ -54,6 +58,21 @@ moving producer track. Agent Plus is deliberately deferred, and is not a design
 reference for current Agent observation semantics.
 
 ## Validate the candidate
+
+On Linux with Python 3.11+, install into a dedicated environment, then run the
+same standalone gate as CI:
+
+```sh
+rtk proxy uv venv .venv
+rtk proxy uv pip install --python .venv/bin/python -e . jsonschema==4.26.0 ruff==0.16.10
+rtk proxy .venv/bin/python scripts/check.py
+```
+
+This runs the lock, Read/Delivery oracles, core runtime tests and lint. It needs
+no Observer packages, providers, desktop tools or configured fleet. With the
+reviewed producer dependencies installed, `scripts/check.py --native` runs the
+full owned native/SSH suite. Add `--check-sources` to verify sibling source parity.
+Neither option deploys artifacts. See the [handoff](docs/handoff.md#validation).
 
 Use Python 3.11+ and `jsonschema` 4.26.0. With an existing validation environment:
 

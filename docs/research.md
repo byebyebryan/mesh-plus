@@ -1,15 +1,18 @@
 # Mesh Plus source baselines and research
 
-## Repository evidence
+## Initial research and subsequent source reviews
 
-Inspected 2026-10-09. Full heads and input digests are recorded in
-[source baselines](evidence/source-baselines.json). The local checkout review is
+Initially inspected 2026-10-09. The table and tracking comparisons below describe
+that research history, not current remote publication or deployment status.
+Full reviewed heads and input digests are recorded in
+[source baselines](evidence/source-baselines.json); see [the handoff](handoff.md)
+for current integration readiness. The local checkout review is
 read-only outside Mesh Plus; remote runtime and installed artifact parity are
 separate evidence.
 
 | Repository | Baseline | Relevant source |
 | --- | --- | --- |
-| SSH Plus | `a69bd75` | [Host Mesh v1](../reference/rofi-ssh-plus/docs/HOST_MESH_V1.md), `mesh.py`, `probe.py`, canonical fixtures |
+| SSH Plus | `a69bd75` initially; `e01f89c` after default authority adoption | [Host Mesh v1](../reference/rofi-ssh-plus/docs/HOST_MESH_V1.md), facade/legacy authority, `probe.py`, canonical fixtures |
 | Tmux Observer | `128f7f8`, 0.5.0a1 | [Boundaries](../reference/tmux-observer/docs/component-boundaries.md), [wire rules](../reference/tmux-observer/docs/wire-v1.md), `ssh.py`, `_remote_state.py`, `_fleet_state.py` |
 | Tmux Plus | `5105eae` | `observer_client.py`, pinned artifact, [fleet performance](../reference/rofi-tmux-plus/docs/fleet-performance.md) |
 | Agent Observer | `43b8d3e` initially, `bca4c26` after event research, `8776cc6` after state-push refinement; 0.5.0a11 | [API 2](../reference/agent-observer/docs/api-v2.md), [service 2](../reference/agent-observer/docs/service-protocol-v2.md), [state push](../reference/agent-observer/docs/state-push-design.md), [client handoff](../reference/agent-observer/docs/api-v2-client-handoff.md) |

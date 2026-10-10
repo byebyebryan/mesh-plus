@@ -1,5 +1,10 @@
 # Implementation checkpoints
 
+This is a chronological checkpoint log. Test counts, versions and pending gates
+below describe their own checkpoint, rather than the current whole repository.
+See [the handoff](handoff.md) for current readiness, candidate/deployed versions,
+integration ownership and remaining acceptance work.
+
 ## Foundation: 0.1.0a1
 
 The runtime package now implements strict candidate framing, transactional

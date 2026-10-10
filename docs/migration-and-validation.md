@@ -1,5 +1,10 @@
 # Mesh Plus migration and acceptance
 
+This is the staged migration plan, not a current deployment ledger. The
+[handoff](handoff.md) records completed core/authority work and the remaining
+Observer, consumer and operational gates. Stages can advance independently;
+their numbering is not a requirement to repeat accepted earlier work.
+
 ## Delivery sequence
 
 | Stage | Deliverable | Exit criterion |
@@ -20,7 +25,8 @@ not automatic changes to a frozen Tmux artifact.
 
 No stage silently promotes native, graphical or deployment acceptance from
 synthetic fixtures. Release/commit/push and operational selection require their
-own requested scope; this design pass produces no selected runtime.
+own requested scope. The authority rollout is accepted separately; it does not
+select Observer transport or consumer migrations.
 
 ## Design validation matrix
 

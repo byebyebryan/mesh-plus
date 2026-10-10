@@ -1,5 +1,9 @@
 # Mesh Plus implementation components
 
+The [integration handoff](handoff.md) records current runtime support. This
+component design also includes deferred backends and services; the
+[frozen state contract](contract-freeze.md) defines what is implemented.
+
 ## Package boundaries
 
 | Component | Responsibility | Prohibited dependency |
@@ -21,7 +25,9 @@ an explicit adapter/profile, not generic arbitrary remote argv.
 
 ## Current interfaces
 
-Commands exist in the candidate package; no operational installation is selected:
+Commands exist in the candidate package. SSH Plus selects the released shared
+authority on Snap and Starship; delivery CLI/services remain integration
+candidates, with no operational Observer transport migration selected:
 
 ```text
 mesh-plus hosts --authority ssh-plus|mesh
@@ -80,8 +86,10 @@ See [connection-sharing policy](https://man.openbsd.org/ssh_config).
 An adapter descriptor declares domain/profile version, supported cached reads,
 owner protocol, exact document limits, source binding extraction, receipt
 components and pure effective projection. No universal provider/runtime enum is
-part of Mesh Plus. Tmux source IDs may be `default`; Agent source IDs derive from
-provider plus namespace, preserving both as opaque identity inputs.
+part of Mesh Plus. Configured adapter selectors such as `tmux_default` and
+`agent_default` identify fixed local sockets. Receipt source IDs are separate:
+Tmux uses `default`, while Agent preserves provider plus namespace as opaque
+native identity inputs.
 
 For a probe, an adapter returns an immutable checked full owner view with its
 original service metadata and source-clock expiries. The bridge calculates

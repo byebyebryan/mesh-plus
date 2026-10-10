@@ -1,4 +1,4 @@
-"""Published Host Mesh v1 process boundary; SSH Plus remains the sole writer."""
+"""Host Mesh v1 authority boundary; the selected facade uses one shared writer."""
 
 import asyncio
 import contextlib

@@ -1,0 +1,78 @@
+{
+  "status": "source_validated_package_pending",
+  "scope": "Mesh Plus source refinement, documentation synchronization and repository hygiene",
+  "checkedAtUtc": "2026-10-10T01:43:47.131557+00:00",
+  "sourceParent": "5362cd8aa75d4f0b448c205cb37ef8fa0b9a5129",
+  "version": "0.1.0a2",
+  "sourceValidation": {
+    "command": "scripts/check.py --native --check-sources",
+    "reports": [
+      {
+        "status": "passed",
+        "checkedAtUtc": "2026-10-10T01:43:41.159695+00:00",
+        "validationScope": "schemas, adversarial design model, frozen producer projection; no native/network/runtime acceptance",
+        "sourceParityChecked": true,
+        "checksPassed": 117,
+        "limits": "Native passivity, SSH integration, GUI, resource, physical suspend and deployment remain later gates"
+      },
+      {
+        "status": "passed",
+        "checkedAtUtc": "2026-10-10T01:43:41.650036+00:00",
+        "checksPassed": 169,
+        "schemas": 4,
+        "examples": 26,
+        "validationScope": "offline schemas, synthetic lifecycle/cursor/credit/proof/sharing oracles; no producer event wire or deployed runtime acceptance"
+      },
+      {
+        "status": "passed",
+        "checkedAtUtc": "2026-10-10T01:43:47.131557+00:00",
+        "python": "3.13.7",
+        "scope": "runtime and owned native/SSH acceptance",
+        "testsRun": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": [],
+        "versions": {
+          "mesh-plus": "0.1.0a2",
+          "tmux-observer": "0.5.0a1",
+          "agent-observer": "0.5.0a11",
+          "jsonschema": "4.26.0"
+        }
+      }
+    ],
+    "lint": "passed",
+    "terminalRegressions": "three reproduced timeouts before fixes; all pass after fixes"
+  },
+  "contractLock": {
+    "file": "contracts/LOCK.json",
+    "sha256": "2b93e1c1e0b533be00e6646ea0ef62aefec357ba00e1e8a51489578ccde38489",
+    "changed": false
+  },
+  "findings": [
+    {
+      "severity": "bug",
+      "finding": "A completed/failed subscription could block on repeated iteration",
+      "resolution": "Persist terminal exhaustion separately from explicit resource cleanup"
+    },
+    {
+      "severity": "bug",
+      "finding": "Request ended frames did not settle pending SDK callers",
+      "resolution": "Set typed per-request failure immediately; preserve sibling work"
+    },
+    {
+      "severity": "documentation",
+      "finding": "Historical pending gates and source IDs could be confused with current adoption",
+      "resolution": "Current handoff guide, historical labels and configured-selector/receipt identity distinction"
+    },
+    {
+      "severity": "hygiene",
+      "finding": "No shared validation entry point or version distinction from deployed wheel",
+      "resolution": "Canonical standalone check shared with CI, unreleased a2 version, changelog, agent guidance and package metadata"
+    }
+  ],
+  "limits": [
+    "No Observer consumer/service migrations or deployment changes",
+    "No WSS/event/replay/shared-broker implementation",
+    "No operational fleet, GUI or physical suspend acceptance"
+  ]
+}

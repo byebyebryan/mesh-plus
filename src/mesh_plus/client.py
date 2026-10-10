@@ -21,17 +21,20 @@ class Subscription:
         self.ready = asyncio.get_running_loop().create_future()
         self.ended = asyncio.Event()
         self.closed = False
+        self.exhausted = False
 
     def __aiter__(self):
         return self
 
     async def __anext__(self):
-        if self.closed:
+        if self.closed or self.exhausted:
             raise StopAsyncIteration
         item = await self.queue.get()
         if isinstance(item, BaseException):
+            self.exhausted = True
             raise item
         if item is None:
+            self.exhausted = True
             raise StopAsyncIteration
         frame, size = item
         self.client.buffered_bytes -= size
@@ -197,6 +200,10 @@ class Client:
                             future.set_result(frame["payload"])
                         else:
                             future.set_exception(DeliveryError(frame["error"]["code"], frame["error"]["message"]))
+                elif frame["kind"] == "ended" and frame["handleType"] == "request":
+                    future = self.requests.get(frame["handleId"])
+                    if future and not future.done() and outcome != "quarantined":
+                        future.set_exception(DeliveryError(frame["reason"]))
                 key = frame.get("subscriptionId", frame.get("handleId"))
                 sub = self.subscriptions.get(key)
                 if sub:

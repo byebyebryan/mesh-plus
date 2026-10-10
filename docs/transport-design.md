@@ -1,5 +1,9 @@
 # Mesh Plus transport and subscription design
 
+This design includes future transport/products. For the implemented IPC/SSH
+state subset and current acceptance status, use the
+[contract freeze](contract-freeze.md) and [handoff](handoff.md).
+
 Status: second design candidate, 2026-10-09. This extends the read design; it
 does not implement a selected runtime or allocate new Observer wire versions.
 
