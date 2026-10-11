@@ -46,6 +46,22 @@ Reference APIs: [Sans-I/O integration](https://websockets.readthedocs.io/en/stab
 
 See [roadmap](../../docs/wss-roadmap.md) for acceptance and promotion gates.
 
+Matched measurement runner:
+
+```sh
+rtk proxy /tmp/mesh-wss-study/env/bin/python studies/wss/measure.py --output /tmp/mesh-wss-study/measurements
+```
+
+This owns loopback subprocesses and disposable private SSH/TLS material. A
+persistent publisher/Bridge worker per Reader is used by both carriers. SSH's
+forced command uses `/usr/bin/socat` as a raw stdio-to-IPC relay; its descendants
+are counted. IPC is a separately labeled local reference. Publishers broadcast
+cached updates and preserve original receipts. No shared-listener topology is
+attributed to a raw carrier benefit. Every run checks native admission, full
+proofs, observed updates/recovery and owned cleanup before recording success.
+The 20 ms `/proc` sampler runs in the worker, so measured worker CPU includes
+its process-count-dependent overhead. CPU differences require that qualification.
+
 W0 baseline: source `57ca1ad`, installed a13, Python 3.13.7, websockets 17.1,
 Tmux 0.6.0a5 and Agent 0.5.0a16. A fresh `/tmp/mesh-wss-study/env` was created
 from immutable wheels: the existing design environment contained older Observer
