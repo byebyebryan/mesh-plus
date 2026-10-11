@@ -1,0 +1,50 @@
+{
+  "format": "mesh-plus.wss-study.measurement-inputs.v1",
+  "reproductionCommit": "1b73295",
+  "studyInputs": {
+    "carrier.py": "a155d3346134d8ee1f11ea87fe5052961d4d8ce9b9c8e16f7d84211f50830204",
+    "configuration.py": "7b915cfdc2e3ec2acb55b7ff322e9a3ad11dac02b6146a60733c7140d8003517",
+    "fixtures.py": "10770933f14f6110930213f0b35973d0af4b136ad36ce8d3e173948e9dc8c2f9",
+    "node.py": "2fec8bb650744d464e6d295fd9926a60e9a300fbf0f2f8428d57523786fefa66",
+    "measure.py": "69b23442dcec201eaa0e93e44d2d175fe0fe42e70ee0cff7797020dbe3ce73eb"
+  },
+  "nativeWheels": {
+    "tmux_observer-0.6.0a5-py3-none-any.whl": "958d2f5381d57f172294e35654e19c96770ccd38e7ef8421a23f3dcf00abe536",
+    "agent_observer-0.5.0a16-py3-none-any.whl": "94705baebfa51a9664e9dbfa7603dcb932d6301146cf9a59017017c5285b3b17"
+  },
+  "releasedMeshWheelSha256": "62b42bc76e7d79d95d89c41ee6f73c5e0169d24e2f1ac911c151c13f1f2b6f07",
+  "host": {
+    "os": "Linux",
+    "loopbackOnly": true,
+    "readerAndPublisherPlacement": "same physical machine; distinct owned processes",
+    "kernel": "7.2.9-arch1-1",
+    "architecture": "x86_64",
+    "cpuModel": "12th Gen Intel Core i9-12900H",
+    "logicalCpus": 20,
+    "frequencyControl": "not pinned"
+  },
+  "controls": {
+    "publishersPerReader": 1,
+    "updateIntervalSeconds": 1,
+    "receiptRenewal": false,
+    "proofIntervalsSeconds": {
+      "tmux": 3,
+      "agent": 10
+    },
+    "steadySeconds": 30,
+    "samplerSeconds": 0.02
+  },
+  "timingExclusions": [
+    "certificate generation",
+    "publisher start",
+    "initial ready acquisition",
+    "cleanup"
+  ],
+  "byteCounterCaveat": "Use Channel/byKind completed JSON totals. Released Client operation result counters include a legacy +1 LF estimator.",
+  "tools": {
+    "ssh": "OpenSSH_10.6p1 / OpenSSL 3.6.5",
+    "socat": "1.8.1.3",
+    "pythonTls": "OpenSSL 3.5.3",
+    "certificateGenerator": "OpenSSL 3.6.5"
+  }
+}

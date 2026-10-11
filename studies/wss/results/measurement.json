@@ -1,0 +1,28 @@
+{
+  "format": "mesh-plus.wss-study.measurement.v1",
+  "status": "passed",
+  "runs": 32,
+  "steadySeconds": 30,
+  "extraRuns": 6,
+  "coldAcquisitions": 40,
+  "checkedAtUtc": "2026-10-11T08:44:23.711844+00:00",
+  "python": "3.13.7",
+  "tls": "OpenSSL 3.5.3 16 Sep 2025",
+  "websockets": "17.1",
+  "topology": "one persistent separate publisher/Bridge worker per Reader; SSH includes forced socat relay",
+  "samplingSeconds": 0.02,
+  "cpuScope": "steady worker, publisher and sampled owned descendants",
+  "exclusions": [
+    "short lived descendants between samples",
+    "TLS/NIC bytes",
+    "WAN",
+    "physical suspend",
+    "global RSS bound",
+    "statistical tail latency"
+  ],
+  "byteScopes": [
+    "completed JSON lines including LF (SSH/IPC)",
+    "completed JSON messages (WSS)",
+    "WebSocket framing before TLS available on raw WSS Channel only"
+  ]
+}

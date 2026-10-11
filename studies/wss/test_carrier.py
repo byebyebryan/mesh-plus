@@ -203,7 +203,8 @@ class WSSCase(unittest.IsolatedAsyncioTestCase):
                 path.write_bytes(original)
 
     async def test_fragment_stall_binary_strict_json_and_empty_fragments(self):
-        samples = [b'{"kind":"hello","kind":"hello"}', b'{"x":NaN}', b'{} {}', b'\xff']
+        samples = ['{"kind":"hello","kind":"hello"}', '{"x":NaN}', '{} {}', b'\xff',
+                   '[' * 70 + '0' + ']' * 70, '[' + ','.join('0' for _ in range(100001)) + ']']
         async def fragments():
             yield "{"
             await asyncio.sleep(3)
@@ -245,6 +246,16 @@ class WSSCase(unittest.IsolatedAsyncioTestCase):
             await peer.send([raw[:9], raw[9:]])
             received = json.loads(await peer.recv())
             self.assertEqual(received["kind"], "hello")
+            request = {"protocol": PROTOCOL, "version": 1, "sequence": 2, "kind": "request",
+                       "channelId": received["channelId"], "requestId": "boundary", "operation": "snapshot",
+                       "timeoutMs": 2000, "parameters": {"padding": ""}}
+            request["parameters"]["padding"] = "x" * (MAX_CONTROL - len(encode(request)))
+            exact = encode(request)
+            self.assertEqual(len(exact), MAX_CONTROL)
+            await peer.send(exact.decode())
+            response = json.loads(await peer.recv())
+            self.assertEqual(response["kind"], "result")
+            self.assertEqual(response["outcome"], "ok")
         async with peer_connect(self.listener.url, ssl=self.client_context, proxy=None, compression=None,
                                 subprotocols=[PROTOCOL], close_timeout=.2) as peer:
             await peer.send(" " * (MAX_CONTROL + 1))
@@ -299,6 +310,93 @@ class WSSCase(unittest.IsolatedAsyncioTestCase):
         finally:
             for sock in sockets:
                 sock.close()
+
+    async def test_redirect_is_rejected_without_second_destination(self):
+        calls = 0
+        async def redirect(reader, writer):
+            nonlocal calls
+            calls += 1
+            try:
+                await reader.readuntil(b"\r\n\r\n")
+                writer.write(("HTTP/1.1 302 Found\r\nLocation: " + self.listener.url +
+                              "\r\nContent-Length: 0\r\n\r\n").encode())
+                await writer.drain()
+            finally:
+                writer.close()
+                await writer.wait_closed()
+        server = await asyncio.start_server(redirect, "127.0.0.1", 0, ssl=self.server_context)
+        try:
+            port = server.sockets[0].getsockname()[1]
+            with self.assertRaises(Exception):
+                await connect(f"wss://localhost:{port}/mesh/state", self.client_context)
+            self.assertEqual(calls, 1)
+            self.assertEqual(self.listener.dispatched, 0)
+        finally:
+            server.close()
+            await server.wait_closed()
+
+    async def test_complete_message_queue_overload_closes_without_unbounded_retention(self):
+        admitted = []
+        async def slow(channel):
+            admitted.append(channel)
+            await channel.pump
+        await self.listener.close()
+        self.listener = await Listener(self.server_context, slow, self.server_configuration.authorize,
+                                       self.policy[fingerprint(self.root)]).start()
+        root = Path(__file__).resolve().parents[2]
+        raw = (root / "contracts/mesh-delivery-v1/examples/client-hello.json").read_text()
+        async with peer_connect(self.listener.url, ssl=self.client_context, proxy=None, compression=None,
+                                subprotocols=[PROTOCOL], close_timeout=.2) as peer:
+            for _ in range(4):
+                await peer.send(raw)
+            await asyncio.wait_for(peer.wait_closed(), 4)
+        self.assertEqual(admitted[0].inspect()["peakQueueFrames"], 2)
+        await asyncio.wait_for(admitted[0].pump, 2)
+        self.assertTrue(admitted[0].pump.done())
+
+    async def test_repeated_send_cancellation_retires_owned_channel(self):
+        client = await self.client()
+        entered = asyncio.Event()
+        async def stalled():
+            entered.set()
+            await asyncio.Event().wait()
+        with patch.object(client.channel.writer, "drain", stalled):
+            request = asyncio.create_task(client.request())
+            await asyncio.wait_for(entered.wait(), 1)
+            for _ in range(5):
+                request.cancel()
+                await asyncio.sleep(0)
+            await asyncio.gather(request, return_exceptions=True)
+        await client.channel.close()
+        self.assertTrue(client.channel.closed)
+        self.assertTrue(client.channel.pump.done())
+        self.assertTrue(client.channel.retirement.done())
+
+    async def test_repeated_setup_cancellation_closes_tls_writer(self):
+        admitted = asyncio.Event()
+        retired = asyncio.Event()
+        async def stall(reader, writer):
+            try:
+                await reader.readuntil(b"\r\n\r\n")
+                admitted.set()
+                await reader.read()
+            finally:
+                writer.close()
+                await writer.wait_closed()
+                retired.set()
+        server = await asyncio.start_server(stall, "127.0.0.1", 0, ssl=self.server_context)
+        try:
+            port = server.sockets[0].getsockname()[1]
+            opening = asyncio.create_task(connect(f"wss://localhost:{port}/mesh/state", self.client_context))
+            await asyncio.wait_for(admitted.wait(), 2)
+            for _ in range(5):
+                opening.cancel()
+                await asyncio.sleep(0)
+            await asyncio.gather(opening, return_exceptions=True)
+            await asyncio.wait_for(retired.wait(), 2)
+        finally:
+            server.close()
+            await server.wait_closed()
 
 
 class BindingCase(unittest.IsolatedAsyncioTestCase):

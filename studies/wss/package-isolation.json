@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "releasedWheelSha256": "62b42bc76e7d79d95d89c41ee6f73c5e0169d24e2f1ac911c151c13f1f2b6f07",
+  "candidateWheelSha256": "c0137bd2f769a7ed5e0a5d437fb5d63f9f4ac2e6fcbab6f59be6050d5904e8d6",
+  "identicalRuntimeSchemaResources": 49,
+  "changedRuntimeMembers": [],
+  "unexpectedMembers": [],
+  "wssPackaged": false,
+  "metadataDependenciesEqual": true
+}
