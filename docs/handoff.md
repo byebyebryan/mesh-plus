@@ -46,6 +46,10 @@ publisher updates/restart through owned IPC, including remote nonce-proof bindin
 See [follow-up acceptance](evidence/2026-10-11-conformance-followup/README.md).
 This keeps the same SDK v1 and does not select live artifacts or migrate owners.
 
+The [WSS roadmap](wss-roadmap.md) defines the next bounded research/prototype loop.
+It preserves current runtime and owner pins; endpoint authority, truthful carrier
+provenance and a normative promotion review precede supported WSS operation.
+
 Tmux rejects stale control bindings and reserves one retiring local bridge
 handler alongside its active Reader. Eight installed native Mesh tests pass;
 independent owned fixtures cover successful delivery and gap revocation. Agent
