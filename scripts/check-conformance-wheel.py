@@ -36,6 +36,14 @@ def main():
             negative = run_suite(profile_suite(broken, domain=domain), domain=domain)
             if negative["ok"] or not negative["failures"]:
                 raise AssertionError("broken external profile was certified")
+            def expected_failure(domain):
+                raise RuntimeError("controlled factory failure")
+            marked = profile_suite(expected_failure, domain=domain)
+            for case in marked:
+                case.__unittest_expecting_failure__ = True
+            negative = run_suite(marked, domain=domain)
+            if negative["ok"] or not negative["cases"] or any(c["status"] != "expected_failure" for c in negative["cases"]):
+                raise AssertionError("expected failures were certified or unreported")
             if args.ssh:
                 from mesh_plus.testing.ssh import ssh_suite
                 report = run_suite(ssh_suite(Profile, domain=domain), domain=domain)
@@ -46,6 +54,7 @@ def main():
                       "observerPackagesPresent": {name: importlib.util.find_spec(name) is not None
                                                   for name in ("tmux_observer", "agent_observer")},
                       "reports": reports, "negativeProfilesDetected": 2,
+                      "expectedFailureSuitesRejected": 2,
                       "limits": "Installed independent fixture profiles, not owner deployment or provider acceptance"}
     if destination:
         destination.write_text(json.dumps(result, indent=2) + "\n")

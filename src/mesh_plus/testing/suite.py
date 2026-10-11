@@ -80,6 +80,8 @@ class _Result(unittest.TestResult):
         self.cases = []
 
     def _record(self, test, status):
+        # unittest sends skipped subtests separately from their parent case.
+        test = getattr(test, "test_case", test)
         item = {"caseId": test.case_id, "status": status}
         if hasattr(test, "case"):
             from ..protocol import encode

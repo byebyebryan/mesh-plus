@@ -1,5 +1,6 @@
 """The portable oracle detects both permissive and overconservative profiles."""
 
+import asyncio
 import copy
 import inspect
 import json
@@ -7,7 +8,7 @@ import unittest
 from pathlib import Path
 
 from mesh_plus.testing import network_suite, profile_cases, profile_suite, run_suite
-from mesh_plus.testing.sample import Profile
+from mesh_plus.testing.sample import Profile, Publisher
 
 
 class ConformanceTests(unittest.TestCase):
@@ -15,6 +16,21 @@ class ConformanceTests(unittest.TestCase):
         for domain in ("tmux", "agent"):
             report = run_suite(network_suite(Profile, domain=domain), domain=domain)
             self.assertTrue(report["ok"], report)
+
+    def test_changed_cache_without_push_does_not_pass_update_case(self):
+        class QuietPublisher(Publisher):
+            async def watch(self):
+                iterator = super().watch()
+                try:
+                    yield await anext(iterator)
+                    await asyncio.Event().wait()
+                finally:
+                    await iterator.aclose()
+        suite = network_suite(Profile, domain="tmux", publisher_factory=lambda d, h, s, p: QuietPublisher(d, h, s, p))
+        update = unittest.TestSuite(test for test in suite if "pushed_update" in test.case_id)
+        report = run_suite(update, domain="tmux")
+        self.assertFalse(report["ok"], report)
+        self.assertEqual(report["errors"], 2)
 
     def test_independent_profiles_pass_fixed_oracles(self):
         for domain in ("tmux", "agent"):
@@ -123,4 +139,17 @@ class ConformanceTests(unittest.TestCase):
         self.assertFalse(report["ok"], report)
         self.assertEqual(len(report["cases"]), 6)
         self.assertEqual(report["cases"][0]["status"], "failed")
+        self.assertNotIn("private", json.dumps(report))
+
+    def test_skipped_subtest_is_redacted_and_cannot_certify(self):
+        suite = profile_suite(Profile, domain="tmux")
+        first = next(iter(suite))
+        def skip_subtest():
+            with first.subTest(private="private payload"):
+                first.skipTest("private skip")
+        first.runTest = skip_subtest
+        report = run_suite(suite, domain="tmux")
+        self.assertFalse(report["ok"], report)
+        self.assertEqual(report["skipped"], 1)
+        self.assertTrue(any(case["status"] == "skipped" for case in report["cases"]))
         self.assertNotIn("private", json.dumps(report))

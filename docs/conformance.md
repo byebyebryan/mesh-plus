@@ -30,8 +30,11 @@ do not derive the expected oracle by invoking the profile being tested.
 
 `run_suite(suite, domain=...)` runs synchronously outside an active async runner.
 It returns `mesh-plus.conformance.v1`, interface/SDK versions, fixed descriptor,
-corpus digest, stable case IDs, counts and `ok`. Failures, unrelated exceptions
-and skips cannot certify the suite. It excludes payloads and exception messages.
+corpus digest, stable case IDs, counts and `ok`. Every selected case must have an
+explicit passing outcome. Failures, unrelated exceptions, skips, expected failures
+and unexpected successes cannot certify the suite. Failed subtests are recorded
+under their parent case without parameters or messages. It excludes payloads and
+exception messages.
 For local tracebacks, run the same suite with `unittest.TextTestRunner` instead.
 
 The bundled `mesh_plus.testing.sample.Profile` is an independent fixture
@@ -40,14 +43,20 @@ and transport boundary; it does not certify arbitrary provider semantics.
 Owner-native validation remains mandatory. The kit is never imported by ordinary
 Mesh entry points and leaves `mesh_plus.api` signatures/exports unchanged.
 
-`network_suite(make_profile, domain=...)` adds eight owned IPC/remote-proof
+`network_suite(make_profile, domain=...)` adds ten owned IPC/remote-proof
 lifecycle cases per domain. Its route connector test uses IPC and does not claim
 SSH carriage. Optional `publisher_factory(domain, host, source, profile)` returns
 a disposable fixture publisher with the sample publisher's `frame`,
-`state_profile`, cached `wrap()` and watcher-count surface plus the normal Bridge
+`state_profile`, cached `wrap()`, a `changes` notification queue and watcher-count surface plus the normal Bridge
 methods. This is a test scenario, not a requirement on production adapters.
 The default scenario is Mesh-owned and accepts the owner's profile without
-inheritance. It supplies controlled changes, restart and failures.
+inheritance. Update/restart scenarios mutate a copied native frame and notify
+`changes`, then observe delivery through Bridge, IPC, Reader and ReadGuard. Both
+local and remote-proof bindings run. Updates must arrive before the long periodic
+proof interval, preserve original receipts and keep the connection epoch.
+Publisher restart must visibly revoke rows, reconnect and deliver an accepted
+resync with a newer epoch. These cases use IPC; actual SSH carriage remains the
+separate suite below.
 
 For actual carriage, explicitly import `ssh_suite` from `mesh_plus.testing.ssh`.
 It owns a localhost daemon, private keys, forced fixture command and repeated

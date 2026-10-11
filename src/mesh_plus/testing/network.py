@@ -5,6 +5,7 @@ import copy
 import json
 import tempfile
 import unittest
+import uuid
 from dataclasses import replace
 from importlib.resources import files
 from pathlib import Path
@@ -46,6 +47,98 @@ class _NetworkTests(unittest.IsolatedAsyncioTestCase):
 
     def _publisher(self, host, source="default"):
         return self.publisher_factory(self.domain, host, source, self._profile())
+
+    async def _publisher_transition(self, restart):
+        for local in (True, False):
+            with self.subTest(local=local), tempfile.TemporaryDirectory() as directory:
+                host = "local" if local else "remote"
+                publisher = self._publisher(host)
+                profile = publisher.state_profile
+                path = Path(directory) / "mesh.sock"
+                server = await IPCServer(path, Bridge(publisher).serve).start()
+                clients = []
+                async def connect():
+                    client = await Client.connect(await connect_ipc(path), host=host, source="default",
+                                                  profile=publisher.profile, codec=publisher.validate)
+                    clients.append(client)
+                    return client
+                revision = "sha256:" + "b" * 64
+                async def catalog_check():
+                    return revision
+                reader = Reader(self.domain, [Endpoint(host, local, None if local else "sha256:" + "a" * 64,
+                                                       connect, profile.bind(host, "default"))],
+                                local_host="local", catalog_revision=None if local else revision,
+                                catalog_check=None if local else catalog_check, profile=profile)
+                request_id = "c" * 32
+                guard = ReadGuard(self.domain, request_id, host_ids=[host], profile=profile)
+                # Long proof cadence makes the pushed update, rather than a
+                # scheduled read, responsible for observing the new frame.
+                watch = reader.watch(proof_interval=60, request_id=request_id)
+                async def until(predicate):
+                    async with asyncio.timeout(3):
+                        async for response in watch:
+                            guard.accept(response)
+                            if predicate(response):
+                                return response
+                    self.fail("watch ended before publisher transition")
+                try:
+                    request_metric = "snapshotRequests" if local else "proofRequests"
+                    def settled_baseline(response):
+                        if not clients or response["mesh"]["hosts"][0]["delivery"]["status"] != "ready":
+                            return False
+                        metrics = clients[0].inspect()
+                        return (metrics["operations"][request_metric] >= 2 and metrics["pendingRequests"] == 0
+                                and metrics["channel"]["byKind"]["received"].get("data", {}).get("frames", 0) >= 1)
+                    baseline = await until(settled_baseline)
+                    initial_epoch = baseline["mesh"]["hosts"][0]["delivery"]["epoch"]
+                    self.assertTrue(guard.current(boottime_ms(), baseline["mesh"]["reader"]["clock"]))
+                    original = copy.deepcopy(publisher.frame)
+                    changed = copy.deepcopy(original)
+                    title_key = "name" if self.domain == "tmux" else "title"
+                    changed["snapshot"]["sessions"][0][title_key] = "conformance pushed update"
+                    changed["viewRevision"] += 1
+                    changed["sequence"] += 1
+                    publisher_key = "publisherId" if self.domain == "tmux" else "serviceId"
+                    if restart:
+                        changed[publisher_key] = str(uuid.uuid4())
+                    publisher.frame = changed
+                    await publisher.changes.put(None)
+                    if restart:
+                        revoked = await until(lambda r: r["mesh"]["hosts"][0]["delivery"]["status"] == "unavailable")
+                        self.assertEqual(guard.current(boottime_ms(), revoked["mesh"]["reader"]["clock"]), [])
+                    replacement = await until(lambda r: r["mesh"]["hosts"][0]["delivery"]["status"] == "ready"
+                                              and reconstructed(r, r["mesh"]["hosts"][0], profile=profile) == changed)
+                    outcome = replacement["mesh"]["hosts"][0]
+                    if restart:
+                        self.assertEqual(replacement["mesh"]["kind"], "resync")
+                        self.assertGreater(outcome["delivery"]["epoch"], initial_epoch)
+                        self.assertGreaterEqual(len(clients), 2)
+                    else:
+                        self.assertEqual(outcome["delivery"]["epoch"], initial_epoch)
+                        self.assertEqual(len(clients), 1)
+                        self.assertGreaterEqual(clients[0].inspect()["channel"]["byKind"]["received"]["data"]["frames"], 2)
+                    if not local:
+                        self.assertIsNotNone(outcome["delivery"]["proof"])
+                    rows = guard.current(boottime_ms(), replacement["mesh"]["reader"]["clock"])
+                    self.assertTrue(rows)
+                    self.assertEqual(rows[0][title_key], "conformance pushed update")
+                    # Delivery changes never renew original source receipts.
+                    self.assertEqual(profile.bind(host, "default").inspect_native(original).receipts,
+                                     profile.bind(host, "default").inspect_native(changed).receipts)
+                finally:
+                    guard.disconnect()
+                    await watch.aclose()
+                    await server.close()
+                self.assertEqual(publisher.watchers, 0)
+                self.assertTrue(all(client.channel.closed for client in clients))
+                self.assertEqual(reader.inspect()["activeConnections"], 0)
+                self.assertEqual(reader.inspect()["cleanupFailures"], 0)
+
+    async def test_pushed_update_crosses_carrier_with_original_receipts(self):
+        await self._publisher_transition(restart=False)
+
+    async def test_publisher_restart_revokes_then_resyncs_through_carrier(self):
+        await self._publisher_transition(restart=True)
 
     async def test_configured_poll_and_push_full_profile_path_and_owned_close(self):
         for domain in (self.domain,):
