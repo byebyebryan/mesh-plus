@@ -35,6 +35,12 @@ The next Mesh-owned work is in the [SDK maintenance plan](docs/sdk-maintenance-p
 Owner conformance tooling comes first; diagnostics and measured refinement follow.
 This planning scope does not delay independent Observer adoption.
 
+**0.1.0a12** publishes the [portable owner conformance kit](docs/conformance.md),
+explicit [SDK diagnostics and cached assessment](docs/sdk-diagnostics.md), and
+[matched measurement/package evidence](docs/evidence/2026-10-11-sdk-maintenance/README.md).
+The maintenance sequence is complete without a speculative core optimization.
+This package checkpoint does not change live selections.
+
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The
 [implementation checkpoints](docs/implementation-progress.md) preserve history.

@@ -35,6 +35,13 @@ portable owner conformance, compatible diagnostics, measured internal refinement
 and a separate package checkpoint. It is reviewed implementation scope, not a
 prerequisite for Observer adoption or a new runtime capability.
 
+That sequence is accepted in **a12**: installed owner conformance, explicit v2
+SDK diagnostics and cached assessment, matched measurements selecting no core
+optimization, and an immutable package. See the
+[acceptance record](evidence/2026-10-11-sdk-maintenance/README.md),
+[kit](conformance.md) and [diagnostics](sdk-diagnostics.md). The frozen runtime
+SDK/wire boundary stays unchanged, and no live selection is made by this release.
+
 Tmux rejects stale control bindings and reserves one retiring local bridge
 handler alongside its active Reader. Eight installed native Mesh tests pass;
 independent owned fixtures cover successful delivery and gap revocation. Agent

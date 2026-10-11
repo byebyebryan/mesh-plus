@@ -5,6 +5,12 @@ not a new SDK guarantee, frozen contract revision or deployment selection.
 The [SDK interface](sdk-api.md), [owner handoff](sdk-owner-handoff.md) and
 [contract freeze](contract-freeze.md) remain authoritative.
 
+Implementation disposition, 2026-10-11: M0–M3 are accepted by the
+[a12 package record](evidence/2026-10-11-sdk-maintenance/README.md). M2's explicit
+decision is to retain the core after matched measurement. The proposed sequence
+below preserves the review rationale; conformance and diagnostic usage now live
+in their current guides. Owner adoption and deployment remain separate.
+
 ## Decision and sequence
 
 Make the existing SDK boundary portable to owner tests, improve diagnosis of

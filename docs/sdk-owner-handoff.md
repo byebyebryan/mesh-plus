@@ -5,6 +5,12 @@ Mesh SDK interface v1 is implemented in a11. See the [interface](sdk-api.md) and
 integrations remain compatible; owner adoption is independently schedulable.
 Both Observer source checkouts remain unchanged by this Mesh pass.
 
+A12 adds an optional [installed conformance kit](conformance.md) and
+[cached diagnostics](sdk-diagnostics.md) under that same SDK interface, with
+[package evidence](evidence/2026-10-11-sdk-maintenance/README.md). Owners can use
+the kit against their own profile factories without copying Mesh tests. SDK v1
+adoption against a11 remains valid; a12 does not require a coordinated migration.
+
 | Work stream | Bounded next task | Acceptance |
 | --- | --- | --- |
 | Mesh | Transport fixes, cleanup, diagnostics and measured performance under SDK v1 | Standalone conformance, pinned native matrix when affected, SSH authority compatibility; preserve lock/schema bytes. |
