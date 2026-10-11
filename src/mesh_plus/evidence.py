@@ -28,4 +28,3 @@ def digest(value):
 @lru_cache(maxsize=1)
 def bridge_validator():
     return Draft202012Validator(json.loads(files("mesh_plus").joinpath("schemas", "bridge-reply.schema.json").read_text()))
-

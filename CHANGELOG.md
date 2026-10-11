@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0a11 (2026-10-10)
+
+- Add SDK interface v1 with explicit pure profiles and bound endpoint codecs,
+  threaded through configured IPC/SSH, fleet polling/push, reconstruction and guards.
+- Preserve domain-string/default integrations, original receipts/native eligibility,
+  frozen wire/schema bytes and the reviewed SSH authority ABI.
+- Include independent profile conformance in the standalone core gate, public
+  signature fixtures, pinned-a10 projection comparison and explicit current
+  authority provenance/behavior acceptance.
+- This source/package checkpoint does not select new live artifacts or move
+  Observer adapters, provider policy or Plus consumers.
+
 ## 0.1.0a10 (2026-10-10)
 
 - 2026-10-10: paired Snap/Starship adoption, recovery, rollback/reselection,
