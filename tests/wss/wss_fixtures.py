@@ -29,14 +29,26 @@ def certificates(root):
     root.chmod(0o700)
     command(root, "req", "-x509", "-newkey", "ec", "-pkeyopt", "ec_paramgen_curve:P-256", "-nodes",
             "-keyout", "ca.key", "-out", "ca.pem", "-subj", "/CN=Mesh study CA", "-days", "1")
+    (root / "index.txt").write_text("")
+    (root / "serial").write_text("1000\n")
+    (root / "ca.cnf").write_text(
+        "[ca]\ndefault_ca=local\n[local]\ndatabase=index.txt\nserial=serial\n"
+        "certificate=ca.pem\nprivate_key=ca.key\ndefault_md=sha256\ndefault_days=1\n"
+        "policy=policy\nx509_extensions=client\n[policy]\ncommonName=supplied\n"
+        "[client]\nsubjectAltName=DNS:localhost\nextendedKeyUsage=clientAuth\n")
     for name in ("server", "client", "rotation", "unknown", "expired"):
         command(root, "req", "-new", "-newkey", "ec", "-pkeyopt", "ec_paramgen_curve:P-256", "-nodes",
                 "-keyout", name + ".key", "-out", name + ".csr", "-subj", "/CN=" + name)
         (root / "extensions").write_text("subjectAltName=DNS:localhost\nextendedKeyUsage=" +
                                         ("serverAuth" if name == "server" else "clientAuth") + "\n")
-        validity = ["-not_before", "20200101000000Z", "-not_after", "20200102000000Z"] if name == "expired" else ["-days", "1"]
-        command(root, "x509", "-req", "-in", name + ".csr", "-CA", "ca.pem", "-CAkey", "ca.key",
-                "-CAcreateserial", "-out", name + ".pem", *validity, "-extfile", "extensions")
+        if name == "expired":
+            # openssl ca supports explicit dates on both OpenSSL 3.0 and newer.
+            # x509's signing -not_before/-not_after flags are newer and not portable.
+            command(root, "ca", "-batch", "-notext", "-config", "ca.cnf", "-in", name + ".csr",
+                    "-out", name + ".pem", "-startdate", "20200101000000Z", "-enddate", "20200102000000Z")
+        else:
+            command(root, "x509", "-req", "-in", name + ".csr", "-CA", "ca.pem", "-CAkey", "ca.key",
+                    "-CAcreateserial", "-out", name + ".pem", "-days", "1", "-extfile", "extensions")
     for path in root.iterdir():
         path.chmod(0o600)
 

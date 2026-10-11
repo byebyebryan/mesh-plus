@@ -51,7 +51,7 @@ def main():
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(report, indent=2) + "\n")
-    print(json.dumps({k: v for k, v in report.items() if k != "inputs"}, indent=2))
+    print(json.dumps({k: v for k, v in report.items() if k not in {"inputs", "runtimeInputs"}}, indent=2))
     return 0 if passed else 1
 
 
