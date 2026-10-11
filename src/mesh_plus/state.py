@@ -204,8 +204,8 @@ class ReferenceCodec:
         return ObserverCodec(self.profile.domain, self.host, self.source)
 
     def validate_bridge(self, payload):
-        # Core validates the bridge; inspect_native supplies pure native admission.
-        pass
+        # Direct Client users retain full native/bridge admission as before.
+        self.legacy.validate(payload)
 
     def inspect_native(self, frame):
         codec = self.legacy

@@ -54,7 +54,7 @@ def reconstructed(response, host, *, profile=None):
                                                  if profile.record_host(row) == host["hostId"]])
 
 
-def validate_response(response, *, profile=None):
+def _validated_response(response, profile=None):
     domain = "tmux" if response.get("protocol") == "tmux-observer.mesh-candidate.v1" else "agent"
     profile = resolve_profile(domain, profile)
     # A composed response passes several independent consumers in one process.
@@ -96,6 +96,7 @@ def validate_response(response, *, profile=None):
         references.append(identity)
     check(len(references) == len(set(references)), "duplicate_identity")
     check(host_positions == sorted(host_positions), "row_host_order")
+    admitted = {}
     for host in hosts:
         local = host["hostId"] == local_host
         check(host["local"] == local and (host["delivery"]["path"] == "ipc") == local, "local_binding")
@@ -111,6 +112,7 @@ def validate_response(response, *, profile=None):
         frame = reconstructed(response, host, profile=profile)
         codec = profile.bind(host["hostId"], "default")
         state = inspect_state(profile, codec, frame)
+        admitted[host["hostId"]] = state
         check(state.owner == host["owner"] and list(state.records) == [row for row in response["sessions"]
               if profile.record_host(row) == host["hostId"]], "owner_projection")
         snapshot = state.owner["metadata"]
@@ -153,22 +155,25 @@ def validate_response(response, *, profile=None):
                 "mesh": {**mesh, "hosts": [{**host, "owner": None} for host in hosts]}}
     check(len(encode(metadata)) + 1 <= 65536, "metadata_capacity")
     metadata_bounds(metadata)
-    return response
+    return response, admitted
+
+
+def validate_response(response, *, profile=None):
+    return _validated_response(response, profile)[0]
 
 
 def current_sessions(response, now_ms, clock, *, profile=None):
     """Only records with unexpired scoped leases; never infer idle from absence."""
     domain = "tmux" if response["protocol"].startswith("tmux-") else "agent"
     profile = resolve_profile(domain, profile)
-    validate_response(response, profile=profile)
+    _, admitted = _validated_response(response, profile)
     check(clock == response["mesh"]["reader"]["clock"] and type(now_ms) is int and
           now_ms >= response["mesh"]["reader"]["encodedAtMs"], "reader_clock_scope")
     rows = []
     for host in response["mesh"]["hosts"]:
         if host["viewState"] != "current" or host["delivery"]["status"] != "ready":
             continue
-        codec = profile.bind(host["hostId"], "default")
-        state = inspect_state(profile, codec, reconstructed(response, host, profile=profile))
+        state = admitted[host["hostId"]]
         available = {(r["sourceId"], r["component"]) for r in host["receipts"]
                      if r["health"] in {"current", "partial"} and r["expiresAtMs"] > now_ms}
         native = {(r["sourceId"], r["component"]) for r in state.receipts
@@ -216,7 +221,7 @@ class ReadGuard:
             check(len(encode(frame)) <= 16384, "control_capacity")
             check(self.binding is not None, "read_baseline_required")
         else:
-            validate_response(frame, profile=self.state_profile)
+            _, admitted = _validated_response(frame, self.state_profile)
         check(frame["protocol"] == self.profile and mesh["requestId"] == self.request_id and
               mesh["operation"] == "watch", "read_request_binding")
         reader = mesh["reader"]
@@ -238,9 +243,7 @@ class ReadGuard:
                 owner = host["owner"]
                 publisher = None
                 if owner is not None:
-                    codec = self.state_profile.bind(host["hostId"], "default")
-                    publisher = inspect_state(self.state_profile, codec,
-                                              reconstructed(frame, host, profile=self.state_profile)).publisher
+                    publisher = admitted[host["hostId"]].publisher
                 previous = self.host_bindings.get(host["hostId"])
                 if previous is not None:
                     check(epoch >= previous[0], "read_host_epoch_regression")

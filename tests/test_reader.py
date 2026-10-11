@@ -54,6 +54,16 @@ class CachedClient:
 
 
 class ViewTests(unittest.TestCase):
+    def test_explicit_reference_codec_rejects_bad_direct_delivery_payload(self):
+        from mesh_plus.api import ReferenceProfile
+        client = CachedClient("tmux", "local")
+        payload = client.adapter.wrap(client.frame)
+        codec = ReferenceProfile("tmux").bind("local", "default")
+        codec.validate_bridge(payload)
+        payload["ownerDigest"] = "sha256:" + "0" * 64
+        with self.assertRaisesRegex(ProtocolError, "owner_digest"):
+            codec.validate_bridge(payload)
+
     def test_repeated_structure_never_bypasses_native_checks_or_python_types(self):
         response = json.loads((ROOT / "contracts/mesh-read-v1/examples/tmux-local.json").read_text())
         validate_response(response)

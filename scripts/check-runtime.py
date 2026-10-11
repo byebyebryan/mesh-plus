@@ -1,4 +1,4 @@
-"""Runtime acceptance report; core-only mode explicitly excludes native adapters."""
+"""Runtime acceptance report; core-only mode includes independent SDK profiles and excludes native adapters."""
 
 import argparse
 import hashlib
@@ -36,7 +36,7 @@ def main():
             versions[name] = None
     report = {"status": "passed" if result.wasSuccessful() else "failed",
               "checkedAtUtc": datetime.now(timezone.utc).isoformat(), "python": sys.version.split()[0],
-              "scope": "core-only IPC/lifecycle/quoting" if args.core_only else "runtime and owned native/SSH acceptance",
+              "scope": "standalone IPC/lifecycle/SDK profiles/authority/quoting" if args.core_only else "runtime and owned native/SSH acceptance",
               "testsRun": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),
               "skipped": [{"test": test.id(), "reason": reason} for test, reason in result.skipped],
               "versions": versions,
