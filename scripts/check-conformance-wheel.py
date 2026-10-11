@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 import tempfile
+from pathlib import Path
 
 import mesh_plus
 from mesh_plus.testing import network_suite, profile_suite, run_suite
@@ -14,7 +15,11 @@ from mesh_plus.testing.sample import Profile
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ssh", action="store_true", help="separate owned actual-SSH acceptance")
+    parser.add_argument("--report", type=Path)
     args = parser.parse_args()
+    if Path(mesh_plus.__file__).resolve().is_relative_to(Path(__file__).resolve().parents[1]):
+        raise RuntimeError("installed wheel required; editable/source package cannot pass this gate")
+    destination = args.report.resolve() if args.report else None
     reports = []
     with tempfile.TemporaryDirectory(prefix="mesh-external-caller-") as directory:
         os.chdir(directory)
@@ -37,11 +42,16 @@ def main():
                 if not report["ok"]:
                     raise AssertionError(report)
                 reports.append(report)
-    print(json.dumps({"status": "passed", "meshVersion": mesh_plus.__version__,
+    result = {"status": "passed", "meshVersion": mesh_plus.__version__,
                       "observerPackagesPresent": {name: importlib.util.find_spec(name) is not None
                                                   for name in ("tmux_observer", "agent_observer")},
                       "reports": reports, "negativeProfilesDetected": 2,
-                      "limits": "Installed independent fixture profiles, not owner deployment or provider acceptance"}, indent=2))
+                      "limits": "Installed independent fixture profiles, not owner deployment or provider acceptance"}
+    if destination:
+        destination.write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps({"status": "passed", "suites": len(reports), "cases": sum(r["testsRun"] for r in reports)}))
+    else:
+        print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":

@@ -9,16 +9,41 @@ import shlex
 import shutil
 import socket
 
-from ..transport import ssh_argv, subprocess_channel
+from ..transport import finish_owned, ssh_argv, subprocess_channel
+
+
+async def _stop(process):
+    async def retire():
+        if process.returncode is None:
+            process.terminate()
+            try:
+                await asyncio.wait_for(process.wait(), 3)
+            except TimeoutError:
+                process.kill()
+                await asyncio.wait_for(process.wait(), 3)
+    await finish_owned(asyncio.create_task(retire()))
+
+
+async def _spawn(*argv, **kwargs):
+    creation = asyncio.create_task(asyncio.create_subprocess_exec(*argv, **kwargs))
+    try:
+        return await finish_owned(creation)
+    except BaseException:
+        if creation.done() and not creation.cancelled() and creation.exception() is None:
+            await _stop(creation.result())
+        raise
 
 
 @contextlib.asynccontextmanager
 async def ssh_server(directory, command, source):
     """One owned daemon with independently owned reconnectable channels."""
     for name in ("host", "client"):
-        child = await asyncio.create_subprocess_exec("ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", str(directory / name))
-        if await child.wait() != 0:
-            raise RuntimeError("owned key generation failed")
+        child = await _spawn("ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", str(directory / name))
+        try:
+            if await child.wait() != 0:
+                raise RuntimeError("owned key generation failed")
+        finally:
+            await _stop(child)
     nonce = "b" * 32
     wrapper = f"printf '\\036ROFI_PLUS_REACHED_V1:{nonce}\\037\\n' >&2; exec " + shlex.join(command)
     wrapper_path = directory / "bridge.sh"
@@ -40,7 +65,7 @@ async def ssh_server(directory, command, source):
     known = directory / "known_hosts"
     known.write_text(f"[127.0.0.1]:{port} {host_key[0]} {host_key[1]}\n")
     log = directory / "sshd.log"
-    daemon = await asyncio.create_subprocess_exec(shutil.which("sshd"), "-D", "-f", str(config), "-E", str(log),
+    daemon = await _spawn(shutil.which("sshd"), "-D", "-f", str(config), "-E", str(log),
                                                  stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.DEVNULL,
                                                  stderr=asyncio.subprocess.DEVNULL)
     try:
@@ -64,9 +89,7 @@ async def ssh_server(directory, command, source):
             return await subprocess_channel(argv, reached_nonce=nonce)
         yield connect
     finally:
-        if daemon.returncode is None:
-            daemon.terminate()
-            await asyncio.wait_for(daemon.wait(), 3)
+        await _stop(daemon)
 
 
 @contextlib.asynccontextmanager

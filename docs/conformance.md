@@ -15,8 +15,8 @@ assert report["ok"], report
 `make_profile(domain)` returns the owner's reviewed pure `StateProfile`. Each
 case gets a fresh instance. `profile_cases(domain)` supplies the curated baseline:
 six Tmux and seven Agent cases, including the reviewed stale unsaved runtime
-case. It covers 81 original evaluation points plus the added negative case's
-points, with exact native state, identities, receipt facts and effective rows.
+case. It covers 90 evaluation points, with exact native state, identities,
+receipt facts and effective rows.
 Expectations were fixed with released a11 and pinned native facades; they are not
 computed using the tested profile. It excludes reserved WSS/events studies.
 

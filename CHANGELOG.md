@@ -1,11 +1,15 @@
 # Changelog
 
-## 0.1.0a12 (candidate)
+## 0.1.0a12 (2026-10-11)
 
 - Add opt-in installed owner profile conformance with independent fixed native,
   receipt, identity and current-view oracles. No runtime wire or authority change.
 - Add explicit `doctor --sdk` diagnostics v2 and cached `assess` polling/watch
   evidence samples; preserve v1 acquisition semantics and disable route writes.
+- Add matched IPC/SSH profile measurements including consumer validity, large
+  snapshots and observed disconnect/recovery. Performance changes remain evidence-driven.
+- Preserve frozen runtime APIs, wire/schema and authority bytes. This package
+  does not select live artifacts or certify producer-owned profile adoption.
 
 ## 0.1.0a11 (2026-10-10)
 
