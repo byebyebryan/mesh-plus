@@ -52,6 +52,8 @@ Authenticated poll/push and both profiles pass in isolated loopback fixtures.
 The a14 source/private-wheel candidate promotes optional native WSS through the
 [reviewed addendum](../contracts/wss-v1/contract.md) and lock revision 2. See
 [WSS SDK/configuration](wss.md) and the [promotion plan](wss-promotion-plan.md).
+The [promotion acceptance](evidence/2026-10-11-wss-promotion/README.md) binds the
+a14 private wheel, installed cross-Python/native gates and exact exclusions.
 The existing Read/Delivery and native schemas remain byte-identical. WSS owns
 immutable mixed-backend selection, mTLS, bounded carrier IO and explicit local-file
 job ownership. Source/private wheel acceptance is separate from release and real

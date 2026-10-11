@@ -1,5 +1,9 @@
 # WSS evaluation and extension roadmap
 
+The study sequence below is historical. The separate a14 promotion is accepted
+at source/private-wheel scope; see [the promotion record](evidence/2026-10-11-wss-promotion/README.md)
+and [WSS SDK/configuration](wss.md). Real-fleet selection remains separate.
+
 2026-10-11 planning checkpoint against released a13. This is a reviewed research
 plan, not authorization to advertise WSS support. The [state freeze](contract-freeze.md)
 and [lock](../contracts/LOCK.json) still accept IPC/SSH only. Existing Observer

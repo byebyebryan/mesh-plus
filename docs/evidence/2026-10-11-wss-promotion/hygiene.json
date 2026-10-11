@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "ownedMatchingProcesses": 0,
+  "ownedFixtureDirectories": 0,
+  "ownedSSHDirectories": 0,
+  "scope": "read-only ownership-prefix audit after accepted gates; not a global machine preservation claim"
+}
