@@ -1,0 +1,32 @@
+{
+  "format": "mesh-plus.wss-study.resources.v1",
+  "scope": "synthetic transport stress, not native/profile state",
+  "rssScope": "one worker containing TLS client and server; sampled and process peak, no global bound",
+  "slowReader": {
+    "messageBytes": 8470528,
+    "peakQueuedFrames": 2,
+    "peakAssemblyBytes": 8470528,
+    "overloadClosed": true,
+    "sampledPeakRssKiB": 150780
+  },
+  "oversizedPeer": {
+    "declaredBytes": 4294967296,
+    "assembledBytes": 0,
+    "closedBeforePayload": true
+  },
+  "pendingTLS": {
+    "offeredTCPConnections": 8,
+    "admitted": 4,
+    "dispatchedSources": 0,
+    "rssKiB": 117108,
+    "kernelBacklogExcluded": true
+  },
+  "processPeakRssKiB": 152504,
+  "cleanup": {
+    "listeners": 0,
+    "channels": 0,
+    "pendingTLS": 0,
+    "unexpectedTasks": 0
+  },
+  "status": "passed"
+}

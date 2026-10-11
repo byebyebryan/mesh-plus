@@ -217,3 +217,16 @@ The [planning review](evidence/2026-10-11-wss-roadmap-review.json) records check
 inputs and unresolved runtime questions. It validates roadmap boundaries and
 existing design gates, not WSS functionality or production performance.
 Historical [carrier acceptance](transport-validation.md) retains its own scope.
+
+## Completed study checkpoint
+
+The W0–W5 loop completed on 2026-10-11. The
+[outcome](../studies/wss/outcome.md) records authenticated state carriage, both
+native profiles, cross-Python acceptance, 32 original and eight refined remote
+ABBA runs, 40 cold acquisitions, true local IPC controls and bounded resource
+stress. Its disposition is feasible opt-in candidate, with runtime promotion
+deferred to the [concrete review proposal](../studies/wss/promotion-proposal.md).
+The frozen parser's generic byte/depth limits do not add a global node cap.
+Study phase budgets and local-file thread limits do not establish a promoted
+aggregate setup/send/configuration IO guarantee. Existing runtime, schema/lock,
+authority and deployed pins retain their own accepted bytes.

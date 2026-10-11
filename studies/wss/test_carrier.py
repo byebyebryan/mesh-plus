@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from carrier import Listener, connect, endpoint_url
+from carrier import Listener, connect, endpoint_url, pause_until
 from configuration import (
     BINDING,
     Selection,
@@ -28,6 +28,7 @@ from mesh_plus.bridge import Bridge
 from mesh_plus.catalog import Catalog
 from mesh_plus.evidence import digest
 from mesh_plus.protocol import MAX_CONTROL, MAX_MESSAGE, PROTOCOL, ProtocolError, encode
+from mesh_plus.transport import boottime_ms
 
 
 class WSSCase(unittest.IsolatedAsyncioTestCase):
@@ -53,6 +54,7 @@ class WSSCase(unittest.IsolatedAsyncioTestCase):
         await self.listener.close()
         self.assertFalse(self.listener.tasks)
         self.assertFalse(self.listener.channels)
+        self.assertEqual(self.listener.unexpected, 0)
         self.assertEqual(self.publisher.watchers, 0)
         self.temp.cleanup()
 
@@ -90,6 +92,16 @@ class WSSCase(unittest.IsolatedAsyncioTestCase):
             with self.subTest(name=name), self.assertRaises(Exception):
                 await connect(self.listener.url, context)
         context = ssl.create_default_context(cafile=str(self.root / "ca.pem"))
+        with self.assertRaises(Exception):
+            await connect(self.listener.url, context)
+        other = self.root / "untrusted"
+        other.mkdir(mode=0o700)
+        await asyncio.to_thread(certificates, other)
+        # Trust the RIGHT server, but offer an allowlisted cert from the WRONG CA.
+        # This isolates TLS client trust from fingerprint allowlist rejection.
+        context = tls_context(self.root / "ca.pem", other / "client.pem", other / "client.key")
+        self.policy[fingerprint(other)] = ["beta", "default", self.publisher.profile]
+        write_policy(self.policy_path, self.policy)
         with self.assertRaises(Exception):
             await connect(self.listener.url, context)
         self.assertEqual(self.listener.dispatched, 0)
@@ -397,6 +409,46 @@ class WSSCase(unittest.IsolatedAsyncioTestCase):
         finally:
             server.close()
             await server.wait_closed()
+
+    async def test_graceful_websocket_close_and_late_validation_rejection(self):
+        import time
+
+        from carrier import decode as strict_decode
+        async with peer_connect(self.listener.url, ssl=self.client_context, proxy=None, compression=None,
+                                subprotocols=[PROTOCOL]) as peer:
+            channel = next(iter(self.listener.channels))
+            await channel.close()
+            await asyncio.wait_for(peer.wait_closed(), 2)
+            self.assertEqual(peer.close_code, 1000)
+        channel = await connect(self.listener.url, self.client_context)
+        channel.assembly_timeout = .01
+        def late(raw, direction, maximum):
+            time.sleep(.025)
+            return strict_decode(raw, direction, maximum)
+        with patch("carrier.decode", late), self.assertRaises(ProtocolError):
+            await Client.connect(channel, host="beta", source="default", profile=self.publisher.profile,
+                                 codec=self.publisher.validate)
+        self.assertTrue(channel.pump.done())
+
+    async def test_partial_header_deadline_and_boottime_resume_tick(self):
+        original = self.listener.handler
+        async def fast(channel):
+            channel.assembly_timeout = .05
+            await original(channel)
+        self.listener.handler = fast
+        channel = await connect(self.listener.url, self.client_context)
+        try:
+            channel.writer.write(b"\x81")
+            await channel.writer.drain()
+            await asyncio.wait_for(channel.pump, 1)
+            self.assertTrue(channel.closed)
+        finally:
+            await channel.close()
+        now = boottime_ms()
+        sleeper = asyncio.create_task(pause_until(now + 5000))
+        await asyncio.sleep(.02)
+        with patch("carrier.boottime_ms", return_value=now + 10000):
+            await asyncio.wait_for(sleeper, .3)
 
 
 class BindingCase(unittest.IsolatedAsyncioTestCase):

@@ -46,7 +46,7 @@ restart coverage through owned IPC with local and remote-proof bindings. SDK v1
 and runtime contracts stay unchanged; see the
 [follow-up acceptance](docs/evidence/2026-10-11-conformance-followup/README.md).
 
-The next research track is the [WSS roadmap](docs/wss-roadmap.md): isolated carrier,
+The completed research track is the [WSS roadmap](docs/wss-roadmap.md): isolated carrier,
 authenticated endpoint binding, native state acceptance and matched measurements.
 WSS remains outside supported runtime until a separately reviewed promotion.
 

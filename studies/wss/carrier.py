@@ -1,6 +1,7 @@
 """Explicit study-only owned TLS/WebSocket Channel; no runtime registration."""
 
 import asyncio
+import contextlib
 import hashlib
 import re
 import secrets
@@ -12,6 +13,7 @@ from urllib.parse import urlsplit
 from websockets.client import ClientProtocol
 from websockets.frames import Frame, Opcode
 from websockets.http11 import Request, Response
+from websockets.protocol import State
 from websockets.server import ServerProtocol
 from websockets.uri import parse_uri
 
@@ -32,6 +34,12 @@ def endpoint_url(url):
 
 async def budget(awaitable, seconds):
     return await within_deadline(awaitable, boottime_ms() + int(seconds * 1000))
+
+
+async def pause_until(deadline):
+    """Notice BOOTTIME resume on the next runnable 100 ms tick."""
+    while boottime_ms() < deadline:
+        await asyncio.sleep(min(.1, (deadline - boottime_ms()) / 1000))
 
 
 async def retire_writer(writer):
@@ -88,14 +96,15 @@ class Channel:
         self.pending_ping = None
         tls = writer.get_extra_info("ssl_object")
         self.peer_expiry = ssl.cert_time_to_seconds(tls.getpeercert()["notAfter"])
+        self.peer_start = ssl.cert_time_to_seconds(tls.getpeercert()["notBefore"])
         self.pump = asyncio.create_task(self._pump())
         self.liveness = asyncio.create_task(self._liveness())
 
     async def _liveness(self):
         try:
             while True:
-                await asyncio.sleep(5)
-                check(time.time() < self.peer_expiry, "wss_certificate_expired")
+                await pause_until(boottime_ms() + 5000)
+                check(self.peer_start <= time.time() < self.peer_expiry, "wss_certificate_expired")
                 if self.pending_ping:
                     check(boottime_ms() - self.pending_ping[1] < 5000, "wss_ping_timeout")
                 async with self.lock:
@@ -178,6 +187,7 @@ class Channel:
                 if not frame.fin:
                     continue
                 value = decode(bytes(assembly), self.incoming, maximum)
+                check(boottime_ms() < deadline, "frame_deadline")
                 self.count("received", value, len(assembly))
                 await budget(self.queue.put((value, len(assembly))), 2)
                 self.metrics["peakQueueFrames"] = max(self.metrics["peakQueueFrames"], self.queue.qsize())
@@ -229,6 +239,14 @@ class Channel:
     async def _retire(self):
         self.closed = True
         self.wakeup.set()
+        if not self.pump.done() and self.protocol.state == State.OPEN:
+            async def graceful():
+                async with self.lock:
+                    self.protocol.send_close(1000)
+                    await self._flush()
+                await asyncio.shield(self.pump)
+            with contextlib.suppress(Exception):
+                await budget(graceful(), 1)
         self.pump.cancel()
         self.liveness.cancel()
         await asyncio.gather(self.pump, return_exceptions=True)
@@ -285,6 +303,7 @@ class Listener:
         self.peak_admitted = 0
         self.dispatched = 0
         self.failures = 0
+        self.unexpected = 0
         self.closed = False
         self.retirement = None
 
@@ -310,8 +329,13 @@ class Listener:
                 raise
             task = asyncio.create_task(self._serve(sock))
             self.tasks.add(task)
-            task.add_done_callback(self.tasks.discard)
+            task.add_done_callback(self._completed)
             self.peak_admitted = max(self.peak_admitted, len(self.tasks))
+
+    def _completed(self, task):
+        self.tasks.discard(task)
+        if not task.cancelled() and task.exception() is not None:
+            self.unexpected += 1
 
     async def _authorize(self, fingerprint, not_after):
         check(time.time() < not_after, "wss_certificate_expired")
@@ -335,7 +359,7 @@ class Listener:
             except Exception:
                 await channel.close()
                 return
-            await asyncio.sleep(max(0, self.policy_interval - (boottime_ms() - started) / 1000))
+            await pause_until(started + int(self.policy_interval * 1000))
 
     async def _serve(self, sock):
         writer, channel, monitor = None, None, None

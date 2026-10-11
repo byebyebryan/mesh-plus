@@ -39,6 +39,7 @@ class StateCase(unittest.IsolatedAsyncioTestCase):
             await listener.close()
             self.assertFalse(listener.tasks)
             self.assertFalse(listener.channels)
+            self.assertEqual(listener.unexpected, 0)
         for reader in self.readers:
             self.assertEqual(reader.inspect()["activeConnections"], 0)
         for publisher in self.publishers:

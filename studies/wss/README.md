@@ -26,8 +26,10 @@ are excluded. The token hashes canonical JSON containing `bindingProtocol`,
 `selectionRevision`, `hostId`, `endpointIndex`. Server authorization changes are
 checked by the listener, independently of this client selection revision.
 
-Proposed bounds: 3 seconds opening, 2 seconds message assembly/write, 1 second
-close, 256 fragments, two complete queued messages, 64 KiB control/HTTP input,
+Prototype bounds: 3 seconds per TLS/header phase, five seconds per authorization
+read, 2 seconds message assembly/write, 1 second graceful close followed by
+bounded TLS retirement (up to three seconds overall), 256 fragments, two complete
+queued messages, 64 KiB control/HTTP input,
 and the frozen negotiated message ceiling. Deadlines use BOOTTIME. TLS certificate
 validity uses wall time. Policy checks start no more than five seconds apart,
 with a five second read budget; tests may choose a shorter interval. Any failed
@@ -59,8 +61,15 @@ are counted. IPC is a separately labeled local reference. Publishers broadcast
 cached updates and preserve original receipts. No shared-listener topology is
 attributed to a raw carrier benefit. Every run checks native admission, full
 proofs, observed updates/recovery and owned cleanup before recording success.
-The 20 ms `/proc` sampler runs in the worker, so measured worker CPU includes
+The original 20 ms `/proc` sampler runs in the worker, so measured worker CPU includes
 its process-count-dependent overhead. CPU differences require that qualification.
+`refine_measure.py` repeats four-reader ABBA runs with a 500 ms sampler and
+separately reports its CPU; `resources.py` runs fresh synthetic transport stress.
+
+The [outcome](outcome.md), [decision](results/decision.json) and
+[promotion proposal](promotion-proposal.md) conclude this loop. WSS remains an
+isolated candidate. For reproduction of the original measurement inputs, use
+commit `1b73295`; final refinement input hashes are retained in its report.
 
 W0 baseline: source `57ca1ad`, installed a13, Python 3.13.7, websockets 17.1,
 Tmux 0.6.0a5 and Agent 0.5.0a16. A fresh `/tmp/mesh-wss-study/env` was created

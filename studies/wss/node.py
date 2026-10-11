@@ -65,7 +65,7 @@ async def main(args):
         await asyncio.gather(*jobs, return_exceptions=True)
         await listener.close()
         transport.close()
-        if channels or publisher.watchers:
+        if channels or publisher.watchers or getattr(listener, "unexpected", 0):
             raise RuntimeError("study_node_retained_resources")
 
 

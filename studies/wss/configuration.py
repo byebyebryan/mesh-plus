@@ -6,7 +6,7 @@ import re
 import ssl
 import stat
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from types import MappingProxyType
 
@@ -24,7 +24,7 @@ BINDING = "mesh-plus.wss-study.v1"
 @dataclass(frozen=True)
 class ServerConfiguration:
     paths: tuple
-    material: tuple
+    material: tuple = field(repr=False)
     policy_path: Path
     context: object
 
@@ -118,7 +118,7 @@ class Selection:
 
     paths: tuple
     bindings: tuple
-    key_bytes: bytes
+    key_bytes: bytes = field(repr=False)
     context: object
 
     @classmethod

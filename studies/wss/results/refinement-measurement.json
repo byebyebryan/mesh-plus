@@ -1,0 +1,27 @@
+{
+  "format": "mesh-plus.wss-study.refinement-measurement.v1",
+  "status": "passed",
+  "studyInputs": {
+    "carrier.py": "575280f6d941161d29393dfd8b832117e39672cf379eae56d2ac1f769ceae5c0",
+    "configuration.py": "6ecc9b3561e5b4759fd11d05eb768be9b824d56299886b12f8e01b64f80500de",
+    "fixtures.py": "10770933f14f6110930213f0b35973d0af4b136ad36ce8d3e173948e9dc8c2f9",
+    "node.py": "1f8c24bc3574fb764dab4e90d1bafc932e2d1dee193ea05bf5b0b8280d46368f",
+    "measure.py": "6b7c0368967475879962fe2cc5d2b456cef899309023e3234ba112f093252870",
+    "refine_measure.py": "b4d84cf4ed31bbee0710c4d87ba0b2f772c110f357146f1fa85f3c3bacff4754"
+  },
+  "runs": 10,
+  "remoteABBARuns": 8,
+  "trueLocalIPCReferences": 2,
+  "steadySeconds": 30,
+  "samplingSeconds": 0.5,
+  "scope": "four independent persistent publishers, full native validators/proofs; true local IPC separately",
+  "cpuCaveat": "Sampler CPU is separately measured/subtracted from worker CPU; loop scheduling overhead remains",
+  "byteCaveat": "Raw WebSocket counters are framing queued before TLS, not encrypted or NIC bytes",
+  "excluded": [
+    "WAN",
+    "physical suspend",
+    "TLS/NIC bytes",
+    "global RSS bound",
+    "tail latency"
+  ]
+}

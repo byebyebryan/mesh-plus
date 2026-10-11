@@ -1,0 +1,5705 @@
+[
+  {
+    "domain": "tmux",
+    "carrier": "ssh",
+    "scenario": "four",
+    "elapsedSeconds": 30.001140104002843,
+    "readers": 4,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 3,
+    "checks": {
+      "baseline": 4,
+      "updates": 120,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 4,
+      "guardAdmissions": 136
+    },
+    "proofRttMs": [
+      6,
+      5,
+      8,
+      8,
+      11,
+      9,
+      7,
+      8,
+      4,
+      7,
+      8,
+      5,
+      7,
+      3,
+      6,
+      4,
+      5,
+      8,
+      3,
+      3,
+      3,
+      5,
+      10,
+      8,
+      5,
+      4,
+      4,
+      5,
+      4,
+      4,
+      4,
+      4,
+      3,
+      4,
+      5,
+      5,
+      5,
+      5,
+      4,
+      6,
+      5,
+      4,
+      3,
+      5,
+      5,
+      4,
+      3,
+      5,
+      5,
+      4,
+      6,
+      4,
+      5,
+      4,
+      4,
+      4,
+      5,
+      4,
+      4,
+      4,
+      4,
+      6,
+      4,
+      4,
+      4,
+      3,
+      4,
+      4,
+      5,
+      4,
+      4,
+      5,
+      4,
+      3,
+      6,
+      10,
+      3,
+      4,
+      4,
+      5,
+      4,
+      4,
+      4,
+      3,
+      4,
+      3,
+      5,
+      5,
+      4,
+      3,
+      5,
+      5,
+      4,
+      5,
+      4,
+      5,
+      5,
+      5,
+      5,
+      4,
+      5,
+      5,
+      4,
+      5,
+      4,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      6,
+      4,
+      5,
+      6,
+      5,
+      5,
+      5,
+      4,
+      5,
+      5,
+      6,
+      5,
+      5,
+      4
+    ],
+    "steadyWorkerCpuMs": 1005.9970000000001,
+    "sampledTreeCpuMs": 1640.0,
+    "sampledWorkerCpuMs": 1010.0,
+    "sampledPublisherCpuMs": 610.0,
+    "sampledPeakTreeRssKiB": 312204,
+    "sampledPeakProcesses": 25,
+    "samplingCpuMs": 75.03208199999989,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 5,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 3,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 3,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      }
+    ],
+    "loadAverage": [
+      1.52490234375,
+      0.9716796875,
+      0.82177734375
+    ],
+    "workerCpuLessSamplerMs": 930.9649180000001,
+    "channels": [
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 4,
+      "channelsClosed": 4,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 1
+  },
+  {
+    "domain": "tmux",
+    "carrier": "wss",
+    "scenario": "four",
+    "elapsedSeconds": 30.000545934999536,
+    "readers": 4,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 3,
+    "checks": {
+      "baseline": 4,
+      "updates": 120,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 4,
+      "guardAdmissions": 136
+    },
+    "proofRttMs": [
+      43,
+      46,
+      7,
+      46,
+      46,
+      12,
+      6,
+      6,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      5,
+      4,
+      3,
+      4,
+      4,
+      4,
+      4,
+      4,
+      6,
+      4,
+      4,
+      4,
+      5,
+      4,
+      3,
+      5,
+      5,
+      6,
+      6,
+      6,
+      4,
+      5,
+      5,
+      5,
+      6,
+      5,
+      6,
+      4,
+      4,
+      5,
+      6,
+      4,
+      7,
+      4,
+      6,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      7,
+      4,
+      4,
+      4,
+      6,
+      4,
+      4,
+      6,
+      4,
+      4,
+      4,
+      4,
+      4,
+      5,
+      4,
+      3,
+      4,
+      3,
+      6,
+      4,
+      5,
+      4,
+      4,
+      4,
+      4,
+      4,
+      43,
+      4,
+      6,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      3,
+      4,
+      5,
+      4,
+      3,
+      5,
+      3,
+      3,
+      3,
+      4,
+      4,
+      7,
+      4,
+      6,
+      4,
+      5,
+      6,
+      5,
+      6,
+      6,
+      5,
+      4,
+      4,
+      6,
+      4,
+      3
+    ],
+    "steadyWorkerCpuMs": 912.185,
+    "sampledTreeCpuMs": 1590.0,
+    "sampledWorkerCpuMs": 910.0,
+    "sampledPublisherCpuMs": 680.0,
+    "sampledPeakTreeRssKiB": 191020,
+    "sampledPeakProcesses": 5,
+    "samplingCpuMs": 18.596294000000206,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 1,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139091,
+        "sentBytes": 16785,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 1,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139091,
+        "sentBytes": 16785,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 1,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139091,
+        "sentBytes": 16785,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 1,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139091,
+        "sentBytes": 16785,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      }
+    ],
+    "loadAverage": [
+      2.2841796875,
+      1.21337890625,
+      0.908203125
+    ],
+    "workerCpuLessSamplerMs": 893.5887059999998,
+    "channels": [
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16785,
+        "receivedBytes": 139091,
+        "websocketSentBytes": 17473,
+        "websocketReceivedBytes": 139471,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 2213,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16785,
+        "receivedBytes": 139091,
+        "websocketSentBytes": 17473,
+        "websocketReceivedBytes": 139471,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 2213,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16785,
+        "receivedBytes": 139091,
+        "websocketSentBytes": 17473,
+        "websocketReceivedBytes": 139471,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 2213,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16785,
+        "receivedBytes": 139091,
+        "websocketSentBytes": 17473,
+        "websocketReceivedBytes": 139471,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 2213,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 4,
+      "channelsClosed": 4,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 2
+  },
+  {
+    "domain": "tmux",
+    "carrier": "wss",
+    "scenario": "four",
+    "elapsedSeconds": 30.000978085001407,
+    "readers": 4,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 3,
+    "checks": {
+      "baseline": 4,
+      "updates": 120,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 4,
+      "guardAdmissions": 136
+    },
+    "proofRttMs": [
+      43,
+      44,
+      5,
+      4,
+      44,
+      46,
+      4,
+      5,
+      3,
+      5,
+      4,
+      3,
+      3,
+      4,
+      3,
+      3,
+      4,
+      3,
+      4,
+      4,
+      5,
+      5,
+      4,
+      4,
+      4,
+      4,
+      4,
+      6,
+      3,
+      4,
+      4,
+      4,
+      3,
+      4,
+      4,
+      5,
+      5,
+      3,
+      3,
+      3,
+      9,
+      8,
+      5,
+      7,
+      9,
+      8,
+      5,
+      8,
+      7,
+      7,
+      4,
+      8,
+      8,
+      8,
+      5,
+      8,
+      8,
+      8,
+      8,
+      9,
+      8,
+      8,
+      8,
+      8,
+      6,
+      7,
+      6,
+      7,
+      6,
+      5,
+      5,
+      7,
+      7,
+      3,
+      6,
+      8,
+      5,
+      7,
+      8,
+      8,
+      8,
+      6,
+      4,
+      8,
+      8,
+      5,
+      3,
+      9,
+      10,
+      7,
+      6,
+      7,
+      5,
+      7,
+      4,
+      5,
+      8,
+      7,
+      7,
+      8,
+      8,
+      8,
+      4,
+      7,
+      8,
+      6,
+      4,
+      8,
+      6,
+      7,
+      7,
+      8,
+      8,
+      9,
+      9,
+      6,
+      5,
+      8,
+      8,
+      7,
+      8,
+      7,
+      7,
+      6,
+      7,
+      7,
+      4,
+      6,
+      9,
+      7,
+      5,
+      7
+    ],
+    "steadyWorkerCpuMs": 1357.884,
+    "sampledTreeCpuMs": 2610.0,
+    "sampledWorkerCpuMs": 1360.0,
+    "sampledPublisherCpuMs": 1250.0,
+    "sampledPeakTreeRssKiB": 189324,
+    "sampledPeakProcesses": 5,
+    "samplingCpuMs": 46.07439100000005,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 0,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139091,
+        "sentBytes": 16785,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 1,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139091,
+        "sentBytes": 16785,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 1,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139091,
+        "sentBytes": 16785,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 1,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139091,
+        "sentBytes": 16785,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      }
+    ],
+    "loadAverage": [
+      1.70458984375,
+      1.17529296875,
+      0.90625
+    ],
+    "workerCpuLessSamplerMs": 1311.809609,
+    "channels": [
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16785,
+        "receivedBytes": 139091,
+        "websocketSentBytes": 17473,
+        "websocketReceivedBytes": 139471,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 2213,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16785,
+        "receivedBytes": 139091,
+        "websocketSentBytes": 17473,
+        "websocketReceivedBytes": 139471,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 2213,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16785,
+        "receivedBytes": 139091,
+        "websocketSentBytes": 17473,
+        "websocketReceivedBytes": 139471,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 2213,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16785,
+        "receivedBytes": 139091,
+        "websocketSentBytes": 17473,
+        "websocketReceivedBytes": 139471,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 2213,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 364
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 409
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67595
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70770
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 4,
+      "channelsClosed": 4,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 3
+  },
+  {
+    "domain": "tmux",
+    "carrier": "ssh",
+    "scenario": "four",
+    "elapsedSeconds": 30.000209904996154,
+    "readers": 4,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 3,
+    "checks": {
+      "baseline": 4,
+      "updates": 120,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 4,
+      "guardAdmissions": 136
+    },
+    "proofRttMs": [
+      6,
+      7,
+      6,
+      7,
+      11,
+      6,
+      7,
+      7,
+      9,
+      7,
+      3,
+      7,
+      7,
+      7,
+      4,
+      8,
+      8,
+      9,
+      3,
+      10,
+      8,
+      8,
+      9,
+      4,
+      7,
+      7,
+      8,
+      9,
+      8,
+      9,
+      7,
+      9,
+      6,
+      3,
+      7,
+      8,
+      3,
+      7,
+      8,
+      8,
+      6,
+      9,
+      7,
+      5,
+      6,
+      9,
+      7,
+      6,
+      5,
+      7,
+      6,
+      7,
+      7,
+      6,
+      7,
+      9,
+      7,
+      7,
+      4,
+      7,
+      7,
+      11,
+      5,
+      8,
+      6,
+      6,
+      5,
+      7,
+      8,
+      8,
+      7,
+      6,
+      8,
+      8,
+      8,
+      9,
+      4,
+      9,
+      4,
+      6,
+      4,
+      3,
+      6,
+      3,
+      3,
+      4,
+      3,
+      3,
+      3,
+      4,
+      3,
+      3,
+      3,
+      4,
+      3,
+      3,
+      4,
+      4,
+      4,
+      3,
+      3,
+      3,
+      3,
+      4,
+      3,
+      4,
+      4,
+      3,
+      3,
+      5,
+      3,
+      3,
+      4,
+      5,
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      4,
+      3,
+      3,
+      3,
+      3,
+      5,
+      4,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "steadyWorkerCpuMs": 1220.01,
+    "sampledTreeCpuMs": 2060.0,
+    "sampledWorkerCpuMs": 1220.0,
+    "sampledPublisherCpuMs": 810.0,
+    "sampledPeakTreeRssKiB": 311196,
+    "sampledPeakProcesses": 25,
+    "samplingCpuMs": 108.94415500000143,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 70802,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2182,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      }
+    ],
+    "loadAverage": [
+      1.29150390625,
+      1.12548828125,
+      0.8994140625
+    ],
+    "workerCpuLessSamplerMs": 1111.0658449999985,
+    "channels": [
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 139156,
+        "sentBytes": 16850,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 67626
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 70802
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 4,
+      "channelsClosed": 4,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 4
+  },
+  {
+    "domain": "agent",
+    "carrier": "ssh",
+    "scenario": "four",
+    "elapsedSeconds": 30.00077949900151,
+    "readers": 4,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 10,
+    "checks": {
+      "baseline": 4,
+      "updates": 120,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 0,
+      "guardAdmissions": 132
+    },
+    "proofRttMs": [
+      7,
+      14,
+      16,
+      20,
+      22,
+      13,
+      14,
+      7,
+      8,
+      13,
+      5,
+      14,
+      8,
+      8,
+      6,
+      6,
+      8,
+      8,
+      5,
+      8,
+      9,
+      7,
+      7,
+      9,
+      8,
+      6,
+      8,
+      9,
+      9,
+      8,
+      9,
+      8,
+      9,
+      5,
+      9,
+      7,
+      6,
+      6,
+      8,
+      6,
+      8,
+      6,
+      8,
+      9,
+      8,
+      8,
+      7,
+      7,
+      15,
+      10,
+      10,
+      8,
+      6,
+      9,
+      8,
+      6,
+      8,
+      10,
+      10,
+      6,
+      16,
+      10,
+      10,
+      5,
+      13,
+      7,
+      11,
+      7,
+      10,
+      5,
+      8,
+      8,
+      7,
+      6,
+      10,
+      9,
+      10,
+      8,
+      5,
+      8,
+      11,
+      7,
+      9,
+      11,
+      6,
+      15,
+      5,
+      5,
+      6,
+      8,
+      14,
+      8,
+      5,
+      11,
+      6,
+      9,
+      9,
+      12,
+      7,
+      12,
+      7,
+      10,
+      7,
+      5,
+      7,
+      6,
+      5,
+      8,
+      7,
+      13,
+      11,
+      9,
+      8,
+      10,
+      8,
+      8,
+      7,
+      14,
+      7,
+      6,
+      8,
+      8,
+      8,
+      6,
+      13,
+      8,
+      9,
+      8
+    ],
+    "steadyWorkerCpuMs": 1844.8739999999996,
+    "sampledTreeCpuMs": 3390.0,
+    "sampledWorkerCpuMs": 1850.0,
+    "sampledPublisherCpuMs": 1520.0,
+    "sampledPeakTreeRssKiB": 314888,
+    "sampledPeakProcesses": 25,
+    "samplingCpuMs": 95.49517799999919,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 3,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 3,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 2,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      }
+    ],
+    "loadAverage": [
+      1.25146484375,
+      1.140625,
+      0.9130859375
+    ],
+    "workerCpuLessSamplerMs": 1749.3788220000004,
+    "channels": [
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 4,
+      "channelsClosed": 4,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 5
+  },
+  {
+    "domain": "agent",
+    "carrier": "wss",
+    "scenario": "four",
+    "elapsedSeconds": 30.000421049997385,
+    "readers": 4,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 10,
+    "checks": {
+      "baseline": 4,
+      "updates": 119,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 0,
+      "guardAdmissions": 131
+    },
+    "proofRttMs": [
+      46,
+      54,
+      56,
+      64,
+      24,
+      13,
+      15,
+      22,
+      5,
+      5,
+      6,
+      5,
+      5,
+      7,
+      8,
+      6,
+      5,
+      5,
+      7,
+      6,
+      6,
+      5,
+      7,
+      12,
+      4,
+      8,
+      6,
+      7,
+      4,
+      7,
+      7,
+      12,
+      7,
+      10,
+      5,
+      10,
+      8,
+      6,
+      6,
+      9,
+      7,
+      8,
+      5,
+      5,
+      6,
+      12,
+      5,
+      6,
+      8,
+      5,
+      9,
+      5,
+      7,
+      6,
+      6,
+      5,
+      7,
+      6,
+      9,
+      6,
+      6,
+      6,
+      6,
+      7,
+      5,
+      10,
+      12,
+      7,
+      7,
+      7,
+      8,
+      5,
+      9,
+      8,
+      13,
+      13,
+      6,
+      9,
+      9,
+      5,
+      10,
+      5,
+      6,
+      7,
+      7,
+      5,
+      6,
+      8,
+      8,
+      10,
+      6,
+      7,
+      7,
+      7,
+      5,
+      7,
+      7,
+      6,
+      11,
+      6,
+      6,
+      7,
+      6,
+      5,
+      7,
+      8,
+      7,
+      6,
+      7,
+      11,
+      6,
+      8,
+      7,
+      7,
+      7,
+      7,
+      8,
+      9,
+      14,
+      11,
+      6,
+      9,
+      6,
+      8,
+      7,
+      8,
+      6
+    ],
+    "steadyWorkerCpuMs": 1849.1439999999998,
+    "sampledTreeCpuMs": 3900.0,
+    "sampledWorkerCpuMs": 1850.0,
+    "sampledPublisherCpuMs": 2050.0,
+    "sampledPeakTreeRssKiB": 192272,
+    "sampledPeakProcesses": 5,
+    "samplingCpuMs": 55.94986300000115,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565811,
+        "sentBytes": 16786,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565811,
+        "sentBytes": 16786,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 4,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565811,
+        "sentBytes": 16786,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 5,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 63,
+        "sentFrames": 63,
+        "receivedBytes": 547883,
+        "sentBytes": 16274,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 31,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 287425,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 30,
+              "bytes": 259762
+            },
+            "result": {
+              "frames": 31,
+              "bytes": 287394
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 31,
+              "bytes": 8738
+            },
+            "credit": {
+              "frames": 30,
+              "bytes": 6897
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 32
+      }
+    ],
+    "loadAverage": [
+      1.2109375,
+      1.142578125,
+      0.919921875
+    ],
+    "workerCpuLessSamplerMs": 1793.1941369999986,
+    "channels": [
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16786,
+        "receivedBytes": 565811,
+        "websocketSentBytes": 17474,
+        "websocketReceivedBytes": 566191,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 9323,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16786,
+        "receivedBytes": 565811,
+        "websocketSentBytes": 17474,
+        "websocketReceivedBytes": 566191,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 9323,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 63,
+        "receivedFrames": 63,
+        "sentBytes": 16274,
+        "receivedBytes": 547883,
+        "websocketSentBytes": 16946,
+        "websocketReceivedBytes": 548255,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 9323,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 31,
+              "bytes": 8738
+            },
+            "credit": {
+              "frames": 30,
+              "bytes": 6897
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 30,
+              "bytes": 259762
+            },
+            "result": {
+              "frames": 31,
+              "bytes": 287394
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16786,
+        "receivedBytes": 565811,
+        "websocketSentBytes": 17474,
+        "websocketReceivedBytes": 566191,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 9323,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 4,
+      "channelsClosed": 4,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 6
+  },
+  {
+    "domain": "agent",
+    "carrier": "wss",
+    "scenario": "four",
+    "elapsedSeconds": 30.000352650000423,
+    "readers": 4,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 10,
+    "checks": {
+      "baseline": 4,
+      "updates": 120,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 0,
+      "guardAdmissions": 132
+    },
+    "proofRttMs": [
+      42,
+      47,
+      49,
+      17,
+      11,
+      13,
+      50,
+      5,
+      5,
+      6,
+      5,
+      6,
+      6,
+      6,
+      5,
+      5,
+      6,
+      5,
+      6,
+      5,
+      6,
+      6,
+      6,
+      5,
+      5,
+      8,
+      6,
+      5,
+      7,
+      8,
+      5,
+      7,
+      13,
+      7,
+      8,
+      5,
+      8,
+      8,
+      8,
+      5,
+      6,
+      5,
+      8,
+      8,
+      7,
+      8,
+      8,
+      10,
+      6,
+      6,
+      13,
+      6,
+      7,
+      7,
+      10,
+      7,
+      12,
+      7,
+      9,
+      8,
+      7,
+      7,
+      8,
+      8,
+      11,
+      12,
+      10,
+      11,
+      9,
+      6,
+      6,
+      11,
+      9,
+      7,
+      7,
+      12,
+      8,
+      6,
+      6,
+      10,
+      8,
+      5,
+      9,
+      5,
+      8,
+      7,
+      11,
+      8,
+      8,
+      8,
+      8,
+      8,
+      6,
+      7,
+      8,
+      7,
+      6,
+      7,
+      7,
+      7,
+      6,
+      8,
+      8,
+      8,
+      7,
+      7,
+      6,
+      7,
+      7,
+      6,
+      6,
+      7,
+      6,
+      8,
+      7,
+      8,
+      9,
+      5,
+      5,
+      9,
+      7,
+      5,
+      9,
+      7,
+      6,
+      5,
+      8,
+      6
+    ],
+    "steadyWorkerCpuMs": 1856.7309999999998,
+    "sampledTreeCpuMs": 3700.0,
+    "sampledWorkerCpuMs": 1860.0,
+    "sampledPublisherCpuMs": 1840.0,
+    "sampledPeakTreeRssKiB": 191916,
+    "sampledPeakProcesses": 5,
+    "samplingCpuMs": 47.18580200000097,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 2,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565811,
+        "sentBytes": 16786,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 2,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565811,
+        "sentBytes": 16786,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 2,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565811,
+        "sentBytes": 16786,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-messages",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 2,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565811,
+        "sentBytes": 16786,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      }
+    ],
+    "loadAverage": [
+      1.4384765625,
+      1.20849609375,
+      0.94921875
+    ],
+    "workerCpuLessSamplerMs": 1809.545197999999,
+    "channels": [
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16786,
+        "receivedBytes": 565811,
+        "websocketSentBytes": 17474,
+        "websocketReceivedBytes": 566191,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 9323,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16786,
+        "receivedBytes": 565811,
+        "websocketSentBytes": 17474,
+        "websocketReceivedBytes": 566191,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 9323,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16786,
+        "receivedBytes": 565811,
+        "websocketSentBytes": 17474,
+        "websocketReceivedBytes": 566191,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 9323,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          }
+        }
+      },
+      {
+        "sentFrames": 65,
+        "receivedFrames": 65,
+        "sentBytes": 16786,
+        "receivedBytes": 565811,
+        "websocketSentBytes": 17474,
+        "websocketReceivedBytes": 566191,
+        "peakQueueFrames": 1,
+        "peakAssemblyBytes": 9323,
+        "peakFragments": 1,
+        "closed": false,
+        "byteScope": "completed-json-messages",
+        "transportByteScope": "websocket-framing-before-TLS",
+        "byKind": {
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 274
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9020
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7127
+            }
+          },
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 317
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268421
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296663
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 4,
+      "channelsClosed": 4,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 7
+  },
+  {
+    "domain": "agent",
+    "carrier": "ssh",
+    "scenario": "four",
+    "elapsedSeconds": 30.00121086100262,
+    "readers": 4,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 10,
+    "checks": {
+      "baseline": 4,
+      "updates": 120,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 0,
+      "guardAdmissions": 132
+    },
+    "proofRttMs": [
+      9,
+      11,
+      14,
+      14,
+      24,
+      12,
+      17,
+      19,
+      6,
+      6,
+      5,
+      14,
+      8,
+      8,
+      6,
+      9,
+      5,
+      10,
+      8,
+      5,
+      6,
+      7,
+      6,
+      10,
+      8,
+      7,
+      9,
+      8,
+      6,
+      10,
+      8,
+      8,
+      10,
+      6,
+      7,
+      6,
+      9,
+      5,
+      6,
+      5,
+      6,
+      8,
+      8,
+      8,
+      7,
+      6,
+      5,
+      9,
+      9,
+      8,
+      9,
+      11,
+      8,
+      8,
+      8,
+      9,
+      6,
+      8,
+      9,
+      5,
+      9,
+      9,
+      11,
+      10,
+      6,
+      9,
+      8,
+      7,
+      7,
+      6,
+      11,
+      9,
+      6,
+      12,
+      11,
+      5,
+      9,
+      8,
+      9,
+      7,
+      6,
+      5,
+      7,
+      10,
+      10,
+      10,
+      11,
+      6,
+      7,
+      6,
+      9,
+      5,
+      9,
+      8,
+      7,
+      5,
+      10,
+      6,
+      12,
+      9,
+      9,
+      13,
+      8,
+      8,
+      7,
+      9,
+      10,
+      7,
+      15,
+      12,
+      9,
+      8,
+      8,
+      15,
+      8,
+      11,
+      6,
+      9,
+      6,
+      14,
+      12,
+      6,
+      12,
+      7,
+      6,
+      7,
+      6,
+      8
+    ],
+    "steadyWorkerCpuMs": 1917.9740000000002,
+    "sampledTreeCpuMs": 3680.0,
+    "sampledWorkerCpuMs": 1920.0,
+    "sampledPublisherCpuMs": 1720.0,
+    "sampledPeakTreeRssKiB": 315012,
+    "sampledPeakProcesses": 25,
+    "samplingCpuMs": 140.0715220000006,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 5,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 5,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 6,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      },
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 7,
+        "catalogCheckMs": 6,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "operations": {
+          "snapshotRequests": 0,
+          "proofRequests": 32,
+          "snapshotResultBytes": 0,
+          "proofResultBytes": 296695,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 0,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 33
+      }
+    ],
+    "loadAverage": [
+      1.07568359375,
+      1.1396484375,
+      0.9345703125
+    ],
+    "workerCpuLessSamplerMs": 1777.9024779999995,
+    "channels": [
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      },
+      {
+        "receivedFrames": 65,
+        "sentFrames": 65,
+        "receivedBytes": 565876,
+        "sentBytes": 16851,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 31,
+              "bytes": 268452
+            },
+            "result": {
+              "frames": 32,
+              "bytes": 296695
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 32,
+              "bytes": 9052
+            },
+            "credit": {
+              "frames": 31,
+              "bytes": 7158
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 4,
+      "channelsClosed": 4,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 8
+  },
+  {
+    "domain": "tmux",
+    "carrier": "ipc",
+    "scenario": "idle",
+    "elapsedSeconds": 30.001349272999505,
+    "readers": 1,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 3,
+    "checks": {
+      "baseline": 1,
+      "updates": 0,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 1,
+      "guardAdmissions": 13
+    },
+    "proofRttMs": [],
+    "steadyWorkerCpuMs": 174.617,
+    "sampledTreeCpuMs": 230.0,
+    "sampledWorkerCpuMs": 180.0,
+    "sampledPublisherCpuMs": 50.0,
+    "sampledPeakTreeRssKiB": 67828,
+    "sampledPeakProcesses": 2,
+    "samplingCpuMs": 28.558344999999985,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "tmux",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 0,
+        "catalogCheckMs": 0,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 19,
+        "sentFrames": 14,
+        "receivedBytes": 27113,
+        "sentBytes": 3548,
+        "operations": {
+          "snapshotRequests": 11,
+          "proofRequests": 0,
+          "snapshotResultBytes": 22977,
+          "proofResultBytes": 0,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 1,
+              "bytes": 2174
+            },
+            "result": {
+              "frames": 11,
+              "bytes": 22977
+            },
+            "control": {
+              "frames": 5,
+              "bytes": 1234
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 11,
+              "bytes": 2678
+            },
+            "credit": {
+              "frames": 1,
+              "bytes": 230
+            }
+          }
+        },
+        "peakClientBufferedBytes": 2173,
+        "peakClientBufferedControlBytes": 246,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 12
+      }
+    ],
+    "loadAverage": [
+      0.92041015625,
+      1.09375,
+      0.92529296875
+    ],
+    "workerCpuLessSamplerMs": 146.05865500000002,
+    "channels": [
+      {
+        "receivedFrames": 19,
+        "sentFrames": 14,
+        "receivedBytes": 27113,
+        "sentBytes": 3548,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 410
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 1,
+              "bytes": 2174
+            },
+            "result": {
+              "frames": 11,
+              "bytes": 22977
+            },
+            "control": {
+              "frames": 5,
+              "bytes": 1234
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 365
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 11,
+              "bytes": 2678
+            },
+            "credit": {
+              "frames": 1,
+              "bytes": 230
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 1,
+      "channelsClosed": 1,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 9
+  },
+  {
+    "domain": "agent",
+    "carrier": "ipc",
+    "scenario": "idle",
+    "elapsedSeconds": 30.001049412996508,
+    "readers": 1,
+    "rows": "original-fixture",
+    "proofIntervalSeconds": 10,
+    "checks": {
+      "baseline": 1,
+      "updates": 0,
+      "unavailable": 0,
+      "recoveries": 0,
+      "expiredRuntime": 0,
+      "guardAdmissions": 5
+    },
+    "proofRttMs": [],
+    "steadyWorkerCpuMs": 118.02699999999999,
+    "sampledTreeCpuMs": 130.0,
+    "sampledWorkerCpuMs": 110.0,
+    "sampledPublisherCpuMs": 20.0,
+    "sampledPeakTreeRssKiB": 68444,
+    "sampledPeakProcesses": 2,
+    "samplingCpuMs": 26.450141000000205,
+    "samplingSeconds": 0.5,
+    "metrics": [
+      {
+        "format": "mesh-plus.reader-metrics.v1",
+        "domain": "agent",
+        "byteScope": "completed-json-lines",
+        "activeConnections": 1,
+        "partial": false,
+        "connectionAttempts": 1,
+        "connectionsOpened": 1,
+        "connectionsClosed": 0,
+        "connectionFailures": 0,
+        "rotations": 0,
+        "cleanupFailures": 0,
+        "peakConnections": 1,
+        "catalogChecks": 0,
+        "catalogCheckMs": 0,
+        "instrumentedConnections": 1,
+        "uninstrumentedConnections": 0,
+        "receivedFrames": 12,
+        "sentFrames": 7,
+        "receivedBytes": 45183,
+        "sentBytes": 1843,
+        "operations": {
+          "snapshotRequests": 4,
+          "proofRequests": 0,
+          "snapshotResultBytes": 34509,
+          "proofResultBytes": 0,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 1,
+              "bytes": 8713
+            },
+            "result": {
+              "frames": 4,
+              "bytes": 34509
+            },
+            "control": {
+              "frames": 5,
+              "bytes": 1232
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 4,
+              "bytes": 972
+            },
+            "credit": {
+              "frames": 1,
+              "bytes": 230
+            }
+          }
+        },
+        "peakClientBufferedBytes": 8712,
+        "peakClientBufferedControlBytes": 246,
+        "peakSubscriptionQueueFrames": 1,
+        "peakRetainedHandles": 5
+      }
+    ],
+    "loadAverage": [
+      1.59033203125,
+      1.21728515625,
+      0.97021484375
+    ],
+    "workerCpuLessSamplerMs": 91.57685899999979,
+    "channels": [
+      {
+        "receivedFrames": 12,
+        "sentFrames": 7,
+        "receivedBytes": 45183,
+        "sentBytes": 1843,
+        "closed": false,
+        "byteScope": "completed-json-lines",
+        "byKind": {
+          "received": {
+            "hello": {
+              "frames": 1,
+              "bytes": 411
+            },
+            "subscribed": {
+              "frames": 1,
+              "bytes": 318
+            },
+            "data": {
+              "frames": 1,
+              "bytes": 8713
+            },
+            "result": {
+              "frames": 4,
+              "bytes": 34509
+            },
+            "control": {
+              "frames": 5,
+              "bytes": 1232
+            }
+          },
+          "sent": {
+            "hello": {
+              "frames": 1,
+              "bytes": 366
+            },
+            "subscribe": {
+              "frames": 1,
+              "bytes": 275
+            },
+            "request": {
+              "frames": 4,
+              "bytes": 972
+            },
+            "credit": {
+              "frames": 1,
+              "bytes": 230
+            }
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "publisherProcessesReaped": 1,
+      "channelsClosed": 1,
+      "activeReaderConnections": 0,
+      "listenersClosed": true
+    },
+    "order": 10
+  }
+]

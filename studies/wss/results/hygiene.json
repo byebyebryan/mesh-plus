@@ -1,0 +1,8 @@
+{
+  "format": "mesh-plus.wss-study.hygiene.v1",
+  "status": "passed",
+  "runtimeDrift": [],
+  "ownedStudyProcesses": [],
+  "retainedMeasureDirectories": 0,
+  "scope": "exact runtime hashes and study argv markers; unrelated processes excluded"
+}

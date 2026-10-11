@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "command": "rtk proxy .venv/bin/python scripts/check.py --native",
+  "lockedInputs": 18,
+  "packagedSchemas": 20,
+  "reports": [
+    {
+      "status": "passed",
+      "checkedAtUtc": "2026-10-11T09:07:31.226221+00:00",
+      "validationScope": "schemas, adversarial design model, frozen producer projection; no native/network/runtime acceptance",
+      "sourceParityChecked": false,
+      "checksPassed": 116,
+      "limits": "Native passivity, SSH integration, GUI, resource, physical suspend and deployment remain later gates"
+    },
+    {
+      "status": "passed",
+      "checkedAtUtc": "2026-10-11T09:07:31.408079+00:00",
+      "checksPassed": 169,
+      "schemas": 4,
+      "examples": 26,
+      "validationScope": "offline schemas, synthetic lifecycle/cursor/credit/proof/sharing oracles; no producer event wire or deployed runtime acceptance"
+    },
+    {
+      "status": "passed",
+      "checkedAtUtc": "2026-10-11T09:08:08.315514+00:00",
+      "python": "3.13.7",
+      "scope": "runtime and owned native/SSH acceptance",
+      "testsRun": 141,
+      "failures": 0,
+      "errors": 0,
+      "skipped": [],
+      "versions": {
+        "mesh-plus": "0.1.0a13",
+        "tmux-observer": "0.6.0a5",
+        "agent-observer": "0.5.0a16",
+        "jsonschema": "4.26.0"
+      }
+    }
+  ],
+  "lint": "passed",
+  "checkSources": "excluded; no sibling HEAD acceptance",
+  "scope": "unchanged ordinary source core; distinct from isolated WSS gate"
+}

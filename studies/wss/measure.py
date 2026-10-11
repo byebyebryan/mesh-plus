@@ -29,12 +29,15 @@ STUDY = Path(__file__).resolve().parent
 
 
 class Samples:
-    def __init__(self, publishers):
+    def __init__(self, publishers, interval=.02):
         self.publishers = publishers
         self.cpu = {}
         self.peak_rss = self.peak_processes = 0
+        self.interval = interval
+        self.sampling_cpu = 0
 
     def sample(self):
+        started = time.process_time()
         pending, seen, rss = [os.getpid()], set(), 0
         while pending:
             pid = pending.pop()
@@ -54,18 +57,20 @@ class Samples:
                 continue
         self.peak_rss = max(self.peak_rss, rss)
         self.peak_processes = max(self.peak_processes, len(seen))
+        self.sampling_cpu += time.process_time() - started
 
     async def watch(self):
         while True:
             self.sample()
-            await asyncio.sleep(.02)
+            await asyncio.sleep(self.interval)
 
     def report(self):
         per_pid = {pid: (last - first) * 1000 / os.sysconf("SC_CLK_TCK")
                    for (pid, _), (first, last) in self.cpu.items()}
         return {"sampledTreeCpuMs": sum(per_pid.values()), "sampledWorkerCpuMs": per_pid.get(os.getpid(), 0),
                 "sampledPublisherCpuMs": sum(per_pid.get(pid, 0) for pid in self.publishers),
-                "sampledPeakTreeRssKiB": self.peak_rss, "sampledPeakProcesses": self.peak_processes}
+                "sampledPeakTreeRssKiB": self.peak_rss, "sampledPeakProcesses": self.peak_processes,
+                "samplingCpuMs": 1000 * self.sampling_cpu, "samplingSeconds": self.interval}
 
 
 async def run(args):
@@ -123,13 +128,15 @@ async def run(args):
                         return client
                     async def catalog():
                         return revision
-                    endpoint = Endpoint("beta", False, binding.token, connection, codec)
+                    endpoint = Endpoint("beta", args.carrier == "ipc", None if args.carrier == "ipc" else binding.token,
+                                        connection, codec)
                     if args.carrier == "wss":
                         reader = StudyReader(args.domain, [endpoint], local_host="alpha", profile=profile,
                                              catalog_revision=revision, catalog_check=catalog, bindings=(binding,))
                     else:
-                        reader = Reader(args.domain, [endpoint], local_host="alpha", profile=profile,
-                                        catalog_revision=revision, catalog_check=catalog)
+                        reader = Reader(args.domain, [endpoint], local_host="beta" if args.carrier == "ipc" else "alpha",
+                                        profile=profile, catalog_revision=None if args.carrier == "ipc" else revision,
+                                        catalog_check=None if args.carrier == "ipc" else catalog)
                     readers.append(reader)
                 if args.cold:
                     for _ in range(10):
@@ -160,11 +167,12 @@ async def run(args):
                             ready = host["delivery"]["status"] == "ready"
                             state = states[index]
                             if ready:
-                                expected_path = "wss" if args.carrier == "wss" else "ssh"
+                                expected_path = "wss" if args.carrier == "wss" else "ipc" if args.carrier == "ipc" else "ssh"
                                 check(host["delivery"]["path"] == expected_path, "study_path")
                                 proof = host["delivery"]["proof"]
-                                check(proof is not None, "study_full_proof")
-                                latencies.append(proof["receivedAtMs"] - proof["sentAtMs"])
+                                check((proof is None) == (args.carrier == "ipc"), "study_full_proof")
+                                if proof:
+                                    latencies.append(proof["receivedAtMs"] - proof["sentAtMs"])
                                 version = host["owner"]["service"]["viewRevision"]
                                 if state["revision"] is not None and state["revision"] != version:
                                     checks["updates"] += 1
@@ -186,7 +194,7 @@ async def run(args):
                             views[index] = view
                     tasks.append(asyncio.create_task(consume()))
                 await asyncio.wait_for(asyncio.gather(*(event.wait() for event in ready_events)), 10)
-                samples = Samples([node.pid for node in nodes])
+                samples = Samples([node.pid for node in nodes], args.sampling_seconds)
                 sampler = asyncio.create_task(samples.watch())
                 started = time.perf_counter()
                 usage = resource.getrusage(resource.RUSAGE_SELF)
@@ -217,6 +225,8 @@ async def run(args):
                                                        usage.ru_utime - usage.ru_stime), **samples.report(),
                           "metrics": [reader.inspect() for reader in readers],
                           "loadAverage": list(os.getloadavg())}
+                result["workerCpuLessSamplerMs"] = result["steadyWorkerCpuMs"] - result["samplingCpuMs"]
+                result["channels"] = [client.channel.inspect() for client in clients]
             finally:
                 for task in tasks:
                     task.cancel()
@@ -298,9 +308,10 @@ if __name__ == "__main__":
     parser.add_argument("--scenario", choices=("idle", "four", "large", "recovery"), default="idle")
     parser.add_argument("--seconds", type=float, default=30)
     parser.add_argument("--cold", action="store_true")
+    parser.add_argument("--sampling-seconds", type=float, default=.02)
     parser.add_argument("--output", default="/tmp/mesh-wss-study/measurements")
     args = parser.parse_args()
-    check(args.seconds > 0, "study_duration")
+    check(args.seconds > 0 and 0 < args.sampling_seconds <= 1, "study_duration")
     if args.worker:
         print(json.dumps(asyncio.run(run(args)), indent=2))
     else:

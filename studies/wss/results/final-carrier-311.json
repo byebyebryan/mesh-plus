@@ -1,0 +1,39 @@
+{
+  "format": "mesh-plus.wss-study.validation.v1",
+  "phase": "carrier",
+  "checkedAtUtc": "2026-10-11T08:54:14.820665+00:00",
+  "status": "passed",
+  "testsRun": 23,
+  "failures": [],
+  "errors": [],
+  "skipped": [],
+  "expectedFailures": 0,
+  "unexpectedSuccesses": 0,
+  "runtimeDrift": [],
+  "python": "3.11.10",
+  "tls": "OpenSSL 3.0.15 3 Sep 2024",
+  "packages": {
+    "mesh-plus": "0.1.0a13",
+    "jsonschema": "4.26.0",
+    "websockets": "17.1",
+    "tmux-observer": "0.6.0a5",
+    "agent-observer": "0.5.0a16"
+  },
+  "studyInputs": {
+    "baseline.py": "805fb8d989682a4bcbab4b866e2948457ce3a67078a9c6989dfcae96d520fb1c",
+    "carrier.py": "575280f6d941161d29393dfd8b832117e39672cf379eae56d2ac1f769ceae5c0",
+    "check.py": "de4b45a98220a3c0d0d3387858d5d8ba865e119f159cf20fd1415af58d06759d",
+    "configuration.py": "6ecc9b3561e5b4759fd11d05eb768be9b824d56299886b12f8e01b64f80500de",
+    "fixtures.py": "10770933f14f6110930213f0b35973d0af4b136ad36ce8d3e173948e9dc8c2f9",
+    "test_carrier.py": "fe65c09e38a2365a9d9d79d914ce22e5e81d588752b486e0554618b05082fc61"
+  },
+  "scope": "owned loopback mTLS, released SDK and reviewed pure native wheels; no runtime promotion",
+  "excluded": [
+    "sibling source acceptance",
+    "deployment",
+    "WAN",
+    "physical suspend",
+    "normal runtime promotion",
+    "browser access"
+  ]
+}

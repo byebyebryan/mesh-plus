@@ -1,0 +1,706 @@
+{
+  "format": "mesh-plus.wss-study.decision.v1",
+  "status": "passed",
+  "disposition": "feasible_opt_in_candidate_defer_runtime_promotion",
+  "initialABBARuns": 32,
+  "refinedABBARuns": 8,
+  "coldAcquisitions": 40,
+  "trueLocalReferences": 2,
+  "initial": [
+    {
+      "domain": "tmux",
+      "scenario": "idle",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 1700.0,
+      "publisherCpuMsMean": 50.0,
+      "peakTreeRssKiBMean": 103942,
+      "peakProcesses": [
+        7,
+        7
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.9892578125,
+          0.85498046875,
+          0.71484375
+        ],
+        [
+          0.5625,
+          0.7685546875,
+          0.69873046875
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "idle",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 1070.0,
+      "publisherCpuMsMean": 75.0,
+      "peakTreeRssKiBMean": 77540,
+      "peakProcesses": [
+        2,
+        2
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          1.1142578125,
+          0.88623046875,
+          0.72900390625
+        ],
+        [
+          0.8076171875,
+          0.83251953125,
+          0.71630859375
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "four",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 5085.0,
+      "publisherCpuMsMean": 945.0,
+      "peakTreeRssKiBMean": 312986,
+      "peakProcesses": [
+        25,
+        25
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.5625,
+          0.744140625,
+          0.69287109375
+        ],
+        [
+          0.90673828125,
+          0.77880859375,
+          0.7099609375
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "four",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 3500.0,
+      "publisherCpuMsMean": 1105.0,
+      "peakTreeRssKiBMean": 190538,
+      "peakProcesses": [
+        5,
+        5
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.609375,
+          0.7373046875,
+          0.69287109375
+        ],
+        [
+          0.49951171875,
+          0.69775390625,
+          0.68115234375
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "large",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 2885.0,
+      "publisherCpuMsMean": 675.0,
+      "peakTreeRssKiBMean": 105790,
+      "peakProcesses": [
+        7,
+        7
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.99462890625,
+          0.802734375,
+          0.720703125
+        ],
+        [
+          1.068359375,
+          0.8466796875,
+          0.7431640625
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "large",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 2830.0,
+      "publisherCpuMsMean": 700.0,
+      "peakTreeRssKiBMean": 79532,
+      "peakProcesses": [
+        2,
+        2
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.896484375,
+          0.8037109375,
+          0.7236328125
+        ],
+        [
+          0.6044921875,
+          0.74169921875,
+          0.7060546875
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "recovery",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 1830.0,
+      "publisherCpuMsMean": 225.0,
+      "peakTreeRssKiBMean": 103974,
+      "peakProcesses": [
+        7,
+        7
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.70849609375,
+          0.78076171875,
+          0.72314453125
+        ],
+        [
+          0.513671875,
+          0.69384765625,
+          0.69970703125
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "recovery",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 1510.0,
+      "publisherCpuMsMean": 300.0,
+      "peakTreeRssKiBMean": 77066,
+      "peakProcesses": [
+        2,
+        2
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.56005859375,
+          0.7373046875,
+          0.71142578125
+        ],
+        [
+          0.5283203125,
+          0.71435546875,
+          0.70556640625
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "idle",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 1700.0,
+      "publisherCpuMsMean": 35.0,
+      "peakTreeRssKiBMean": 104240,
+      "peakProcesses": [
+        7,
+        7
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.47900390625,
+          0.67333984375,
+          0.693359375
+        ],
+        [
+          0.90087890625,
+          0.798828125,
+          0.73779296875
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "idle",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 765.0,
+      "publisherCpuMsMean": 40.0,
+      "peakTreeRssKiBMean": 76844,
+      "peakProcesses": [
+        2,
+        2
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.7646484375,
+          0.72216796875,
+          0.7099609375
+        ],
+        [
+          1.0380859375,
+          0.8125,
+          0.74169921875
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "four",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 6260.0,
+      "publisherCpuMsMean": 1610.0,
+      "peakTreeRssKiBMean": 315850,
+      "peakProcesses": [
+        25,
+        25
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.76318359375,
+          0.77099609375,
+          0.7294921875
+        ],
+        [
+          0.666015625,
+          0.7197265625,
+          0.716796875
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "four",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 4470.0,
+      "publisherCpuMsMean": 1690.0,
+      "peakTreeRssKiBMean": 192326,
+      "peakProcesses": [
+        5,
+        5
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.65673828125,
+          0.7451171875,
+          0.72265625
+        ],
+        [
+          0.53466796875,
+          0.70556640625,
+          0.7109375
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "large",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 10480.0,
+      "publisherCpuMsMean": 3830.0,
+      "peakTreeRssKiBMean": 113222,
+      "peakProcesses": [
+        7,
+        7
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.798828125,
+          0.7470703125,
+          0.7275390625
+        ],
+        [
+          1.29345703125,
+          0.87548828125,
+          0.7724609375
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "large",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 9910.0,
+      "publisherCpuMsMean": 3695.0,
+      "peakTreeRssKiBMean": 88848,
+      "peakProcesses": [
+        2,
+        2
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.603515625,
+          0.71044921875,
+          0.71533203125
+        ],
+        [
+          0.91943359375,
+          0.7724609375,
+          0.73681640625
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "recovery",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 1975.0,
+      "publisherCpuMsMean": 375.0,
+      "peakTreeRssKiBMean": 104592,
+      "peakProcesses": [
+        7,
+        7
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          1.3193359375,
+          0.93310546875,
+          0.796875
+        ],
+        [
+          0.57080078125,
+          0.77783203125,
+          0.75244140625
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "recovery",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 1755.0,
+      "publisherCpuMsMean": 430.0,
+      "peakTreeRssKiBMean": 77264,
+      "peakProcesses": [
+        2,
+        2
+      ],
+      "workerLessSamplerMsMean": null,
+      "loadAverage": [
+        [
+          0.79833984375,
+          0.84228515625,
+          0.7705078125
+        ],
+        [
+          0.65625,
+          0.80908203125,
+          0.76171875
+        ]
+      ]
+    }
+  ],
+  "refinement": [
+    {
+      "domain": "tmux",
+      "scenario": "idle",
+      "carrier": "ipc",
+      "samples": 1,
+      "treeCpuMsMean": 230.0,
+      "publisherCpuMsMean": 50.0,
+      "peakTreeRssKiBMean": 67828,
+      "peakProcesses": [
+        2
+      ],
+      "workerLessSamplerMsMean": 146.05865500000002,
+      "loadAverage": [
+        [
+          0.92041015625,
+          1.09375,
+          0.92529296875
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "four",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 1850.0,
+      "publisherCpuMsMean": 710.0,
+      "peakTreeRssKiBMean": 311700,
+      "peakProcesses": [
+        25,
+        25
+      ],
+      "workerLessSamplerMsMean": 1021.0153814999993,
+      "loadAverage": [
+        [
+          1.52490234375,
+          0.9716796875,
+          0.82177734375
+        ],
+        [
+          1.29150390625,
+          1.12548828125,
+          0.8994140625
+        ]
+      ]
+    },
+    {
+      "domain": "tmux",
+      "scenario": "four",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 2100.0,
+      "publisherCpuMsMean": 965.0,
+      "peakTreeRssKiBMean": 190172,
+      "peakProcesses": [
+        5,
+        5
+      ],
+      "workerLessSamplerMsMean": 1102.6991574999997,
+      "loadAverage": [
+        [
+          2.2841796875,
+          1.21337890625,
+          0.908203125
+        ],
+        [
+          1.70458984375,
+          1.17529296875,
+          0.90625
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "idle",
+      "carrier": "ipc",
+      "samples": 1,
+      "treeCpuMsMean": 130.0,
+      "publisherCpuMsMean": 20.0,
+      "peakTreeRssKiBMean": 68444,
+      "peakProcesses": [
+        2
+      ],
+      "workerLessSamplerMsMean": 91.57685899999979,
+      "loadAverage": [
+        [
+          1.59033203125,
+          1.21728515625,
+          0.97021484375
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "four",
+      "carrier": "ssh",
+      "samples": 2,
+      "treeCpuMsMean": 3535.0,
+      "publisherCpuMsMean": 1620.0,
+      "peakTreeRssKiBMean": 314950,
+      "peakProcesses": [
+        25,
+        25
+      ],
+      "workerLessSamplerMsMean": 1763.6406499999998,
+      "loadAverage": [
+        [
+          1.25146484375,
+          1.140625,
+          0.9130859375
+        ],
+        [
+          1.07568359375,
+          1.1396484375,
+          0.9345703125
+        ]
+      ]
+    },
+    {
+      "domain": "agent",
+      "scenario": "four",
+      "carrier": "wss",
+      "samples": 2,
+      "treeCpuMsMean": 3800.0,
+      "publisherCpuMsMean": 1945.0,
+      "peakTreeRssKiBMean": 192094,
+      "peakProcesses": [
+        5,
+        5
+      ],
+      "workerLessSamplerMsMean": 1801.3696674999987,
+      "loadAverage": [
+        [
+          1.2109375,
+          1.142578125,
+          0.919921875
+        ],
+        [
+          1.4384765625,
+          1.20849609375,
+          0.94921875
+        ]
+      ]
+    }
+  ],
+  "validation": [
+    {
+      "python": "3.11.10",
+      "allStudyCases": 31,
+      "carrierRefreshCases": 23,
+      "stateSourceUnchanged": true,
+      "status": "passed",
+      "skips": 0
+    },
+    {
+      "python": "3.13.7",
+      "allStudyCases": 31,
+      "carrierRefreshCases": 23,
+      "stateSourceUnchanged": true,
+      "status": "passed",
+      "skips": 0
+    },
+    {
+      "python": "3.14.8",
+      "allStudyCases": 31,
+      "carrierRefreshCases": 23,
+      "stateSourceUnchanged": true,
+      "status": "passed",
+      "skips": 0
+    }
+  ],
+  "resources": {
+    "format": "mesh-plus.wss-study.resources.v1",
+    "scope": "synthetic transport stress, not native/profile state",
+    "rssScope": "one worker containing TLS client and server; sampled and process peak, no global bound",
+    "slowReader": {
+      "messageBytes": 8470528,
+      "peakQueuedFrames": 2,
+      "peakAssemblyBytes": 8470528,
+      "overloadClosed": true,
+      "sampledPeakRssKiB": 150780
+    },
+    "oversizedPeer": {
+      "declaredBytes": 4294967296,
+      "assembledBytes": 0,
+      "closedBeforePayload": true
+    },
+    "pendingTLS": {
+      "offeredTCPConnections": 8,
+      "admitted": 4,
+      "dispatchedSources": 0,
+      "rssKiB": 117108,
+      "kernelBacklogExcluded": true
+    },
+    "processPeakRssKiB": 152504,
+    "cleanup": {
+      "listeners": 0,
+      "channels": 0,
+      "pendingTLS": 0,
+      "unexpectedTasks": 0
+    },
+    "status": "passed"
+  },
+  "cold": [
+    {
+      "domain": "tmux",
+      "carrier": "ssh",
+      "samples": 10,
+      "meanMs": 126.17949599807616,
+      "medianMs": 125.04211849955027,
+      "minMs": 123.40778599900659,
+      "maxMs": 131.68337399838492
+    },
+    {
+      "domain": "tmux",
+      "carrier": "wss",
+      "samples": 10,
+      "meanMs": 52.67082160062273,
+      "medianMs": 51.74945850012591,
+      "minMs": 50.344044000667054,
+      "maxMs": 62.636394999572076
+    },
+    {
+      "domain": "agent",
+      "carrier": "ssh",
+      "samples": 10,
+      "meanMs": 160.89282749890117,
+      "medianMs": 159.41342000223813,
+      "minMs": 146.0025560008944,
+      "maxMs": 178.4550379961729
+    },
+    {
+      "domain": "agent",
+      "carrier": "wss",
+      "samples": 10,
+      "meanMs": 61.95456699933857,
+      "medianMs": 56.57890949805733,
+      "minMs": 55.23605100461282,
+      "maxMs": 72.16047499969136
+    }
+  ],
+  "findings": [
+    "Fewer processes and lower tree RSS in this one-publisher-per-reader WSS fixture",
+    "No demonstrated reduction of consumer full-proof/native validation work",
+    "Initial CPU includes 20ms process-count-dependent sampler overhead",
+    "Refinement subtracts measured sampler CPU, but is descriptive and includes unpinned host load",
+    "Tmux refined runs overlapped cross-Python validation; CPU conclusions remain qualified",
+    "Initial IPC extras are remote-proof emulation, not ordinary local Read acceptance",
+    "True local IPC controls replace that interpretation in the refinement",
+    "The frozen generic JSON parser bounds bytes/depth, not a separate global node count",
+    "No pooling, compact proofs, TLS/NIC-byte or WAN benefit is established"
+  ],
+  "promotionBlocks": [
+    "Reviewed WSS authority/revision/token contract and lock addendum",
+    "Opt-in SDK factory and mixed-backend metrics/counter correction",
+    "Carrier-wide setup and send validation budget review",
+    "Bounded configuration IO boundary under blocked filesystems",
+    "Immutable package and owner-selected operational acceptance"
+  ],
+  "evidenceHashes": {
+    "core-acceptance.json": "7ebb8e0b3ecee8d8b81e4ad154430bca3ad25e9924453cf7b378a10ce65c5178",
+    "extras.json": "c3520258fc8a35d5a1059b76ec6e046d62e6dbccc9c9d8f9cb67867cdb8d42f4",
+    "final-311.json": "696a1f3261d0a23addbc0fed012aab99361ac98f62ddc3d483ae8bb5301fdc94",
+    "final-313.json": "cbd890033e73615163a6bc1ef9ce0de1b8434dfd2f09965ccee8e092b19636a2",
+    "final-314.json": "f150ceb85ea42d98297bb15462db4c2674eab7d71185b35fb08ee194fb37fca4",
+    "final-carrier-311.json": "54c7d50e94e2786b0aa3123e8bb0895d6e2013b10bbbae73d9cc4f3ebe130d53",
+    "final-carrier-313.json": "301ca4d08ee7cf98a61ac438beeef45d5f01868c5374c30da561ecd283d540fe",
+    "final-carrier-314.json": "e598f67b10d5177458099e17a2b250818d1dc13f8e845e5c5c9e304af47448f1",
+    "hygiene.json": "531b2dc881a8d56a3f048672bc417ac3368e038c3457f6273f8b0e034c052f32",
+    "installed-conformance.json": "1e84f25c34ccd410a38c94bdd9a4fdadae4ff52679176302034365713fba7e36",
+    "measurement.json": "008fd3c78a0e068d8ad6c768134e3200f96b5a093b19487f0f26050bef7e5daf",
+    "pre-refinement-311.json": "b3cdcd2014416dca35eef4150ed5388f4fe04fff34c99830680d5b87315b2aed",
+    "pre-refinement-314.json": "9232ffec365a6772959acce738b74543dc1a1140895557ffda0c4b18320fb5b9",
+    "refinement-measurement.json": "6aca000789a3e4d4fa98ad4fb76864f3361c95355f5ac3b856bb7deb85487d0d",
+    "refinement-runs.json": "17c5aaabfd364ab6602a5fbc3b97fac7ad402d776ebbea5037c6d3546612fe68",
+    "resources.json": "4a93348c0511b30146580adcb136064011960dba6821b0c592aa6357445521f9",
+    "runs.json": "e4febb99b595938b7d5bfbdff58f295a6786ab74a1061af24a664b14750065ca"
+  }
+}
