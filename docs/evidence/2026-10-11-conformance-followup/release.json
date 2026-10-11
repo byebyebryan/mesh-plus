@@ -1,0 +1,21 @@
+{
+  "releaseUrl": "https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a13",
+  "releaseTagCommit": "d9cdac4ba6314430c3c8eb4d948a9d697c90b411",
+  "wheelSha256": "62b42bc76e7d79d95d89c41ee6f73c5e0169d24e2f1ac911c151c13f1f2b6f07",
+  "downloadVerified": true,
+  "sourceCI": {
+    "runId": 38122198770,
+    "conclusion": "success",
+    "python": [
+      "3.11",
+      "3.13"
+    ],
+    "scope": "canonical standalone and synthetic fault lab"
+  },
+  "interimDocumentationFailure": {
+    "commit": "3cf72c5c1197bd19198646d0c6f62d9dd7727739",
+    "runId": 38122142016,
+    "reason": "Report links preceded the commit adding their targets; complete source/tag now contains the reports."
+  },
+  "deploymentSelected": false
+}

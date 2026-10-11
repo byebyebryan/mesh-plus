@@ -34,6 +34,13 @@ The a13 wheel is 107,803 bytes, SHA-256
 All 49 runtime/schema/resource members match source. Only the package version
 marker and `testing/network.py` / `testing/suite.py` differ from a12.
 
+The [immutable a13 release](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a13)
+is tagged at the complete evidence commit. [Publication verification](release.json)
+records green source CI and byte-identical downloaded wheel/checksum assets.
+The earlier preparation commit briefly linked reports before their addition;
+its failed documentation gate is retained explicitly rather than claimed green.
+Runtime acceptance inputs stay source-identical to the final release tag.
+
 Reproduce with isolated installed wheels:
 
 ```sh
