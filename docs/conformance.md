@@ -74,4 +74,3 @@ separate strict installed gate, `scripts/check-wss.py --installed --native`, wit
 carrier authentication, mixed-fleet selection and lifecycle cases. See
 [WSS operations](wss.md). Neither gate selects live artifacts or certifies WAN,
 physical suspend or provider collection.
-

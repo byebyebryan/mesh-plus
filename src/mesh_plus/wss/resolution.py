@@ -80,4 +80,3 @@ async def open_stream(hostname, port, context, *, server_hostname):
     if last is not None:
         raise last
     raise OSError("wss_resolution_failed")
-
