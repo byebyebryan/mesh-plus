@@ -49,9 +49,13 @@ This keeps the same SDK v1 and does not select live artifacts or migrate owners.
 The [WSS roadmap](wss-roadmap.md) research loop is complete; see the
 [study outcome](../studies/wss/outcome.md) and [promotion proposal](../studies/wss/promotion-proposal.md).
 Authenticated poll/push and both profiles pass in isolated loopback fixtures.
-WSS remains an opt-in candidate outside the frozen runtime and ordinary package.
-Endpoint authority/revisions, SDK configuration, aggregate carrier budgets and
-configuration IO require review before promotion. Current owner and live pins remain.
+The a14 source/private-wheel candidate promotes optional native WSS through the
+[reviewed addendum](../contracts/wss-v1/contract.md) and lock revision 2. See
+[WSS SDK/configuration](wss.md) and the [promotion plan](wss-promotion-plan.md).
+The existing Read/Delivery and native schemas remain byte-identical. WSS owns
+immutable mixed-backend selection, mTLS, bounded carrier IO and explicit local-file
+job ownership. Source/private wheel acceptance is separate from release and real
+fleet selection; current owner and live pins remain.
 
 Tmux rejects stale control bindings and reserves one retiring local bridge
 handler alongside its active Reader. Eight installed native Mesh tests pass;
@@ -180,7 +184,7 @@ Observer is still awaiting initial Mesh adaptation.
 See [Observer adaptation](observer-adaptation.md) and
 [migration acceptance](migration-and-validation.md) for detailed domain checks.
 
-Ordered native events, replay/status, digest-proof, WSS runtime/authorization,
+Ordered native events, replay/status, digest-proof,
 shared fleet connection broker/pool, refresh/actions and command idempotence are
 deferred. Their schemas and study examples are research material. They require
 separate producer/transport acceptance before being advertised as capabilities.

@@ -18,10 +18,10 @@ def require(condition, message):
 
 def main():
     lock = json.loads((ROOT / "contracts/LOCK.json").read_text())
-    require(lock["lockRevision"] == 1 and lock["status"] == "frozen_for_implementation", "lock disposition")
+    require(lock["lockRevision"] == 2 and lock["status"] == "frozen_for_implementation", "lock disposition")
     require(lock["products"] == ["state"], "unsupported product promoted")
     require(lock["capabilities"] == ["snapshot", "proof", "subscribe"], "unsupported capability promoted")
-    require(lock["backends"] == ["ipc", "ssh-stdio"], "unsupported backend promoted")
+    require(lock["backends"] == ["ipc", "ssh-stdio", "wss"], "unsupported backend promoted")
     require(lock["meshProtocol"] == 1 and lock["deliveryVersion"] == 1 and
             lock["deliveryProtocol"] == "mesh-plus.delivery-candidate.v1", "protocol binding")
     expected = {"docs/contract-freeze.md", "contracts/mesh-read-v1/contract.md",
@@ -31,7 +31,13 @@ def main():
     expected.update("contracts/mesh-delivery-v1/" + name for name in
                     ("client-frame.schema.json", "server-frame.schema.json"))
     expected.update(file["path"] for profile in lock["nativeInputs"].values() for file in profile["schemas"])
+    expected.update("contracts/wss-v1/" + name for name in
+                    ("contract.md", "registry.schema.json", "authorization.schema.json"))
     require(set(lock["normativeDigests"]) == expected, "normative inventory changed")
+    require("wss-runtime" not in lock["excluded"], "WSS disposition")
+    for name in ("registry", "authorization"):
+        require((ROOT / "src/mesh_plus/wss" / (name + ".schema.json")).read_bytes() ==
+                (ROOT / "contracts/wss-v1" / (name + ".schema.json")).read_bytes(), "WSS configuration schema drift")
     for profile in lock["nativeInputs"].values():
         for file in profile["schemas"]:
             require(lock["normativeDigests"][file["path"]] == file["sha256"], "native schema binding")

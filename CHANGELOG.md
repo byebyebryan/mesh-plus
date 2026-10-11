@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0a14 source/private-wheel candidate
+
+- Add optional native WSS poll/push carriage, mTLS listener, immutable mixed-fleet
+  selection and separate `mesh-plus-wss` CLI. Existing SDK v1 defaults remain.
+- Review additive lock revision 2 and new configuration schemas; preserve all
+  prior wire/native schema bytes and SSH authority behavior.
+- Include encoding/validation in carrier budgets, scope checks in snapshot
+  budgets, explicit local-filesystem job ownership and carrier-aware byte counts.
+- Add standalone/native/installed WSS acceptance and optional CI matrix. No
+  released artifact, deployed pin, sibling project or chezmoi state is selected.
+
 ## 0.1.0a13 (2026-10-11)
 
 - Require every selected conformance case to explicitly pass. Expected failures,

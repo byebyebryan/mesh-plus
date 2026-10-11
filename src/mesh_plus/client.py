@@ -245,7 +245,7 @@ class Client:
                     raise DeliveryError(frame["error"]["code"], frame["error"]["message"])
                 if frame["kind"] == "result":
                     operation = self.operations.get(frame["requestId"], "other")
-                    self.metrics[operation + "ResultBytes"] += size + 1
+                    self.metrics[operation + "ResultBytes"] += size + getattr(self.channel, "framing_bytes", 1)
                     future = self.requests.get(frame["requestId"])
                     if future and not future.done() and outcome != "quarantined":
                         if frame["outcome"] == "ok":

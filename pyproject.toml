@@ -4,11 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mesh-plus"
-version = "0.1.0a13"
+version = "0.1.0a14"
 description = "Bounded fleet delivery for host-local Observer services"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["jsonschema>=4.26,<5"]
+
+[project.optional-dependencies]
+wss = ["websockets>=17.1,<18"]
 
 [project.urls]
 Repository = "https://github.com/byebyebryan/mesh-plus"
@@ -16,12 +19,14 @@ Issues = "https://github.com/byebyebryan/mesh-plus/issues"
 
 [project.scripts]
 mesh-plus = "mesh_plus.cli:main"
+mesh-plus-wss = "mesh_plus.wss.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 mesh_plus = ["schemas/*.json"]
+"mesh_plus.wss" = ["*.schema.json"]
 "mesh_plus.testing" = ["corpus.json", "catalog.json"]
 
 [tool.ruff]

@@ -23,7 +23,7 @@ preserves a9's exact artifacts and its own acceptance.
 A8 introduced proactive watch connection rotation and cumulative measurements;
 a9 makes owned send/close retirement withstand repeated caller cancellation.
 The [reliability plan](docs/reliability-and-measurement.md) records the remaining
-optimization gates. Ordered events/replay, WSS, a shared fleet broker and further
+optimization gates. Ordered events/replay, a shared fleet broker and further
 Plus/device migrations remain deferred.
 
 SDK interface v1 in **0.1.0a11** adds explicit pure profile injection throughout
@@ -48,7 +48,10 @@ and runtime contracts stay unchanged; see the
 
 The completed research track is the [WSS roadmap](docs/wss-roadmap.md): isolated carrier,
 authenticated endpoint binding, native state acceptance and matched measurements.
-WSS remains outside supported runtime until a separately reviewed promotion.
+The a14 source/private-wheel candidate promotes optional native WSS under
+[lock revision 2](contracts/wss-v1/contract.md). See [WSS configuration and SDK](docs/wss.md)
+for polling, push, the separate `mesh-plus-wss` CLI and operational limits.
+Existing wire/profile schemas, SDK v1 defaults and live selections remain unchanged.
 
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The

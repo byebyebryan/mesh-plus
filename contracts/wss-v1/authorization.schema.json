@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:wss:1:authorization",
+  "description": "Native WSS authorization configuration; see the WSS contract addendum.",
+  "type": "object",
+  "maxProperties": 128,
+  "propertyNames": {
+    "pattern": "^[0-9a-f]{64}$"
+  },
+  "additionalProperties": {
+    "type": "array",
+    "minItems": 3,
+    "maxItems": 3,
+    "prefixItems": [
+      {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_.-]*$",
+        "maxLength": 16384
+      },
+      {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,127}$"
+      },
+      {
+        "enum": [
+          "tmux-observer.mesh-candidate.v1",
+          "agent-observer.mesh-candidate.v1"
+        ]
+      }
+    ]
+  }
+}

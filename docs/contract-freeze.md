@@ -2,7 +2,8 @@
 
 The state delivery boundary is frozen for independent implementation against
 `contracts/LOCK.json`. It supports cached polling and pushed state over local IPC
-and persistent SSH stdio. This is an experimental implementation freeze, not a
+and persistent SSH stdio, with optional native WSS as defined by the
+[WSS addendum](../contracts/wss-v1/contract.md). This is an experimental implementation freeze, not a
 published Observer API, selected desktop artifact or operational fleet release.
 
 ## Authority and compatibility
@@ -141,8 +142,8 @@ current producer contract; its older backend is not the Agent profile authority.
 SSH Plus already has the optional shared-authority facade; changing its default
 or selecting live artifacts belongs to the paired operational gate.
 
-Ordered native events, event replay/status, digest-proof, WSS runtime and its
-authorization registry, shared fleet broker/pool, refresh/actions and command
+Ordered native events, event replay/status, digest-proof,
+shared fleet broker/pool, refresh/actions and command
 idempotence are outside this freeze. Their schemas and synthetic studies are
 reserved design material, not advertised production capability. Teams may
 research them independently, but need producer and transport acceptance before

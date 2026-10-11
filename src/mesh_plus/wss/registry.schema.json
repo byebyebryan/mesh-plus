@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:wss:1:registry",
+  "description": "Native WSS registry configuration; see the WSS contract addendum.",
+  "type": "object",
+  "required": [
+    "protocol",
+    "endpoints"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "protocol": {
+      "const": "mesh-plus.wss.v1"
+    },
+    "endpoints": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hostId",
+          "sourceId",
+          "profile",
+          "url",
+          "product",
+          "capabilities"
+        ],
+        "properties": {
+          "hostId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$",
+            "maxLength": 16384
+          },
+          "sourceId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,127}$"
+          },
+          "profile": {
+            "enum": [
+              "tmux-observer.mesh-candidate.v1",
+              "agent-observer.mesh-candidate.v1"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 4096,
+            "pattern": "^wss://[^/?#@]+/mesh/state$"
+          },
+          "product": {
+            "const": "state"
+          },
+          "capabilities": {
+            "const": [
+              "snapshot",
+              "proof",
+              "subscribe"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

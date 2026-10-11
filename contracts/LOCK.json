@@ -1,6 +1,6 @@
 {
-  "lockId": "mesh-plus-state-core-2026-10-09",
-  "lockRevision": 1,
+  "lockId": "mesh-plus-state-wss-2026-10-11",
+  "lockRevision": 2,
   "status": "frozen_for_implementation",
   "meshProtocol": 1,
   "deliveryProtocol": "mesh-plus.delivery-candidate.v1",
@@ -15,7 +15,8 @@
   ],
   "backends": [
     "ipc",
-    "ssh-stdio"
+    "ssh-stdio",
+    "wss"
   ],
   "profiles": {
     "tmux": "tmux-observer.mesh-candidate.v1",
@@ -54,7 +55,6 @@
     "replay",
     "status",
     "digest-proof",
-    "wss-runtime",
     "fleet-broker",
     "global-memory-pool",
     "refresh",
@@ -74,7 +74,10 @@
     "contracts/mesh-read-v1/schema.json": "8da7bd0ea618bafbc3a1866d08914822bf1a3e5772139ea74ba3fe2aa25fbbfb",
     "contracts/mesh-read-v1/tmux.profile.schema.json": "49169be091510b9afd85dd6eaa099298280cc8177f7e426f433ceb091ef3eafc",
     "contracts/mesh-read-v1/tmux.stream.schema.json": "e529b284e1ed365daddaa14e3eee5ced28d778f82aa0fc5be376f86886f44bd7",
-    "docs/contract-freeze.md": "95cd2d9a5c7b4e656ad5bf276c1c34f2072efa843f7eb0bde1938574f8e9eded",
+    "contracts/wss-v1/authorization.schema.json": "66cc50ffdd6619ee77a50dd0b535027db05e6518399edacf6746ceb8267299e5",
+    "contracts/wss-v1/contract.md": "d0155e7ef9a306dd9673f4bccecfb9e996617b4c616af40bfe2c1daffbac31eb",
+    "contracts/wss-v1/registry.schema.json": "413a932759d0cf5be753728e12695c211e307176ae024bbbcd7f545ab8959b37",
+    "docs/contract-freeze.md": "152b31d81832d09320ecbc0031becdd91835cbb00b05b11e7aba3398820e7479",
     "reference/agent-observer/agent_observer/contracts/service-frame.schema.json": "f43ebea80a47f9db2379a576ca089fde25994e4229606473e5937f1379cbb984",
     "reference/agent-observer/agent_observer/contracts/snapshot.schema.json": "95ba9e3ef4ad5dc059f7a344b5946ea59193a9b061b7d747927d6aceb2eb0e39",
     "reference/tmux-observer/contracts/observation-v1/schema.json": "b79b26cddc4363e43dbc73265f880115570afa9fa5f9851aed947ebb6f0c8c8c",
