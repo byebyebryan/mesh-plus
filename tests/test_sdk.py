@@ -254,6 +254,45 @@ class SDKTests(unittest.IsolatedAsyncioTestCase):
             finally:
                 await server.close()
 
+    async def test_snapshot_repeated_cancellation_waits_for_all_sibling_cleanup(self):
+        publisher = Publisher("tmux", "local")
+        profile = publisher.state_profile
+        started, release, blocked_started = asyncio.Event(), asyncio.Event(), asyncio.Event()
+        client = AsyncMock()
+        del client.guard
+        del client.inspect
+        del client.route_token
+        client.request.return_value = publisher.wrap()
+        async def close():
+            started.set()
+            await release.wait()
+        client.close.side_effect = close
+        async def healthy():
+            return client
+        async def blocked():
+            blocked_started.set()
+            await asyncio.Event().wait()
+        reader = Reader("tmux", [Endpoint("local", True, None, healthy, profile.bind("local", "default")),
+                                  Endpoint("remote", False, "sha256:" + "a" * 64, blocked,
+                                           profile.bind("remote", "default"))], local_host="local",
+                        catalog_revision="sha256:" + "b" * 64, profile=profile)
+        task = asyncio.create_task(reader.snapshot())
+        try:
+            await asyncio.wait_for(started.wait(), 1)
+            await asyncio.wait_for(blocked_started.wait(), 1)
+            for _ in range(3):
+                task.cancel()
+                await asyncio.sleep(.01)
+                self.assertFalse(task.done())
+            release.set()
+            with self.assertRaises(asyncio.CancelledError):
+                await task
+            self.assertEqual(reader.inspect()["activeConnections"], 0)
+            self.assertEqual(reader.inspect()["connectionsOpened"], reader.inspect()["connectionsClosed"])
+        finally:
+            release.set()
+            await asyncio.gather(task, return_exceptions=True)
+
     async def test_gap_restart_and_catalog_change_revoke_without_native_imports(self):
         profile = Profile("agent")
         response = json.loads((ROOT / "contracts/mesh-read-v1/examples/agent-local.json").read_text())

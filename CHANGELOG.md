@@ -9,6 +9,8 @@
 - Include independent profile conformance in the standalone core gate, public
   signature fixtures, pinned-a10 projection comparison and explicit current
   authority provenance/behavior acceptance.
+- Retire every snapshot host task before reporting cancellation, including
+  delayed sibling cleanup and repeated cancellation.
 - This source/package checkpoint does not select new live artifacts or move
   Observer adapters, provider policy or Plus consumers.
 

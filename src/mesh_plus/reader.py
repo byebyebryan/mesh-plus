@@ -283,7 +283,18 @@ class Reader:
                 if client:
                     await self._close(client)
 
-        values = await asyncio.gather(*(one(endpoint) for endpoint in selected))
+        tasks = [asyncio.create_task(one(endpoint)) for endpoint in selected]
+        try:
+            values = await asyncio.gather(*tasks)
+        except BaseException:
+            # gather may report one cancelled child before sibling finally
+            # blocks retire their clients. The snapshot owns all of them.
+            for task in tasks:
+                if not task.done():
+                    task.cancel()
+            retirement = asyncio.gather(*tasks, return_exceptions=True)
+            await finish_owned(retirement)
+            raise
         return self.compose(selected, {e.host: value for e, value in zip(selected, values)}, request_id)
 
     async def watch(self, *, mode="fleet", hosts=(), proof_interval=None, request_id=None, catalog_interval=5):
