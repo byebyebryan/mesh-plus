@@ -9,8 +9,9 @@ from importlib.resources import files
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-from .observer import ObserverCodec, digest
+from .evidence import digest
 from .protocol import check, encode, metadata_bounds
+from .state import inspect_state, resolve_profile
 
 _PROFILE_DIGESTS = {}
 
@@ -46,16 +47,16 @@ def row_host(domain, row):
     return row["hostId"] if domain == "tmux" else row["identity"]["hostScope"]
 
 
-def reconstructed(response, host):
+def reconstructed(response, host, *, profile=None):
     domain = "tmux" if response["protocol"].startswith("tmux-") else "agent"
-    metadata = host["owner"]["metadata"]
-    snapshot = None if metadata is None else {**metadata, "sessions": [row for row in response["sessions"]
-                                                                      if row_host(domain, row) == host["hostId"]]}
-    return {**host["owner"]["service"], "snapshot": snapshot}
+    profile = resolve_profile(domain, profile)
+    return profile.restore_native(host["owner"], [row for row in response["sessions"]
+                                                 if profile.record_host(row) == host["hostId"]])
 
 
-def validate_response(response):
+def validate_response(response, *, profile=None):
     domain = "tmux" if response.get("protocol") == "tmux-observer.mesh-candidate.v1" else "agent"
+    profile = resolve_profile(domain, profile)
     # A composed response passes several independent consumers in one process.
     # Reuse only static schema success for identical complete JSON bytes. Native
     # validation, proofs, receipts, chronology and current-time checks still run.
@@ -71,6 +72,7 @@ def validate_response(response):
         if key is not None:
             _PROFILE_DIGESTS[domain] = key
     check(len(encoded) + 1 <= 16 * 1024 * 1024, "aggregate_capacity")
+    profile.validate_response(response)
     mesh = response["mesh"]
     hosts = mesh["hosts"]
     scope = mesh["scope"]["hostIds"]
@@ -86,10 +88,12 @@ def validate_response(response):
     references = []
     host_positions = []
     for row in response["sessions"]:
-        check(row_host(domain, row) in scope, "row_host_scope")
-        host_positions.append(scope.index(row_host(domain, row)))
-        references.append(tuple(row[k] for k in ("hostId", "serverGeneration", "sessionId", "createdAt")) if domain == "tmux"
-                          else tuple(row["identity"][k] for k in ("hostScope", "provider", "namespace", "nativeIdKind", "nativeId")))
+        check(profile.record_host(row) in scope, "row_host_scope")
+        host_positions.append(scope.index(profile.record_host(row)))
+        identity = profile.record_identity(row)
+        check(type(identity) is tuple and bool(identity) and all(type(v) in {str, int} for v in identity),
+              "record_identity")
+        references.append(identity)
     check(len(references) == len(set(references)), "duplicate_identity")
     check(host_positions == sorted(host_positions), "row_host_order")
     for host in hosts:
@@ -101,28 +105,30 @@ def validate_response(response):
         current = [r for r in host["receipts"] if r["health"] in {"current", "partial"}]
         check((host["viewState"] == "current") == bool(current), "current_receipt_binding")
         if host["owner"] is None:
-            check(not host["receipts"] and not any(row_host(domain, row) == host["hostId"] for row in response["sessions"]),
+            check(not host["receipts"] and not any(profile.record_host(row) == host["hostId"] for row in response["sessions"]),
                   "rows_without_owner")
             continue
-        frame = reconstructed(response, host)
-        codec = ObserverCodec(domain, host["hostId"], "default")
-        codec.native(frame)
-        snapshot = frame["snapshot"]
-        check(host["owner"]["protocol"] == ("tmux-observer.observation.v1" if domain == "tmux" else "agent-observer.snapshot")
-              and host["owner"]["version"] == (1 if domain == "tmux" else 4), "owner_version")
-        check(snapshot is not None or not any(row_host(domain, row) == host["hostId"] for row in response["sessions"]),
+        frame = reconstructed(response, host, profile=profile)
+        codec = profile.bind(host["hostId"], "default")
+        state = inspect_state(profile, codec, frame)
+        check(state.owner == host["owner"] and list(state.records) == [row for row in response["sessions"]
+              if profile.record_host(row) == host["hostId"]], "owner_projection")
+        snapshot = state.owner["metadata"]
+        check(host["owner"]["protocol"] == profile.descriptor.native_protocol
+              and host["owner"]["version"] == profile.descriptor.native_version, "owner_version")
+        check(snapshot is not None or not any(profile.record_host(row) == host["hostId"] for row in response["sessions"]),
               "warming_rows")
-        native = {(r["sourceId"], r["component"]): r for r in codec.receipts(frame)}
+        native = {(r["sourceId"], r["component"]): r for r in state.receipts}
         keys = [(r["sourceId"], r["component"]) for r in host["receipts"]]
         check(len(keys) == len(set(keys)) and set(keys) <= set(native) and
               (snapshot is None or set(keys) == set(native)), "receipt_scope")
         check(not current or snapshot is not None, "warming_positive_receipt")
         proof = delivery["proof"]
         if local:
-            check(proof is None and codec.clock(frame) == mesh["reader"]["clock"], "local_clock_scope")
+            check(proof is None and state.clock == mesh["reader"]["clock"], "local_clock_scope")
         elif current:
             check(proof is not None and proof["payloadDigest"] == digest(frame) and
-                  proof["bridgeClock"] == codec.clock(frame) and proof["bridgeEncodedAtMs"] >= codec.emitted(frame) and
+                  proof["bridgeClock"] == state.clock and proof["bridgeEncodedAtMs"] >= state.emitted_ms and
                   proof["receivedAtMs"] <= mesh["reader"]["encodedAtMs"], "remote_proof_binding")
         for receipt in host["receipts"]:
             original = native[receipt["sourceId"], receipt["component"]]
@@ -150,41 +156,40 @@ def validate_response(response):
     return response
 
 
-def current_sessions(response, now_ms, clock):
+def current_sessions(response, now_ms, clock, *, profile=None):
     """Only records with unexpired scoped leases; never infer idle from absence."""
-    validate_response(response)
+    domain = "tmux" if response["protocol"].startswith("tmux-") else "agent"
+    profile = resolve_profile(domain, profile)
+    validate_response(response, profile=profile)
     check(clock == response["mesh"]["reader"]["clock"] and type(now_ms) is int and
           now_ms >= response["mesh"]["reader"]["encodedAtMs"], "reader_clock_scope")
-    domain = "tmux" if response["protocol"].startswith("tmux-") else "agent"
     rows = []
     for host in response["mesh"]["hosts"]:
         if host["viewState"] != "current" or host["delivery"]["status"] != "ready":
             continue
-        codec = ObserverCodec(domain, host["hostId"], "default")
-        native = codec.receipts(reconstructed(response, host))
-        for row in response["sessions"]:
-            if row_host(domain, row) != host["hostId"]:
-                continue
-            source = "default" if domain == "tmux" else row["identity"]["provider"] + ":" + row["identity"]["namespace"]
-            active = [r for r in host["receipts"] if r["sourceId"] == source and r["health"] in {"current", "partial"}]
-            expected = {r["component"] for r in native if r["sourceId"] == source and r["health"] in {"current", "partial"}}
-            if domain == "agent" and not row["hasSavedHistory"]:
-                # Unsaved memory has no public per-row retirement receipt. A
-                # fresh history component cannot extend its runtime authority.
-                # Preserve the original row in the lossless envelope; only this
-                # conservative current selector omits historical runtime rows.
-                if row["runtime"]["health"] != "current" or not any(r["component"] == "runtime" for r in active):
-                    continue
-            if active and {r["component"] for r in active} == expected and all(r["expiresAtMs"] > now_ms for r in active):
+        codec = profile.bind(host["hostId"], "default")
+        state = inspect_state(profile, codec, reconstructed(response, host, profile=profile))
+        available = {(r["sourceId"], r["component"]) for r in host["receipts"]
+                     if r["health"] in {"current", "partial"} and r["expiresAtMs"] > now_ms}
+        native = {(r["sourceId"], r["component"]) for r in state.receipts
+                  if r["health"] in {"current", "partial"}}
+        for row in state.records:
+            required = profile.record_receipts(row, state)
+            check(required is None or (type(required) is frozenset and all(
+                type(k) is tuple and len(k) == 2 and all(type(v) is str for v in k) for k in required)),
+                "record_receipt_keys")
+            if required and required <= native and required <= available and profile.record_eligible(row, state):
                 rows.append(copy.deepcopy(row))
+
     return rows
 
 
 class ReadGuard:
     """Per-request replacement stream guard; validity still needs current_sessions."""
 
-    def __init__(self, domain, request_id, *, host_ids=None):
+    def __init__(self, domain, request_id, *, host_ids=None, profile=None):
         check(domain in {"tmux", "agent"}, "observer_domain")
+        self.state_profile = resolve_profile(domain, profile)
         self.profile = domain + "-observer.mesh-candidate.v1"
         self.request_id, self.host_ids = request_id, None if host_ids is None else tuple(host_ids)
         self.binding, self.sequence, self.revision = None, 0, 0
@@ -211,7 +216,7 @@ class ReadGuard:
             check(len(encode(frame)) <= 16384, "control_capacity")
             check(self.binding is not None, "read_baseline_required")
         else:
-            validate_response(frame)
+            validate_response(frame, profile=self.state_profile)
         check(frame["protocol"] == self.profile and mesh["requestId"] == self.request_id and
               mesh["operation"] == "watch", "read_request_binding")
         reader = mesh["reader"]
@@ -231,7 +236,11 @@ class ReadGuard:
             for host in mesh["hosts"]:
                 epoch = host["delivery"]["epoch"]
                 owner = host["owner"]
-                publisher = None if owner is None else owner["service"].get("publisherId", owner["service"].get("serviceId"))
+                publisher = None
+                if owner is not None:
+                    codec = self.state_profile.bind(host["hostId"], "default")
+                    publisher = inspect_state(self.state_profile, codec,
+                                              reconstructed(frame, host, profile=self.state_profile)).publisher
                 previous = self.host_bindings.get(host["hostId"])
                 if previous is not None:
                     check(epoch >= previous[0], "read_host_epoch_regression")
@@ -256,7 +265,7 @@ class ReadGuard:
     def current(self, now_ms, clock):
         if self.closed or self.needs_resync or self.view is None:
             return []
-        return current_sessions(self.view, now_ms, clock)
+        return current_sessions(self.view, now_ms, clock, profile=self.state_profile)
 
     def disconnect(self):
         """EOF/framing/liveness failure revokes cached positives immediately."""

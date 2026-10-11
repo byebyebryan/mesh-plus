@@ -8,8 +8,9 @@ import uuid
 from dataclasses import dataclass
 
 from .client import DeliveryError
-from .observer import clock_domain, digest
+from .evidence import clock_domain, digest
 from .protocol import check
+from .state import check_binding, legacy_codec, resolve_profile, validate_bridge
 from .transport import boottime_ms, finish_owned, within_deadline
 from .view import remote_expiry, validate_response
 
@@ -27,6 +28,7 @@ class Endpoint:
     local: bool
     route_token: str | None
     connect: object
+    codec: object = None
 
 
 @dataclass
@@ -37,8 +39,9 @@ class PublicationState:
 
 
 class Reader:
-    def __init__(self, domain, endpoints, *, local_host, catalog_revision=None, catalog_check=None):
+    def __init__(self, domain, endpoints, *, local_host, catalog_revision=None, catalog_check=None, profile=None):
         check(domain in {"tmux", "agent"}, "observer_domain")
+        self.profile = resolve_profile(domain, profile)
         self.domain, self.local_host, self.catalog_revision = domain, local_host, catalog_revision
         self.endpoints = tuple(endpoints)
         check(len({endpoint.host for endpoint in self.endpoints}) == len(self.endpoints) and
@@ -46,6 +49,11 @@ class Reader:
         check(all(endpoint.local == (endpoint.host == local_host) for endpoint in self.endpoints), "endpoint_local_binding")
         check(all((endpoint.route_token is None) == endpoint.local for endpoint in self.endpoints), "endpoint_route_binding")
         check(catalog_revision is not None or [e.host for e in self.endpoints] == [local_host], "catalog_required")
+        self._bindings = {}
+        for endpoint in self.endpoints:
+            if endpoint.codec is not None:
+                check_binding(endpoint.codec, endpoint.host, endpoint.codec.source, self.profile.descriptor.profile_id)
+                self._bindings[id(endpoint)] = (endpoint.host, endpoint.codec.source, self.profile.descriptor.profile_id)
         self.id = str(uuid.uuid4())
         self.setup_slots = asyncio.Semaphore(4)
         self.catalog_check = catalog_check
@@ -166,9 +174,20 @@ class Reader:
                              "routeToken": endpoint.route_token, "error": {"code": code, "message": "Source delivery unavailable"},
                              "proof": None}, "viewState": "unavailable", "owner": None, "receipts": []}
 
-    async def read_host(self, client, endpoint, epoch=1):
-        codec = client.codec.__self__
-        check(codec.domain == self.domain and codec.host == endpoint.host, "endpoint_codec_binding")
+    def _codec(self, client, endpoint):
+        codec = endpoint.codec
+        if codec is None:
+            codec = legacy_codec(self.domain, self.profile, endpoint.host, client.codec)
+        binding = self._bindings.get(id(endpoint), (endpoint.host, codec.source, self.profile.descriptor.profile_id))
+        check_binding(codec, *binding)
+        guard = getattr(client, "guard", None)
+        if guard is not None:
+            check(guard.authenticated_host == codec.host and guard.hello["sourceId"] == codec.source and
+                  guard.hello["profile"] == codec.profile_id, "endpoint_client_binding")
+        return codec
+
+    async def read_host(self, client, endpoint, epoch=1, *, _state=None):
+        codec = self._codec(client, endpoint)
         proof = None
         if endpoint.local:
             reply = await client.request()
@@ -184,10 +203,11 @@ class Reader:
             proof = {"nonce": nonce, "bridgeId": reply["bridgeId"], "bridgeClock": reply["clock"],
                      "bridgeEncodedAtMs": reply["encodedAtMs"], "sentAtMs": sent, "receivedAtMs": received,
                      "marginMs": 100, "payloadDigest": reply["ownerDigest"]}
-        frame = reply["ownerFrame"]
+        state = validate_bridge(self.profile, codec, reply)
         now = boottime_ms()
         receipts = []
-        for receipt in codec.receipts(frame):
+        for original in state.receipts:
+            receipt = dict(original)
             original_expiry = receipt.pop("expiry")
             remaining = max(0, original_expiry - (now if endpoint.local else reply["encodedAtMs"])) if receipt["health"] in {"current", "partial"} else 0
             expiry = original_expiry if endpoint.local else remote_expiry(sent, received, remaining)
@@ -196,18 +216,15 @@ class Reader:
                     receipt["health"] = "stale"
                 expiry, remaining = None, 0
             receipts.append({**receipt, "remainingMs": remaining, "expiresAtMs": expiry})
-        snapshot = frame["snapshot"]
-        metadata = None if snapshot is None else {key: value for key, value in snapshot.items() if key != "sessions"}
-        service = {key: value for key, value in frame.items() if key != "snapshot"}
         current = any(r["health"] in {"current", "partial"} for r in receipts)
         result = {"hostId": endpoint.host, "local": endpoint.local,
                   "delivery": {"path": "ipc" if endpoint.local else "ssh", "status": "ready", "epoch": epoch,
                                "routeToken": getattr(client, "route_token", endpoint.route_token), "error": None, "proof": proof},
-                  "viewState": "warming" if snapshot is None else "current" if current else "historical",
-                  "owner": {"protocol": "tmux-observer.observation.v1" if self.domain == "tmux" else "agent-observer.snapshot",
-                            "version": 1 if self.domain == "tmux" else 4, "metadata": metadata, "service": service},
-                  "receipts": receipts}
-        return result, [] if snapshot is None else snapshot["sessions"]
+                  "viewState": "warming" if state.owner["metadata"] is None else "current" if current else "historical",
+                  "owner": state.owner, "receipts": receipts}
+        if _state is not None:
+            _state.append(state)
+        return result, list(state.records)
 
     def compose(self, selected, outcomes, request_id, operation="snapshot", *, state=None, kind="view"):
         now = boottime_ms()
@@ -236,7 +253,7 @@ class Reader:
                              "reader": {"id": self.id, "clock": clock_domain(), "encodedAtMs": now,
                                         "sequence": sequence, "revision": revision},
                              "kind": kind, "status": status, "hosts": hosts, "extensions": {}}, "sessions": sessions}
-        validate_response(response)
+        validate_response(response, profile=self.profile)
         state.sequence, state.revision, state.fingerprint = sequence, revision, fingerprint
         return response
 
@@ -313,6 +330,7 @@ class Reader:
             nonlocal resync
             epoch = 0
             retry = .25
+            previous_publisher = None
             while True:
                 client, sub, next_frame = None, None, None
                 rotation_barrier = None
@@ -322,18 +340,18 @@ class Reader:
                         nonlocal client, sub
                         async with self.setup_slots:
                             client = await self._connect(endpoint)
+                            self._codec(client, endpoint)
                             sub = await client.subscribe()
                     await within_deadline(setup(), boottime_ms() + 15000)
                     # Baseline is a candidate: accept positives only through a cached read/proof.
                     while True:
                         if callable(getattr(client, "rotation_due", None)) and client.rotation_due():
                             raise DeliveryError("channel_rotation_required")
-                        previous = outcomes[endpoint.host][0]["owner"]
-                        replacement = await self.read_host(client, endpoint, epoch)
-                        current = replacement[0]["owner"]
-                        publisher = "publisherId" if self.domain == "tmux" else "serviceId"
-                        if previous is not None and current is not None:
-                            resync = resync or previous["service"][publisher] != current["service"][publisher]
+                        admitted = []
+                        replacement = await self.read_host(client, endpoint, epoch, _state=admitted)
+                        publisher = admitted[0].publisher
+                        resync = resync or (previous_publisher is not None and previous_publisher != publisher)
+                        previous_publisher = publisher
                         outcomes[endpoint.host] = replacement
                         resync = resync or epoch > 1
                         retry = .25

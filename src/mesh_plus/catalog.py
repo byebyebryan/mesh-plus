@@ -10,7 +10,7 @@ from importlib.resources import files
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-from .observer import digest
+from .evidence import digest
 from .protocol import check, decode_json
 
 

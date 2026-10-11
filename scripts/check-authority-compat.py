@@ -18,6 +18,8 @@ def main():
     parser.add_argument("--ssh-plus", type=Path, required=True)
     parser.add_argument("--report", type=Path)
     parser.add_argument("--backend", choices=("legacy", "mesh-plus"), default="legacy")
+    parser.add_argument("--baseline", choices=("legacy-extraction", "bounded-read-v1"), default="legacy-extraction",
+                        help="current reviewed captured-byte seam is distinct from the original literal extraction")
     args = parser.parse_args()
     report_path = args.report.resolve() if args.report else None
     root = args.ssh_plus.resolve()
@@ -25,11 +27,22 @@ def main():
     if (root / "rofi_ssh_plus/_legacy_mesh.py").exists():
         source = root / "rofi_ssh_plus/_legacy_mesh.py"
     extracted = Path(authority.__file__)
-    if source.read_bytes() != extracted.read_bytes():
-        raise SystemExit("authority source drift: review extraction before running compatibility gate")
+    if args.baseline == "legacy-extraction":
+        if source.read_bytes() != extracted.read_bytes():
+            raise SystemExit("authority source drift: review extraction before running compatibility gate")
+    else:
+        # Reviewed in 01da59e: captured-byte parsing avoids reopening a checked
+        # pathname. This is explicit provenance, not an arbitrary drift waiver.
+        if args.backend != "mesh-plus":
+            raise SystemExit("bounded-read-v1 requires the selected canonical mesh-plus backend")
+        if hashlib.sha256(extracted.read_bytes()).hexdigest() != "8ea029cf68987064c5dfad0e0dc31a354ef35d037dc65ff280a1510dfbaf2136":
+            raise SystemExit("reviewed bounded-read authority drift")
+        if hashlib.sha256(source.read_bytes()).hexdigest() != "188570bdf706fcd758dae0b94be022645957313aaf7917d2b24fe65d856097b0":
+            raise SystemExit("reviewed SSH legacy authority drift")
     if subprocess.check_output(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"]).strip():
         raise SystemExit("SSH Plus tracked source must be clean for baseline compatibility evidence")
     os.chdir(root)
+    os.environ["PATH"] = str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", "")
     sys.path.insert(0, str(root))
     import rofi_ssh_plus
     if args.backend == "mesh-plus":
@@ -49,11 +62,15 @@ def main():
               "sourceCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
               "sourceFile": str(source.relative_to(root)),
               "sourceSha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+              "extractedSha256": hashlib.sha256(extracted.read_bytes()).hexdigest(),
               "extractedFile": "src/mesh_plus/authority.py",
               "testsRun": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),
               "backend": args.backend,
+              "baseline": args.baseline,
               "skipped": [{"test": test.id(), "reason": reason} for test, reason in result.skipped],
-              "method": "Byte-identical model/store extraction; process-only CLI isolated from picker",
+              "method": ("Byte-identical model/store extraction; process-only CLI isolated from picker"
+                         if args.baseline == "legacy-extraction" else
+                         "Reviewed bounded-read authority bytes; canonical model/store and subprocess regressions"),
               "limits": [("Canonical Mesh authority selected in SSH imports and subprocesses" if args.backend == "mesh-plus"
                           else "In-process model imports bound to Mesh; subprocess wrapper tests still use legacy SSH authority"),
                          "Mesh process is separately tested in runtime suite",

@@ -1,0 +1,36 @@
+{
+  "sdkVersion": 1,
+  "exports": [
+    "BoundStateCodec",
+    "Bridge",
+    "Client",
+    "DeliveryError",
+    "Endpoint",
+    "NativeState",
+    "ProfileDescriptor",
+    "Publication",
+    "ReadGuard",
+    "Reader",
+    "ReceiptKey",
+    "ReferenceProfile",
+    "SDK_INTERFACE_VERSION",
+    "StateProfile",
+    "Subscription",
+    "configured_reader",
+    "current_sessions",
+    "descriptor",
+    "reconstructed",
+    "validate_response"
+  ],
+  "signatures": {
+    "ProfileDescriptor": "(sdk_version: int, profile_id: str, native_protocol: str, native_version: int, contract_digest: str, frame_bytes: int) -> None",
+    "NativeState": "(owner: dict, records: Sequence[dict], clock: dict, publisher: str, emitted_ms: int, receipts: Sequence[dict]) -> None",
+    "Endpoint": "(host: str, local: bool, route_token: str | None, connect: object, codec: object = None) -> None",
+    "Reader": "(domain, endpoints, *, local_host, catalog_revision=None, catalog_check=None, profile=None)",
+    "configured_reader": "(domain, *, source, socket, scope='fleet', hosts=(), local_host=None, authority=None, report_routes=False, profile=None)",
+    "ReadGuard": "(domain, request_id, *, host_ids=None, profile=None)",
+    "validate_response": "(response, *, profile=None)",
+    "current_sessions": "(response, now_ms, clock, *, profile=None)",
+    "reconstructed": "(response, host, *, profile=None)"
+  }
+}

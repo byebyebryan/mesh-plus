@@ -4,8 +4,8 @@ import asyncio
 import time
 
 from .client import Client
-from .observer import ObserverCodec
 from .protocol import check
+from .state import check_binding, resolve_profile
 from .transport import connect_ssh
 
 TRANSPORT_FAILURES = ("could not resolve hostname", "name or service not known", "temporary failure in name resolution",
@@ -21,9 +21,11 @@ class SetupError(Exception):
         super().__init__(code)
 
 
-async def connect_catalog_host(catalog, host, domain, source, *, authority=None, connector=connect_ssh):
+async def connect_catalog_host(catalog, host, domain, source, *, authority=None, connector=connect_ssh, profile=None, codec=None):
     check(not host["local"] and bool(host["routes"]), "remote_host")
-    codec = ObserverCodec(domain, host["id"], source)
+    profile = resolve_profile(domain, profile)
+    codec = profile.bind(host["id"], source) if codec is None else codec
+    check_binding(codec, host["id"], source, profile.descriptor.profile_id)
     policy = catalog.payload["sshPolicy"]
     timeout = min(60, policy["connectTimeoutSeconds"] * policy["connectionAttempts"] + 3)
     last = None
@@ -34,7 +36,7 @@ async def connect_catalog_host(catalog, host, domain, source, *, authority=None,
             channel = await connector(route["destination"], source, executable=policy["executable"],
                                       timeout_seconds=policy["connectTimeoutSeconds"], attempts=policy["connectionAttempts"])
             client = await Client.connect(channel, host=host["id"], source=source,
-                                          profile=domain + "-observer.mesh-candidate.v1", codec=codec.validate,
+                                          profile=profile.descriptor.profile_id, codec=codec.validate_bridge,
                                           required=("snapshot", "proof", "subscribe"), timeout=timeout)
             check(channel.reached_count <= 1, "duplicate_reached_marker")
             client.route_token = token

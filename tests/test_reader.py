@@ -58,7 +58,7 @@ class ViewTests(unittest.TestCase):
         response = json.loads((ROOT / "contracts/mesh-read-v1/examples/tmux-local.json").read_text())
         validate_response(response)
         validate_response(copy.deepcopy(response))
-        with patch("mesh_plus.view.ObserverCodec.native", side_effect=ProtocolError("native_rejected")):
+        with patch("mesh_plus.observer.ObserverCodec.native", side_effect=ProtocolError("native_rejected")):
             with self.assertRaisesRegex(ProtocolError, "native_rejected"):
                 validate_response(response)
         changed = copy.deepcopy(response)

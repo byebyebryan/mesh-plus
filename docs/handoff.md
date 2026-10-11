@@ -88,12 +88,12 @@ barrier)`. The supported capabilities are `snapshot`, `proof`, `subscribe`.
 `source` is a configured selector matching `[a-z][a-z0-9_]{0,127}`; Agent's
 provider/namespace receipt IDs are separate native identities.
 
-`Client` accepts a pure payload validator. The current `Reader` additionally
-expects `client.codec` to be the bound `ObserverCodec.validate` method, whose
-owner provides `domain`, `host`, `receipts()` and native frame helpers. Supplying
-an arbitrary lambda is sufficient for generic Delivery tests but not for domain
-Reader integration. A producer-owned replacement must preserve this boundary or
-coordinate an explicit compatible SDK refactor.
+`Client` accepts a pure payload validator. SDK interface v1 additionally carries
+an explicit bound codec in `Endpoint`, with `profile=` threaded through configured
+IPC/SSH, Reader, reconstruction, validation and guards. Independent profiles need
+no reference adapter inheritance or bound-method discovery. Existing constructors
+retain the reviewed reference compatibility path. The
+[SDK interface specification](sdk-api.md) defines the exact surface and gates.
 
 ## How a consumer uses the contract
 
@@ -222,12 +222,11 @@ replace the deployed authority wheel until an explicit paired release/deploy.
 
 ## Owner operations and relocated deployment evidence
 
-The [SDK independence review](sdk-independence-review.md) proposes an explicit
-networking/profile boundary and independent conformance gates. It is a reviewed
-design draft with disposable experiment evidence, not a newly frozen public SDK
-or a runtime change. SSH Plus is the direct client for that proposed Mesh pass;
-Observer work is limited to its networking interface, with Plus migrations out
-of scope.
+The [SDK independence review](sdk-independence-review.md) preserves the initial
+design and negative probes. The accepted additive
+[SDK interface v1](sdk-api.md) separates networking from explicit pure profiles.
+SSH Plus is the direct authority client; Observer work is confined to networking
+interfaces. Plus migrations and producer policy are outside this Mesh pass.
 
 Agent's bridge/reader selection procedure is now owned by
 [Agent Observer](https://github.com/byebyebryan/agent-observer/blob/main/docs/mesh-read-client.md).
