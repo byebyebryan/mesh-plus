@@ -30,6 +30,11 @@ See [package acceptance](evidence/2026-10-10-sdk-v1/README.md) and
 [independent networking adoption](sdk-owner-handoff.md). It does not change the
 a10 live selections or certify owner adapter extraction.
 
+The next Mesh-owned sequence is the [SDK maintenance plan](sdk-maintenance-plan.md):
+portable owner conformance, compatible diagnostics, measured internal refinement
+and a separate package checkpoint. It is reviewed implementation scope, not a
+prerequisite for Observer adoption or a new runtime capability.
+
 Tmux rejects stale control bindings and reserves one retiring local bridge
 handler alongside its active Reader. Eight installed native Mesh tests pass;
 independent owned fixtures cover successful delivery and gap revocation. Agent
