@@ -1,0 +1,90 @@
+{
+  "status": "passed",
+  "runtimeSourceCommit": "3cf72c5c1197bd19198646d0c6f62d9dd7727739",
+  "canonicalGates": {
+    "source": {
+      "runtime": {
+        "status": "passed",
+        "checkedAtUtc": "2026-10-11T07:39:01.606377+00:00",
+        "python": "3.13.7",
+        "scope": "standalone IPC/lifecycle/SDK profiles/authority/quoting",
+        "testsRun": 104,
+        "failures": 0,
+        "errors": 0,
+        "skipped": [],
+        "versions": {
+          "mesh-plus": "0.1.0a13",
+          "tmux-observer": "0.6.0a5",
+          "agent-observer": "0.5.0a16",
+          "jsonschema": "4.26.0"
+        }
+      },
+      "readChecks": 116,
+      "deliveryChecks": 169,
+      "lockedInputs": 18,
+      "packagedSchemas": 20,
+      "lint": "passed",
+      "logSha256": "d87ae0986d5960fd9c5aa16d9d4e018307ad6a87400429afc332efe401b7f4c0"
+    },
+    "core": {
+      "runtime": {
+        "status": "passed",
+        "checkedAtUtc": "2026-10-11T07:39:05.551038+00:00",
+        "python": "3.11.10",
+        "scope": "standalone IPC/lifecycle/SDK profiles/authority/quoting",
+        "testsRun": 104,
+        "failures": 0,
+        "errors": 0,
+        "skipped": [],
+        "versions": {
+          "mesh-plus": "0.1.0a13",
+          "tmux-observer": null,
+          "agent-observer": null,
+          "jsonschema": "4.26.0"
+        }
+      },
+      "readChecks": 116,
+      "deliveryChecks": 169,
+      "lockedInputs": 18,
+      "packagedSchemas": 20,
+      "lint": "passed",
+      "logSha256": "43926826ec6b93647f041ff4e8eb346022c2bd2125233f540d7d5db0fee29190"
+    },
+    "native": {
+      "runtime": {
+        "status": "passed",
+        "checkedAtUtc": "2026-10-11T07:39:16.442720+00:00",
+        "python": "3.14.8",
+        "scope": "runtime and owned native/SSH acceptance",
+        "testsRun": 141,
+        "failures": 0,
+        "errors": 0,
+        "skipped": [],
+        "versions": {
+          "mesh-plus": "0.1.0a13",
+          "tmux-observer": "0.6.0a5",
+          "agent-observer": "0.5.0a16",
+          "jsonschema": "4.26.0"
+        }
+      },
+      "readChecks": 116,
+      "deliveryChecks": 169,
+      "lockedInputs": 18,
+      "packagedSchemas": 20,
+      "lint": "passed",
+      "logSha256": "1dd4719f379194954b09c618dc15a8518f0fee1456e47ac91c99570a5b04a187"
+    }
+  },
+  "excluded": [
+    "sibling-source parity",
+    "owner checkout adoption",
+    "ordinary fleet",
+    "deployment or live selection",
+    "provider collection",
+    "GUI",
+    "physical suspend",
+    "production soak",
+    "performance matrix",
+    "SSH Plus regressions not rerun; authority bytes unchanged"
+  ]
+}
