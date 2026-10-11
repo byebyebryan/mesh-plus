@@ -1,0 +1,119 @@
+{
+  "status": "passed",
+  "artifactSourceCommit": "9d570c59041832d177519fd634d26c56ed572e81",
+  "canonicalWheelGates": {
+    "core311": {
+      "canonicalReports": [
+        {
+          "status": "passed",
+          "checkedAtUtc": "2026-10-11T06:09:30.880072+00:00",
+          "validationScope": "schemas, adversarial design model, frozen producer projection; no native/network/runtime acceptance",
+          "sourceParityChecked": false,
+          "checksPassed": 116,
+          "limits": "Native passivity, SSH integration, GUI, resource, physical suspend and deployment remain later gates"
+        },
+        {
+          "status": "passed",
+          "checkedAtUtc": "2026-10-11T06:09:31.088107+00:00",
+          "checksPassed": 169,
+          "schemas": 4,
+          "examples": 26,
+          "validationScope": "offline schemas, synthetic lifecycle/cursor/credit/proof/sharing oracles; no producer event wire or deployed runtime acceptance"
+        },
+        {
+          "status": "passed",
+          "checkedAtUtc": "2026-10-11T06:09:51.150323+00:00",
+          "python": "3.11.10",
+          "scope": "standalone IPC/lifecycle/SDK profiles/authority/quoting",
+          "testsRun": 85,
+          "failures": 0,
+          "errors": 0,
+          "skipped": [],
+          "versions": {
+            "mesh-plus": "0.1.0a11",
+            "tmux-observer": null,
+            "agent-observer": null,
+            "jsonschema": "4.26.0"
+          }
+        }
+      ],
+      "logSha256": "cb81adb93b2686f0a2262b9f5e9736b9cddbcac0345305a367ba4b8cb39abe10"
+    },
+    "native314": {
+      "canonicalReports": [
+        {
+          "status": "passed",
+          "checkedAtUtc": "2026-10-11T06:09:30.961305+00:00",
+          "validationScope": "schemas, adversarial design model, frozen producer projection; no native/network/runtime acceptance",
+          "sourceParityChecked": false,
+          "checksPassed": 116,
+          "limits": "Native passivity, SSH integration, GUI, resource, physical suspend and deployment remain later gates"
+        },
+        {
+          "status": "passed",
+          "checkedAtUtc": "2026-10-11T06:09:31.184205+00:00",
+          "checksPassed": 169,
+          "schemas": 4,
+          "examples": 26,
+          "validationScope": "offline schemas, synthetic lifecycle/cursor/credit/proof/sharing oracles; no producer event wire or deployed runtime acceptance"
+        },
+        {
+          "status": "passed",
+          "checkedAtUtc": "2026-10-11T06:09:57.873231+00:00",
+          "python": "3.14.8",
+          "scope": "runtime and owned native/SSH acceptance",
+          "testsRun": 119,
+          "failures": 0,
+          "errors": 0,
+          "skipped": [],
+          "versions": {
+            "mesh-plus": "0.1.0a11",
+            "tmux-observer": "0.6.0a5",
+            "agent-observer": "0.5.0a16",
+            "jsonschema": "4.26.0"
+          }
+        }
+      ],
+      "logSha256": "ffc47dac954bf5849579a77e7aca9379d8aa53ef9de05f8593c1a9434f61b1b6"
+    }
+  },
+  "ci": {
+    "runId": 38117122145,
+    "sourceCommit": "9d570c59041832d177519fd634d26c56ed572e81",
+    "status": "passed",
+    "python": [
+      "3.11",
+      "3.13"
+    ],
+    "url": "https://github.com/byebyebryan/mesh-plus/actions/runs/38117122145"
+  },
+  "negativePreserved": {
+    "initialSourceCommit": "feb45544c9e3059dca89c95276316c16018bd10b",
+    "initialWheelSha256": "33ba95230f617a994f139cc86aeffc8b49d8091a005d9fc765e89c19937b675c",
+    "deterministicSnapshotCancellation": "failed as expected before fix",
+    "negativeLogSha256": "4914d90ab0035b003c2dc4950bbbc8a7be8883b28ab0aab4e2eddb68e9e8f087",
+    "failedCiRuns": [
+      38116633302,
+      38116708840
+    ]
+  },
+  "limits": [
+    "No operational selection or live service restart",
+    "No Observer adapter extraction or Plus consumer work",
+    "Historical source parity gate intentionally not used; native inputs are pinned wheels",
+    "No WSS, events/replay or broker support added",
+    "No physical suspend, GUI or new production-budget soak acceptance"
+  ],
+  "supplementaryNetworking": {
+    "agentSource": "611be2c88daf2327a3117154ee4642998b1d89f6",
+    "agentPinnedWheel": "0.5.0a16",
+    "agentSourceBoundaryTests": 7,
+    "agentLogSha256": "330087f1a3b2c75ff2619b0b5fb42e1a7d595f4354b3afa0d90283a7d66076ff",
+    "tmuxPinnedWheel": "0.6.0a5",
+    "tmuxFacadeAdmission": "passed; pure native/bridge admission using existing owned fixture; no native I/O",
+    "limits": [
+      "Supplementary smokes used the immediately preceding 5f99ae6 wheel; exact final wheel acceptance is the separate canonical matrix above",
+      "No sibling source modification, adapter extraction or deployment"
+    ]
+  }
+}

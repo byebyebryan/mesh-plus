@@ -26,6 +26,11 @@ The [reliability plan](docs/reliability-and-measurement.md) records the remainin
 optimization gates. Ordered events/replay, WSS, a shared fleet broker and further
 Plus/device migrations remain deferred.
 
+SDK interface v1 in **0.1.0a11** adds explicit pure profile injection throughout
+IPC/SSH polling and pushed fleet state. See the [SDK specification](docs/sdk-api.md)
+and [independent Observer networking tasks](docs/sdk-owner-handoff.md). This SDK
+package checkpoint is separate from the selected a10 live artifacts above.
+
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The
 [implementation checkpoints](docs/implementation-progress.md) preserve history.

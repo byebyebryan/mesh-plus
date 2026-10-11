@@ -24,6 +24,12 @@ Tmux Observer a5 / Agent Observer a16, with no skips. It is selected on both
 endpoints. The original private a10 wheel remains separate evidence; only its
 unchanged Reader/Client/transport bytes are shared with long rotation soaks.
 
+The **0.1.0a11** SDK checkpoint adds explicit pure profiles, preserves legacy
+entry points, and retires all snapshot host tasks before returning cancellation.
+See [package acceptance](evidence/2026-10-10-sdk-v1/README.md) and
+[independent networking adoption](sdk-owner-handoff.md). It does not change the
+a10 live selections or certify owner adapter extraction.
+
 Tmux rejects stale control bindings and reserves one retiring local bridge
 handler alongside its active Reader. Eight installed native Mesh tests pass;
 independent owned fixtures cover successful delivery and gap revocation. Agent

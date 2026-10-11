@@ -24,6 +24,9 @@ selected Python environment: `rtk proxy .venv/bin/python scripts/check.py`.
 `--check-sources` additionally reads sibling checkouts. Packaging changes need an
 isolated wheel check. Record exact inputs, exclusions and any skipped tests.
 
+Keep project docs, scripts and acceptance evidence in the owning repository.
+Use chezmoi/dotfiles only for deployment configuration that actually needs management.
+
 Stage intended files only. Preserve dated evidence and frozen references; add
 new review evidence instead of attributing old acceptance to changed runtime
 bytes. Do not edit, migrate or deploy sibling projects without task scope.
