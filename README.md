@@ -31,15 +31,20 @@ IPC/SSH polling and pushed fleet state. See the [SDK specification](docs/sdk-api
 and [independent Observer networking tasks](docs/sdk-owner-handoff.md). This SDK
 package checkpoint is separate from the selected a10 live artifacts above.
 
-The next Mesh-owned work is in the [SDK maintenance plan](docs/sdk-maintenance-plan.md).
-Owner conformance tooling comes first; diagnostics and measured refinement follow.
-This planning scope does not delay independent Observer adoption.
+The [SDK maintenance plan](docs/sdk-maintenance-plan.md) is complete in a12:
+owner conformance tooling, diagnostics, matched measurements and package acceptance.
+Independent Observer adoption can proceed against SDK interface v1.
 
 **0.1.0a12** publishes the [portable owner conformance kit](docs/conformance.md),
 explicit [SDK diagnostics and cached assessment](docs/sdk-diagnostics.md), and
 [matched measurement/package evidence](docs/evidence/2026-10-11-sdk-maintenance/README.md).
 The maintenance sequence is complete without a speculative core optimization.
 This package checkpoint does not change live selections.
+
+**0.1.0a13** hardens conformance certification and adds real publisher update/
+restart coverage through owned IPC with local and remote-proof bindings. SDK v1
+and runtime contracts stay unchanged; see the
+[follow-up acceptance](docs/evidence/2026-10-11-conformance-followup/README.md).
 
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The

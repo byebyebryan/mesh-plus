@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0a13 (2026-10-11)
+
+- Require every selected conformance case to explicitly pass. Expected failures,
+  unexpected successes and failed/skipped subtests cannot certify a profile;
+  report their outcomes without private parameters or messages.
+- Exercise actual publisher updates and restart through Bridge, owned IPC,
+  Reader and ReadGuard with both local and remote-proof bindings. Verify push
+  notification, revocation/resync, unchanged original receipts and owned cleanup.
+- Synchronize the completed SDK maintenance sequence in current guides.
+- Preserve SDK v1, frozen wire/schema, transport and authority bytes. Package
+  acceptance and live selection remain separate; no deployment is implied.
+
 ## 0.1.0a12 (2026-10-11)
 
 - Add opt-in installed owner profile conformance with independent fixed native,
