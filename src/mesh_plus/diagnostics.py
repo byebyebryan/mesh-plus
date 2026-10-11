@@ -103,26 +103,31 @@ async def assess(reader, *, mode="snapshot", timeout_ms=5000):
         report["sample"] = _summary(response, now, rows, reader.profile)
         report["acquired"] = any(h["delivery"] == "ready" for h in report["sample"]["hosts"])
         report["ok"] = report["acquired"]
-    try:
-        await within_deadline(exercise(), boottime_ms() + timeout_ms)
-    except asyncio.CancelledError:
-        raise
-    except Exception as error:
-        report["error"] = sdk_failure_code(error)
-    finally:
+    operation = asyncio.create_task(exercise())
+    async def cleanup():
+        if not operation.done():
+            operation.cancel()
+        await asyncio.gather(operation, return_exceptions=True)
         if guard:
             guard.disconnect()
         if stream:
             try:
-                await finish_owned(asyncio.create_task(stream.aclose()))
-            except asyncio.CancelledError:
-                raise
+                await stream.aclose()
             except Exception:
                 report.update(ok=False, error="cleanup_incomplete")
         report["runtime"] = reader.inspect()
         report["elapsedMs"] = round((time.perf_counter() - started) * 1000, 3)
         if report["runtime"]["activeConnections"] or report["runtime"]["cleanupFailures"]:
             report.update(ok=False, error="cleanup_incomplete")
+    try:
+        await within_deadline(operation, boottime_ms() + timeout_ms)
+    except asyncio.CancelledError:
+        raise
+    except Exception as error:
+        report.update(ok=False, acquired=False, error=sdk_failure_code(error))
+        report.pop("sample", None)
+    finally:
+        await finish_owned(asyncio.create_task(cleanup()))
     return report
 
 

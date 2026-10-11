@@ -5,7 +5,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
 from mesh_plus.api import Bridge, Client, Endpoint, Reader
 from mesh_plus.diagnostics import (
@@ -151,6 +151,62 @@ class AssessmentTests(unittest.IsolatedAsyncioTestCase):
                     await task
             finally:
                 release.set()
+                await server.close()
+
+    async def test_repeated_cancellation_during_acquisition_retires_reader(self):
+        publisher = Publisher("tmux", "local")
+        client = AsyncMock()
+        for name in ("guard", "inspect", "route_token"):
+            delattr(client, name)
+        client.request.return_value = publisher.wrap()
+        started, release = asyncio.Event(), asyncio.Event()
+        async def close():
+            started.set()
+            await release.wait()
+        client.close.side_effect = close
+        async def connect():
+            return client
+        reader = Reader("tmux", [Endpoint("local", True, None, connect, publisher.codec)],
+                        local_host="local", profile=publisher.state_profile)
+        task = asyncio.create_task(assess(reader))
+        try:
+            await asyncio.wait_for(started.wait(), 1)
+            for _ in range(3):
+                task.cancel()
+                await asyncio.sleep(.01)
+                self.assertFalse(task.done())
+            release.set()
+            with self.assertRaises(asyncio.CancelledError):
+                await task
+            self.assertEqual(reader.inspect()["activeConnections"], 0)
+        finally:
+            release.set()
+            await asyncio.gather(task, return_exceptions=True)
+
+    async def test_late_synchronous_validation_cannot_report_success(self):
+        import time
+
+        from mesh_plus import diagnostics
+        from mesh_plus.api import configured_reader
+        publisher = Publisher("tmux", "local")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "mesh.sock"
+            server = await IPCServer(path, Bridge(publisher).serve).start()
+            try:
+                reader = await configured_reader("tmux", source="default", socket=path, local_host="local",
+                                                 profile=publisher.state_profile)
+                original = diagnostics._summary
+                def delayed(*args):
+                    report = original(*args)
+                    time.sleep(.03)
+                    return report
+                with patch.object(diagnostics, "_summary", side_effect=delayed):
+                    report = await assess(reader, timeout_ms=20)
+                self.assertFalse(report["ok"])
+                self.assertFalse(report["acquired"])
+                self.assertEqual(report["error"], "deadline")
+                self.assertNotIn("sample", report)
+            finally:
                 await server.close()
 
 
