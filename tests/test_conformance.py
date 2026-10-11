@@ -98,3 +98,29 @@ class ConformanceTests(unittest.TestCase):
         self.assertFalse(report["ok"])
         self.assertEqual(report["skipped"], 1)
         self.assertNotIn("private", json.dumps(report))
+
+    def test_expected_failures_and_unexpected_success_cannot_certify(self):
+        def broken(domain):
+            raise RuntimeError("private factory failure")
+        for factory, status in ((broken, "expected_failure"), (Profile, "unexpected_success")):
+            suite = profile_suite(factory, domain="tmux")
+            for test in suite:
+                test.__unittest_expecting_failure__ = True
+            report = run_suite(suite, domain="tmux")
+            self.assertFalse(report["ok"], report)
+            self.assertEqual(len(report["cases"]), 6)
+            self.assertEqual({case["status"] for case in report["cases"]}, {status})
+            self.assertNotIn("private", json.dumps(report))
+
+    def test_subtest_failure_is_recorded_without_private_details(self):
+        suite = profile_suite(Profile, domain="tmux")
+        first = next(iter(suite))
+        def fail_subtest():
+            with first.subTest(private="private payload"):
+                first.fail("private failure")
+        first.runTest = fail_subtest
+        report = run_suite(suite, domain="tmux")
+        self.assertFalse(report["ok"], report)
+        self.assertEqual(len(report["cases"]), 6)
+        self.assertEqual(report["cases"][0]["status"], "failed")
+        self.assertNotIn("private", json.dumps(report))

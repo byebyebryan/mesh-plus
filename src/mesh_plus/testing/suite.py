@@ -102,6 +102,19 @@ class _Result(unittest.TestResult):
         super().addSkip(test, reason)
         self._record(test, "skipped")
 
+    def addExpectedFailure(self, test, err):
+        super().addExpectedFailure(test, err)
+        self._record(test, "expected_failure")
+
+    def addUnexpectedSuccess(self, test):
+        super().addUnexpectedSuccess(test)
+        self._record(test, "unexpected_success")
+
+    def addSubTest(self, test, subtest, err):
+        super().addSubTest(test, subtest, err)
+        if err is not None:
+            self._record(test, "failed" if issubclass(err[0], test.failureException) else "error")
+
 
 def run_suite(suite, *, domain):
     """Run on a synchronous caller thread; skips cannot certify conformance."""
@@ -120,10 +133,13 @@ def run_suite(suite, *, domain):
         raise ValueError("conformance_suite_duplicates")
     result = _Result()
     suite.run(result)
+    complete = (result.testsRun == len(selected) == len(result.cases)
+                and {case["caseId"] for case in result.cases} == {test.case_id for test in selected}
+                and all(case["status"] == "passed" for case in result.cases))
     return {"format": "mesh-plus.conformance.v1", "interfaceVersion": CONFORMANCE_INTERFACE_VERSION,
             "sdkVersion": SDK_INTERFACE_VERSION, "profile": asdict(expected),
             "corpusDigest": "sha256:" + hashlib.sha256(corpus_bytes()).hexdigest(),
             "coverage": "selected cases only; owner-native semantics and deployment are separate",
-            "ok": result.wasSuccessful() and result.testsRun > 0 and not result.skipped,
+            "ok": result.wasSuccessful() and complete,
             "testsRun": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),
             "skipped": len(result.skipped), "cases": result.cases}
