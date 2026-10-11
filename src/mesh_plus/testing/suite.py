@@ -37,7 +37,10 @@ class _ProfileTest(unittest.TestCase):
             for source in ("default", "configured_source"):
                 codec = p.bind(host_id, source)
                 check_binding(codec, host_id, source, p.descriptor.profile_id)
-                state = asdict(codec.inspect_native(copy.deepcopy(frame)))
+                inspected = codec.inspect_native(copy.deepcopy(frame))
+                for row in inspected.records:
+                    self.assertIs(type(p.record_eligible(row, inspected)), bool)
+                state = asdict(inspected)
                 state["records"], state["receipts"] = list(state["records"]), list(state["receipts"])
                 self.assertEqual(state, c.states[host_id])
         for sample in c.selections:
@@ -113,11 +116,14 @@ def run_suite(suite, *, domain):
     selected = list(cases(suite))
     if not selected or any(getattr(test, "domain", None) != domain for test in selected):
         raise ValueError("conformance_suite_scope")
+    if len({test.case_id for test in selected}) != len(selected):
+        raise ValueError("conformance_suite_duplicates")
     result = _Result()
     suite.run(result)
     return {"format": "mesh-plus.conformance.v1", "interfaceVersion": CONFORMANCE_INTERFACE_VERSION,
             "sdkVersion": SDK_INTERFACE_VERSION, "profile": asdict(expected),
             "corpusDigest": "sha256:" + hashlib.sha256(corpus_bytes()).hexdigest(),
+            "coverage": "selected cases only; owner-native semantics and deployment are separate",
             "ok": result.wasSuccessful() and result.testsRun > 0 and not result.skipped,
             "testsRun": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),
             "skipped": len(result.skipped), "cases": result.cases}

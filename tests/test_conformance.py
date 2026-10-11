@@ -1,8 +1,10 @@
 """The portable oracle detects both permissive and overconservative profiles."""
 
 import copy
+import inspect
 import json
 import unittest
+from pathlib import Path
 
 from mesh_plus.testing import network_suite, profile_cases, profile_suite, run_suite
 from mesh_plus.testing.sample import Profile
@@ -74,3 +76,25 @@ class ConformanceTests(unittest.TestCase):
         self.assertEqual(profile_cases("tmux")[0].response, original)
         with self.assertRaises(ValueError):
             profile_suite(Profile, domain="tmux", cases=[])
+
+    def test_public_testing_signatures_and_report_scope(self):
+        from mesh_plus import testing
+        baseline = json.loads((Path(__file__).parent / "fixtures/conformance-interface-v1.json").read_text())
+        self.assertEqual(sorted(testing.__all__), baseline["exports"])
+        self.assertEqual({n: str(inspect.signature(getattr(testing, n))) for n in baseline["signatures"]},
+                         baseline["signatures"])
+        with self.assertRaises(ValueError):
+            run_suite(profile_suite(Profile, domain="tmux"), domain="agent")
+        suite = profile_suite(Profile, domain="tmux")
+        duplicate = unittest.TestSuite([suite, profile_suite(Profile, domain="tmux")])
+        with self.assertRaises(ValueError):
+            run_suite(duplicate, domain="tmux")
+
+    def test_skipped_mandatory_case_cannot_certify(self):
+        suite = profile_suite(Profile, domain="tmux")
+        first = next(iter(suite))
+        first.runTest = unittest.skip("private skipped reason")(first.runTest)
+        report = run_suite(suite, domain="tmux")
+        self.assertFalse(report["ok"])
+        self.assertEqual(report["skipped"], 1)
+        self.assertNotIn("private", json.dumps(report))
