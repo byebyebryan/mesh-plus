@@ -33,7 +33,7 @@ def certificates(root):
     (root / "serial").write_text("1000\n")
     (root / "ca.cnf").write_text(
         "[ca]\ndefault_ca=local\n[local]\ndatabase=index.txt\nserial=serial\n"
-        "certificate=ca.pem\nprivate_key=ca.key\ndefault_md=sha256\ndefault_days=1\n"
+        "new_certs_dir=.\ncertificate=ca.pem\nprivate_key=ca.key\ndefault_md=sha256\ndefault_days=1\n"
         "policy=policy\nx509_extensions=client\n[policy]\ncommonName=supplied\n"
         "[client]\nsubjectAltName=DNS:localhost\nextendedKeyUsage=clientAuth\n")
     for name in ("server", "client", "rotation", "unknown", "expired"):

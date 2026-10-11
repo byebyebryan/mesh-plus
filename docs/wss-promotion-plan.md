@@ -30,6 +30,20 @@ real-host artifacts or change existing SDK defaults.
   close and abort. Deadlines use BOOTTIME and are checked after synchronous work;
   Python validation is not preempted while executing.
 
+## Implementation review refinement
+
+CI exposed OpenSSL date-signing fixture portability; use the portable `openssl ca`
+interface with a private disposable database. The first correction omitted its
+required output-directory setting; smoke and full gates must pass before the
+final handoff. No runtime schema or credential policy was relaxed.
+
+Review also found default asyncio hostname resolution could leave an executor
+thread behind a cancelled setup. Add an owned standard-library DNS helper,
+three-second lookup and TCP/TLS budgets inside the existing fifteen-second total,
+verified original hostnames, and cancellation/timeout retirement tests. Numeric
+addresses bypass DNS. This compatible refinement does not inherit the study's
+cold-setup measurements.
+
 ## Sequence and acceptance
 
 1. Review/lock the additive configuration contract; prove old schema digests

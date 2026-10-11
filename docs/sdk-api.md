@@ -10,6 +10,13 @@ Import supported networking entry points from `mesh_plus.api`. Its
 Tmux observation/service 1 or Agent snapshot 4/service 2. Existing module imports,
 domain-string constructors, CLI and reference adapter names remain supported.
 
+The a14 source/private-wheel candidate adds a separate optional
+[`mesh_plus.wss.configured_reader`](wss.md) factory under the
+[WSS addendum](../contracts/wss-v1/contract.md). It accepts the same pure profile
+and returns a Reader with unchanged Read/Delivery semantics. Existing API exports,
+signatures and defaults remain SDK v1. WSS adoption is an explicit networking
+selection, independent of producer collection or desktop/client behavior.
+
 ## Pure profile interface
 
 The exact structural signatures and immutable DTO constructors are in

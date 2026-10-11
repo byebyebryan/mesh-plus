@@ -20,6 +20,8 @@ from websockets.uri import parse_uri
 from mesh_plus.protocol import MAX_CONTROL, MAX_MESSAGE, PROTOCOL, check, decode, encode, validate
 from mesh_plus.transport import boottime_ms, finish_owned, within_deadline
 
+from .resolution import open_stream
+
 
 def endpoint_url(url):
     value = urlsplit(url)
@@ -282,10 +284,8 @@ class Channel:
 async def _connect(url, context, *, server_hostname=None):
     target = endpoint_url(url)
     check(context.verify_mode == ssl.CERT_REQUIRED and context.check_hostname, "wss_server_trust")
-    reader, writer = await budget(asyncio.open_connection(
-        target.hostname, target.port or 443, ssl=context,
-        server_hostname=server_hostname or target.hostname, ssl_handshake_timeout=3,
-        ssl_shutdown_timeout=1, limit=MAX_CONTROL), 3)
+    reader, writer = await open_stream(target.hostname, target.port or 443, context,
+                                      server_hostname=server_hostname or target.hostname)
     try:
         protocol = ClientProtocol(parse_uri(url), subprotocols=[PROTOCOL], max_size=MAX_MESSAGE)
         protocol.send_request(protocol.connect())

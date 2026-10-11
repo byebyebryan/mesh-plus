@@ -21,7 +21,7 @@ from mesh_plus.remote import connect_catalog_host
 from mesh_plus.testing.sample import Publisher
 from mesh_plus.testing.ssh_carrier import ssh_server
 from mesh_plus.transport import IPCServer, boottime_ms
-from mesh_plus.wss import Listener, Selection, configured_reader, connect
+from mesh_plus.wss import Listener, Selection, configured_reader, connect, resolution
 from mesh_plus.wss.local_files import LocalReadOwner
 
 
@@ -257,3 +257,35 @@ class LocalFilesCase(unittest.IsolatedAsyncioTestCase):
             release.set()
             await first
             owner.close()
+
+
+class ResolutionCase(unittest.IsolatedAsyncioTestCase):
+    async def test_literals_do_not_spawn_and_hostname_lookup_preserves_addresses(self):
+        with patch("mesh_plus.wss.resolution.asyncio.create_subprocess_exec") as spawn:
+            self.assertEqual(await resolution.addresses("127.0.0.1"), ["127.0.0.1"])
+            self.assertEqual(await resolution.addresses("::1"), ["::1"])
+            spawn.assert_not_called()
+        self.assertTrue(set(await resolution.addresses("localhost")) <= {"127.0.0.1", "::1"})
+
+    async def test_cancel_and_timeout_reap_owned_resolver(self):
+        real_spawn = asyncio.create_subprocess_exec
+        processes = []
+
+        async def spawn(*args, **kwargs):
+            process = await real_spawn(*args, **kwargs)
+            processes.append(process)
+            return process
+
+        with patch("mesh_plus.wss.resolution.PROGRAM", "import time; time.sleep(60)"):
+            with patch("mesh_plus.wss.resolution.asyncio.create_subprocess_exec", spawn):
+                pending = asyncio.create_task(resolution.addresses("localhost"))
+                while not processes:
+                    await asyncio.sleep(.005)
+                for _ in range(4):
+                    pending.cancel()
+                    await asyncio.sleep(0)
+                await asyncio.gather(pending, return_exceptions=True)
+                self.assertIsNotNone(processes[-1].returncode)
+                with self.assertRaises(TimeoutError):
+                    await resolution.addresses("localhost")
+                self.assertIsNotNone(processes[-1].returncode)

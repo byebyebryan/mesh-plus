@@ -65,3 +65,13 @@ fail visibly. The remote fixture uses the independent sample projection; the
 client uses the injected owner profile. It does not test an owner's native
 publisher deployment. Both the IPC and SSH suite can be passed to `run_suite`;
 do not mix domains in one report. Custom pure case input digests are included.
+
+## Optional WSS acceptance
+
+The existing portable kit certifies its listed profile and IPC/SSH scenarios; it
+does not implicitly certify a new carrier. The a14 optional WSS backend has a
+separate strict installed gate, `scripts/check-wss.py --installed --native`, with
+carrier authentication, mixed-fleet selection and lifecycle cases. See
+[WSS operations](wss.md). Neither gate selects live artifacts or certifies WAN,
+physical suspend or provider collection.
+

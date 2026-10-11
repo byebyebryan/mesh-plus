@@ -69,8 +69,13 @@ updates alone do not revoke selection. No producer field or semantics changes.
 
 ## Budgets, local filesystem and diagnostics
 
-Carrier setup has one fifteen-second BOOTTIME budget including TLS, HTTP,
-authorization and validation. Send has a two-second budget including encoding,
+Carrier setup has one fifteen-second BOOTTIME budget including DNS, TLS, HTTP,
+authorization and validation. Hostname resolution uses a fixed standard-library
+helper process with a three-second lookup budget and separately bounded
+terminate/kill retirement; numeric addresses bypass it. Address attempts share
+one three-second TCP/TLS budget, and certificate failure never tries another
+address. TLS verifies the original configured hostname. Scoped IPv6 literals
+are excluded. No default asyncio resolver thread outlives failed setup. Send has a two-second budget including encoding,
 validation, write-lock admission and IO. Assembly's two-second budget starts at
 the first fragment byte and includes decode validation. Synchronous Python work
 is checked after returning; it is not preempted. Idle reads use liveness controls,

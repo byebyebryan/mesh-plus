@@ -20,6 +20,10 @@ available there. WSS uses the documented
 over owned TLS streams, with no high-level proxy/redirect discovery. It is a
 direct native endpoint suitable for an explicitly bound LAN/tailnet address.
 Browser clients, reverse proxies and automatic carrier fallback are not supported.
+Hostname setup owns a bounded standard-library DNS helper process; numeric
+addresses bypass it. TLS still checks the configured hostname. Failed DNS setup
+reaps its helper rather than leaving an asyncio executor thread. Scoped IPv6
+literals are excluded. Cold setup costs therefore differ from the earlier study.
 
 ## Configuration and authority
 
