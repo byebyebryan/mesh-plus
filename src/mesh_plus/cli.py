@@ -73,9 +73,9 @@ async def stdio_channel():
 
 async def run(args):
     if args.command == "doctor":
-        from .diagnostics import doctor, failure_code
+        from .diagnostics import doctor, doctor_sdk, failure_code
 
-        report = doctor()
+        report = doctor_sdk() if args.sdk else doctor()
         if args.config:
             try:
                 configured_descriptor(args.config, args.source)
@@ -104,6 +104,15 @@ async def run(args):
             check(not selected["local"], "probe_local_requires_socket")
             return await connect_catalog_host(catalog, selected, args.domain, args.source, authority=None)
         report = await probe(connect, mode=args.mode, timeout_ms=args.timeout_ms)
+        print(json.dumps(report, separators=(",", ":")))
+        return 0 if report["ok"] else 1
+    if args.command == "assess":
+        from .catalog import MeshAuthority, SSHPlusAuthority
+        from .diagnostics import assess_configured
+        authority = MeshAuthority() if args.authority == "mesh" else SSHPlusAuthority()
+        report = await assess_configured(args.domain, mode=args.mode, timeout_ms=args.timeout_ms,
+                                         source=args.source, socket=args.socket, scope=args.scope, hosts=args.hosts,
+                                         local_host=args.local_host, authority=authority)
         print(json.dumps(report, separators=(",", ":")))
         return 0 if report["ok"] else 1
     if args.command in {"hosts", "read", "watch"}:
@@ -174,6 +183,7 @@ def main():
     diagnostic = commands.add_parser("doctor", help="inspect packages and optional source config without contacting hosts")
     diagnostic.add_argument("--config", type=Path)
     diagnostic.add_argument("--source")
+    diagnostic.add_argument("--sdk", action="store_true", help="explicit SDK/interface diagnostics v2")
     diagnostic = commands.add_parser("probe", help="explicit cached-state IPC or catalog SSH probe; no health writes")
     diagnostic.add_argument("--domain", choices=("tmux", "agent"), required=True)
     diagnostic.add_argument("--host", required=True)
@@ -192,7 +202,7 @@ def main():
             command.add_argument("--socket", type=Path, required=True)
     hosts = commands.add_parser("hosts")
     hosts.add_argument("--authority", choices=("ssh-plus", "mesh"), default="ssh-plus")
-    for name in ("read", "watch"):
+    for name in ("read", "watch", "assess"):
         command = commands.add_parser(name)
         command.add_argument("--domain", choices=("tmux", "agent"), required=True)
         command.add_argument("--authority", choices=("ssh-plus", "mesh"), default="ssh-plus")
@@ -201,7 +211,11 @@ def main():
         command.add_argument("--scope", choices=("local", "fleet", "hosts"), default="fleet")
         command.add_argument("--hosts", nargs="*", default=[])
         command.add_argument("--local-host", help="explicit standalone local identity; bypass Host Mesh authority")
-        command.add_argument("--metrics", action="store_true", help="emit final local transport counters on stderr")
+        if name == "assess":
+            command.add_argument("--mode", choices=("snapshot", "subscribe"), default="snapshot")
+            command.add_argument("--timeout-ms", type=int, choices=range(1, 60001), default=5000, metavar="1..60000")
+        else:
+            command.add_argument("--metrics", action="store_true", help="emit final local transport counters on stderr")
     args = parser.parse_args()
     if args.command == "doctor" and bool(args.config) != bool(args.source):
         parser.error("doctor --config and --source must be supplied together")

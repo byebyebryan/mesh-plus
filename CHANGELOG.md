@@ -4,6 +4,8 @@
 
 - Add opt-in installed owner profile conformance with independent fixed native,
   receipt, identity and current-view oracles. No runtime wire or authority change.
+- Add explicit `doctor --sdk` diagnostics v2 and cached `assess` polling/watch
+  evidence samples; preserve v1 acquisition semantics and disable route writes.
 
 ## 0.1.0a11 (2026-10-10)
 
