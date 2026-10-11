@@ -1,0 +1,39 @@
+{
+  "state": "passed",
+  "scope": "projection feasibility against current validated local/fleet fixtures; no new SDK implementation or acceptance",
+  "cases": [
+    {
+      "domain": "tmux",
+      "local": true,
+      "losslessOwnerAndRecords": true,
+      "originalReceiptsPreserved": true
+    },
+    {
+      "domain": "tmux",
+      "local": false,
+      "losslessOwnerAndRecords": true,
+      "originalReceiptsPreserved": true
+    },
+    {
+      "domain": "agent",
+      "local": true,
+      "losslessOwnerAndRecords": true,
+      "originalReceiptsPreserved": true
+    },
+    {
+      "domain": "agent",
+      "local": false,
+      "losslessOwnerAndRecords": true,
+      "originalReceiptsPreserved": true
+    }
+  ],
+  "caseCount": 4,
+  "effectiveSelectionComparisons": 4,
+  "outputWireChanged": false,
+  "sourceFilesChanged": false,
+  "limits": [
+    "Pure shape/receipt roundtrip only; full future injected Reader and ReadGuard not implemented",
+    "Existing native semantics supplied by current reviewed validators"
+  ],
+  "modelSha256": "2d72ea8cad5b897d2c250930e190b0b701d64f7a0ff3888b2bad6fa1053beb03"
+}

@@ -222,6 +222,13 @@ replace the deployed authority wheel until an explicit paired release/deploy.
 
 ## Owner operations and relocated deployment evidence
 
+The [SDK independence review](sdk-independence-review.md) proposes an explicit
+networking/profile boundary and independent conformance gates. It is a reviewed
+design draft with disposable experiment evidence, not a newly frozen public SDK
+or a runtime change. SSH Plus is the direct client for that proposed Mesh pass;
+Observer work is limited to its networking interface, with Plus migrations out
+of scope.
+
 Agent's bridge/reader selection procedure is now owned by
 [Agent Observer](https://github.com/byebyebryan/agent-observer/blob/main/docs/mesh-read-client.md).
 Paired Tmux installed recovery and rollback are owned by
