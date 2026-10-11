@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0a12 (candidate)
+
+- Add opt-in installed owner profile conformance with independent fixed native,
+  receipt, identity and current-view oracles. No runtime wire or authority change.
+
 ## 0.1.0a11 (2026-10-10)
 
 - Add SDK interface v1 with explicit pure profiles and bound endpoint codecs,

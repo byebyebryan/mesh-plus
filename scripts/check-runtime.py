@@ -23,7 +23,7 @@ def main():
     loader = unittest.TestLoader()
     if args.core_only:
         suite = unittest.TestSuite(loader.loadTestsFromName(name) for name in
-                                  ("test_protocol", "test_transport", "test_delivery", "test_diagnostics", "test_configured_read", "test_sdk",
+                                  ("test_protocol", "test_transport", "test_delivery", "test_diagnostics", "test_configured_read", "test_sdk", "test_conformance",
                                    "test_authority", "test_library_authority", "test_remote.QuotingTests"))
     else:
         suite = loader.discover(str(ROOT / "tests"))
