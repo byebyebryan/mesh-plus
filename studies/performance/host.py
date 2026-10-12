@@ -176,6 +176,7 @@ async def serve(args):
         listener = await Listener(configuration.context, Bridge(pub).serve, configuration.authorize,
                                   (pub.host, pub.source, pub.profile)).start(args.port, address=args.address)
         ready = {"status": "ready", "host": args.host, "domain": args.domain, "pid": os.getpid(),
+                 "birth": Path(f"/proc/{os.getpid()}/stat").read_text().rsplit(")", 1)[1].split()[19],
                  "port": listener.port, "source": pub.source, "profile": pub.profile}
         private_write(args.output, ready)
         print(json.dumps(ready), flush=True)
@@ -259,9 +260,35 @@ async def diagnostic(args):
     # Constructor requires watch capability; this diagnostic never publishes a subscription.
     profiler = cProfile.Profile()
     profiler.enable()
-    for _ in range(args.samples):
-        payload = await pub.proof({"nonce": "a" * 32})
-        pub.validate(payload)  # Bridge's compulsory result boundary.
+    if args.role == "publisher":
+        for _ in range(args.samples):
+            payload = await pub.proof({"nonce": "a" * 32})
+            pub.validate(payload)  # Bridge's compulsory result boundary.
+    else:
+        from mesh_plus.api import Endpoint, Reader, ReadGuard
+
+        class Reply:
+            codec = pub.codec.validate_bridge
+
+            async def request(self, operation, parameters, **kwargs):
+                # Publisher/source work excluded; direct Client domain callback included.
+                profiler.disable()
+                try:
+                    payload = await pub.proof(parameters)
+                finally:
+                    profiler.enable()
+                self.codec(payload)
+                return payload
+
+        endpoint = Endpoint(args.host, False, "sha256:" + "f" * 64, None, pub.codec)
+        reader = Reader(args.domain, [endpoint], local_host="diagnostic-origin", catalog_revision="sha256:" + "f" * 64, profile=p)
+        for _ in range(args.samples):
+            outcome = await reader.read_host(Reply(), endpoint)
+            response = reader.compose([endpoint], {args.host: outcome}, "a" * 32, "watch")
+            guard = ReadGuard(args.domain, "a" * 32, profile=p)
+            guard.accept(response)
+            guard.current(boottime_ms(), clock_domain())
+            guard.disconnect()
     profiler.disable()
     statistics = pstats.Stats(profiler)
     functions = []
@@ -270,9 +297,9 @@ async def diagnostic(args):
             functions.append({"module": Path(filename).name, "line": line, "function": function,
                               "calls": calls, "selfSeconds": own, "cumulativeSeconds": cumulative})
     functions.sort(key=lambda item: item["cumulativeSeconds"], reverse=True)
-    report = {"host": args.host, "domain": args.domain, "samples": args.samples, "rows": len(state.records),
+    report = {"host": args.host, "domain": args.domain, "role": args.role, "samples": args.samples, "rows": len(state.records),
               "nativeBytes": len(Path(args.frame).read_bytes()), "functions": functions,
-              "endedBoottimeMs": boottime_ms(), "scope": "instrumented frozen-frame proof plus Bridge validation; not CPU acceptance"}
+              "endedBoottimeMs": boottime_ms(), "scope": "instrumented frozen-frame " + args.role + "; not CPU acceptance; reader excludes publisher/acquisition/network and includes direct callback/composition/guard"}
     private_write(args.output, report)
     print(json.dumps({k: v for k, v in report.items() if k != "functions"}))
 
@@ -291,6 +318,7 @@ def main():
     parser.add_argument("--peer", choices=("snap", "starship"))
     parser.add_argument("--port", type=int)
     parser.add_argument("--samples", type=int, default=12)
+    parser.add_argument("--role", choices=("publisher", "reader"), default="publisher")
     args = parser.parse_args()
     if not args.output.is_absolute() or not 1 <= args.samples <= 100:
         parser.error("absolute output and samples 1..100 required")
