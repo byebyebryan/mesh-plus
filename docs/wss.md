@@ -167,3 +167,10 @@ chezmoi configuration or live artifact is changed by the implementation pass.
 The [two-host trial plan](wss-fleet-trial-plan.md) defines separate environments,
 credentials, staged acceptance, matched measurement and rollback. Its planning
 evidence does not establish WSS reachability or select a live endpoint.
+
+## Observer reader adoption
+
+The [owner selection handoff](wss-owner-selection.md) records the remaining
+networking constructor/lifecycle step for current Tmux and Agent readers.
+Installed optional dependencies and accepted owner listeners do not select WSS
+for existing IPC/SSH consumers. Domain profiles and guards remain unchanged.
