@@ -5,7 +5,12 @@ mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
-Status: **0.1.0a10 selected on Snap and Starship**, 2026-10-10. Polling and pushed
+Latest published prerelease: **0.1.0a15**, SDK interface 1, with optional WSS
+and the Observer-owned publisher seam. [Release acceptance](docs/evidence/2026-10-12-a15-release/README.md)
+records unchanged accepted wheel bytes and independent published-download checks.
+Publication does not select live services.
+
+Recorded **0.1.0a10 adoption on Snap and Starship**, 2026-10-10. Polling and pushed
 replacement state over local IPC and SSH stdio use the frozen contract. Snap and
 Starship select a10 for the public CLI/transport, Tmux Observer 0.6.0a5 / Tmux
 Plus 0.12.0a5, and separate Agent 0.5.0a16 reader / bridge environments.
@@ -53,7 +58,7 @@ The a14 source/private-wheel candidate promotes optional native WSS under
 for polling, push, the separate `mesh-plus-wss` CLI and operational limits.
 Existing wire/profile schemas, SDK v1 defaults and live selections remain unchanged.
 
-The **a15 candidate** adds a generic cached publisher and trusted installed
+The **a15 release** adds a generic cached publisher and trusted installed
 factory hook for independent Observer publisher ownership. See the
 [publisher API and owner handoff](docs/publisher-api.md). Existing defaults and
 the wire contract remain unchanged; no live selection is made.

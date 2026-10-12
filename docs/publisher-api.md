@@ -1,6 +1,6 @@
 # Observer-owned cached publisher API
 
-Accepted additive SDK interface 1 surface in the **0.1.0a15 candidate**. This
+Accepted additive SDK interface 1 surface in the **0.1.0a15 prerelease**. This
 seam is independent of optional WSS. All Read/Delivery/profile schemas and the
 contract lock retain their bytes. Reader SDK signatures and default reference
 publishers remain supported. See the [installed acceptance](evidence/2026-10-11-publisher-factory/README.md)
@@ -105,7 +105,7 @@ snapshot/watch must own all operation resources.
 
 Both owners can now implement their cached source and static factory against
 this surface independently. Retain existing reader `profile=` usage and the
-frozen protocol/profile identifiers. Use the exact reviewed a15 wheel; Tmux's
+frozen protocol/profile identifiers. Use the exact [published a15 wheel](evidence/2026-10-12-a15-release/README.md); Tmux's
 current exact a13 guard needs a separately reviewed owner artifact change.
 Agent's broad dependency floor alone does not accept a future artifact.
 

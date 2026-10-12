@@ -2,6 +2,12 @@
 
 ## Current disposition
 
+Latest publication is [a15](evidence/2026-10-12-a15-release/README.md), with
+SDK interface 1, optional WSS and the generic cached publisher/factory seam.
+Release and installed-byte acceptance do not select an owner or live endpoint.
+The [WSS fleet trial plan](wss-fleet-trial-plan.md) is read-only preparation;
+shared publisher launcher adoption remains coordinated after owner acceptance.
+
 The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The
 wire boundary is frozen by [the state contract](contract-freeze.md) and
@@ -72,7 +78,7 @@ Paired live selection, recovery, rollback and reselection pass in the
 Final resource and installed SSH/Tmux checks pass; Agent cached delivery passes
 separately, with Agent Plus migration excluded.
 
-Snap and Starship select a10 for the public CLI/transport and Tmux
+The 2026-10-10 adoption selected a10 for the public CLI/transport and Tmux
 Observer 0.6.0a5 / Plus 0.12.0a5. Agent uses separate a16 reader and bridge
 environments, each with SDK a10. SSH Plus retains its independent shared
 authority SDK a6 root. Agent's 0.5.0a15 collector and 0.4.0a16 writer retain
@@ -95,7 +101,7 @@ tests, candidate package bytes and the unchanged contract lock. The
 describe a3 diagnostics, synthetic workloads and the optional pool proposal. Older evidence
 files describe their own checkpoints; they do not certify changed source bytes.
 
-The a15 candidate adds the [generic cached publisher and installed factory
+The published a15 prerelease adds the [generic cached publisher and installed factory
 seam](publisher-api.md). Observer owners can replace reference publication through
 one explicit trusted Python map for local IPC, fixed SSH and optional WSS.
 [Installed candidate acceptance](evidence/2026-10-11-publisher-factory/README.md)

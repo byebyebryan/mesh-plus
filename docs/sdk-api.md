@@ -17,7 +17,7 @@ and returns a Reader with unchanged Read/Delivery semantics. Existing API export
 signatures and defaults remain SDK v1. WSS adoption is an explicit networking
 selection, independent of producer collection or desktop/client behavior.
 
-The a15 candidate adds the [Observer-owned publisher helper and trusted CLI
+The a15 release adds the [Observer-owned publisher helper and trusted CLI
 factory seam](publisher-api.md). These are additive SDK v1 exports; existing
 exports/signatures, source descriptors and remote command stay unchanged.
 

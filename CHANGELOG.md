@@ -1,13 +1,14 @@
 # Changelog
 
-## 0.1.0a15 source/private-wheel candidate
+## 0.1.0a15
 
 - Add public explicit-profile CachedSource/CachedPublication/CachedPublisher for
   Observer-owned cached acquisition with Mesh-owned envelopes and proofs.
 - Add trusted Python publisher factory injection to the existing IPC/SSH and
   optional WSS CLI paths; preserve descriptors, fixed commands and defaults.
 - Keep SDK interface 1, the reviewed contract lock and every frozen schema byte.
-  No release, deployment or Observer-native ownership acceptance is implied.
+  The accepted private wheel is published unchanged; deployment and
+  Observer-native ownership acceptance remain separate.
 
 ## 0.1.0a14 source/private-wheel candidate
 

@@ -1,7 +1,7 @@
 # Optional native WSS transport
 
-The a14 source/private-wheel candidate adds WSS polling and pushed replacement
-state. It uses the same frozen Read/Delivery envelopes and pure Observer profiles
+WSS polling and pushed replacement state, first accepted in the a14 private
+candidate, are published in [a15](evidence/2026-10-12-a15-release/README.md). It uses the same frozen Read/Delivery envelopes and pure Observer profiles
 as IPC/SSH. The [addendum](../contracts/wss-v1/contract.md) defines authorization,
 selection and resource guarantees. No release or operational deployment is
 implied by source support. Existing live pins and SDK defaults remain unchanged.
@@ -9,13 +9,12 @@ implied by source support. Existing live pins and SDK defaults remain unchanged.
 Install the optional extra into a dedicated environment:
 
 ```sh
-rtk proxy uv pip install --python /absolute/environment/bin/python 'mesh-plus[wss]'
+rtk proxy uv pip install --python /absolute/environment/bin/python '/absolute/mesh_plus-0.1.0a15-py3-none-any.whl[wss]'
 rtk proxy /absolute/environment/bin/mesh-plus-wss doctor
 ```
 
-Use an explicitly selected candidate wheel until a14 is released; the package
-index command above is the eventual installation form, not evidence that a14 is
-available there. WSS uses the documented
+Download and verify the a15 wheel from the GitHub prerelease before installing.
+No package-index publication is implied. WSS uses the documented
 [websockets Sans-I/O API](https://websockets.readthedocs.io/en/stable/howto/sansio.html)
 over owned TLS streams, with no high-level proxy/redirect discovery. It is a
 direct native endpoint suitable for an explicitly bound LAN/tailnet address.
@@ -164,3 +163,7 @@ service restart, certificate replacement, network loss, physical suspend and
 rollback on an owned fleet pair. Rollback removes WSS selection, stops its
 listener and explicitly restores the separately pinned SSH configuration. No
 chezmoi configuration or live artifact is changed by the implementation pass.
+
+The [two-host trial plan](wss-fleet-trial-plan.md) defines separate environments,
+credentials, staged acceptance, matched measurement and rollback. Its planning
+evidence does not establish WSS reachability or select a live endpoint.
