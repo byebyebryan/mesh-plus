@@ -1,0 +1,14 @@
+{
+  "host": "snap",
+  "peer": "starship",
+  "domain": "tmux",
+  "status": "passed",
+  "snapshot": "complete",
+  "watch": "complete",
+  "path": "wss",
+  "proof": true,
+  "rows": 6,
+  "snapshotMs": 190.76458999188617,
+  "scope": "real-host cached owner WSS; not native oracle",
+  "cleanup": true
+}

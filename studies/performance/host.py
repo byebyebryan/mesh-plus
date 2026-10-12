@@ -8,10 +8,12 @@ import importlib.metadata
 import json
 import os
 import pstats
+import signal
 import socket
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 
@@ -26,7 +28,7 @@ def private_write(path, value):
         stream.write("\n")
 
 
-def installed():
+def installed(args):
     home = Path.home()
     tmux = json.loads((home / ".local/share/chezmoi/deployments/tmux-observer.json").read_text())
     agent = json.loads((home / ".local/share/chezmoi/deployments/agent-observer.json").read_text())
@@ -34,6 +36,10 @@ def installed():
     roots = [home / shared["readerSdk"]["prefix"], home / tmux["core"]["prefix"],
              home / agent["readerPrefix"] / "lib/python3.14/site-packages"]
     roots.extend(home / p["prefix"] for p in shared["packages"] if p["name"] not in ("mesh-plus", "tmux-reader-sdk"))
+    if getattr(args, "mesh_root", None):
+        roots[0] = args.mesh_root
+    if getattr(args, "agent_root", None):
+        roots[2] = args.agent_root
     sys.path[:0] = [str(path) for path in roots]
     return tmux, agent, roots
 
@@ -154,6 +160,84 @@ async def fleet(args):
     print(json.dumps(report))
 
 
+async def serve(args):
+    from mesh_plus.api import Bridge
+    from mesh_plus.wss import Listener, ServerConfiguration
+    pub = publisher(args.domain, args.host)
+    directory = args.material
+    configuration = ServerConfiguration.load(directory / "ca.pem", directory / "server.pem",
+                                               directory / "server.key", directory / (args.domain + "-authorization.json"))
+    listener = None
+    stopped = asyncio.Event()
+    loop = asyncio.get_running_loop()
+    for selected in (signal.SIGTERM, signal.SIGINT):
+        loop.add_signal_handler(selected, stopped.set)
+    try:
+        listener = await Listener(configuration.context, Bridge(pub).serve, configuration.authorize,
+                                  (pub.host, pub.source, pub.profile)).start(args.port, address=args.address)
+        ready = {"status": "ready", "host": args.host, "domain": args.domain, "pid": os.getpid(),
+                 "port": listener.port, "source": pub.source, "profile": pub.profile}
+        private_write(args.output, ready)
+        print(json.dumps(ready), flush=True)
+        await stopped.wait()
+    finally:
+        if listener is not None:
+            await listener.close()
+        configuration.close()
+        for selected in (signal.SIGTERM, signal.SIGINT):
+            loop.remove_signal_handler(selected)
+
+
+async def wss_read(args):
+    from mesh_plus.api import ReadGuard
+    from mesh_plus.evidence import clock_domain
+    from mesh_plus.transport import boottime_ms
+    from mesh_plus.wss import Selection, configured_reader
+    directory = args.material
+    selection = Selection.load(directory / "catalog.json", directory / (args.domain + "-registry.json"),
+                               directory / "ca.pem", directory / (args.domain + "-client.pem"),
+                               directory / (args.domain + "-client.key"))
+    p = profile(args.domain)
+    source = "tmux_default" if args.domain == "tmux" else "agent"
+    stream = None
+    started = time.monotonic()
+    try:
+        reader = await configured_reader(args.domain, selection=selection, source=source,
+                                         socket=Path("/unused"), scope="hosts", hosts=[args.peer], profile=p)
+        snapshot = await reader.snapshot()
+        if snapshot["mesh"]["status"] != "complete":
+            print(json.dumps({"status": snapshot["mesh"]["status"], "errors": [h["delivery"]["error"] for h in snapshot["mesh"]["hosts"]]}), file=sys.stderr)
+            raise ValueError("wss_snapshot_incomplete")
+        snapshot_ms = (time.monotonic() - started) * 1000
+        guard = ReadGuard(args.domain, "d" * 32, host_ids=[args.peer], profile=p)
+        stream = reader.watch(request_id="d" * 32)
+        async with asyncio.timeout(20):
+            async for frame in stream:
+                guard.accept(frame)
+                if frame.get("mesh", {}).get("status") == "complete":
+                    break
+            else:
+                raise ValueError("wss_watch_ended")
+        rows = guard.current(boottime_ms(), clock_domain())
+        outcome = frame["mesh"]["hosts"][0]
+        if outcome["delivery"]["path"] != "wss" or not outcome["delivery"]["proof"]:
+            raise ValueError("wss_binding_or_proof")
+        report = {"host": args.host, "peer": args.peer, "domain": args.domain, "status": "passed",
+                  "snapshot": "complete", "watch": "complete", "path": "wss", "proof": True,
+                  "rows": len(rows), "snapshotMs": snapshot_ms, "scope": "real-host cached owner WSS; not native oracle"}
+        guard.disconnect()
+    finally:
+        if stream is not None:
+            await stream.aclose()
+        selection.close()
+    metrics = reader.inspect()
+    if metrics["activeConnections"] or metrics["cleanupFailures"]:
+        raise ValueError("wss_cleanup")
+    report["cleanup"] = True
+    private_write(args.output, report)
+    print(json.dumps(report))
+
+
 async def diagnostic(args):
     from mesh_plus.evidence import clock_domain
     from mesh_plus.transport import boottime_ms
@@ -195,18 +279,28 @@ async def diagnostic(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("inventory", "capture", "diagnostic", "fleet"))
+    parser.add_argument("command", choices=("inventory", "capture", "diagnostic", "fleet", "serve", "wss-read"))
     parser.add_argument("--host", choices=("snap", "starship"), required=True)
     parser.add_argument("--domain", choices=("tmux", "agent"))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--frame", type=Path)
+    parser.add_argument("--mesh-root", type=Path)
+    parser.add_argument("--agent-root", type=Path)
+    parser.add_argument("--material", type=Path)
+    parser.add_argument("--address")
+    parser.add_argument("--peer", choices=("snap", "starship"))
+    parser.add_argument("--port", type=int)
     parser.add_argument("--samples", type=int, default=12)
     args = parser.parse_args()
     if not args.output.is_absolute() or not 1 <= args.samples <= 100:
         parser.error("absolute output and samples 1..100 required")
-    tmux, agent, roots = installed()
+    tmux, agent, roots = installed(args)
     if args.command == "inventory":
         inventory(args, tmux, agent, roots)
+    elif args.command in ("serve", "wss-read"):
+        if not args.domain or not args.material or (args.command == "serve" and (not args.address or args.port is None)):
+            parser.error("domain/material and listener address/port required")
+        asyncio.run(serve(args) if args.command == "serve" else wss_read(args))
     elif args.command == "fleet":
         asyncio.run(fleet(args))
     else:

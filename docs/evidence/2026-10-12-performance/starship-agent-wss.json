@@ -1,0 +1,14 @@
+{
+  "host": "starship",
+  "peer": "snap",
+  "domain": "agent",
+  "status": "passed",
+  "snapshot": "complete",
+  "watch": "complete",
+  "path": "wss",
+  "proof": true,
+  "rows": 94,
+  "snapshotMs": 315.10496299597435,
+  "scope": "real-host cached owner WSS; not native oracle",
+  "cleanup": true
+}

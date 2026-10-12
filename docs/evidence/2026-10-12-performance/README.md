@@ -1,7 +1,7 @@
 # Coordinated networking performance execution
 
 2026-10-12. Active execution of the [accepted plan](../../performance-and-wss-plan.md).
-Current disposition: **P0 baseline captured; P1 publisher attribution in progress.**
+Current disposition: **P0 complete; P1 publisher attribution recorded; P2 native WSS baseline functional gates pass.**
 Ordinary clients remain on IPC/SSH; no collector, native source, shared launcher,
 chezmoi selector or runtime package was changed by these diagnostics.
 
@@ -52,3 +52,25 @@ no native resources. Diagnostic replay requires the capturing host's clock domai
 These ledgers do not certify candidate bytes, live WSS, tailnet reachability,
 capacity, improvement, physical suspend or operational selection. Subsequent
 checkpoints add their own exact evidence and keep discarded attempts explicit.
+
+## Real-host WSS baseline
+
+Dedicated private CA and host/domain credentials, isolated Python 3.14 a15/wss
+environments and four owned listeners serve the accepted native factories on
+Snap/Starship tailnet IPs, ports 9443/9444. Both domains pass remote cached
+snapshot/watch with exact WSS provenance, nonce proofs and owned reader cleanup
+in both directions. Ordinary clients remain on SSH. These first functional
+samples do not establish performance, fault/revocation or default suitability.
+
+Initial connections were explicitly unavailable because the host firewalls
+rejected the trial ports. A dedicated runtime-only rich rule on each host admits
+only the other peer /32 to its own tailnet /32 on TCP 9443-9444. Snap uses the
+existing tailscale zone; Starship its existing public fallback. Rules expire
+after six hours and have explicit owned removal receipts in private trial
+storage. Permanent policy, SSH access and normal units are unchanged. The
+reviewed helpers in `studies/performance/material.py` and `firewall.py` prepare
+private credentials and reversible trial rules; no secret material is published.
+
+P2 baseline measurements and later candidate/fault/resource/rollback gates remain
+active. The listeners are owned foreground processes, not enabled deployment
+units. Final acceptance must retire them and remove both owned runtime rules.
