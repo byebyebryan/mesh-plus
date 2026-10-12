@@ -83,6 +83,12 @@ def sample_server():
                 runtime[package] = hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()
             for name in ("measure.py", "host.py", "bin/mesh-plus"):
                 runtime[name] = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+            candidate_root = ROOT / "candidate/lib/python3.14/site-packages"
+            if candidate_root.exists():
+                hashes = {str(p.relative_to(candidate_root)): hashlib.sha256(p.read_bytes()).hexdigest()
+                          for p in sorted((candidate_root / "agent_observer").rglob("*")) if p.suffix in (".py", ".json")}
+                runtime["agent_candidate"] = hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()
+                runtime["candidate_launcher"] = hashlib.sha256((ROOT / "bin-candidate/mesh-plus").read_bytes()).hexdigest()
             print(json.dumps({"controls": controls, "units": units,
                               "runtime": runtime,
                               "path": {"online": peer["Online"], "currentAddress": peer.get("CurAddr"),
@@ -185,7 +191,8 @@ async def reader(args):
         async def connector(destination, source, **kwargs):
             nonce = secrets.token_hex(16)
             argv = ssh_argv(destination, source, nonce=nonce, **kwargs)
-            argv[-1] = "env " + shlex.join([f"PATH={ROOT}/bin:/usr/bin", f"MESH_PERF_CASE={args.case}"]) + " " + argv[-1]
+            prefix = ROOT / ("bin-candidate" if args.agent_root else "bin")
+            argv[-1] = "env " + shlex.join([f"PATH={prefix}:/usr/bin", f"MESH_PERF_CASE={args.case}"]) + " " + argv[-1]
             return await subprocess_channel(argv, reached_nonce=nonce)
 
         async def connect():
@@ -200,7 +207,7 @@ async def reader(args):
 
         owner = Reader(args.domain, [Endpoint(args.peer, False, catalog.route_token(args.peer, host["routes"][0]), connect, codec)],
                        local_host=args.host, catalog_revision=catalog.revision, catalog_check=check, profile=p)
-    frames, inventories, first, failures = 0, {}, asyncio.Event(), []
+    frames, inventories, evidence_views, first, failures = 0, {}, {}, asyncio.Event(), []
     request_id = secrets.token_hex(16)
     guard = ReadGuard(args.domain, request_id, host_ids=[args.peer], profile=p)
     start = time.monotonic()
@@ -221,6 +228,9 @@ async def reader(args):
                 identities = sorted(repr(p.record_identity(row)) for row in rows)
                 key = hashlib.sha256(json.dumps(identities).encode()).hexdigest()
                 inventories[key] = {"rows": len(rows), "frames": inventories.get(key, {}).get("frames", 0) + 1}
+                health = sorted(receipt["health"] for host in frame["mesh"]["hosts"] for receipt in host["receipts"])
+                view = (frame["mesh"]["hosts"][0]["viewState"], len(frame["sessions"]), len(rows), tuple(health))
+                evidence_views[repr(view)] = evidence_views.get(repr(view), 0) + 1
                 if not first.is_set():
                     print(json.dumps({"ready": process(os.getpid()), "coldMs": (time.monotonic() - start) * 1000}), flush=True)
                     first.set()
@@ -256,7 +266,7 @@ async def reader(args):
         if selection:
             selection.close()
     result = {"host": args.host, "peer": args.peer, "domain": args.domain, "carrier": args.carrier,
-              "frames": frames, "inventories": inventories, "failures": failures, "metrics": owner.inspect(),
+              "frames": frames, "inventories": inventories, "evidenceViews": evidence_views, "failures": failures, "metrics": owner.inspect(),
               "proofInterval": 3 if args.domain == "tmux" else 10}
     if result["metrics"]["activeConnections"] or result["metrics"]["cleanupFailures"]:
         raise ValueError("reader_cleanup")

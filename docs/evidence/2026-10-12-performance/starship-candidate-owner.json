@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "host": "starship",
+  "nativeChannelsAfterClose": 0,
+  "forbiddenImports": [],
+  "carriers": [
+    {
+      "carrier": "local-ipc",
+      "rows": 391,
+      "ready": true,
+      "proofRequired": false,
+      "currentPushRows": 391,
+      "activeConnectionsAfterClose": 0,
+      "cleanupFailures": 0
+    },
+    {
+      "carrier": "fixed-ssh-installed-launcher",
+      "rows": 391,
+      "ready": true,
+      "proofRequired": true,
+      "currentPushRows": 391,
+      "activeConnectionsAfterClose": 0,
+      "cleanupFailures": 0
+    }
+  ],
+  "scope": "private a21 installed cached owner and disposable fixed SSH; no independent provider oracle or ordinary selection"
+}

@@ -16,6 +16,7 @@ from host import private_write  # noqa: E402
 ROOT = Path("/tmp/mesh-perf-20261012")
 PYTHON = str(ROOT / "baseline/bin/python")
 MESH = str(ROOT / "baseline/lib/python3.14/site-packages")
+CANDIDATE = str(ROOT / "candidate/lib/python3.14/site-packages")
 
 
 async def spawn(argv):
@@ -87,21 +88,22 @@ def resources(samples):
             "unattributedCpuPercent": max(0, system - overhead - sum(role["cpuPercent"] for role in report)), "errors": missing}
 
 
-async def window(args, host, domain, carrier, block, position):
+async def window(args, host, domain, carrier, block, position, variant="baseline"):
     peer = "starship" if host == "snap" else "snap"
     case = secrets.token_hex(16)
     worker, samplers, listener = None, [], None
     result = {"case": case, "host": host, "peer": peer, "domain": domain, "carrier": carrier,
-              "block": block, "position": position, "warmupSeconds": args.warmup, "measurementSeconds": args.seconds}
+              "block": block, "position": position, "variant": variant, "warmupSeconds": args.warmup, "measurementSeconds": args.seconds}
+    override = ["--agent-root", CANDIDATE] if variant == "candidate" else []
     try:
         if carrier == "wss":
             listener = await spawn(on_host(peer, ["serve", "--host", peer, "--domain", domain,
                 "--material", str(ROOT / "material" / peer), "--address", "100.84.31.64" if peer == "starship" else "100.70.82.105",
-                "--port", "9443" if domain == "tmux" else "9444", "--output", str(ROOT / "cases" / case / "wss.json"), "--mesh-root", MESH], "host.py"))
+                "--port", "9443" if domain == "tmux" else "9444", "--output", str(ROOT / "cases" / case / "wss.json"), "--mesh-root", MESH, *override], "host.py"))
             async with asyncio.timeout(15):
                 result["listener"] = json.loads(await listener.stdout.readline())
         worker = await spawn(on_host(host, ["reader", "--host", host, "--peer", peer, "--domain", domain,
-                                          "--carrier", carrier, "--case", case, "--material", str(ROOT / "material" / host), "--mesh-root", MESH]))
+                                          "--carrier", carrier, "--case", case, "--material", str(ROOT / "material" / host), "--mesh-root", MESH, *override]))
         async with asyncio.timeout(30):
             ready = json.loads(await worker.stdout.readline())
         result["coldMs"] = ready["coldMs"]
@@ -174,7 +176,7 @@ async def window(args, host, domain, carrier, block, position):
                 result["status"] = "failed_window"
                 result["error"] = "listener_retirement_failed"
     private_write(args.output / (case + ".json"), result)
-    print(json.dumps({key: result.get(key) for key in ("case", "host", "domain", "carrier", "block", "position", "status", "exclusions", "error", "attributableCpuPercent")}), flush=True)
+    print(json.dumps({key: result.get(key) for key in ("case", "host", "domain", "carrier", "variant", "block", "position", "status", "exclusions", "error", "attributableCpuPercent")}), flush=True)
     return result
 
 
@@ -183,10 +185,13 @@ async def run(args):
     cases = []
     for host in args.hosts:
         for domain in args.domains:
-            for block in range(args.blocks):
-                for position, carrier in enumerate(("ssh", "wss", "wss", "ssh")):
-                    cases.append(await window(args, host, domain, carrier, block, position))
-    private_write(args.output / "index.json", {"cases": [{key: case.get(key) for key in ("case", "host", "domain", "carrier", "block", "position", "status", "exclusions", "error", "attributableCpuPercent")} for case in cases],
+            for block in range(args.start_block, args.blocks):
+                a, b = {"baseline-carrier": (("ssh", "baseline"), ("wss", "baseline")),
+                        "optimization": (("ssh", "baseline"), ("ssh", "candidate")),
+                        "candidate-carrier": (("ssh", "candidate"), ("wss", "candidate"))}[args.pair]
+                for position, (carrier, variant) in enumerate((a, b, b, a)):
+                    cases.append(await window(args, host, domain, carrier, block, position, variant))
+    private_write(args.output / "index.json", {"pair": args.pair, "cases": [{key: case.get(key) for key in ("case", "host", "domain", "carrier", "variant", "block", "position", "status", "exclusions", "error", "attributableCpuPercent")} for case in cases],
                   "scope": "remote owner cached endpoint watch, unchanged proof cadence; ordinary native CPU separate; sampler CPU separate; root sshd PSS may be inaccessible"})
 
 
@@ -196,11 +201,15 @@ def main():
     parser.add_argument("--hosts", nargs="+", choices=("snap", "starship"), default=["snap", "starship"])
     parser.add_argument("--domains", nargs="+", choices=("tmux", "agent"), default=["tmux", "agent"])
     parser.add_argument("--blocks", type=int, default=4)
+    parser.add_argument("--start-block", type=int, default=0)
+    parser.add_argument("--pair", choices=("baseline-carrier", "optimization", "candidate-carrier"), default="baseline-carrier")
     parser.add_argument("--warmup", type=float, default=15)
     parser.add_argument("--seconds", type=float, default=120)
     args = parser.parse_args()
-    if not args.output.is_absolute() or not 1 <= args.blocks <= 4 or not 1 <= args.seconds <= 600 or not 0 <= args.warmup <= 30:
+    if not args.output.is_absolute() or not 0 <= args.start_block < args.blocks <= 4 or not 1 <= args.seconds <= 600 or not 0 <= args.warmup <= 30:
         parser.error("bounded timing and absolute private output required")
+    if args.pair != "baseline-carrier" and "tmux" in args.domains:
+        parser.error("candidate pure Agent change has no Tmux cell")
     asyncio.run(run(args))
 
 

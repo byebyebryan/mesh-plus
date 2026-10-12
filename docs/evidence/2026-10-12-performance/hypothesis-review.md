@@ -86,3 +86,30 @@ window and verifies its exact private ready-receipt command and birth before
 retirement. This keeps allocator/process history comparable to fresh SSH
 publishers. Standing-listener cold acquisition receipts retain their separate
 scope and cannot be substituted for normal watch cost.
+
+## Following P3 hypothesis: equivalent type-dispatch allocation removal
+
+A smaller owner-only candidate was identified after the initial no-change review.
+Agent's private `_matches_type` constructs all six predicate results and a new
+dictionary on every type check; most `validate_shape` type specs are singular
+strings but still allocate a wrapper list and generator. These operations recur
+through every retained native validation. The candidate replaces only redundant
+allocation/dispatch, not validation calls or accepted shapes. No Mesh SDK/API
+extension, profile callback weakening or mutable-frame cache is needed.
+
+Before editing: the same selected predicate must run for every supported type;
+booleans remain distinct from integers, nullable unions retain short-circuit and
+error behavior, unknown/malformed type specs retain legacy fallback behavior, and
+all field, text/control/pattern, number/range, enum/const and native semantic
+checks remain. Pure validation sees every fresh input without reuse. Differential
+tests compare the original algorithm over shapes and adversarial native frames,
+including exact finite rejection codes. Frozen schema/contract resources and
+all direct bridge/native validators retain their existing boundary.
+
+Use an isolated Agent worktree and successor private immutable wheel. Installed
+a18 collection, a20 readers/publishers, both shared factories and ordinary SSH
+selection stay unchanged. The first complete Snap Tmux baseline ABBA block is
+retained; its next partial window was retired without acceptance so that source
+validation work cannot contaminate timed windows. Restart clean measurements
+after candidate correctness/profiling, and narrow candidate comparisons only
+when a change is demonstrably irrelevant to an unchanged domain.

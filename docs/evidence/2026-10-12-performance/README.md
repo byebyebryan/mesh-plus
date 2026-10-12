@@ -1,7 +1,7 @@
 # Coordinated networking performance execution
 
 2026-10-12. Active execution of the [accepted plan](../../performance-and-wss-plan.md).
-Current disposition: **P0 complete; P1 publisher/reader attribution recorded; P2 native WSS functional/admission gates pass; unchanged-carrier measurement next.**
+Current disposition: **P0 complete; P1 publisher/reader attribution recorded; P2 native WSS functional/admission gates pass; P3 private Agent a21 candidate installed; full matched measurement next.**
 Ordinary clients remain on IPC/SSH; no collector, native source, shared launcher,
 chezmoi selector or runtime package was changed by these diagnostics.
 
@@ -93,3 +93,35 @@ domains/directions admit four active channels, reject the fifth and missing or
 other-domain credentials, retain healthy proof delivery, and close twelve fresh
 poll/push channels per listener. These are cached-source probes, not provider
 classification or certificate-provisioning acceptance.
+
+## Private Agent allocation candidate
+
+The initial no-change review found that weakening callbacks or retaining mutable
+frames would cross admission boundaries. A narrower following hypothesis instead
+removes pure type-dispatch allocations while retaining every validation call.
+Agent's isolated branch `mesh-perf-shape-20261012` commits runtime at
+`af99914904dee1669ff4d9b8ec8a8dd96dff172c`. Mesh remains a15/SDK 1; Tmux remains a7.
+The [private wheel ledger](agent-candidate-build.json) records a21 SHA256
+`c6f89fd8b1782d85e41d54199a1c2b4d6a146f8ffe8fb1951447934b9aad1aa6`. Only
+Agent's version and `contract.py` runtime bytes differ from a20; all seven
+packaged schemas are identical. This candidate is not released or selected.
+
+Source gates pass 379 tests, three focused admission cases and 936 exact
+differential outcomes on each host's 94/391-row frozen capture. Four ABBA pure
+validation blocks reduce CPU about 20% on Snap; carrier/fleet improvement is
+unproven. Private installed wheel verification passes both hosts with zero
+provider invocations/selection changes. Redacted owner receipts pass cached IPC,
+CLI subscription assessment and disposable actual fixed SSH on both hosts;
+short candidate SSH/WSS pilots also pass. Pilot CPU values exclude full proof
+cycles and certify no gain. A mixed a21-local/a20-remote complete fleet sample
+passes on Snap with original proofs/receipts and owned retirement.
+
+The timed matrix now compares baseline SSH/WSS for both domains and directions,
+and baseline/candidate SSH plus candidate SSH/WSS for Agent only. Candidate
+Tmux cells are omitted because no Mesh or Tmux runtime changes. Four ABBA blocks
+per pair and host role, 15-second warmup and 120-second measurement are retained.
+A first complete Tmux block at the earlier harness checkpoint is descriptive;
+restart decision-driving windows with one final harness pin after candidate
+correctness work. All interruptions/discarded attempts remain private and
+produce no paired performance acceptance. Native health/current/stored row
+counts are recorded separately; transport readiness never implies native truth.
