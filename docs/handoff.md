@@ -108,6 +108,11 @@ one explicit trusted Python map for local IPC, fixed SSH and optional WSS.
 passes both profiles over IPC/fixed SSH/WSS and a10 interoperability.
 Native/resource/managed acceptance remains owner-specific; no live pins change.
 
+The next [coordinated performance/WSS pass](performance-and-wss-plan.md) plans
+measurement and compatible refinement against Tmux a7/Agent a20/Mesh a15.
+Both publisher factories are already deployed; shared launcher composition is
+no longer a pending prerequisite. Ordinary transport selection remains SSH.
+
 ## Ownership and implementation entry points
 
 | Owner | Reusable boundary | Responsibility |

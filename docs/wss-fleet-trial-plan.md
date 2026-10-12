@@ -1,6 +1,9 @@
 # Two-host WSS trial, measurement and rollback plan
 
-2026-10-12. **Preparation only; no live WSS selected.** A15 is
+2026-10-12. **Preparation only; no live WSS selected.** The later
+[coordinated performance plan](performance-and-wss-plan.md) refreshes owner
+inputs and supersedes execution ordering; the original dated inventory below
+remains historical evidence. A15 is
 [published and accepted](evidence/2026-10-12-a15-release/README.md). This plan
 uses that exact wheel and leaves shared launcher/Observer deployment changes to
 separate, coordinated acceptance. No firewall, certificate, listener, producer,
