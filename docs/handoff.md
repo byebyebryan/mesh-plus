@@ -95,6 +95,11 @@ tests, candidate package bytes and the unchanged contract lock. The
 describe a3 diagnostics, synthetic workloads and the optional pool proposal. Older evidence
 files describe their own checkpoints; they do not certify changed source bytes.
 
+The a15 candidate adds the [generic cached publisher and installed factory
+seam](publisher-api.md). Observer owners can replace reference publication through
+one explicit trusted Python map for local IPC, fixed SSH and optional WSS.
+Native/resource/managed acceptance remains owner-specific; no live pins change.
+
 ## Ownership and implementation entry points
 
 | Owner | Reusable boundary | Responsibility |

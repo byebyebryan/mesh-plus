@@ -34,10 +34,36 @@ def configured_descriptor(path, source):
     return config["host"], selected["domain"], selected["socket"]
 
 
-def configured_adapter(path, source):
+def publisher_factory_map(publisher_factories):
+    """Capture trusted Python factories only; never resolve wire/config imports."""
+    from .protocol import check
+
+    factories = {} if publisher_factories is None else dict(publisher_factories)
+    check(set(factories) <= {"tmux", "agent"} and all(callable(f) for f in factories.values()),
+          "publisher_factory_mapping")
+    return factories
+
+
+def configured_adapter(path, source, *, publisher_factories=None):
+    from .protocol import check
+
+    factories = publisher_factory_map(publisher_factories)
+    host, domain, socket = configured_descriptor(path, source)
+    if domain in factories:
+        from .state import descriptor
+
+        adapter = factories[domain](host, source, socket)
+        check(getattr(adapter, "host", None) == host and getattr(adapter, "source", None) == source and
+              getattr(adapter, "profile", None) == descriptor(domain).profile_id, "publisher_factory_binding")
+        capabilities = getattr(adapter, "capabilities", None)
+        check(isinstance(capabilities, (tuple, list)) and all(isinstance(c, str) for c in capabilities) and
+              len(capabilities) == len(set(capabilities)) and
+              set(capabilities) <= {"snapshot", "proof", "subscribe"} and
+              all(callable(getattr(adapter, name, None)) for name in ("validate", "snapshot", "proof", "watch")),
+              "publisher_factory_interface")
+        return adapter
     from .observer import ObserverAdapter
 
-    host, domain, socket = configured_descriptor(path, source)
     return ObserverAdapter(domain, host, source, socket)
 
 
@@ -71,7 +97,8 @@ async def stdio_channel():
     return LineChannel(reader, asyncio.StreamWriter(transport, protocol, reader, loop), "client")
 
 
-async def run(args):
+async def run(args, *, publisher_factories=None):
+    publisher_factories = publisher_factory_map(publisher_factories)
     if args.command == "doctor":
         from .diagnostics import doctor, doctor_sdk, failure_code
 
@@ -147,7 +174,7 @@ async def run(args):
     from .bridge import Bridge
     from .transport import IPCServer
 
-    adapter = configured_adapter(args.config, args.source)
+    adapter = configured_adapter(args.config, args.source, publisher_factories=publisher_factories)
     bridge = Bridge(adapter)
     if args.command == "bridge":
         await bridge.serve(await stdio_channel())
@@ -169,12 +196,13 @@ async def run(args):
                 loop.remove_signal_handler(selected)
 
 
-def main():
+def main(*, publisher_factories=None):
     # Catalog polling is a stdlib authority operation. Loading the state SDK
     # here would add its dependency import cost to every catalog recheck.
     if len(sys.argv) > 1 and sys.argv[1] == "mesh":
         from .authority_cli import main as authority_main
         return authority_main(sys.argv[2:])
+    publisher_factories = publisher_factory_map(publisher_factories)
     import asyncio
 
     parser = argparse.ArgumentParser(description="Mesh Plus experimental cached-state transport")
@@ -220,7 +248,7 @@ def main():
     if args.command == "doctor" and bool(args.config) != bool(args.source):
         parser.error("doctor --config and --source must be supplied together")
     try:
-        return asyncio.run(run(args)) or 0
+        return asyncio.run(run(args, publisher_factories=publisher_factories)) or 0
     except KeyboardInterrupt:
         return 130
     except Exception as error:

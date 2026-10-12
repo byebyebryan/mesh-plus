@@ -53,6 +53,11 @@ The a14 source/private-wheel candidate promotes optional native WSS under
 for polling, push, the separate `mesh-plus-wss` CLI and operational limits.
 Existing wire/profile schemas, SDK v1 defaults and live selections remain unchanged.
 
+The **a15 candidate** adds a generic cached publisher and trusted installed
+factory hook for independent Observer publisher ownership. See the
+[publisher API and owner handoff](docs/publisher-api.md). Existing defaults and
+the wire contract remain unchanged; no live selection is made.
+
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The
 [implementation checkpoints](docs/implementation-progress.md) preserve history.

@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 from mesh_plus.bridge import Bridge
-from mesh_plus.cli import configured_adapter
+from mesh_plus.cli import configured_adapter, publisher_factory_map
 from mesh_plus.diagnostics import failure_code, probe
 
 from .carrier import Listener
@@ -17,7 +17,8 @@ from .configuration import Selection, ServerConfiguration
 from .configured_read import configured_reader
 
 
-async def run(args):
+async def run(args, *, publisher_factories=None):
+    publisher_factories = publisher_factory_map(publisher_factories)
     if args.command == "doctor":
         report = {"ok": True, "backend": "wss", "networkContacted": False,
                   "version": importlib.metadata.version("mesh-plus"),
@@ -25,7 +26,7 @@ async def run(args):
         print(json.dumps(report, separators=(",", ":")))
         return 0
     if args.command == "serve":
-        adapter = configured_adapter(args.config, args.source)
+        adapter = configured_adapter(args.config, args.source, publisher_factories=publisher_factories)
         configuration = ServerConfiguration.load(args.ca, args.certificate, args.key, args.authorization)
         server = None
         stopped = asyncio.Event()
@@ -83,7 +84,8 @@ async def run(args):
             selection.close()
 
 
-def main():
+def main(*, publisher_factories=None):
+    publisher_factories = publisher_factory_map(publisher_factories)
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("doctor", help="installed dependency diagnostics; no host contact")
@@ -115,7 +117,7 @@ def main():
             selected.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args()
     try:
-        return asyncio.run(run(args))
+        return asyncio.run(run(args, publisher_factories=publisher_factories))
     except KeyboardInterrupt:
         return 130
     except Exception as error:

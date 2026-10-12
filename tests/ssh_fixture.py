@@ -13,7 +13,7 @@ from mesh_plus.transport import ssh_argv, subprocess_channel
 
 
 @contextlib.asynccontextmanager
-async def ssh_server(directory, command, source):
+async def ssh_server(directory, command, source, *, command_emits_marker=False):
     """One owned daemon with independently owned reconnectable channels."""
     for name in ("host", "client"):
         child = await asyncio.create_subprocess_exec("ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", str(directory / name))
@@ -21,6 +21,8 @@ async def ssh_server(directory, command, source):
             raise RuntimeError("owned key generation failed")
     nonce = "b" * 32
     wrapper = f"printf '\\036ROFI_PLUS_REACHED_V1:{nonce}\\037\\n' >&2; exec " + shlex.join(command)
+    if command_emits_marker:
+        wrapper = "exec " + shlex.join(command)
     wrapper_path = directory / "bridge.sh"
     wrapper_path.write_text("#!/bin/sh\n" + wrapper + "\n")
     wrapper_path.chmod(0o700)

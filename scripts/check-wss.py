@@ -29,8 +29,9 @@ def main():
             if importlib.metadata.version(name) != expected:
                 raise RuntimeError("reviewed native package required: " + name)
     os.environ["MESH_WSS_NATIVE"] = "1" if args.native else "0"
+    sys.path.insert(0, str(ROOT / "tests"))
     sys.path.insert(0, str(ROOT / "tests/wss"))
-    names = ["test_wss_carrier", "test_wss_integration"] + (["test_wss_state", "test_wss_cli"] if args.native else [])
+    names = ["test_wss_carrier", "test_wss_integration", "test_wss_publisher"] + (["test_wss_state", "test_wss_cli"] if args.native else [])
     suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(name) for name in names)
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     passed = (result.testsRun > 0 and result.wasSuccessful() and not result.skipped and

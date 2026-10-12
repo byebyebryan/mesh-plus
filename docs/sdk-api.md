@@ -17,6 +17,10 @@ and returns a Reader with unchanged Read/Delivery semantics. Existing API export
 signatures and defaults remain SDK v1. WSS adoption is an explicit networking
 selection, independent of producer collection or desktop/client behavior.
 
+The a15 candidate adds the [Observer-owned publisher helper and trusted CLI
+factory seam](publisher-api.md). These are additive SDK v1 exports; existing
+exports/signatures, source descriptors and remote command stay unchanged.
+
 ## Pure profile interface
 
 The exact structural signatures and immutable DTO constructors are in
@@ -102,7 +106,9 @@ uses only supported pure Observer facades when native data is admitted.
 Publishers must produce a checked cached native reply after the proof nonce
 arrives, preserve original receipts, and close their owned iterators on
 cancellation. Heartbeats or retained watch data cannot renew a lease or replace
-that proof. Events/replay, refresh/actions, WSS and shared brokers remain deferred.
+that proof. Events/replay, refresh/actions and shared brokers remain deferred. Optional WSS
+is separately accepted under its addendum; publisher ownership uses the same
+transport-neutral interface.
 
 ## Independent gates and compatibility
 
