@@ -1,0 +1,47 @@
+{
+  "hostId": "starship",
+  "hostname": "starship",
+  "uid": 1000,
+  "checkedAtUtc": "2026-10-12T07:01:11.510511+00:00",
+  "scope": "read-only inventory; no WSS reachability or native acceptance",
+  "python": "Python 3.14.8",
+  "openssl": "OpenSSL 3.6.5 29 Sep 2026 (Library: OpenSSL 3.6.5 29 Sep 2026)",
+  "meshExecutable": "/home/bryan/.local/bin/mesh-plus",
+  "ports": {
+    "9443": "",
+    "9444": ""
+  },
+  "tailnet": {
+    "HostName": "starship",
+    "DNSName": "starship.tail223cf3.ts.net.",
+    "TailscaleIPs": [
+      "100.84.31.64",
+      "fd7a:115c:a1e0::7537:1f41"
+    ],
+    "Online": true
+  },
+  "lanCandidates": [
+    {
+      "interface": "wlan0",
+      "address": "192.168.1.110",
+      "prefixLength": 24
+    }
+  ],
+  "selected": {
+    "agent-observer": {
+      "version": "0.5.0a18",
+      "prefix": ".local/share/agent-observer/0.5.0a18-06544d27ae62f590",
+      "readerPrefix": ".local/share/agent-observer/0.5.0a18-06544d27ae62f590-mesh-a11-reader"
+    },
+    "tmux-observer": {
+      "observerVersion": "0.6.0a6",
+      "bridgeVersion": "0.1.0a10",
+      "readerSdk": "0.1.0a13"
+    }
+  },
+  "units": {
+    "mesh-plus-agent.service": "LoadState=loaded\nActiveState=active\nSubState=running",
+    "agent-observer.service": "LoadState=loaded\nActiveState=active\nSubState=running",
+    "tmux-observer-owner@starship.service": "LoadState=loaded\nActiveState=active\nSubState=running"
+  }
+}
