@@ -5,8 +5,10 @@
 Latest publication is [a15](evidence/2026-10-12-a15-release/README.md), with
 SDK interface 1, optional WSS and the generic cached publisher/factory seam.
 Release and installed-byte acceptance do not select an owner or live endpoint.
-The [WSS fleet trial plan](wss-fleet-trial-plan.md) is read-only preparation;
-shared publisher launcher adoption remains coordinated after owner acceptance.
+The combined shared launcher now selects both accepted owner factories. The
+[coordinated performance/WSS pass](performance-and-wss-plan.md) is executing
+isolated trials and measurement; [its ledger](evidence/2026-10-12-performance/README.md)
+records current evidence. Ordinary readers remain on IPC/SSH.
 
 The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The

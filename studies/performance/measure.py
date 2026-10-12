@@ -46,8 +46,9 @@ def sample_server():
         if request.get("controls"):
             home = Path.home()
             controls = {}
-            for name in (".local/bin/mesh-plus", ".config/mesh-plus/sources.toml",
+            for name in (".local/bin/mesh-plus", ".local/bin/agent-observer", ".config/mesh-plus/sources.toml",
                          ".local/share/chezmoi/deployments/tmux-observer.json", ".local/share/chezmoi/deployments/agent-observer.json",
+                         ".local/share/chezmoi/deployments/agent-observer-mesh.json",
                          ".config/systemd/user/agent-observer.service", ".config/systemd/user/mesh-plus-agent.service"):
                 controls[name] = hashlib.sha256((home / name).read_bytes()).hexdigest()
             units = {}
@@ -56,7 +57,17 @@ def sample_server():
                     "--property=MainPID,ExecMainStartTimestampMonotonic,ActiveState"], text=True).strip()
             state = json.loads(subprocess.check_output(["tailscale", "status", "--json"], text=True))
             peer = next(value for value in state["Peer"].values() if {"snap": "100.70.82.105", "starship": "100.84.31.64"}[request["peer"]] in value["TailscaleIPs"])
+            from types import SimpleNamespace
+            _, _, roots = installed(SimpleNamespace(mesh_root=ROOT / "baseline/lib/python3.14/site-packages"))
+            runtime = {}
+            for root, package in zip(roots[:3], ("mesh_plus", "tmux_observer", "agent_observer")):
+                hashes = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
+                          for p in sorted((root / package).rglob("*")) if p.suffix in (".py", ".json")}
+                runtime[package] = hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()
+            for name in ("measure.py", "host.py", "bin/mesh-plus"):
+                runtime[name] = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
             print(json.dumps({"controls": controls, "units": units,
+                              "runtime": runtime,
                               "path": {"online": peer["Online"], "currentAddress": peer.get("CurAddr"),
                                        "relay": peer.get("Relay"), "kind": "direct" if peer.get("CurAddr") else "relay-or-idle"}}), flush=True)
             continue
@@ -108,8 +119,6 @@ def sample_server():
 
 
 def bridge(args):
-    from host import publisher
-
     from mesh_plus.cli import main
     case = os.environ.get("MESH_PERF_CASE", "")
     if len(case) != 32 or any(c not in "0123456789abcdef" for c in case):
@@ -118,8 +127,15 @@ def bridge(args):
     directory = ROOT / "cases" / case
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)
     private_write(directory / f"publisher-{os.getpid()}.json", own)
-    factories = {"tmux": lambda host, source, socket: publisher("tmux", host),
-                 "agent": lambda host, source, socket: publisher("agent", host)}
+    def tmux(host, source, socket):
+        from tmux_observer.mesh_publisher import make_publisher
+        return make_publisher(host, source, socket)
+
+    def agent(host, source, socket):
+        from agent_observer.mesh_publisher import make_publisher
+        return make_publisher(host, source, socket)
+
+    factories = {"tmux": tmux, "agent": agent}
     # Same fixed SDK command/config and both lazy owner factories as installed selection.
     sys.argv = ["mesh-plus", *args.bridge_arguments]
     raise SystemExit(main(publisher_factories=factories))

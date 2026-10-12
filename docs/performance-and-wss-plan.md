@@ -1,7 +1,8 @@
 # Mesh and Observer networking performance pass
 
-2026-10-12. **Reviewed planning checkpoint; implementation and trial selection
-have not started.** Tmux and Agent development are parked for this coordinated
+2026-10-12. **Active authorized execution; ordinary transport remains SSH.**
+The [execution ledger](evidence/2026-10-12-performance/README.md) records current
+inputs, diagnostics, isolated trials and checkpoint limits. Tmux and Agent development are parked for this coordinated
 pass. Mesh owns this plan and cross-project evidence; any eventual source change
 belongs in its owning repository. Existing published artifacts remain immutable.
 

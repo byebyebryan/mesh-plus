@@ -1,7 +1,7 @@
 # Coordinated networking performance execution
 
 2026-10-12. Active execution of the [accepted plan](../../performance-and-wss-plan.md).
-Current disposition: **P0 complete; P1 publisher attribution recorded; P2 native WSS baseline functional gates pass.**
+Current disposition: **P0 complete; P1 publisher/reader attribution recorded; P2 native WSS functional/admission gates pass; unchanged-carrier measurement next.**
 Ordinary clients remain on IPC/SSH; no collector, native source, shared launcher,
 chezmoi selector or runtime package was changed by these diagnostics.
 
@@ -74,3 +74,22 @@ private credentials and reversible trial rules; no secret material is published.
 P2 baseline measurements and later candidate/fault/resource/rollback gates remain
 active. The listeners are owned foreground processes, not enabled deployment
 units. Final acceptance must retire them and remove both owned runtime rules.
+
+## Reviewed cost and correctness checkpoint
+
+[Hypothesis review](hypothesis-review.md) separates repeated validation from
+standalone callback, reconstruction and mutation admission. No runtime candidate
+or API change is selected. Four reader replays complement the publisher reports.
+The two-host accounting harness checks PID births and sampled own CPU, excludes
+reaped-child double counting and reports unavailable root SSH-session PSS as null.
+Short pilots establish plumbing only; discarded attempts remain private.
+
+[Regression gates](gates.json) pass 113 standalone /151 owned native-SSH and
+43 native WSS cases without skips, using Python 3.13 and the historical reviewed
+Tmux a5/Agent a16 inputs. Exact current sibling HEAD parity fails at the expected
+`source_head_changed:tmux-observer` guard; no frozen reference is rewritten.
+Current installed a7/a20 owner checks have separate real-tailnet receipts: both
+domains/directions admit four active channels, reject the fifth and missing or
+other-domain credentials, retain healthy proof delivery, and close twelve fresh
+poll/push channels per listener. These are cached-source probes, not provider
+classification or certificate-provisioning acceptance.
