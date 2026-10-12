@@ -1,0 +1,427 @@
+{
+  "host": "snap",
+  "domain": "tmux",
+  "samples": 12,
+  "rows": 6,
+  "nativeBytes": 3335,
+  "functions": [
+    {
+      "module": "publisher.py",
+      "line": 49,
+      "function": "validate",
+      "calls": 24,
+      "selfSeconds": 4.0733000000000005e-05,
+      "cumulativeSeconds": 0.029112337000000002
+    },
+    {
+      "module": "state.py",
+      "line": 129,
+      "function": "validate_bridge",
+      "calls": 24,
+      "selfSeconds": 0.000153892,
+      "cumulativeSeconds": 0.029071604
+    },
+    {
+      "module": "state.py",
+      "line": 102,
+      "function": "inspect_state",
+      "calls": 36,
+      "selfSeconds": 0.000550954,
+      "cumulativeSeconds": 0.026788719000000003
+    },
+    {
+      "module": "publisher.py",
+      "line": 106,
+      "function": "proof",
+      "calls": 12,
+      "selfSeconds": 4.7271e-05,
+      "cumulativeSeconds": 0.026418278000000003
+    },
+    {
+      "module": "publisher.py",
+      "line": 53,
+      "function": "wrap",
+      "calls": 12,
+      "selfSeconds": 0.000123212,
+      "cumulativeSeconds": 0.026226457
+    },
+    {
+      "module": "mesh_profile.py",
+      "line": 102,
+      "function": "inspect_native",
+      "calls": 36,
+      "selfSeconds": 0.00016926900000000002,
+      "cumulativeSeconds": 0.016981188
+    },
+    {
+      "module": "_delivery_validation.py",
+      "line": 162,
+      "function": "validate_service_frame",
+      "calls": 36,
+      "selfSeconds": 1.6129e-05,
+      "cumulativeSeconds": 0.012695239
+    },
+    {
+      "module": "_delivery_validation.py",
+      "line": 166,
+      "function": "_checked_service_frame",
+      "calls": 36,
+      "selfSeconds": 7.654000000000001e-05,
+      "cumulativeSeconds": 0.01267911
+    },
+    {
+      "module": "validators.py",
+      "line": 448,
+      "function": "validate",
+      "calls": 24,
+      "selfSeconds": 2.6887000000000002e-05,
+      "cumulativeSeconds": 0.009996515000000001
+    },
+    {
+      "module": "validators.py",
+      "line": 349,
+      "function": "iter_errors",
+      "calls": 24,
+      "selfSeconds": 6.388800000000001e-05,
+      "cumulativeSeconds": 0.009969628000000001
+    },
+    {
+      "module": "copy.py",
+      "line": 110,
+      "function": "deepcopy",
+      "calls": 22776,
+      "selfSeconds": 0.003553988,
+      "cumulativeSeconds": 0.008903984
+    },
+    {
+      "module": "_delivery_validation.py",
+      "line": 187,
+      "function": "_service_after_tree",
+      "calls": 36,
+      "selfSeconds": 0.000345748,
+      "cumulativeSeconds": 0.007634620000000001
+    },
+    {
+      "module": "_native_validation.py",
+      "line": 110,
+      "function": "_observation_after_tree",
+      "calls": 36,
+      "selfSeconds": 0.00040080000000000004,
+      "cumulativeSeconds": 0.00502668
+    },
+    {
+      "module": "protocol.py",
+      "line": 78,
+      "function": "encode",
+      "calls": 36,
+      "selfSeconds": 2.5593e-05,
+      "cumulativeSeconds": 0.005022073
+    },
+    {
+      "module": "_wire.py",
+      "line": 117,
+      "function": "validate_tree",
+      "calls": 36,
+      "selfSeconds": 0.0031939850000000003,
+      "cumulativeSeconds": 0.0049679500000000005
+    },
+    {
+      "module": "protocol.py",
+      "line": 38,
+      "function": "tree",
+      "calls": 9684,
+      "selfSeconds": 0.0036572400000000004,
+      "cumulativeSeconds": 0.004200992000000001
+    },
+    {
+      "module": "mesh_profile.py",
+      "line": 43,
+      "function": "restore_native",
+      "calls": 36,
+      "selfSeconds": 7.7407e-05,
+      "cumulativeSeconds": 0.003704138
+    },
+    {
+      "module": "__init__.py",
+      "line": 185,
+      "function": "dumps",
+      "calls": 180,
+      "selfSeconds": 0.00023564600000000003,
+      "cumulativeSeconds": 0.003329344
+    },
+    {
+      "module": "_native_validation.py",
+      "line": 65,
+      "function": "_session_with_reference",
+      "calls": 216,
+      "selfSeconds": 0.00048694600000000004,
+      "cumulativeSeconds": 0.0031636800000000003
+    },
+    {
+      "module": "encoder.py",
+      "line": 185,
+      "function": "encode",
+      "calls": 180,
+      "selfSeconds": 0.000208805,
+      "cumulativeSeconds": 0.003047066
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 33,
+      "function": "string",
+      "calls": 1908,
+      "selfSeconds": 0.0007111460000000001,
+      "cumulativeSeconds": 0.00177498
+    },
+    {
+      "module": "_wire.py",
+      "line": 280,
+      "function": "_encode_after_validation",
+      "calls": 108,
+      "selfSeconds": 0.000116781,
+      "cumulativeSeconds": 0.0016921820000000002
+    },
+    {
+      "module": "_native_validation.py",
+      "line": 33,
+      "function": "reference",
+      "calls": 216,
+      "selfSeconds": 0.0002369,
+      "cumulativeSeconds": 0.001346589
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 21,
+      "function": "obj",
+      "calls": 756,
+      "selfSeconds": 0.0007917200000000001,
+      "cumulativeSeconds": 0.0013140760000000002
+    },
+    {
+      "module": "evidence.py",
+      "line": 23,
+      "function": "digest",
+      "calls": 36,
+      "selfSeconds": 5.6157000000000005e-05,
+      "cumulativeSeconds": 0.0012036380000000001
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 41,
+      "function": "nullable",
+      "calls": 2016,
+      "selfSeconds": 0.000418571,
+      "cumulativeSeconds": 0.001057611
+    },
+    {
+      "module": "protocol.py",
+      "line": 73,
+      "function": "_encode_json",
+      "calls": 36,
+      "selfSeconds": 3.2826e-05,
+      "cumulativeSeconds": 0.000795488
+    },
+    {
+      "module": "evidence.py",
+      "line": 16,
+      "function": "clock_domain",
+      "calls": 12,
+      "selfSeconds": 5.5531e-05,
+      "cumulativeSeconds": 0.000566792
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 22,
+      "function": "<genexpr>",
+      "calls": 5472,
+      "selfSeconds": 0.00046522100000000004,
+      "cumulativeSeconds": 0.00046522100000000004
+    },
+    {
+      "module": "_native_validation.py",
+      "line": 23,
+      "function": "source",
+      "calls": 72,
+      "selfSeconds": 9.020000000000001e-05,
+      "cumulativeSeconds": 0.000413351
+    },
+    {
+      "module": "_delivery_validation.py",
+      "line": 38,
+      "function": "receipt",
+      "calls": 36,
+      "selfSeconds": 0.00018694700000000002,
+      "cumulativeSeconds": 0.000411499
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 73,
+      "function": "clock",
+      "calls": 72,
+      "selfSeconds": 5.9896000000000004e-05,
+      "cumulativeSeconds": 0.0003948
+    },
+    {
+      "module": "state.py",
+      "line": 92,
+      "function": "check_binding",
+      "calls": 36,
+      "selfSeconds": 0.000124403,
+      "cumulativeSeconds": 0.000303311
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 27,
+      "function": "integer",
+      "calls": 1656,
+      "selfSeconds": 0.00028982700000000004,
+      "cumulativeSeconds": 0.00028982700000000004
+    },
+    {
+      "module": "evidence.py",
+      "line": 28,
+      "function": "bridge_validator",
+      "calls": 1,
+      "selfSeconds": 6.956000000000001e-06,
+      "cumulativeSeconds": 0.00014439700000000002
+    },
+    {
+      "module": "_native_validation.py",
+      "line": 47,
+      "function": "sample",
+      "calls": 36,
+      "selfSeconds": 5.4493e-05,
+      "cumulativeSeconds": 0.000143089
+    },
+    {
+      "module": "state.py",
+      "line": 125,
+      "function": "<genexpr>",
+      "calls": 252,
+      "selfSeconds": 6.463500000000001e-05,
+      "cumulativeSeconds": 8.6718e-05
+    },
+    {
+      "module": "_delivery_validation.py",
+      "line": 220,
+      "function": "<lambda>",
+      "calls": 36,
+      "selfSeconds": 1.1141e-05,
+      "cumulativeSeconds": 7.3646e-05
+    },
+    {
+      "module": "protocol.py",
+      "line": 26,
+      "function": "check",
+      "calls": 754,
+      "selfSeconds": 6.9393e-05,
+      "cumulativeSeconds": 6.9393e-05
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 57,
+      "function": "enum",
+      "calls": 144,
+      "selfSeconds": 4.0153e-05,
+      "cumulativeSeconds": 5.2027e-05
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 51,
+      "function": "boolean",
+      "calls": 288,
+      "selfSeconds": 4.4728e-05,
+      "cumulativeSeconds": 4.4728e-05
+    },
+    {
+      "module": "state.py",
+      "line": 117,
+      "function": "<genexpr>",
+      "calls": 108,
+      "selfSeconds": 3.6747e-05,
+      "cumulativeSeconds": 4.3011000000000005e-05
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 45,
+      "function": "array",
+      "calls": 72,
+      "selfSeconds": 2.2593000000000002e-05,
+      "cumulativeSeconds": 3.6963000000000005e-05
+    },
+    {
+      "module": "state.py",
+      "line": 113,
+      "function": "<genexpr>",
+      "calls": 108,
+      "selfSeconds": 2.5106000000000003e-05,
+      "cumulativeSeconds": 2.5106000000000003e-05
+    },
+    {
+      "module": "mesh_profile.py",
+      "line": 52,
+      "function": "record_host",
+      "calls": 216,
+      "selfSeconds": 2.2083000000000002e-05,
+      "cumulativeSeconds": 2.2083000000000002e-05
+    },
+    {
+      "module": "_delivery_validation.py",
+      "line": 85,
+      "function": "<genexpr>",
+      "calls": 144,
+      "selfSeconds": 1.5163e-05,
+      "cumulativeSeconds": 1.5163e-05
+    },
+    {
+      "module": "transport.py",
+      "line": 18,
+      "function": "boottime_ms",
+      "calls": 12,
+      "selfSeconds": 1.1139000000000001e-05,
+      "cumulativeSeconds": 1.3441e-05
+    },
+    {
+      "module": "_native_validation.py",
+      "line": 43,
+      "function": "scope_key",
+      "calls": 72,
+      "selfSeconds": 1.2948e-05,
+      "cumulativeSeconds": 1.2948e-05
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 80,
+      "function": "clock_key",
+      "calls": 72,
+      "selfSeconds": 1.0679e-05,
+      "cumulativeSeconds": 1.0679e-05
+    },
+    {
+      "module": "_validation_common.py",
+      "line": 63,
+      "function": "error",
+      "calls": 72,
+      "selfSeconds": 8.241000000000001e-06,
+      "cumulativeSeconds": 8.241000000000001e-06
+    },
+    {
+      "module": "mesh_profile.py",
+      "line": 96,
+      "function": "validate_bridge",
+      "calls": 24,
+      "selfSeconds": 5.925e-06,
+      "cumulativeSeconds": 5.925e-06
+    },
+    {
+      "module": "mesh_profile.py",
+      "line": 92,
+      "function": "profile_id",
+      "calls": 36,
+      "selfSeconds": 5.497e-06,
+      "cumulativeSeconds": 5.497e-06
+    }
+  ],
+  "endedBoottimeMs": 186674015,
+  "scope": "instrumented frozen-frame proof plus Bridge validation; not CPU acceptance"
+}
