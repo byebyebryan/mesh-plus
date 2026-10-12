@@ -76,3 +76,13 @@ must preserve controls/incarnations/route and inventory identities; excluded
 windows remain visible. Even stable row identities do not freeze ordinary native
 activity, payload content or external host load, so their results remain
 descriptive unless matched workload comparability is independently established.
+
+Before primary acceptance, the retained capacity-warmed WSS listeners were
+identified as incompatible with fresh-publisher window ordering. The initial
+run was stopped before a complete pair; it certifies no gain. All four first
+trial listeners retired through verified PID/birth SIGTERM and their foreground
+handles exited successfully. The coordinator now owns a fresh listener per WSS
+window and verifies its exact private ready-receipt command and birth before
+retirement. This keeps allocator/process history comparable to fresh SSH
+publishers. Standing-listener cold acquisition receipts retain their separate
+scope and cannot be substituted for normal watch cost.

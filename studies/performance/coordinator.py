@@ -23,8 +23,8 @@ async def spawn(argv):
                                                 stderr=asyncio.subprocess.PIPE, limit=1048576)
 
 
-def on_host(host, arguments):
-    argv = [PYTHON, "-I", "-B", str(ROOT / "measure.py"), *arguments]
+def on_host(host, arguments, script="measure.py"):
+    argv = [PYTHON, "-I", "-B", str(ROOT / script), *arguments]
     if host == "snap":
         return argv
     import shlex
@@ -74,23 +74,32 @@ def resources(samples):
             missing.append({"role": role, "pid": pid, "error": "insufficient_lifetime"})
             continue
         pss = [point[1]["pssKiB"] for point in points if point[1].get("pssKiB") is not None]
+        fds = [point[1]["fds"] for point in points if point[1].get("fds") is not None]
         report.append({"role": role, "pid": pid, "birth": birth, "seconds": seconds,
                        "cpuPercent": 100 * (last[1]["ticks"] - first[1]["ticks"]) / os.sysconf("SC_CLK_TCK") / seconds,
                        "pssMeanKiB": statistics.mean(pss) if pss else None,
                        "rssPeakKiB": max(point[1]["rssKiB"] for point in points),
-                       "fdPeak": max((point[1].get("fds") or 0 for point in points), default=0), "samples": len(points)})
+                       "fdPeak": max(fds) if fds else None, "samples": len(points)})
     sampler = [(sample["time"], sample["sampler"]["ticks"]) for sample in samples]
     overhead = 100 * (sampler[-1][1] - sampler[0][1]) / os.sysconf("SC_CLK_TCK") / (sampler[-1][0] - sampler[0][0])
-    return {"roles": report, "samplerCpuPercent": overhead, "errors": missing}
+    system = 100 * (samples[-1]["systemBusyTicks"] - samples[0]["systemBusyTicks"]) / os.sysconf("SC_CLK_TCK") / (sampler[-1][0] - sampler[0][0])
+    return {"roles": report, "samplerCpuPercent": overhead, "systemCpuPercent": system,
+            "unattributedCpuPercent": max(0, system - overhead - sum(role["cpuPercent"] for role in report)), "errors": missing}
 
 
 async def window(args, host, domain, carrier, block, position):
     peer = "starship" if host == "snap" else "snap"
     case = secrets.token_hex(16)
-    worker, samplers = None, []
+    worker, samplers, listener = None, [], None
     result = {"case": case, "host": host, "peer": peer, "domain": domain, "carrier": carrier,
               "block": block, "position": position, "warmupSeconds": args.warmup, "measurementSeconds": args.seconds}
     try:
+        if carrier == "wss":
+            listener = await spawn(on_host(peer, ["serve", "--host", peer, "--domain", domain,
+                "--material", str(ROOT / "material" / peer), "--address", "100.84.31.64" if peer == "starship" else "100.70.82.105",
+                "--port", "9443" if domain == "tmux" else "9444", "--output", str(ROOT / "cases" / case / "wss.json"), "--mesh-root", MESH], "host.py"))
+            async with asyncio.timeout(15):
+                result["listener"] = json.loads(await listener.stdout.readline())
         worker = await spawn(on_host(host, ["reader", "--host", host, "--peer", peer, "--domain", domain,
                                           "--carrier", carrier, "--case", case, "--material", str(ROOT / "material" / host), "--mesh-root", MESH]))
         async with asyncio.timeout(30):
@@ -104,6 +113,10 @@ async def window(args, host, domain, carrier, block, position):
         discovered = await rpc(remote, {"discover": case, "host": peer, "domain": domain, "carrier": carrier})
         local_roles = [{"role": "reader-consumer", "pid": ready["ready"]["pid"], "birth": ready["ready"]["birth"]}]
         await asyncio.sleep(args.warmup)
+        worker.stdin.write(b"mark\n")
+        await worker.stdin.drain()
+        async with asyncio.timeout(5):
+            result["readerBefore"] = json.loads(await worker.stdout.readline())
         samples = {"readerHost": [], "publisherHost": []}
         started = time.monotonic()
         target = started
@@ -116,6 +129,10 @@ async def window(args, host, domain, carrier, block, position):
             target += .5
         result["resources"] = {key: resources(value) for key, value in samples.items()}
         result["samples"] = samples
+        worker.stdin.write(b"mark\n")
+        await worker.stdin.drain()
+        async with asyncio.timeout(5):
+            result["readerAfter"] = json.loads(await worker.stdout.readline())
         result["controlsAfter"] = await asyncio.gather(rpc(local, {"controls": True, "host": host, "peer": peer}),
                                                       rpc(remote, {"controls": True, "host": peer, "peer": host}))
         worker.stdin.write(b"stop\n")
@@ -145,6 +162,17 @@ async def window(args, host, domain, carrier, block, position):
             await retire(worker)
         for sampler in samplers:
             await retire(sampler)
+        if listener is not None:
+            stopper = await spawn(on_host(peer, ["stop-listener", "--case", case]))
+            async with asyncio.timeout(10):
+                await stopper.communicate()
+            if stopper.returncode:
+                raise ValueError("listener_stop_ownership_failed")
+            await asyncio.wait_for(listener.wait(), 10)
+            result["listenerRetired"] = listener.returncode == 0
+            if not result["listenerRetired"]:
+                result["status"] = "failed_window"
+                result["error"] = "listener_retirement_failed"
     private_write(args.output / (case + ".json"), result)
     print(json.dumps({key: result.get(key) for key in ("case", "host", "domain", "carrier", "block", "position", "status", "exclusions", "error", "attributableCpuPercent")}), flush=True)
     return result

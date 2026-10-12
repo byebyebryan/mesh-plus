@@ -20,7 +20,7 @@ class AccountingTests(unittest.TestCase):
     def test_no_child_cpu_aggregation_or_privileged_memory_invention(self):
         samples = []
         for at, ticks in ((0, 100), (10, 150)):
-            samples.append({"time": at, "sampler": {"ticks": ticks}, "roles": [
+            samples.append({"time": at, "systemBusyTicks": ticks * 10, "sampler": {"ticks": ticks}, "roles": [
                 {"role": "reader", "pid": 1, "birth": "7", "ticks": ticks, "rssKiB": 12, "pssKiB": 9, "fds": 4,
                  "childTicks": 99999},
                 {"role": "ssh-server", "pid": 2, "birth": "8", "ticks": 3, "rssKiB": 4, "pssKiB": None, "fds": None},
@@ -28,10 +28,11 @@ class AccountingTests(unittest.TestCase):
         result = resources(samples)
         self.assertEqual(result["roles"][0]["cpuPercent"], 500 / os.sysconf("SC_CLK_TCK"))
         self.assertIsNone(result["roles"][1]["pssMeanKiB"])
+        self.assertIsNone(result["roles"][1]["fdPeak"])
         self.assertEqual(result["roles"][1]["cpuPercent"], 0)
 
     def test_missing_or_reused_role_never_silently_becomes_zero(self):
-        samples = [{"time": at, "sampler": {"ticks": 0}, "roles": [{"role": "publisher", "pid": 1,
+        samples = [{"time": at, "systemBusyTicks": 0, "sampler": {"ticks": 0}, "roles": [{"role": "publisher", "pid": 1,
                     "error": "incarnation_changed"}]} for at in (0, 1)]
         result = resources(samples)
         self.assertEqual(len(result["errors"]), 2)

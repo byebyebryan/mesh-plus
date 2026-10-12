@@ -7,6 +7,7 @@ import json
 import os
 import secrets
 import shlex
+import signal
 import subprocess
 import sys
 import time
@@ -17,6 +18,22 @@ from host import installed, private_write, profile  # noqa: E402
 
 ROOT = Path("/tmp/mesh-perf-20261012")
 HZ = os.sysconf("SC_CLK_TCK")
+
+
+def stop_listener(case):
+    if len(case) != 32 or any(c not in "0123456789abcdef" for c in case):
+        raise ValueError("case_identity")
+    ready = ROOT / "cases" / case / "wss.json"
+    value = json.loads(ready.read_text())
+    current = process(value["pid"], value["birth"], memory=False)
+    if current.get("error") == "retired":
+        return
+    if "error" in current:
+        raise ValueError("listener_incarnation_changed")
+    command = Path(f"/proc/{value['pid']}/cmdline").read_bytes().split(b"\x00")
+    if str(ready).encode() not in command or str(ROOT / "host.py").encode() not in command or b"serve" not in command:
+        raise ValueError("listener_ownership")
+    os.kill(value["pid"], signal.SIGTERM)
 
 
 def process(pid, birth=None, *, memory=True):
@@ -81,7 +98,7 @@ def sample_server():
                     raise ValueError("one_owned_publisher_required")
                 pub = json.loads(files[0].read_text())
             else:
-                pub = json.loads((ROOT / f"{request['host']}-{request['domain']}-ready.json").read_text())
+                pub = json.loads((ROOT / "cases" / case / "wss.json").read_text())
                 if "birth" not in pub:
                     # Older first-start receipts: validate its exact live command before binding birth.
                     cmd = Path(f"/proc/{pub['pid']}/cmdline").read_bytes()
@@ -115,6 +132,8 @@ def sample_server():
                 pass
         result = {"time": time.monotonic(), "roles": [{"role": role["role"], **process(role["pid"], role.get("birth"))} for role in roles],
                   "sampler": process(os.getpid(), memory=False), "load": os.getloadavg()}
+        cpu = [int(value) for value in Path("/proc/stat").read_text().splitlines()[0].split()[1:9]]
+        result["systemBusyTicks"] = sum(cpu) - cpu[3] - cpu[4]
         print(json.dumps(result, separators=(",", ":")), flush=True)
 
 
@@ -215,9 +234,13 @@ async def reader(args):
         if failures:
             raise ValueError("no_healthy_baseline")
         # Coordinator owns warmup/measurement timing and samples before requesting retirement.
-        command = await asyncio.to_thread(sys.stdin.readline)
-        if command.strip() != "stop":
-            raise ValueError("coordinator_disconnected")
+        while True:
+            command = (await asyncio.to_thread(sys.stdin.readline)).strip()
+            if command == "stop":
+                break
+            if command != "mark":
+                raise ValueError("coordinator_disconnected")
+            print(json.dumps({"mark": owner.inspect(), "inventories": inventories.copy(), "frames": frames}), flush=True)
     finally:
         if task.done() and not task.cancelled():
             failure = task.exception()
@@ -242,7 +265,7 @@ async def reader(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("sample", "reader", "bridge"))
+    parser.add_argument("command", choices=("sample", "reader", "bridge", "stop-listener"))
     parser.add_argument("--host", choices=("snap", "starship"))
     parser.add_argument("--peer", choices=("snap", "starship"))
     parser.add_argument("--domain", choices=("tmux", "agent"))
@@ -258,6 +281,9 @@ def main():
         parser.error("unexpected arguments")
     if args.command == "sample":
         sample_server()
+    elif args.command == "stop-listener":
+        stop_listener(args.case)
+        print(json.dumps({"stopRequested": True}))
     else:
         installed(args)
         if args.command == "bridge":
