@@ -98,6 +98,8 @@ files describe their own checkpoints; they do not certify changed source bytes.
 The a15 candidate adds the [generic cached publisher and installed factory
 seam](publisher-api.md). Observer owners can replace reference publication through
 one explicit trusted Python map for local IPC, fixed SSH and optional WSS.
+[Installed candidate acceptance](evidence/2026-10-11-publisher-factory/README.md)
+passes both profiles over IPC/fixed SSH/WSS and a10 interoperability.
 Native/resource/managed acceptance remains owner-specific; no live pins change.
 
 ## Ownership and implementation entry points

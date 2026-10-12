@@ -3,7 +3,8 @@
 Accepted additive SDK interface 1 surface in the **0.1.0a15 candidate**. This
 seam is independent of optional WSS. All Read/Delivery/profile schemas and the
 contract lock retain their bytes. Reader SDK signatures and default reference
-publishers remain supported. Exact candidate acceptance is recorded separately.
+publishers remain supported. See the [installed acceptance](evidence/2026-10-11-publisher-factory/README.md)
+for the exact artifact and independent carrier/compatibility gates.
 
 ## Public types and constructor
 
