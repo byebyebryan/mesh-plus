@@ -1,14 +1,17 @@
 """Adversarial trace ownership checks and downstream pure Tmux networking conformance."""
 
+import asyncio
 import copy
 import sys
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from trace import Trace  # noqa: E402
 
 from matrix import qualify  # noqa: E402
+from run import case  # noqa: E402
 from tmux_observer.mesh_profile import TmuxMeshProfile  # noqa: E402
 
 from mesh_plus.api import CachedPublisher  # noqa: E402
@@ -16,6 +19,15 @@ from mesh_plus.testing import network_suite  # noqa: E402
 
 
 class TraceTests(unittest.IsolatedAsyncioTestCase):
+    async def test_interruption_retires_owned_ipc_resources(self):
+        trial = asyncio.create_task(case(SimpleNamespace(rows=32, steps=100, interval=.1), "ipc", 1, "push"))
+        await asyncio.sleep(.7)
+        trial.cancel()
+        with self.assertRaises(asyncio.CancelledError):
+            await asyncio.wait_for(trial, 5)
+        # Case teardown itself checks native watchers and closes every owned
+        # child before propagating cancellation; no background replacement runs.
+
     def test_workload_mismatch_and_failure_cannot_certify_a_block(self):
         values = [{"status": "passed", "cleanup": True, "position": i, "carrier": carrier,
                    "rows": 32, "steps": 4, "mode": "push", "fanout": 1, "trace": [{"step": 1}],

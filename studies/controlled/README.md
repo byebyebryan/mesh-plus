@@ -64,6 +64,16 @@ networking suite. It requires no running tmux server or Observer collection.
 The pinned certificate test helper supplies disposable mTLS material; its digest
 and the reused accounting helpers are included in each execution input record.
 
+`attribute.py --output /private/new.json` profiles the pure admission pipeline
+without carrier/source I/O. `summarize.py --root /private/matrix --output /report`
+requires the complete 192-case matrix and rechecks exact-work blocks. It stores
+raw metadata in deterministic gzip with input/report digests.
+
+`check-copy.py` and `copy_hypothesis.py` retain a rejected module-local cloning
+experiment. Its ownership cases pass, but four pipeline CPU blocks are flat or
+slower. It is not packaged, installed or used by the carrier benchmark. See the
+[assessment](../../docs/evidence/2026-10-12-controlled-performance/README.md).
+
 Interrupted/failed pilot directories are retained locally as discarded attempts.
 They cannot certify performance. Loopback comparisons and synthetic fixed work do
 not replace ordinary fleet resource, operational rotation or suspend acceptance.

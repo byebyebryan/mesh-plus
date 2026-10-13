@@ -66,6 +66,10 @@ the wire contract remain unchanged; no live selection is made.
 Start with the [integration handoff](docs/handoff.md) for ownership, entry points,
 acceptance gates and current evidence. The
 [implementation checkpoints](docs/implementation-progress.md) preserve history.
+The [controlled networking benchmark](studies/controlled/README.md) provides
+pinned, exact-work IPC/SSH/WSS comparisons; its
+[assessment](docs/evidence/2026-10-12-controlled-performance/README.md) retains
+SSH defaults and unchanged runtime bytes.
 
 The [state contract freeze](docs/contract-freeze.md) defines the interfaces ready
 for independent implementation. [The checked lock](contracts/LOCK.json) binds

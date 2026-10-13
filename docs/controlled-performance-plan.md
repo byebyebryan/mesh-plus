@@ -41,3 +41,14 @@ promotion gates. No ordinary deployment or alternate protocol belongs here.
 
 The prior [fleet decision](evidence/2026-10-12-performance/decision.md) retains its
 dated scope; this pass does not relabel its excluded comparisons as acceptance.
+
+## Completed disposition
+
+The [assessment](evidence/2026-10-12-controlled-performance/README.md) records all
+192 matched cases and 48 balanced blocks, pinned runtime/harness inputs, Tmux-only
+downstream conformance, expired receipts and final owned teardown. WSS has a
+repeatable shared-publisher memory benefit with multiple independent upstream
+readers; that does not establish ordinary prepared-service or fleet-default gains.
+The private copying prototype is rejected after flat/slower full-pipeline CPU
+screens. Mesh runtime/contract/artifacts and ordinary SSH selections remain.
+No Agent Observer imports, live testing or source edits occurred.

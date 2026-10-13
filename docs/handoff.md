@@ -10,6 +10,12 @@ The combined shared launcher now selects both accepted owner factories. The
 retain-SSH decision after isolated trials and measurement; [its ledger](evidence/2026-10-12-performance/README.md)
 records current evidence. Ordinary readers remain on IPC/SSH.
 
+The subsequent [controlled benchmark pass](controlled-performance-plan.md) is
+complete: [192 exact-work cases](evidence/2026-10-12-controlled-performance/README.md)
+compare IPC/SSH/WSS with a pinned pure Tmux profile, without Agent development
+inputs. It records a multi-upstream sharing benefit and rejects a copying
+prototype; there is no runtime release or new downstream wiring prerequisite.
+
 The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The
 wire boundary is frozen by [the state contract](contract-freeze.md) and

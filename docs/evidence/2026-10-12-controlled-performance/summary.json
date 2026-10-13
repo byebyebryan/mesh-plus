@@ -1,0 +1,2566 @@
+{
+  "format": "mesh-plus.controlled-performance.v1",
+  "cases": 192,
+  "matchedBlocks": 48,
+  "gzipSha256": "e62bc1ec4d928ccb7c80c37654ea5c3a669e806ba64f9971d946e774ff11ea7f",
+  "rawSha256": "bbd70460763bf9cf6be415db18bb0fec445417016cbdd53cc815559c1478396b",
+  "blocks": [
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 1,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 0.885,
+        "cpuMsPerDeliveredStep": 22.125,
+        "accessiblePssMiB": 45.150716145833336,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.135,
+        "samplerCpuPercent": 0.4906857892638823,
+        "latencyMedianMs": 25.80876900901785
+      },
+      "B": {
+        "primaryCpuSeconds": 0.8250000000000001,
+        "cpuMsPerDeliveredStep": 20.625,
+        "accessiblePssMiB": 52.018147786458336,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.135,
+        "samplerCpuPercent": 1.2261812814897857,
+        "latencyMedianMs": 23.698597760812845
+      },
+      "cpuReductionPercent": 6.779661016949145,
+      "accessiblePssReductionPercent": -15.210017086869065,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        30.401217140907647,
+        27.435953760315122,
+        27.977634359255163,
+        35.354114393590166
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 1,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 0.8800000000000001,
+        "cpuMsPerDeliveredStep": 22.0,
+        "accessiblePssMiB": 45.42236328125,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.14,
+        "samplerCpuPercent": 0.7359132898954885,
+        "latencyMedianMs": 25.388841757376213
+      },
+      "B": {
+        "primaryCpuSeconds": 0.8600000000000001,
+        "cpuMsPerDeliveredStep": 21.5,
+        "accessiblePssMiB": 52.153767903645836,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.135,
+        "samplerCpuPercent": 1.22414194585046,
+        "latencyMedianMs": 25.394343501830008
+      },
+      "cpuReductionPercent": 2.2727272727272707,
+      "accessiblePssReductionPercent": -14.81958254949387,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        25.99581477314012,
+        26.90840642781246,
+        29.416578960061756,
+        25.524326745233218
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 1,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 0.885,
+        "cpuMsPerDeliveredStep": 22.125,
+        "accessiblePssMiB": 45.4881591796875,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.13,
+        "samplerCpuPercent": 0.49075035544843515,
+        "latencyMedianMs": 25.920931497239508
+      },
+      "B": {
+        "primaryCpuSeconds": 0.8300000000000001,
+        "cpuMsPerDeliveredStep": 20.75,
+        "accessiblePssMiB": 52.182088216145836,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.13,
+        "samplerCpuPercent": 0.9813281521575727,
+        "latencyMedianMs": 23.40094574901741
+      },
+      "cpuReductionPercent": 6.214689265536721,
+      "accessiblePssReductionPercent": -14.715761545803495,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        29.477707290837003,
+        40.7891665015517,
+        25.964297792276177,
+        27.45151300544351
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 1,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 0.9,
+        "cpuMsPerDeliveredStep": 22.5,
+        "accessiblePssMiB": 45.499593098958336,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.14500000000000002,
+        "samplerCpuPercent": 0.7355549345975559,
+        "latencyMedianMs": 26.003452752775047
+      },
+      "B": {
+        "primaryCpuSeconds": 0.795,
+        "cpuMsPerDeliveredStep": 19.875,
+        "accessiblePssMiB": 52.26566569010417,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.135,
+        "samplerCpuPercent": 1.22506457379253,
+        "latencyMedianMs": 22.752337987185456
+      },
+      "cpuReductionPercent": 11.66666666666667,
+      "accessiblePssReductionPercent": -14.870622197499905,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        28.43303813977623,
+        34.27499999906126,
+        38.75742275977046,
+        28.458296133764
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 2,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.19,
+        "cpuMsPerDeliveredStep": 14.875,
+        "accessiblePssMiB": 45.60725911458333,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.7342237266352645,
+        "latencyMedianMs": 31.66391823469894
+      },
+      "B": {
+        "primaryCpuSeconds": 1.17,
+        "cpuMsPerDeliveredStep": 14.625000000000002,
+        "accessiblePssMiB": 77.2652587890625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 1.4713209669999416,
+        "latencyMedianMs": 31.381471497297753
+      },
+      "cpuReductionPercent": 1.6806722689075682,
+      "accessiblePssReductionPercent": -69.41438772924691,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        }
+      ],
+      "backgroundCpuPercent": [
+        22.972103552610292,
+        26.98881015568066,
+        23.52840026267684,
+        82.47307015631996
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 2,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.185,
+        "cpuMsPerDeliveredStep": 14.812500000000002,
+        "accessiblePssMiB": 45.68277994791667,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.9812948700784232,
+        "latencyMedianMs": 30.972033251600806
+      },
+      "B": {
+        "primaryCpuSeconds": 1.19,
+        "cpuMsPerDeliveredStep": 14.875000000000002,
+        "accessiblePssMiB": 77.34248860677083,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 1.4696110152370567,
+        "latencyMedianMs": 32.15085925330641
+      },
+      "cpuReductionPercent": -0.42194092827003704,
+      "accessiblePssReductionPercent": -69.303375790505,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        }
+      ],
+      "backgroundCpuPercent": [
+        123.49020518388915,
+        80.91034165260558,
+        24.95812346180002,
+        29.358121244413162
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 2,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.1800000000000002,
+        "cpuMsPerDeliveredStep": 14.750000000000002,
+        "accessiblePssMiB": 45.675944010416664,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.7373302826798194,
+        "latencyMedianMs": 31.44047975365538
+      },
+      "B": {
+        "primaryCpuSeconds": 1.185,
+        "cpuMsPerDeliveredStep": 14.812500000000002,
+        "accessiblePssMiB": 77.343994140625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 1.4726315184560237,
+        "latencyMedianMs": 31.649021497287322
+      },
+      "cpuReductionPercent": -0.4237288135593209,
+      "accessiblePssReductionPercent": -69.33201013423226,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        }
+      ],
+      "backgroundCpuPercent": [
+        24.59518199641682,
+        29.89680541715675,
+        25.56542463392657,
+        34.85058327071056
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 2,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.2199999999999998,
+        "cpuMsPerDeliveredStep": 15.249999999999998,
+        "accessiblePssMiB": 45.662190755208336,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.7341591727554262,
+        "latencyMedianMs": 32.12010450079106
+      },
+      "B": {
+        "primaryCpuSeconds": 1.255,
+        "cpuMsPerDeliveredStep": 15.6875,
+        "accessiblePssMiB": 77.3253173828125,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.06,
+        "samplerCpuPercent": 1.223856066649495,
+        "latencyMedianMs": 33.25468949333299
+      },
+      "cpuReductionPercent": -2.868852459016402,
+      "accessiblePssReductionPercent": -69.34211018772154,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        }
+      ],
+      "backgroundCpuPercent": [
+        130.74078348787992,
+        130.71270348512985,
+        130.21099953188627,
+        131.53740454362008
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 4,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 2.375,
+        "cpuMsPerDeliveredStep": 14.843749999999998,
+        "accessiblePssMiB": 45.898600260416664,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 0.8101433909052953,
+        "latencyMedianMs": 61.39430875919061
+      },
+      "B": {
+        "primaryCpuSeconds": 2.415,
+        "cpuMsPerDeliveredStep": 15.09375,
+        "accessiblePssMiB": 126.67936197916667,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 1.9042829677936286,
+        "latencyMedianMs": 63.71851049334509
+      },
+      "cpuReductionPercent": -1.6842105263157992,
+      "accessiblePssReductionPercent": -175.99831206272322,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        }
+      ],
+      "backgroundCpuPercent": [
+        135.7177886545805,
+        73.59534373698908,
+        128.40866054030033,
+        54.49062307847993
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 4,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 2.29,
+        "cpuMsPerDeliveredStep": 14.3125,
+        "accessiblePssMiB": 46.048299153645836,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.07999999999999999,
+        "samplerCpuPercent": 0.6247027999145407,
+        "latencyMedianMs": 59.873217753192876
+      },
+      "B": {
+        "primaryCpuSeconds": 2.3400000000000003,
+        "cpuMsPerDeliveredStep": 14.625000000000002,
+        "accessiblePssMiB": 126.76944986979166,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 1.3819532264806513,
+        "latencyMedianMs": 62.1463374918676
+      },
+      "cpuReductionPercent": -2.183406113537134,
+      "accessiblePssReductionPercent": -175.29670411237066,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        }
+      ],
+      "backgroundCpuPercent": [
+        64.21646613246156,
+        28.766879487846722,
+        25.732180148224785,
+        28.152848005500587
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 4,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 2.3499999999999996,
+        "cpuMsPerDeliveredStep": 14.6875,
+        "accessiblePssMiB": 46.091552734375,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 0.6027584117644439,
+        "latencyMedianMs": 61.19672649947461
+      },
+      "B": {
+        "primaryCpuSeconds": 2.48,
+        "cpuMsPerDeliveredStep": 15.5,
+        "accessiblePssMiB": 126.8248291015625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 1.3245392041799393,
+        "latencyMedianMs": 65.08376174315345
+      },
+      "cpuReductionPercent": -5.53191489361704,
+      "accessiblePssReductionPercent": -175.15850861534713,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        }
+      ],
+      "backgroundCpuPercent": [
+        128.25654222023684,
+        111.0593447896775,
+        27.82511791126396,
+        34.34621114129489
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "poll",
+      "fanout": 4,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 2.2750000000000004,
+        "cpuMsPerDeliveredStep": 14.218750000000002,
+        "accessiblePssMiB": 46.10030110677083,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 0.8367922597489047,
+        "latencyMedianMs": 59.18510850460734
+      },
+      "B": {
+        "primaryCpuSeconds": 2.375,
+        "cpuMsPerDeliveredStep": 14.84375,
+        "accessiblePssMiB": 126.87788899739584,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 1.9418317545205643,
+        "latencyMedianMs": 62.902059755288064
+      },
+      "cpuReductionPercent": -4.39560439560438,
+      "accessiblePssReductionPercent": -175.22138890923875,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        }
+      ],
+      "backgroundCpuPercent": [
+        24.30061315494443,
+        28.535086285450262,
+        33.24549135284414,
+        27.57586727745648
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 1,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.03,
+        "cpuMsPerDeliveredStep": 25.75,
+        "accessiblePssMiB": 46.20845540364583,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.12,
+        "samplerCpuPercent": 1.2278934683770317,
+        "latencyMedianMs": 27.793288500106428
+      },
+      "B": {
+        "primaryCpuSeconds": 1.07,
+        "cpuMsPerDeliveredStep": 26.75,
+        "accessiblePssMiB": 52.93477376302083,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.095,
+        "samplerCpuPercent": 0.9818824669481647,
+        "latencyMedianMs": 28.01913950679591
+      },
+      "cpuReductionPercent": -3.8834951456310662,
+      "accessiblePssReductionPercent": -14.556466561408365,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        35.81647541036888,
+        26.554015602368857,
+        27.447920487381367,
+        34.92763308758725
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 1,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.0299999999999998,
+        "cpuMsPerDeliveredStep": 25.749999999999996,
+        "accessiblePssMiB": 46.16145833333333,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.12,
+        "samplerCpuPercent": 0.9804193820306553,
+        "latencyMedianMs": 27.74591300112661
+      },
+      "B": {
+        "primaryCpuSeconds": 1.075,
+        "cpuMsPerDeliveredStep": 26.874999999999996,
+        "accessiblePssMiB": 52.98404947916667,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.11,
+        "samplerCpuPercent": 0.9807297656621838,
+        "latencyMedianMs": 28.891420239233412
+      },
+      "cpuReductionPercent": -4.368932038834972,
+      "accessiblePssReductionPercent": -14.77984316822749,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        27.012658350287893,
+        26.004647482034756,
+        26.9541821772331,
+        28.867528218590742
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 1,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.075,
+        "cpuMsPerDeliveredStep": 26.874999999999996,
+        "accessiblePssMiB": 46.176228841145836,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.11,
+        "samplerCpuPercent": 0.9823126764106973,
+        "latencyMedianMs": 28.7653609921108
+      },
+      "B": {
+        "primaryCpuSeconds": 1.1149999999999998,
+        "cpuMsPerDeliveredStep": 27.874999999999996,
+        "accessiblePssMiB": 52.938232421875,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.9828128873556595,
+        "latencyMedianMs": 30.279797996627167
+      },
+      "cpuReductionPercent": -3.7209302325581284,
+      "accessiblePssReductionPercent": -14.643906075551595,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        25.022958355956924,
+        23.58878111893653,
+        28.991416895291067,
+        26.54998744339975
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 1,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.02,
+        "cpuMsPerDeliveredStep": 25.5,
+        "accessiblePssMiB": 46.19063313802083,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.491425117317663,
+        "latencyMedianMs": 26.61703400372062
+      },
+      "B": {
+        "primaryCpuSeconds": 0.99,
+        "cpuMsPerDeliveredStep": 24.75,
+        "accessiblePssMiB": 52.877888997395836,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 1.22765873730288,
+        "latencyMedianMs": 25.515622248349246
+      },
+      "cpuReductionPercent": 2.941176470588236,
+      "accessiblePssReductionPercent": -14.477515039451871,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        28.46360540562963,
+        80.12266617038088,
+        121.70329483221748,
+        90.5461087826267
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 2,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.605,
+        "cpuMsPerDeliveredStep": 20.0625,
+        "accessiblePssMiB": 46.46004231770833,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.06,
+        "samplerCpuPercent": 0.7354626945054881,
+        "latencyMedianMs": 35.75907949561952
+      },
+      "B": {
+        "primaryCpuSeconds": 1.88,
+        "cpuMsPerDeliveredStep": 23.5,
+        "accessiblePssMiB": 78.12223307291666,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 1.2212483667490714,
+        "latencyMedianMs": 34.69956149638165
+      },
+      "cpuReductionPercent": -17.133956386292827,
+      "accessiblePssReductionPercent": -68.14929383553365,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        }
+      ],
+      "backgroundCpuPercent": [
+        25.014856838285596,
+        22.45831858374261,
+        29.334713471534812,
+        25.49138800064958
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 2,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.625,
+        "cpuMsPerDeliveredStep": 20.3125,
+        "accessiblePssMiB": 46.5277099609375,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.06,
+        "samplerCpuPercent": 0.9805447426843099,
+        "latencyMedianMs": 36.12330173928058
+      },
+      "B": {
+        "primaryCpuSeconds": 1.89,
+        "cpuMsPerDeliveredStep": 23.625,
+        "accessiblePssMiB": 78.23710123697917,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 1.2269871245512576,
+        "latencyMedianMs": 34.39454025647137
+      },
+      "cpuReductionPercent": -16.307692307692314,
+      "accessiblePssReductionPercent": -68.15162685346732,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        }
+      ],
+      "backgroundCpuPercent": [
+        24.95487860668267,
+        29.413923731079763,
+        28.51506381390729,
+        24.561669872761897
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 2,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.6400000000000001,
+        "cpuMsPerDeliveredStep": 20.5,
+        "accessiblePssMiB": 46.6151123046875,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.49159742299546094,
+        "latencyMedianMs": 34.992480745131616
+      },
+      "B": {
+        "primaryCpuSeconds": 1.8249999999999997,
+        "cpuMsPerDeliveredStep": 22.812499999999996,
+        "accessiblePssMiB": 78.25675455729166,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 1.4689391382624133,
+        "latencyMedianMs": 34.21319973858772
+      },
+      "cpuReductionPercent": -11.280487804878025,
+      "accessiblePssReductionPercent": -67.87850696526661,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        }
+      ],
+      "backgroundCpuPercent": [
+        24.609319703801532,
+        27.906016736483295,
+        26.444529963936375,
+        34.86160008595728
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 2,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.6400000000000001,
+        "cpuMsPerDeliveredStep": 20.5,
+        "accessiblePssMiB": 46.83544921875,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.4905411878707557,
+        "latencyMedianMs": 35.453478500130586
+      },
+      "B": {
+        "primaryCpuSeconds": 1.855,
+        "cpuMsPerDeliveredStep": 23.187499999999996,
+        "accessiblePssMiB": 78.49515787760416,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 1.4690977870102833,
+        "latencyMedianMs": 34.44938474422088
+      },
+      "cpuReductionPercent": -13.109756097560975,
+      "accessiblePssReductionPercent": -67.59774740492846,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        }
+      ],
+      "backgroundCpuPercent": [
+        24.024032846367277,
+        27.447139218788507,
+        32.29188854916603,
+        26.99377951169741
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 4,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 3.305,
+        "cpuMsPerDeliveredStep": 20.65625,
+        "accessiblePssMiB": 47.480794270833336,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.375967589973106,
+        "latencyMedianMs": 65.80942250002408
+      },
+      "B": {
+        "primaryCpuSeconds": 3.6599999999999997,
+        "cpuMsPerDeliveredStep": 22.875,
+        "accessiblePssMiB": 128.135009765625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.10500000000000001,
+        "samplerCpuPercent": 1.7216454968637147,
+        "latencyMedianMs": 56.73996500991052
+      },
+      "cpuReductionPercent": -10.741301059001508,
+      "accessiblePssReductionPercent": -169.86703094041587,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        }
+      ],
+      "backgroundCpuPercent": [
+        33.95646747624269,
+        30.303762538843586,
+        31.665477271465647,
+        36.66978191413534
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 4,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 3.4450000000000003,
+        "cpuMsPerDeliveredStep": 21.53125,
+        "accessiblePssMiB": 48.08085123697917,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.5561698502235187,
+        "latencyMedianMs": 66.79001499287551
+      },
+      "B": {
+        "primaryCpuSeconds": 3.8449999999999998,
+        "cpuMsPerDeliveredStep": 24.03125,
+        "accessiblePssMiB": 128.66780598958334,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 1.4470521744630027,
+        "latencyMedianMs": 59.423278260510415
+      },
+      "cpuReductionPercent": -11.611030478954998,
+      "accessiblePssReductionPercent": -167.60717141926227,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        }
+      ],
+      "backgroundCpuPercent": [
+        101.84690816377432,
+        138.13829361608097,
+        38.51351585314626,
+        45.29034493451593
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 4,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 3.3549999999999995,
+        "cpuMsPerDeliveredStep": 20.96875,
+        "accessiblePssMiB": 48.598063151041664,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.5587046886253981,
+        "latencyMedianMs": 66.28272424131865
+      },
+      "B": {
+        "primaryCpuSeconds": 3.66,
+        "cpuMsPerDeliveredStep": 22.875,
+        "accessiblePssMiB": 129.213134765625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.095,
+        "samplerCpuPercent": 1.710956254742643,
+        "latencyMedianMs": 56.72322874306701
+      },
+      "cpuReductionPercent": -9.090909090909104,
+      "accessiblePssReductionPercent": -165.8812437936745,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        }
+      ],
+      "backgroundCpuPercent": [
+        31.787270704690656,
+        32.580132539856464,
+        31.183477832620525,
+        47.66209387935052
+      ]
+    },
+    {
+      "pair": "ipc-ssh",
+      "mode": "push",
+      "fanout": 4,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 3.335,
+        "cpuMsPerDeliveredStep": 20.84375,
+        "accessiblePssMiB": 48.67626953125,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.095,
+        "samplerCpuPercent": 0.5593031355903093,
+        "latencyMedianMs": 65.93545599025674
+      },
+      "B": {
+        "primaryCpuSeconds": 3.71,
+        "cpuMsPerDeliveredStep": 23.1875,
+        "accessiblePssMiB": 129.334228515625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.095,
+        "samplerCpuPercent": 1.690820713215147,
+        "latencyMedianMs": 57.51220651291078
+      },
+      "cpuReductionPercent": -11.244377811094463,
+      "accessiblePssReductionPercent": -165.70283581939833,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        }
+      ],
+      "backgroundCpuPercent": [
+        30.4342839107654,
+        31.47028578106284,
+        36.551851525501235,
+        31.233453078880927
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 1,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 0.78,
+        "cpuMsPerDeliveredStep": 19.5,
+        "accessiblePssMiB": 55.48555501302083,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.125,
+        "samplerCpuPercent": 0.49105600834697155,
+        "latencyMedianMs": 23.317586739722174
+      },
+      "B": {
+        "primaryCpuSeconds": 0.875,
+        "cpuMsPerDeliveredStep": 21.875,
+        "accessiblePssMiB": 51.26603190104167,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.125,
+        "samplerCpuPercent": 0.9836372755044049,
+        "latencyMedianMs": 25.37815723917447
+      },
+      "cpuReductionPercent": -12.17948717948718,
+      "accessiblePssReductionPercent": 7.604723627598132,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        72.31511111897774,
+        77.62341609317265,
+        31.01803940823399,
+        38.72362633651374
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 1,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 0.8049999999999999,
+        "cpuMsPerDeliveredStep": 20.125,
+        "accessiblePssMiB": 56.384562174479164,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.135,
+        "samplerCpuPercent": 0.981641490237451,
+        "latencyMedianMs": 23.811335253412835
+      },
+      "B": {
+        "primaryCpuSeconds": 0.8,
+        "cpuMsPerDeliveredStep": 20.0,
+        "accessiblePssMiB": 51.792724609375,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.10500000000000001,
+        "samplerCpuPercent": 0.49134288408587423,
+        "latencyMedianMs": 20.632089996070135
+      },
+      "cpuReductionPercent": 0.6211180124223503,
+      "accessiblePssReductionPercent": 8.143785085880339,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        36.81754078601654,
+        121.87467369582868,
+        135.09529888290467,
+        37.787052874640075
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 1,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 0.8,
+        "cpuMsPerDeliveredStep": 20.0,
+        "accessiblePssMiB": 56.4918212890625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.13,
+        "samplerCpuPercent": 0.7367258794281779,
+        "latencyMedianMs": 23.215575252834242
+      },
+      "B": {
+        "primaryCpuSeconds": 0.6699999999999999,
+        "cpuMsPerDeliveredStep": 16.75,
+        "accessiblePssMiB": 51.81119791666667,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 0.9827713881948592,
+        "latencyMedianMs": 17.016490739479195
+      },
+      "cpuReductionPercent": 16.250000000000007,
+      "accessiblePssReductionPercent": 8.2854885284112,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        34.88530083554632,
+        119.23806335764058,
+        123.01994235978415,
+        45.150585001537955
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 1,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 0.775,
+        "cpuMsPerDeliveredStep": 19.375,
+        "accessiblePssMiB": 56.466593424479164,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.125,
+        "samplerCpuPercent": 0.7365678278150282,
+        "latencyMedianMs": 21.99262525391532
+      },
+      "B": {
+        "primaryCpuSeconds": 0.9,
+        "cpuMsPerDeliveredStep": 22.5,
+        "accessiblePssMiB": 51.808919270833336,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.13,
+        "samplerCpuPercent": 0.4908423576663631,
+        "latencyMedianMs": 25.70847250171937
+      },
+      "cpuReductionPercent": -16.129032258064523,
+      "accessiblePssReductionPercent": 8.248548161268488,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        32.33801285604856,
+        37.78511870360598,
+        38.786542153040266,
+        51.12461972133075
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 2,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.2,
+        "cpuMsPerDeliveredStep": 15.0,
+        "accessiblePssMiB": 81.750732421875,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 1.2249395773906244,
+        "latencyMedianMs": 32.0143442513654
+      },
+      "B": {
+        "primaryCpuSeconds": 1.23,
+        "cpuMsPerDeliveredStep": 15.375,
+        "accessiblePssMiB": 52.25870768229167,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.24588356742703335,
+        "latencyMedianMs": 32.421184492704924
+      },
+      "cpuReductionPercent": -2.5000000000000133,
+      "accessiblePssReductionPercent": 36.075548029820226,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        }
+      ],
+      "backgroundCpuPercent": [
+        26.477111235319498,
+        31.39510292302029,
+        48.193179215698535,
+        33.28357004029232
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 2,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.165,
+        "cpuMsPerDeliveredStep": 14.562500000000004,
+        "accessiblePssMiB": 82.28426106770834,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 1.2267514745299035,
+        "latencyMedianMs": 30.9757592403912
+      },
+      "B": {
+        "primaryCpuSeconds": 1.24,
+        "cpuMsPerDeliveredStep": 15.5,
+        "accessiblePssMiB": 52.864095052083336,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.7361903974750228,
+        "latencyMedianMs": 32.48368023196235
+      },
+      "cpuReductionPercent": -6.4377682403433445,
+      "accessiblePssReductionPercent": 35.75430542107726,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        }
+      ],
+      "backgroundCpuPercent": [
+        30.453925096042305,
+        55.486110242466395,
+        25.515185037691218,
+        28.9078148843652
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 2,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.2200000000000002,
+        "cpuMsPerDeliveredStep": 15.250000000000002,
+        "accessiblePssMiB": 82.56656901041667,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 1.4716547305870353,
+        "latencyMedianMs": 31.984213754185475
+      },
+      "B": {
+        "primaryCpuSeconds": 1.225,
+        "cpuMsPerDeliveredStep": 15.3125,
+        "accessiblePssMiB": 52.976725260416664,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.9778594247578556,
+        "latencyMedianMs": 32.30263550358359
+      },
+      "cpuReductionPercent": -0.4098360655737654,
+      "accessiblePssReductionPercent": 35.83756004959698,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        }
+      ],
+      "backgroundCpuPercent": [
+        28.88925793250754,
+        28.86777163908188,
+        31.75738537976362,
+        54.5514732751637
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 2,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.2,
+        "cpuMsPerDeliveredStep": 15.0,
+        "accessiblePssMiB": 82.63382975260417,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 1.4710265170795231,
+        "latencyMedianMs": 32.2417114948621
+      },
+      "B": {
+        "primaryCpuSeconds": 1.225,
+        "cpuMsPerDeliveredStep": 15.3125,
+        "accessiblePssMiB": 52.97526041666667,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 0.9804970991605253,
+        "latencyMedianMs": 32.19382850511465
+      },
+      "cpuReductionPercent": -2.083333333333348,
+      "accessiblePssReductionPercent": 35.89155848728265,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966812
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966812
+        }
+      ],
+      "backgroundCpuPercent": [
+        25.487224767822994,
+        26.928603075554634,
+        26.507851244123813,
+        94.18471812037097
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 4,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 2.3850000000000002,
+        "cpuMsPerDeliveredStep": 14.906250000000002,
+        "accessiblePssMiB": 131.93302408854166,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 1.3474294521944201,
+        "latencyMedianMs": 63.350687247293536
+      },
+      "B": {
+        "primaryCpuSeconds": 2.295,
+        "cpuMsPerDeliveredStep": 14.34375,
+        "accessiblePssMiB": 53.9639892578125,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.8332057033154094,
+        "latencyMedianMs": 59.25584024225827
+      },
+      "cpuReductionPercent": 3.7735849056603876,
+      "accessiblePssReductionPercent": 59.097436270696946,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        }
+      ],
+      "backgroundCpuPercent": [
+        126.26734017247185,
+        29.1953229100765,
+        39.532317865574356,
+        31.731107988138092
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 4,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 2.3150000000000004,
+        "cpuMsPerDeliveredStep": 14.468750000000002,
+        "accessiblePssMiB": 132.21773274739584,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 1.5983213673092358,
+        "latencyMedianMs": 61.552044506242964
+      },
+      "B": {
+        "primaryCpuSeconds": 2.33,
+        "cpuMsPerDeliveredStep": 14.562500000000002,
+        "accessiblePssMiB": 54.1138916015625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 0.8217805575128168,
+        "latencyMedianMs": 59.99945000075968
+      },
+      "cpuReductionPercent": -0.647948164146861,
+      "accessiblePssReductionPercent": 59.072137695063965,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        }
+      ],
+      "backgroundCpuPercent": [
+        42.657095368986035,
+        45.71276111788124,
+        56.573635546970365,
+        30.838210553443673
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 4,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 2.33,
+        "cpuMsPerDeliveredStep": 14.5625,
+        "accessiblePssMiB": 132.34322102864584,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 1.3945062386188134,
+        "latencyMedianMs": 61.53735275438521
+      },
+      "B": {
+        "primaryCpuSeconds": 2.33,
+        "cpuMsPerDeliveredStep": 14.5625,
+        "accessiblePssMiB": 54.06502278645833,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.6108158624294789,
+        "latencyMedianMs": 60.266854241490364
+      },
+      "cpuReductionPercent": 0.0,
+      "accessiblePssReductionPercent": 59.14787144650507,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        }
+      ],
+      "backgroundCpuPercent": [
+        28.52652208605734,
+        58.8219988313715,
+        30.77296800228214,
+        40.57803355203349
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "poll",
+      "fanout": 4,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 2.3200000000000003,
+        "cpuMsPerDeliveredStep": 14.5,
+        "accessiblePssMiB": 132.74064127604169,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 1.5934740590233256,
+        "latencyMedianMs": 61.698931007413194
+      },
+      "B": {
+        "primaryCpuSeconds": 2.3400000000000003,
+        "cpuMsPerDeliveredStep": 14.625000000000004,
+        "accessiblePssMiB": 54.427937825520836,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.8181245182787371,
+        "latencyMedianMs": 60.16575299872784
+      },
+      "cpuReductionPercent": -0.8620689655172376,
+      "accessiblePssReductionPercent": 58.996779507539934,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933624
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933624
+        }
+      ],
+      "backgroundCpuPercent": [
+        29.09536747212512,
+        49.97529782455425,
+        29.002855998254674,
+        30.65911708947155
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 1,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.03,
+        "cpuMsPerDeliveredStep": 25.75,
+        "accessiblePssMiB": 58.7945556640625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.9813846726647808,
+        "latencyMedianMs": 27.41753924783552
+      },
+      "B": {
+        "primaryCpuSeconds": 0.9949999999999999,
+        "cpuMsPerDeliveredStep": 24.874999999999996,
+        "accessiblePssMiB": 54.06254069010417,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.06,
+        "samplerCpuPercent": 0.486333776881262,
+        "latencyMedianMs": 26.25202875060495
+      },
+      "cpuReductionPercent": 3.398058252427194,
+      "accessiblePssReductionPercent": 8.048389719952798,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        64.79171641825317,
+        133.16147254876836,
+        95.29676765731872,
+        25.998531816631733
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 1,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.105,
+        "cpuMsPerDeliveredStep": 27.624999999999993,
+        "accessiblePssMiB": 58.78971354166667,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.11,
+        "samplerCpuPercent": 0.9825577828559624,
+        "latencyMedianMs": 29.18627349572489
+      },
+      "B": {
+        "primaryCpuSeconds": 1.105,
+        "cpuMsPerDeliveredStep": 27.625,
+        "accessiblePssMiB": 54.02978515625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.47831396781865976,
+        "latencyMedianMs": 40.4819372415659
+      },
+      "cpuReductionPercent": 0.0,
+      "accessiblePssReductionPercent": 8.096532707278993,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        25.556178460433173,
+        40.534394045507206,
+        38.275798111325145,
+        26.027919060539872
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 1,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.065,
+        "cpuMsPerDeliveredStep": 26.624999999999996,
+        "accessiblePssMiB": 58.788818359375,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.10500000000000001,
+        "samplerCpuPercent": 0.9830096693152539,
+        "latencyMedianMs": 28.63716374122305
+      },
+      "B": {
+        "primaryCpuSeconds": 1.145,
+        "cpuMsPerDeliveredStep": 28.625000000000004,
+        "accessiblePssMiB": 54.057902018229164,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.7010686897473435,
+        "latencyMedianMs": 51.4875210064929
+      },
+      "cpuReductionPercent": -7.511737089201875,
+      "accessiblePssReductionPercent": 8.047306398005539,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        50.64575879713892,
+        41.731107252951524,
+        26.13095895076537,
+        24.073860388099796
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 1,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.11,
+        "cpuMsPerDeliveredStep": 27.750000000000004,
+        "accessiblePssMiB": 58.7763671875,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 6,
+        "fixtureCpuSeconds": 0.11,
+        "samplerCpuPercent": 1.2275060205689385,
+        "latencyMedianMs": 29.103590997692663
+      },
+      "B": {
+        "primaryCpuSeconds": 1.105,
+        "cpuMsPerDeliveredStep": 27.624999999999996,
+        "accessiblePssMiB": 54.04170735677083,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.48113227131457326,
+        "latencyMedianMs": 40.08346275804797
+      },
+      "cpuReductionPercent": 0.45045045045045695,
+      "accessiblePssReductionPercent": 8.055380176228544,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        23.087611881727533,
+        23.172067911520443,
+        21.042703492331285,
+        21.58936311367122
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 2,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.8199999999999998,
+        "cpuMsPerDeliveredStep": 22.75,
+        "accessiblePssMiB": 83.878173828125,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.9782830593597742,
+        "latencyMedianMs": 33.724946741131134
+      },
+      "B": {
+        "primaryCpuSeconds": 1.655,
+        "cpuMsPerDeliveredStep": 20.6875,
+        "accessiblePssMiB": 54.24593098958333,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.06,
+        "samplerCpuPercent": 0.737208318942613,
+        "latencyMedianMs": 35.529670742107555
+      },
+      "cpuReductionPercent": 9.065934065934055,
+      "accessiblePssReductionPercent": 35.327715764605436,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        }
+      ],
+      "backgroundCpuPercent": [
+        26.424588829089558,
+        22.109311138481473,
+        23.605468189730416,
+        23.449603487632842
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 2,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.8199999999999998,
+        "cpuMsPerDeliveredStep": 22.75,
+        "accessiblePssMiB": 83.8472900390625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 1.226046594880294,
+        "latencyMedianMs": 34.20145424752263
+      },
+      "B": {
+        "primaryCpuSeconds": 1.65,
+        "cpuMsPerDeliveredStep": 20.625,
+        "accessiblePssMiB": 54.2982177734375,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 0.49010700178029687,
+        "latencyMedianMs": 35.94705399882514
+      },
+      "cpuReductionPercent": 9.340659340659341,
+      "accessiblePssReductionPercent": 35.24153523847793,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        }
+      ],
+      "backgroundCpuPercent": [
+        21.493544935346705,
+        35.18512678371761,
+        21.62739423328314,
+        118.00910996140456
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 2,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.8399999999999999,
+        "cpuMsPerDeliveredStep": 23.0,
+        "accessiblePssMiB": 83.89912923177084,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 0.9811642175457693,
+        "latencyMedianMs": 34.99305775039829
+      },
+      "B": {
+        "primaryCpuSeconds": 1.685,
+        "cpuMsPerDeliveredStep": 21.0625,
+        "accessiblePssMiB": 54.257080078125,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.9817664734103057,
+        "latencyMedianMs": 36.01614075159887
+      },
+      "cpuReductionPercent": 8.423913043478247,
+      "accessiblePssReductionPercent": 35.330580215868345,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        }
+      ],
+      "backgroundCpuPercent": [
+        125.8362565185315,
+        33.9183147910787,
+        20.60748434135664,
+        50.92009941410657
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 2,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 1.83,
+        "cpuMsPerDeliveredStep": 22.875,
+        "accessiblePssMiB": 83.91788736979166,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 10,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 1.4690437216767944,
+        "latencyMedianMs": 34.296118494239636
+      },
+      "B": {
+        "primaryCpuSeconds": 1.665,
+        "cpuMsPerDeliveredStep": 20.8125,
+        "accessiblePssMiB": 54.350992838541664,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.4914027228623351,
+        "latencyMedianMs": 35.53171724342974
+      },
+      "cpuReductionPercent": 9.016393442622949,
+      "accessiblePssReductionPercent": 35.23312544912008,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931016
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931016
+        }
+      ],
+      "backgroundCpuPercent": [
+        22.529053267394772,
+        23.055505994629897,
+        23.13634995442959,
+        32.80323038890879
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 4,
+      "block": 0,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 3.6100000000000003,
+        "cpuMsPerDeliveredStep": 22.5625,
+        "accessiblePssMiB": 133.508056640625,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 1.530680969451181,
+        "latencyMedianMs": 55.70588224509265
+      },
+      "B": {
+        "primaryCpuSeconds": 3.405,
+        "cpuMsPerDeliveredStep": 21.28125,
+        "accessiblePssMiB": 55.18672688802083,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.37120090996246224,
+        "latencyMedianMs": 66.18175798939774
+      },
+      "cpuReductionPercent": 5.678670360110816,
+      "accessiblePssReductionPercent": 58.664122393323694,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        }
+      ],
+      "backgroundCpuPercent": [
+        32.43151832788905,
+        24.789802028754252,
+        43.28225354821683,
+        28.34664937328472
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 4,
+      "block": 1,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 3.63,
+        "cpuMsPerDeliveredStep": 22.6875,
+        "accessiblePssMiB": 133.76444498697919,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 1.9707168179043792,
+        "latencyMedianMs": 55.558814252435695
+      },
+      "B": {
+        "primaryCpuSeconds": 3.36,
+        "cpuMsPerDeliveredStep": 21.0,
+        "accessiblePssMiB": 55.612019856770836,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.561366732700672,
+        "latencyMedianMs": 65.53524424089119
+      },
+      "cpuReductionPercent": 7.438016528925617,
+      "accessiblePssReductionPercent": 58.42540978495131,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        }
+      ],
+      "backgroundCpuPercent": [
+        27.769904691388575,
+        34.44338618972844,
+        25.80352982810004,
+        32.57761773780021
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 4,
+      "block": 2,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 3.6799999999999997,
+        "cpuMsPerDeliveredStep": 23.0,
+        "accessiblePssMiB": 133.80106608072919,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 1.7111109580851034,
+        "latencyMedianMs": 56.72859548940323
+      },
+      "B": {
+        "primaryCpuSeconds": 3.385,
+        "cpuMsPerDeliveredStep": 21.15625,
+        "accessiblePssMiB": 55.644205729166664,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 0.5623200730352909,
+        "latencyMedianMs": 65.6007542493171
+      },
+      "cpuReductionPercent": 8.016304347826086,
+      "accessiblePssReductionPercent": 58.41273365072173,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        }
+      ],
+      "backgroundCpuPercent": [
+        30.7675965200321,
+        27.648085672513275,
+        28.163151251711042,
+        84.03843201301888
+      ]
+    },
+    {
+      "pair": "ssh-wss",
+      "mode": "push",
+      "fanout": 4,
+      "block": 3,
+      "status": "exact_work_matched",
+      "A": {
+        "primaryCpuSeconds": 3.84,
+        "cpuMsPerDeliveredStep": 24.0,
+        "accessiblePssMiB": 133.9942626953125,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 18,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 1.672022073048864,
+        "latencyMedianMs": 58.509855494776275
+      },
+      "B": {
+        "primaryCpuSeconds": 3.445,
+        "cpuMsPerDeliveredStep": 21.53125,
+        "accessiblePssMiB": 55.77058919270833,
+        "unknownPssRoles": 0,
+        "primaryProcesses": 2,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.5576452209809675,
+        "latencyMedianMs": 66.43858950701542
+      },
+      "cpuReductionPercent": 10.286458333333337,
+      "accessiblePssReductionPercent": 58.378375259600325,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862032
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862032
+        }
+      ],
+      "backgroundCpuPercent": [
+        123.55131237455345,
+        50.66655904331293,
+        27.209346349998043,
+        34.89440793615498
+      ]
+    }
+  ],
+  "measurementHarnessInputSha256": "7d4797b627eab32952b6a82e41760e27750c83af7cc4c94945abc2af7dff179d",
+  "summaryToolSha256": "988f1bb1f2bae245209a5d290acfd107dcf395350e0b734a34d6dd1efff4f933",
+  "scope": "loopback synthetic 32-row Tmux trace; persistent poll/push; fresh owned resources; shared driver caches",
+  "limits": [
+    "reader-driver includes oracle native validation, control and sampler RPC overhead",
+    "fixture cached acquisition cost separate from primary total",
+    "10ms own-tick quantization on this host",
+    "sampled memory cannot certify transient peaks",
+    "background host load remains uncontrolled",
+    "fanout compares one shared IPC/WSS publisher with independent SSH publishers",
+    "no ordinary fleet budget, real network latency or WSS operational selection acceptance",
+    "no Agent Observer imports, source edits or live tests"
+  ]
+}

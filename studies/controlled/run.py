@@ -28,7 +28,7 @@ from mesh_plus.api import Client, Endpoint, Reader, ReadGuard, reconstructed  # 
 from mesh_plus.evidence import clock_domain  # noqa: E402
 from mesh_plus.reader import PublicationState  # noqa: E402
 from mesh_plus.testing.ssh_carrier import ssh_server  # noqa: E402
-from mesh_plus.transport import boottime_ms, connect_ipc  # noqa: E402
+from mesh_plus.transport import boottime_ms, connect_ipc, finish_owned  # noqa: E402
 
 
 def fingerprints():
@@ -55,9 +55,15 @@ def inputs():
 
 
 async def spawn(*arguments):
-    return await asyncio.create_subprocess_exec(sys.executable, "-I", "-B", *map(str, arguments),
-                                               stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
-                                               stderr=asyncio.subprocess.PIPE, limit=8388609)
+    creation = asyncio.create_task(asyncio.create_subprocess_exec(
+        sys.executable, "-I", "-B", *map(str, arguments), stdin=asyncio.subprocess.PIPE,
+        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, limit=8388609))
+    try:
+        return await finish_owned(creation)
+    except BaseException:
+        if creation.done() and not creation.cancelled() and creation.exception() is None:
+            await retire(creation.result())
+        raise
 
 
 async def retire(child):
@@ -344,11 +350,17 @@ async def case(args, carrier, fanout, mode, expired=False):
                     task.cancel()
                 await asyncio.gather(*consumers, return_exceptions=True)
                 for stream in streams:
-                    await stream.aclose()
+                    try:
+                        await stream.aclose()
+                    except Exception as error:
+                        cleanup_errors.append(error)
                 for guard in guards:
                     guard.disconnect()
                 for client in clients:
-                    await client.close()
+                    try:
+                        await client.close()
+                    except Exception as error:
+                        cleanup_errors.append(error)
                 if children and hub.returncode is None:
                     try:
                         async with asyncio.timeout(3):
