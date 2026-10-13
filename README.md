@@ -69,7 +69,10 @@ acceptance gates and current evidence. The
 The [controlled networking benchmark](studies/controlled/README.md) provides
 pinned, exact-work IPC/SSH/WSS comparisons; its
 [assessment](docs/evidence/2026-10-12-controlled-performance/README.md) retains
-SSH defaults and unchanged runtime bytes.
+SSH defaults and unchanged runtime bytes. The subsequent
+[compact identity/TCP assessment](docs/evidence/2026-10-12-compact-research/README.md)
+keeps full proofs, gates binary prototypes on owner identity review and finds
+no material gain from the matched TCP/TLS carrier study.
 
 The [state contract freeze](docs/contract-freeze.md) defines the interfaces ready
 for independent implementation. [The checked lock](contracts/LOCK.json) binds

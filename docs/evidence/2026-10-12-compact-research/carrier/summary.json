@@ -1,0 +1,1283 @@
+{
+  "format": "mesh-plus.study-carrier-control.v1",
+  "cases": 96,
+  "matchedBlocks": 24,
+  "gzipSha256": "98bb7ad8a8527b8309c63e67654514f760ead30326f878bc26076df098983aff",
+  "rawSha256": "91fdf888fec7b03a03e15651a0250704ddbd305076b352f94400327a62c0e35a",
+  "summaryToolSha256": "a69a60e35f7d5a4a61d1723e6bcdf878059e9920a8fea19bf0b472e36e0abda0",
+  "measurementInputSha256": "421addce0961275b93a621fc2c66399974d5dc6ef662cf1231d1e7f00aa85abe",
+  "decisions": [
+    {
+      "mode": "poll",
+      "fanout": 1,
+      "blocks": 4,
+      "medianCpuReductionPercent": -2.6180576682554135,
+      "medianPssReductionPercent": 0.21078054362447252,
+      "cpuThresholdBlocks": 0,
+      "pssThresholdBlocks": 0,
+      "cpuRegressionsOverFivePercent": 0
+    },
+    {
+      "mode": "poll",
+      "fanout": 2,
+      "blocks": 4,
+      "medianCpuReductionPercent": -0.8394571217608449,
+      "medianPssReductionPercent": 0.248782754347171,
+      "cpuThresholdBlocks": 0,
+      "pssThresholdBlocks": 0,
+      "cpuRegressionsOverFivePercent": 0
+    },
+    {
+      "mode": "poll",
+      "fanout": 4,
+      "blocks": 4,
+      "medianCpuReductionPercent": 0.7337306250349895,
+      "medianPssReductionPercent": 0.15138743349008,
+      "cpuThresholdBlocks": 0,
+      "pssThresholdBlocks": 0,
+      "cpuRegressionsOverFivePercent": 0
+    },
+    {
+      "mode": "push",
+      "fanout": 1,
+      "blocks": 4,
+      "medianCpuReductionPercent": 1.5587044534413008,
+      "medianPssReductionPercent": 0.08198465684148282,
+      "cpuThresholdBlocks": 0,
+      "pssThresholdBlocks": 0,
+      "cpuRegressionsOverFivePercent": 0
+    },
+    {
+      "mode": "push",
+      "fanout": 2,
+      "blocks": 4,
+      "medianCpuReductionPercent": 2.3567724410421045,
+      "medianPssReductionPercent": 0.032901812592328605,
+      "cpuThresholdBlocks": 0,
+      "pssThresholdBlocks": 0,
+      "cpuRegressionsOverFivePercent": 0
+    },
+    {
+      "mode": "push",
+      "fanout": 4,
+      "blocks": 4,
+      "medianCpuReductionPercent": 2.4308098243656318,
+      "medianPssReductionPercent": 0.1445504739320591,
+      "cpuThresholdBlocks": 0,
+      "pssThresholdBlocks": 0,
+      "cpuRegressionsOverFivePercent": 0
+    }
+  ],
+  "blocks": [
+    {
+      "mode": "poll",
+      "fanout": 1,
+      "block": 0,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.8450000000000001,
+        "cpuMsPerDelivery": 21.125000000000004,
+        "accessiblePssMiB": 48.250203450520836,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 26.01371001219377,
+        "fixtureCpuSeconds": 0.14500000000000002,
+        "samplerCpuPercent": 0.490579152668442
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.875,
+        "cpuMsPerDelivery": 21.875,
+        "accessiblePssMiB": 48.51363118489583,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 26.159348752116784,
+        "fixtureCpuSeconds": 0.14,
+        "samplerCpuPercent": 0.7357345939589462
+      },
+      "cpuReductionPercent": -3.5502958579881616,
+      "pssReductionPercent": -0.5459619142230698,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        20.612818100639082,
+        20.101976552589683,
+        19.62354153758239,
+        32.855253773218415
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 1,
+      "block": 1,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.88,
+        "cpuMsPerDelivery": 22.0,
+        "accessiblePssMiB": 49.2305908203125,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 26.190693497483153,
+        "fixtureCpuSeconds": 0.14,
+        "samplerCpuPercent": 0.7352126356680979
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.845,
+        "cpuMsPerDelivery": 21.125,
+        "accessiblePssMiB": 48.958780924479164,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 25.81137925881194,
+        "fixtureCpuSeconds": 0.15,
+        "samplerCpuPercent": 0.49128912128320157
+      },
+      "cpuReductionPercent": 3.9772727272727293,
+      "pssReductionPercent": 0.55211585175855,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        24.466934781303557,
+        28.004014871806937,
+        21.125028649869385,
+        19.131188226347433
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 1,
+      "block": 2,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.865,
+        "cpuMsPerDelivery": 21.625,
+        "accessiblePssMiB": 49.64436848958333,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 25.773458990443032,
+        "fixtureCpuSeconds": 0.15000000000000002,
+        "samplerCpuPercent": 0.7375880432206319
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.885,
+        "cpuMsPerDelivery": 22.125,
+        "accessiblePssMiB": 49.557373046875,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 26.615267757733818,
+        "fixtureCpuSeconds": 0.14,
+        "samplerCpuPercent": 0.7353652291184253
+      },
+      "cpuReductionPercent": -2.3121387283236983,
+      "pssReductionPercent": 0.1752372834122773,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        23.58776503924875,
+        21.539071442200253,
+        27.534178353844837,
+        17.70775766622446
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 1,
+      "block": 3,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.855,
+        "cpuMsPerDelivery": 21.375,
+        "accessiblePssMiB": 50.151529947916664,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 25.55367750028381,
+        "fixtureCpuSeconds": 0.14500000000000002,
+        "samplerCpuPercent": 0.7352192677493936
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.88,
+        "cpuMsPerDelivery": 22.0,
+        "accessiblePssMiB": 50.02799479166667,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 26.574120252917055,
+        "fixtureCpuSeconds": 0.135,
+        "samplerCpuPercent": 0.7371827783681077
+      },
+      "cpuReductionPercent": -2.923976608187129,
+      "pssReductionPercent": 0.24632380383666774,
+      "jsonBytes": [
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        },
+        {
+          "sent": 11272,
+          "received": 483406
+        }
+      ],
+      "backgroundCpuPercent": [
+        18.13510623879023,
+        21.628123896608876,
+        30.949948006819803,
+        31.859767193962426
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 2,
+      "block": 0,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 1.19,
+        "cpuMsPerDelivery": 14.875,
+        "accessiblePssMiB": 51.15445963541667,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 31.928957752825227,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 0.9784506262448697
+      },
+      "tcp": {
+        "primaryCpuSeconds": 1.205,
+        "cpuMsPerDelivery": 15.062500000000002,
+        "accessiblePssMiB": 51.0238037109375,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 31.657187748351134,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 0.7355046705116339
+      },
+      "cpuReductionPercent": -1.26050420168069,
+      "pssReductionPercent": 0.2554145335721847,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        }
+      ],
+      "backgroundCpuPercent": [
+        18.615227318729374,
+        16.178721682913988,
+        25.014518463179762,
+        21.98593004041856
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 2,
+      "block": 1,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 1.185,
+        "cpuMsPerDelivery": 14.812500000000002,
+        "accessiblePssMiB": 51.37919108072917,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 31.604104755388107,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 0.7358033480180683
+      },
+      "tcp": {
+        "primaryCpuSeconds": 1.2000000000000002,
+        "cpuMsPerDelivery": 15.000000000000004,
+        "accessiblePssMiB": 51.201619466145836,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 31.649694239604287,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.7365965080539971
+      },
+      "cpuReductionPercent": -1.2658227848101333,
+      "pssReductionPercent": 0.34560998499242324,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        }
+      ],
+      "backgroundCpuPercent": [
+        19.079741710203074,
+        19.6626453685656,
+        20.0924906548683,
+        25.54194629013751
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 2,
+      "block": 2,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 1.195,
+        "cpuMsPerDelivery": 14.937500000000002,
+        "accessiblePssMiB": 52.12479654947917,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 31.93718398688361,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 1.2267769989022415
+      },
+      "tcp": {
+        "primaryCpuSeconds": 1.2,
+        "cpuMsPerDelivery": 15.0,
+        "accessiblePssMiB": 51.998575846354164,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 31.644576505641453,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 0.7366747656818481
+      },
+      "cpuReductionPercent": -0.4184100418409997,
+      "pssReductionPercent": 0.24215097512215733,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        }
+      ],
+      "backgroundCpuPercent": [
+        18.135963238962674,
+        20.121885069686194,
+        20.655354808649854,
+        26.0513680364801
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 2,
+      "block": 3,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 1.225,
+        "cpuMsPerDelivery": 15.3125,
+        "accessiblePssMiB": 53.06131998697917,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 32.17266049614409,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.48986398028402517
+      },
+      "tcp": {
+        "primaryCpuSeconds": 1.175,
+        "cpuMsPerDelivery": 14.687500000000002,
+        "accessiblePssMiB": 53.10750325520833,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 31.205113489704672,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 0.9797900519459315
+      },
+      "cpuReductionPercent": 4.081632653061229,
+      "pssReductionPercent": -0.08703754117027618,
+      "jsonBytes": [
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        },
+        {
+          "sent": 22544,
+          "received": 966821
+        }
+      ],
+      "backgroundCpuPercent": [
+        17.65817781435652,
+        22.02011211846939,
+        26.48452826291701,
+        21.036589915055885
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 4,
+      "block": 0,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 2.22,
+        "cpuMsPerDelivery": 13.875,
+        "accessiblePssMiB": 54.863728841145836,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 57.38092899991898,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 0.6447027570277262
+      },
+      "tcp": {
+        "primaryCpuSeconds": 2.215,
+        "cpuMsPerDelivery": 13.84375,
+        "accessiblePssMiB": 54.770222981770836,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 57.29664550017333,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 0.4295511177873198
+      },
+      "cpuReductionPercent": 0.22522522522524513,
+      "pssReductionPercent": 0.17043292781965258,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        }
+      ],
+      "backgroundCpuPercent": [
+        21.53676649146439,
+        31.16381711297332,
+        26.85510086735063,
+        21.89608969776718
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 4,
+      "block": 1,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 2.415,
+        "cpuMsPerDelivery": 15.093749999999998,
+        "accessiblePssMiB": 56.62495930989583,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 62.22470999637153,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.5961037038117802
+      },
+      "tcp": {
+        "primaryCpuSeconds": 2.385,
+        "cpuMsPerDelivery": 14.906249999999998,
+        "accessiblePssMiB": 55.674763997395836,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 61.525454504590016,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 0.39987166574374833
+      },
+      "cpuReductionPercent": 1.242236024844734,
+      "pssReductionPercent": 1.678050322826341,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        }
+      ],
+      "backgroundCpuPercent": [
+        140.64503313932093,
+        161.92696226936806,
+        136.89968812899056,
+        138.36694120485143
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 4,
+      "block": 2,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 2.4050000000000002,
+        "cpuMsPerDelivery": 15.03125,
+        "accessiblePssMiB": 59.291422526041664,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 62.09367175324587,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.5970104809638074
+      },
+      "tcp": {
+        "primaryCpuSeconds": 2.36,
+        "cpuMsPerDelivery": 14.75,
+        "accessiblePssMiB": 59.63627115885417,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 60.99302025540965,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.4054752090352153
+      },
+      "cpuReductionPercent": 1.8711018711018879,
+      "pssReductionPercent": -0.5816163925921103,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        }
+      ],
+      "backgroundCpuPercent": [
+        134.52723810020095,
+        134.50099617954822,
+        133.91731894735975,
+        133.12997036836134
+      ]
+    },
+    {
+      "mode": "poll",
+      "fanout": 4,
+      "block": 3,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 2.41,
+        "cpuMsPerDelivery": 15.0625,
+        "accessiblePssMiB": 60.26253255208333,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 62.25133424595697,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.39730252733851196
+      },
+      "tcp": {
+        "primaryCpuSeconds": 2.4299999999999997,
+        "cpuMsPerDelivery": 15.1875,
+        "accessiblePssMiB": 60.18277994791667,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 62.3026627508807,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.39526574742875925
+      },
+      "cpuReductionPercent": -0.829875518672174,
+      "pssReductionPercent": 0.1323419391605074,
+      "jsonBytes": [
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        },
+        {
+          "sent": 45088,
+          "received": 1933712
+        }
+      ],
+      "backgroundCpuPercent": [
+        134.173260179125,
+        136.27993412161237,
+        152.62076262304578,
+        136.76683694807986
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 1,
+      "block": 0,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.975,
+        "cpuMsPerDelivery": 24.375,
+        "accessiblePssMiB": 59.392862955729164,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 26.115977998415474,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.49197582698376763
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.96,
+        "cpuMsPerDelivery": 24.0,
+        "accessiblePssMiB": 59.498046875,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 25.95924725756049,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 0.4912957279281626
+      },
+      "cpuReductionPercent": 1.538461538461544,
+      "pssReductionPercent": -0.17709858396495193,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        135.44599320804028,
+        138.35970499339913,
+        138.7310855580846,
+        138.58065702005456
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 1,
+      "block": 1,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.965,
+        "cpuMsPerDelivery": 24.125,
+        "accessiblePssMiB": 59.489501953125,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 25.381377745361533,
+        "fixtureCpuSeconds": 0.07500000000000001,
+        "samplerCpuPercent": 0.4917794048744005
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.945,
+        "cpuMsPerDelivery": 23.625,
+        "accessiblePssMiB": 59.397542317708336,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 25.26714174018707,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.984099503955332
+      },
+      "cpuReductionPercent": 2.0725388601036343,
+      "pssReductionPercent": 0.15458128307936914,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        136.37819671703465,
+        136.82318560161764,
+        136.75647649796466,
+        137.54124983157877
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 1,
+      "block": 2,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.98,
+        "cpuMsPerDelivery": 24.5,
+        "accessiblePssMiB": 59.62251790364583,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 26.6091645025881,
+        "fixtureCpuSeconds": 0.095,
+        "samplerCpuPercent": 0.73797122924716
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.97,
+        "cpuMsPerDelivery": 24.25,
+        "accessiblePssMiB": 59.41398111979167,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 25.70099174772622,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.49230988994826475
+      },
+      "cpuReductionPercent": 1.0204081632653073,
+      "pssReductionPercent": 0.34976178663096436,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        134.51804528923373,
+        135.3502044817166,
+        135.91267220797388,
+        136.34851195660792
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 1,
+      "block": 3,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.95,
+        "cpuMsPerDelivery": 23.75,
+        "accessiblePssMiB": 59.3792724609375,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 24.81478849949781,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.4909599009395982
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.9349999999999999,
+        "cpuMsPerDelivery": 23.375,
+        "accessiblePssMiB": 59.37369791666667,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 25.130095753411297,
+        "fixtureCpuSeconds": 0.08499999999999999,
+        "samplerCpuPercent": 0.7366704808308694
+      },
+      "cpuReductionPercent": 1.5789473684210575,
+      "pssReductionPercent": 0.009388030603596498,
+      "jsonBytes": [
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        },
+        {
+          "sent": 20476,
+          "received": 965508
+        }
+      ],
+      "backgroundCpuPercent": [
+        137.55835076010575,
+        138.4570523618485,
+        136.60254225973728,
+        136.3979138105973
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 2,
+      "block": 0,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 1.78,
+        "cpuMsPerDelivery": 22.25,
+        "accessiblePssMiB": 59.8890380859375,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 38.145799495396204,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.7364793215428314
+      },
+      "tcp": {
+        "primaryCpuSeconds": 1.745,
+        "cpuMsPerDelivery": 21.8125,
+        "accessiblePssMiB": 59.86360677083333,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 37.946048243611585,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.9810726260212459
+      },
+      "cpuReductionPercent": 1.96629213483146,
+      "pssReductionPercent": 0.042464056723834354,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        }
+      ],
+      "backgroundCpuPercent": [
+        137.6230524643136,
+        136.05581316778182,
+        133.74171861930753,
+        133.96761670484008
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 2,
+      "block": 1,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 1.78,
+        "cpuMsPerDelivery": 22.25,
+        "accessiblePssMiB": 59.9715576171875,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 41.49294374656165,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 0.7362454274027367
+      },
+      "tcp": {
+        "primaryCpuSeconds": 1.775,
+        "cpuMsPerDelivery": 22.1875,
+        "accessiblePssMiB": 59.86409505208333,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 41.98759975406574,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 0.49189461676376334
+      },
+      "cpuReductionPercent": 0.2808988764045006,
+      "pssReductionPercent": 0.17918921797918097,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        }
+      ],
+      "backgroundCpuPercent": [
+        142.65456227493235,
+        157.9805529992978,
+        139.5660906696525,
+        133.84897495498757
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 2,
+      "block": 2,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 1.81,
+        "cpuMsPerDelivery": 22.625,
+        "accessiblePssMiB": 60.321492513020836,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 44.50791724957526,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 0.49288974296220334
+      },
+      "tcp": {
+        "primaryCpuSeconds": 1.755,
+        "cpuMsPerDelivery": 21.9375,
+        "accessiblePssMiB": 60.30741373697917,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 38.89060099754715,
+        "fixtureCpuSeconds": 0.07,
+        "samplerCpuPercent": 0.4910561376923598
+      },
+      "cpuReductionPercent": 3.03867403314918,
+      "pssReductionPercent": 0.023339568460822857,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        }
+      ],
+      "backgroundCpuPercent": [
+        138.51093142922147,
+        134.16094609765662,
+        135.4277457975627,
+        137.01453005024632
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 2,
+      "block": 3,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 1.82,
+        "cpuMsPerDelivery": 22.75,
+        "accessiblePssMiB": 60.32185872395833,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 41.77902500669006,
+        "fixtureCpuSeconds": 0.08,
+        "samplerCpuPercent": 0.7367953948324826
+      },
+      "tcp": {
+        "primaryCpuSeconds": 1.77,
+        "cpuMsPerDelivery": 22.125,
+        "accessiblePssMiB": 60.384073893229164,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 43.094365755678155,
+        "fixtureCpuSeconds": 0.065,
+        "samplerCpuPercent": 0.4918064627841508
+      },
+      "cpuReductionPercent": 2.7472527472527486,
+      "pssReductionPercent": -0.10313868071529786,
+      "jsonBytes": [
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        },
+        {
+          "sent": 40952,
+          "received": 1931092
+        }
+      ],
+      "backgroundCpuPercent": [
+        140.9983689395205,
+        135.28998605896606,
+        137.17016583191418,
+        134.08494292778846
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 4,
+      "block": 0,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 3.675,
+        "cpuMsPerDelivery": 22.96875,
+        "accessiblePssMiB": 62.6126708984375,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 71.19507450261153,
+        "fixtureCpuSeconds": 0.095,
+        "samplerCpuPercent": 0.3470664259758345
+      },
+      "tcp": {
+        "primaryCpuSeconds": 3.565,
+        "cpuMsPerDelivery": 22.28125,
+        "accessiblePssMiB": 62.455851236979164,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 72.89984374801861,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.5163045001656155
+      },
+      "cpuReductionPercent": 2.9931972789115635,
+      "pssReductionPercent": 0.25045994557988394,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        }
+      ],
+      "backgroundCpuPercent": [
+        178.73193715874405,
+        134.66388433058086,
+        145.62460870910041,
+        148.36346344535463
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 4,
+      "block": 1,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 3.63,
+        "cpuMsPerDelivery": 22.6875,
+        "accessiblePssMiB": 63.8914794921875,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 70.30661975295516,
+        "fixtureCpuSeconds": 0.09,
+        "samplerCpuPercent": 0.3512725264694714
+      },
+      "tcp": {
+        "primaryCpuSeconds": 3.525,
+        "cpuMsPerDelivery": 22.03125,
+        "accessiblePssMiB": 63.50423177083333,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 73.84108350379393,
+        "fixtureCpuSeconds": 0.095,
+        "samplerCpuPercent": 0.34129083819752726
+      },
+      "cpuReductionPercent": 2.892561983471076,
+      "pssReductionPercent": 0.6061022916232894,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        }
+      ],
+      "backgroundCpuPercent": [
+        140.04554429597488,
+        134.34583267863786,
+        135.61615503792495,
+        140.2676144952042
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 4,
+      "block": 2,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 3.605,
+        "cpuMsPerDelivery": 22.53125,
+        "accessiblePssMiB": 64.23478190104166,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 69.7441614975105,
+        "fixtureCpuSeconds": 0.095,
+        "samplerCpuPercent": 0.35412941756052563
+      },
+      "tcp": {
+        "primaryCpuSeconds": 3.61,
+        "cpuMsPerDelivery": 22.5625,
+        "accessiblePssMiB": 64.2099609375,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 73.59752925549401,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.6723692220651942
+      },
+      "cpuReductionPercent": -0.1386962552011095,
+      "pssReductionPercent": 0.03864100228423428,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        }
+      ],
+      "backgroundCpuPercent": [
+        167.2573123119976,
+        158.29899901820767,
+        139.5138545588506,
+        24.950381936770583
+      ]
+    },
+    {
+      "mode": "push",
+      "fanout": 4,
+      "block": 3,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 3.555,
+        "cpuMsPerDelivery": 22.21875,
+        "accessiblePssMiB": 64.58439127604167,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 68.91944725066423,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.534082068257731
+      },
+      "tcp": {
+        "primaryCpuSeconds": 3.4850000000000003,
+        "cpuMsPerDelivery": 21.78125,
+        "accessiblePssMiB": 64.65751139322916,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 72.4267582554603,
+        "fixtureCpuSeconds": 0.1,
+        "samplerCpuPercent": 0.3469245254933677
+      },
+      "cpuReductionPercent": 1.9690576652601877,
+      "pssReductionPercent": -0.11321639136454564,
+      "jsonBytes": [
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        },
+        {
+          "sent": 81904,
+          "received": 3862289
+        }
+      ],
+      "backgroundCpuPercent": [
+        40.95922670483739,
+        58.67834994224934,
+        158.6100970785645,
+        116.60782136689696
+      ]
+    }
+  ],
+  "limits": [
+    "synthetic 32-row loopback work; separate actual-native correctness gates",
+    "identical shared publisher topology; generic Reader provenance label is synthetic",
+    "reader-driver includes control, validation, accounting RPC and consumer work",
+    "fixture-source CPU separate, sampler CPU separately visible, 10ms own-tick quantization",
+    "sampled PSS has no transient-peak guarantee; background load uncontrolled",
+    "logical JSON bytes and experimental pre-TLS framing counters are not physical wire capture",
+    "no production TCP selection, binary/compact capability, real network or suspend acceptance",
+    "no active Agent imports, owner edits or managed deployment changes"
+  ]
+}

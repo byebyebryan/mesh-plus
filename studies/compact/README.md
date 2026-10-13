@@ -32,9 +32,15 @@ Use an isolated installed wheel environment (not editable runtime):
 rtk proxy /path/to/venv/bin/python -I -B studies/compact/identity.py --output /private/new-identity.json
 rtk proxy /path/to/venv/bin/python -I -B studies/compact/check_carrier.py
 rtk proxy /path/to/venv/bin/python -I -B studies/compact/check_native.py
+rtk proxy /path/to/venv/bin/python -I -B studies/compact/check_interruption.py
 rtk proxy /path/to/venv/bin/python -I -B studies/compact/compare_carriers.py --output /private/new-matrix --blocks 4
 rtk proxy /path/to/venv/bin/python -I -B studies/compact/compare_carriers.py --output /private/new-long --blocks 1 --fanout 1 --modes push --steps 12 --interval 3 --expired
 ```
+
+Use `summarize_carriers.py --root /private/new-matrix --output /private/summary --expected-cases 96`
+to requalify/archive the primary matrix; the cadence control expects four cases.
+[Assessment](../../docs/evidence/2026-10-12-compact-research/README.md) records
+decisions and measured limits.
 
 Outputs must be new and private. The runner freezes installed runtime/harness
 fingerprints, matches the exact trace/proof/source/consumer work per ABBA block,

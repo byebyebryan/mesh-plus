@@ -1,0 +1,92 @@
+{
+  "status": "passed",
+  "acceptedSource": "0345ea579664495d2729b592bddc84e4f511cacc",
+  "measuredHarnessCommit": "227533f",
+  "installed": "Mesh 0.1.0a15 / Tmux Observer 0.6.0a7 immutable wheels",
+  "sourceEnvironment": "separate editable isolated baseline a15, Python 3.13.7; no Agent package",
+  "canonicalGate": {
+    "command": "rtk proxy .venv/bin/python scripts/check.py --wss",
+    "lockInputs": 21,
+    "identicalPackagedSchemas": 20,
+    "designChecks": 116,
+    "deliveryChecks": 169,
+    "coreTests": 113,
+    "wssTests": 34,
+    "skipped": 0
+  },
+  "installedStudyChecks": {
+    "tcpCases": 10,
+    "actualNativeCases": 1,
+    "actualNativeCarriers": [
+      "wss",
+      "tcp"
+    ],
+    "interruptionCarriers": [
+      "wss",
+      "tcp"
+    ],
+    "tmuxTraceAndConformanceCases": 15,
+    "identityPairs": 26,
+    "identityRawMatches": 0,
+    "primaryMatrixCases": 96,
+    "primaryMatchedBlocks": 24,
+    "cadenceCases": 4,
+    "cadenceMatchedBlocks": 1
+  },
+  "logs": {
+    "source-gate": {
+      "log": "source-gate.txt.gz",
+      "sha256": "8372380a241838c3957cd9fcdfc746748bf8f55b1f42df21c34669b873ede3eb"
+    },
+    "tcp-check": {
+      "log": "tcp-check.txt.gz",
+      "sha256": "197c8fb2f3c72247d0e89d6fc94396902801a7693b6332bbed8d38d26be6d0db"
+    },
+    "actual-native": {
+      "log": "actual-native.txt.gz",
+      "sha256": "2597cd75b053400ab2dbd5b2dde14a0ce4f3b052ee377203a7ae9cadb764686f"
+    },
+    "interruption": {
+      "log": "interruption.txt.gz",
+      "sha256": "a61e689b751e8ee210fe6944b939c0d844648d08ab38c5ff181ac96165fbae20"
+    },
+    "tmux-conformance": {
+      "log": "tmux-conformance.txt.gz",
+      "sha256": "74ad4cf32d75364e44670d3e440c9be1cb9658b808c7c6072b2ce65d7cbd15f8"
+    }
+  },
+  "studyScriptSha256": {
+    "carrier_worker.py": "0d6148c090f5b5e5f831a4c12e6a21dcdc07279e70fe6e4f100618db0c173e55",
+    "check_carrier.py": "0b905cc8b5387a9a5d86714654b461cd99ea7bbe31a81e3466e38e6321bac486",
+    "check_interruption.py": "e88651b2b12ac1e1507977cf141ef4a1fbb5d6f9309408fdfb6689c15cad61a5",
+    "check_native.py": "cfa021ecd2014b928302e581dbe460a69f51b5494d329bdd8e397134fbaf4d65",
+    "compare_carriers.py": "26ea942cc4617175dd7b294951ecebaebe7f7147cdda9faa1a5544ce00318c51",
+    "identity.py": "82dd8c3aee8e6d2b57d9154d65faa40580ef1c6e17c5f19e93ea681c0e888627",
+    "summarize_carriers.py": "a69a60e35f7d5a4a61d1723e6bcdf878059e9920a8fea19bf0b472e36e0abda0",
+    "tcp_stream.py": "7124cbb5b3d879cc0eaa9f7119b21cf2a2ec23f466eed18fe96c945db0015552"
+  },
+  "unchangedPaths": [
+    "src",
+    "contracts",
+    "reference",
+    "pyproject.toml"
+  ],
+  "exclusions": [
+    "full Agent/native suite",
+    "active Agent imports/services",
+    "check-sources sibling parity",
+    "wheel packaging (no packaged change)",
+    "real LAN/tailnet latency",
+    "physical suspend",
+    "ordinary fleet/deployment/credential rollout",
+    "production TCP endpoint/negotiation",
+    "compact/binary prototypes gated by R1"
+  ],
+  "finalDocumentationGate": {
+    "report": "final-design.json",
+    "sha256": "c1ac81d2f9aaf923380138b3c76e87a1f1e660b4fe1de1e8567e02c626a401c1",
+    "checksPassed": 116,
+    "scope": "rerun after documentation sync, runtime checks unchanged"
+  },
+  "cleanup": "cleanup.json"
+}

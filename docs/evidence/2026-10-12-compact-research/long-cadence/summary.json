@@ -1,0 +1,83 @@
+{
+  "format": "mesh-plus.study-carrier-control.v1",
+  "cases": 4,
+  "matchedBlocks": 1,
+  "gzipSha256": "ee1aae7b66db2588a8203f6de507fd7c121eef4be81dba538d89805daef5e182",
+  "rawSha256": "e58cda5cc38d26db760a39d63acd2fbad7418795cda4d5c446c8dcdc9a7f00a2",
+  "summaryToolSha256": "a69a60e35f7d5a4a61d1723e6bcdf878059e9920a8fea19bf0b472e36e0abda0",
+  "measurementInputSha256": "421addce0961275b93a621fc2c66399974d5dc6ef662cf1231d1e7f00aa85abe",
+  "decisions": [
+    {
+      "mode": "push",
+      "fanout": 1,
+      "blocks": 1,
+      "medianCpuReductionPercent": -0.7407407407407307,
+      "medianPssReductionPercent": -0.04585384689641536,
+      "cpuThresholdBlocks": 0,
+      "pssThresholdBlocks": 0,
+      "cpuRegressionsOverFivePercent": 0
+    }
+  ],
+  "blocks": [
+    {
+      "mode": "push",
+      "fanout": 1,
+      "block": 0,
+      "status": "exact_work_matched",
+      "wss": {
+        "primaryCpuSeconds": 0.6749999999999999,
+        "cpuMsPerDelivery": 56.249999999999986,
+        "accessiblePssMiB": 48.557812500000004,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 32.0041625018348,
+        "fixtureCpuSeconds": 0.06,
+        "samplerCpuPercent": 0.01388247775088519
+      },
+      "tcp": {
+        "primaryCpuSeconds": 0.6799999999999999,
+        "cpuMsPerDelivery": 56.66666666666667,
+        "accessiblePssMiB": 48.580078125,
+        "unknownPssRoles": 0,
+        "latencyMedianMs": 31.539239746052772,
+        "fixtureCpuSeconds": 0.05499999999999999,
+        "samplerCpuPercent": 0.041646166157608064
+      },
+      "cpuReductionPercent": -0.7407407407407307,
+      "pssReductionPercent": -0.04585384689641536,
+      "jsonBytes": [
+        {
+          "sent": 6140,
+          "received": 289580
+        },
+        {
+          "sent": 6140,
+          "received": 289580
+        },
+        {
+          "sent": 6140,
+          "received": 289580
+        },
+        {
+          "sent": 6140,
+          "received": 289580
+        }
+      ],
+      "backgroundCpuPercent": [
+        30.90436447015932,
+        30.374645911981236,
+        27.29180247941979,
+        26.87647692571373
+      ]
+    }
+  ],
+  "limits": [
+    "synthetic 32-row loopback work; separate actual-native correctness gates",
+    "identical shared publisher topology; generic Reader provenance label is synthetic",
+    "reader-driver includes control, validation, accounting RPC and consumer work",
+    "fixture-source CPU separate, sampler CPU separately visible, 10ms own-tick quantization",
+    "sampled PSS has no transient-peak guarantee; background load uncontrolled",
+    "logical JSON bytes and experimental pre-TLS framing counters are not physical wire capture",
+    "no production TCP selection, binary/compact capability, real network or suspend acceptance",
+    "no active Agent imports, owner edits or managed deployment changes"
+  ]
+}

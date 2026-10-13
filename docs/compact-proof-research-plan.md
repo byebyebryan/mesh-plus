@@ -1,11 +1,16 @@
 # Compact proof, encoding and stream-carrier research
 
-2026-10-12 local date. **Research plan for review; no runtime promotion.**
+2026-10-12 local date. **Research assessment complete; no runtime promotion.**
 Baseline is committed `0345ea579664495d2729b592bddc84e4f511cacc`, released
 Mesh a15, SDK interface 1 and accepted lock revision 2. Concurrent uncommitted
 Agent timing/profile work is not an input to this plan. Before execution,
 refresh the accepted source/artifact tuple and preserve any subsequent accepted
 profile addenda; do not replace their locks with this older baseline.
+
+The [execution assessment](evidence/2026-10-12-compact-research/README.md)
+records the conditional compact-proof stop, optional owner proposal and matched
+TCP/TLS rejection. Accepted runtime and downstream requirements remain unchanged.
+The ordered gates below preserve the reviewed plan and its conditional exits.
 
 The [controlled assessment](evidence/2026-10-12-controlled-performance/README.md)
 establishes exact-work benchmarking and a WSS shared-publisher memory benefit,

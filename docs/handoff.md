@@ -16,9 +16,11 @@ compare IPC/SSH/WSS with a pinned pure Tmux profile, without Agent development
 inputs. It records a multi-upstream sharing benefit and rejects a copying
 prototype; there is no runtime release or new downstream wiring prerequisite.
 
-The proposed [compact-proof/encoding/TCP research sequence](compact-proof-research-plan.md)
-starts with native state-identity feasibility. It is a study plan, not a runtime
-capability or required Observer migration; normative promotion is a separate review.
+The [compact-proof/encoding/TCP assessment](evidence/2026-10-12-compact-research/README.md)
+completes the conditional research sequence: 0/26 native exact-digest matches
+gate compact/binary prototypes, and 96 matched TCP/TLS cases show no material
+carrier gain. Full proofs and accepted defaults remain. The optional owner
+identity proposal requires separate review and no current downstream migration.
 
 The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The
