@@ -1,0 +1,242 @@
+{
+  "status": "passed",
+  "cases": 96,
+  "blocks": [
+    {
+      "hosts": 1,
+      "reads": 1,
+      "block": 0,
+      "legacyCpuNs": 19166044,
+      "preparedCpuNs": 23701115.5,
+      "cpuReductionPercent": -23.662011315428465
+    },
+    {
+      "hosts": 1,
+      "reads": 1,
+      "block": 1,
+      "legacyCpuNs": 19055060.5,
+      "preparedCpuNs": 22990177.5,
+      "cpuReductionPercent": -20.651296279012076
+    },
+    {
+      "hosts": 1,
+      "reads": 1,
+      "block": 2,
+      "legacyCpuNs": 19171658,
+      "preparedCpuNs": 24360409.5,
+      "cpuReductionPercent": -27.064698838253843
+    },
+    {
+      "hosts": 1,
+      "reads": 1,
+      "block": 3,
+      "legacyCpuNs": 18988507.5,
+      "preparedCpuNs": 24291232,
+      "cpuReductionPercent": -27.925967851870404
+    },
+    {
+      "hosts": 1,
+      "reads": 4,
+      "block": 0,
+      "legacyCpuNs": 46627052,
+      "preparedCpuNs": 27230164,
+      "cpuReductionPercent": 41.60007370828419
+    },
+    {
+      "hosts": 1,
+      "reads": 4,
+      "block": 1,
+      "legacyCpuNs": 46771718.5,
+      "preparedCpuNs": 27424315,
+      "cpuReductionPercent": 41.36560323307342
+    },
+    {
+      "hosts": 1,
+      "reads": 4,
+      "block": 2,
+      "legacyCpuNs": 47199230.5,
+      "preparedCpuNs": 27568764.5,
+      "cpuReductionPercent": 41.590648389913895
+    },
+    {
+      "hosts": 1,
+      "reads": 4,
+      "block": 3,
+      "legacyCpuNs": 47421406.5,
+      "preparedCpuNs": 27693174,
+      "cpuReductionPercent": 41.6019556484475
+    },
+    {
+      "hosts": 1,
+      "reads": 16,
+      "block": 0,
+      "legacyCpuNs": 156122239.5,
+      "preparedCpuNs": 44516225,
+      "cpuReductionPercent": 71.48630128380908
+    },
+    {
+      "hosts": 1,
+      "reads": 16,
+      "block": 1,
+      "legacyCpuNs": 162344533.5,
+      "preparedCpuNs": 45243863.5,
+      "cpuReductionPercent": 72.13095967903348
+    },
+    {
+      "hosts": 1,
+      "reads": 16,
+      "block": 2,
+      "legacyCpuNs": 161665805,
+      "preparedCpuNs": 45924317.5,
+      "cpuReductionPercent": 71.59305426401087
+    },
+    {
+      "hosts": 1,
+      "reads": 16,
+      "block": 3,
+      "legacyCpuNs": 161968270.5,
+      "preparedCpuNs": 46030470,
+      "cpuReductionPercent": 71.58056336719358
+    },
+    {
+      "hosts": 4,
+      "reads": 1,
+      "block": 0,
+      "legacyCpuNs": 77654146.5,
+      "preparedCpuNs": 95405945,
+      "cpuReductionPercent": -22.86007805133754
+    },
+    {
+      "hosts": 4,
+      "reads": 1,
+      "block": 1,
+      "legacyCpuNs": 77751895,
+      "preparedCpuNs": 94093973.5,
+      "cpuReductionPercent": -21.018238204998084
+    },
+    {
+      "hosts": 4,
+      "reads": 1,
+      "block": 2,
+      "legacyCpuNs": 77899109.5,
+      "preparedCpuNs": 93950141.5,
+      "cpuReductionPercent": -20.60489792890379
+    },
+    {
+      "hosts": 4,
+      "reads": 1,
+      "block": 3,
+      "legacyCpuNs": 78402382,
+      "preparedCpuNs": 94746988.5,
+      "cpuReductionPercent": -20.847078982880895
+    },
+    {
+      "hosts": 4,
+      "reads": 4,
+      "block": 0,
+      "legacyCpuNs": 195453883.5,
+      "preparedCpuNs": 112408346.5,
+      "cpuReductionPercent": 42.488558176947144
+    },
+    {
+      "hosts": 4,
+      "reads": 4,
+      "block": 1,
+      "legacyCpuNs": 196509962.5,
+      "preparedCpuNs": 112130365.5,
+      "cpuReductionPercent": 42.939093736787
+    },
+    {
+      "hosts": 4,
+      "reads": 4,
+      "block": 2,
+      "legacyCpuNs": 194758738,
+      "preparedCpuNs": 112723330,
+      "cpuReductionPercent": 42.12155451531011
+    },
+    {
+      "hosts": 4,
+      "reads": 4,
+      "block": 3,
+      "legacyCpuNs": 195599259,
+      "preparedCpuNs": 110848450.5,
+      "cpuReductionPercent": 43.32879834682809
+    },
+    {
+      "hosts": 4,
+      "reads": 16,
+      "block": 0,
+      "legacyCpuNs": 661038832.5,
+      "preparedCpuNs": 184640785.5,
+      "cpuReductionPercent": 72.0680879212947
+    },
+    {
+      "hosts": 4,
+      "reads": 16,
+      "block": 1,
+      "legacyCpuNs": 663211503.5,
+      "preparedCpuNs": 187266291,
+      "cpuReductionPercent": 71.76371489159492
+    },
+    {
+      "hosts": 4,
+      "reads": 16,
+      "block": 2,
+      "legacyCpuNs": 665429782,
+      "preparedCpuNs": 184992375.5,
+      "cpuReductionPercent": 72.19956477691886
+    },
+    {
+      "hosts": 4,
+      "reads": 16,
+      "block": 3,
+      "legacyCpuNs": 665934574.5,
+      "preparedCpuNs": 183250692.5,
+      "cpuReductionPercent": 72.4821777518326
+    }
+  ],
+  "studyFiles": {
+    "check.py": "c7b06b6e3b7bfe3c46cf23557f8424e3fc68b07b92da1df5cebe1360a29c79a8",
+    "compare.py": "119aea5899518e7838ea1d5f92a0e7edd5a559ca61d99fc2fbc2c2aaea4c405f",
+    "measure.py": "1cb2b4b2d8f7786af27dc301220a52185872090e4207e364110bebb021f72db7",
+    "prepared.py": "afec8913a580db54c0276f3d0f6fa1ac86f4587830382326b06063cdaa93c412"
+  },
+  "scope": "complete consumer lifetimes; explicit static compilation assumption; no legacy ABI equivalence or production performance acceptance",
+  "decisions": [
+    {
+      "hosts": 1,
+      "readsPerPublication": 1,
+      "medianCpuReductionPercent": -25.363355076841152
+    },
+    {
+      "hosts": 1,
+      "readsPerPublication": 4,
+      "medianCpuReductionPercent": 41.59536104909904
+    },
+    {
+      "hosts": 1,
+      "readsPerPublication": 16,
+      "medianCpuReductionPercent": 71.58680881560223
+    },
+    {
+      "hosts": 4,
+      "readsPerPublication": 1,
+      "medianCpuReductionPercent": -20.93265859393949
+    },
+    {
+      "hosts": 4,
+      "readsPerPublication": 4,
+      "medianCpuReductionPercent": 42.71382595686707
+    },
+    {
+      "hosts": 4,
+      "readsPerPublication": 16,
+      "medianCpuReductionPercent": 72.13382634910678
+    }
+  ],
+  "archive": {
+    "gzipSha256": "046f16e77649a1fcb4bb5bb816aed09800cabae59b2ed624f2127908b2587674",
+    "rawSha256": "ee65ef6639e25c7f789df22fb7b7c6eabe0e4af8fd4c5a7e136f962e9c9fc08a"
+  },
+  "harnessCommit": "8a82206"
+}

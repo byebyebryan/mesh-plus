@@ -22,6 +22,11 @@ one operation. Fixed error/control schema validators are reused; retained
 mutable views are still revalidated. No Observer hook or downstream migration
 is required, and candidate wheel acceptance does not change live selections.
 
+The [prepared consumer ownership study](evidence/2026-10-13-ownership/README.md)
+provides an opt-in API proposal for repeated reads. Static compilation is not
+accepted SDK 1 behavior: mutation and later callback rejection remain legacy
+checks. The study model is unpromoted and imposes no owner migration.
+
 The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The
 wire boundary is frozen by [the state contract](contract-freeze.md) and
