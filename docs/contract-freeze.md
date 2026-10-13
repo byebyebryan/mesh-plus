@@ -157,3 +157,12 @@ Run the full runtime suite separately with the exact producer dependencies.
 The checked-in evidence records source/wheel inputs and exclusions. A passing
 oracle, editable source, built wheel, CI and selected live artifact are separate
 forms of evidence; only the first four are part of this review pass.
+
+## Reviewed Agent timing extension
+
+The [Agent v2 addendum](../contracts/agent-profile-v2/contract.md) permits an
+explicit successor profile with native wire 5/Service 3 through SDK 1. Lock
+revision 3 preserves every preceding schema and native-input byte. Existing
+Agent v1/Tmux v1 defaults and transport contracts remain frozen; only an explicit
+v2 owner profile selects the new packaged schema. Its independent acceptance
+does not select a deployment.

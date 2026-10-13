@@ -1,5 +1,10 @@
 # Mesh Plus
 
+The [a16 source timing extension](docs/agent-timing-profile.md) adds an explicit
+Agent v2 profile for wire 5/Service 3 through SDK 1. Existing Agent v1/Tmux v1
+defaults and schema bytes are preserved. Exact package and owner rollout gates
+follow source acceptance; published a15 and normal IPC/SSH selections remain.
+
 Mesh Plus owns request/reply and subscription delivery across a configured fleet. A
 mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds

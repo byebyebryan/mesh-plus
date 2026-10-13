@@ -53,8 +53,11 @@ def configured_adapter(path, source, *, publisher_factories=None):
         from .state import descriptor
 
         adapter = factories[domain](host, source, socket)
+        supported = {descriptor(domain).profile_id}
+        if domain == "agent":
+            supported.add(descriptor(domain, profile_id="agent-observer.mesh-candidate.v2").profile_id)
         check(getattr(adapter, "host", None) == host and getattr(adapter, "source", None) == source and
-              getattr(adapter, "profile", None) == descriptor(domain).profile_id, "publisher_factory_binding")
+              isinstance(getattr(adapter, "profile", None), str) and adapter.profile in supported, "publisher_factory_binding")
         capabilities = getattr(adapter, "capabilities", None)
         check(isinstance(capabilities, (tuple, list)) and all(isinstance(c, str) for c in capabilities) and
               len(capabilities) == len(set(capabilities)) and

@@ -1,5 +1,12 @@
 # Mesh SDK interface v1
 
+The reviewed [Agent timing extension](../contracts/agent-profile-v2/contract.md)
+adds compatible optional `descriptor(domain, profile_id=...)` selection.
+Existing defaults remain v1; explicit Agent v2 descriptors bind wire 5/Service 3.
+The generic SDK, Read/Delivery versions, Tmux profile and published native schemas
+are unchanged. Request admission, aggregate validators and guards use the
+selected descriptor; they do not retry under another profile.
+
 Accepted implementation specification, 2026-10-10. The preceding
 [review and negative probes](sdk-independence-review.md) remain dated evidence.
 This additive Python interface does not change the frozen Read/Delivery wire,

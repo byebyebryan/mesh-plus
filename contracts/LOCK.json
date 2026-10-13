@@ -1,6 +1,6 @@
 {
-  "lockId": "mesh-plus-state-wss-2026-10-11",
-  "lockRevision": 2,
+  "lockId": "mesh-plus-state-agent-timing-2026-10-12",
+  "lockRevision": 3,
   "status": "frozen_for_implementation",
   "meshProtocol": 1,
   "deliveryProtocol": "mesh-plus.delivery-candidate.v1",
@@ -48,6 +48,19 @@
           "sha256": "f43ebea80a47f9db2379a576ca089fde25994e4229606473e5937f1379cbb984"
         }
       ]
+    },
+    "agent-observer-timing": {
+      "sourceCommit": "280ddab6e8f8a28fa92e08461a4888e0a504d4ca",
+      "schemas": [
+        {
+          "path": "reference/agent-observer-timing/agent_observer/contracts/snapshot.schema.json",
+          "sha256": "809a4828cd687bfaccbd5dfb37f459751be5bb660ac5ba9e5a525d4d051394b8"
+        },
+        {
+          "path": "reference/agent-observer-timing/agent_observer/contracts/service-frame.schema.json",
+          "sha256": "b7c70313a4566480b34413ede65cb6fcfabe6f6cd686fd13958dda19715f59d9"
+        }
+      ]
     }
   },
   "excluded": [
@@ -77,10 +90,24 @@
     "contracts/wss-v1/authorization.schema.json": "66cc50ffdd6619ee77a50dd0b535027db05e6518399edacf6746ceb8267299e5",
     "contracts/wss-v1/contract.md": "bef6b9a49e0190fbeba9ed106ac41ad494787057ee35d856fc102453254db292",
     "contracts/wss-v1/registry.schema.json": "413a932759d0cf5be753728e12695c211e307176ae024bbbcd7f545ab8959b37",
-    "docs/contract-freeze.md": "152b31d81832d09320ecbc0031becdd91835cbb00b05b11e7aba3398820e7479",
+    "docs/contract-freeze.md": "46c53b06183ef58b40565104a256cb38b51ee70388a9247f8b3ec95cde3a23ef",
     "reference/agent-observer/agent_observer/contracts/service-frame.schema.json": "f43ebea80a47f9db2379a576ca089fde25994e4229606473e5937f1379cbb984",
     "reference/agent-observer/agent_observer/contracts/snapshot.schema.json": "95ba9e3ef4ad5dc059f7a344b5946ea59193a9b061b7d747927d6aceb2eb0e39",
     "reference/tmux-observer/contracts/observation-v1/schema.json": "b79b26cddc4363e43dbc73265f880115570afa9fa5f9851aed947ebb6f0c8c8c",
-    "reference/tmux-observer/contracts/service-v1/schema.json": "4002b17b06200907b935da8c7191fc44ba9a41c45061c8f7b4201403cf39bfd0"
+    "reference/tmux-observer/contracts/service-v1/schema.json": "4002b17b06200907b935da8c7191fc44ba9a41c45061c8f7b4201403cf39bfd0",
+    "reference/agent-observer-timing/agent_observer/contracts/snapshot.schema.json": "809a4828cd687bfaccbd5dfb37f459751be5bb660ac5ba9e5a525d4d051394b8",
+    "reference/agent-observer-timing/agent_observer/contracts/service-frame.schema.json": "b7c70313a4566480b34413ede65cb6fcfabe6f6cd686fd13958dda19715f59d9",
+    "contracts/agent-profile-v2/contract.md": "ec282a892d789616c949ed4e0cc1a00cdede49876b663252cae5cef13957bda7",
+    "contracts/agent-profile-v2/profile.schema.json": "c162e7ce29a048a16bb2d3072c9a4a324c06bea14413301e1645fcd6ad55fc92"
+  },
+  "profileExtensions": {
+    "agent-observer.mesh-candidate.v2": {
+      "domain": "agent",
+      "sdkInterface": 1,
+      "nativeProtocol": "agent-observer.snapshot",
+      "nativeVersion": 5,
+      "serviceProtocol": 3,
+      "schema": "contracts/agent-profile-v2/profile.schema.json"
+    }
   }
 }

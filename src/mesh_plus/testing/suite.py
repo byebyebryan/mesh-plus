@@ -2,6 +2,7 @@
 
 import copy
 import hashlib
+import json
 import unittest
 from dataclasses import asdict
 
@@ -118,10 +119,10 @@ class _Result(unittest.TestResult):
             self._record(test, "failed" if issubclass(err[0], test.failureException) else "error")
 
 
-def run_suite(suite, *, domain):
+def run_suite(suite, *, domain, profile=None):
     """Run on a synchronous caller thread; skips cannot certify conformance."""
     from ..state import descriptor
-    expected = descriptor(domain)
+    expected = descriptor(domain) if profile is None else resolve_profile(domain, profile).descriptor
     def cases(items):
         for item in items:
             if isinstance(item, unittest.TestSuite):
@@ -133,6 +134,9 @@ def run_suite(suite, *, domain):
         raise ValueError("conformance_suite_scope")
     if len({test.case_id for test in selected}) != len(selected):
         raise ValueError("conformance_suite_duplicates")
+    if profile is not None and any(callable(getattr(test, "factory", None)) and
+                                   resolve_profile(domain, test.factory(domain)).descriptor != expected for test in selected):
+        raise ValueError("conformance_profile_scope")
     result = _Result()
     suite.run(result)
     complete = (result.testsRun == len(selected) == len(result.cases)
@@ -141,6 +145,10 @@ def run_suite(suite, *, domain):
     return {"format": "mesh-plus.conformance.v1", "interfaceVersion": CONFORMANCE_INTERFACE_VERSION,
             "sdkVersion": SDK_INTERFACE_VERSION, "profile": asdict(expected),
             "corpusDigest": "sha256:" + hashlib.sha256(corpus_bytes()).hexdigest(),
+            "selectedCaseDigests": [{"caseId": test.case_id,
+                                     "sha256": hashlib.sha256(json.dumps(asdict(test.case), sort_keys=True,
+                                                                         separators=(",", ":")).encode()).hexdigest()}
+                                    for test in selected if hasattr(test, "case")],
             "coverage": "selected cases only; owner-native semantics and deployment are separate",
             "ok": result.wasSuccessful() and complete,
             "testsRun": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),

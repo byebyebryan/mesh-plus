@@ -139,7 +139,7 @@ class Reader:
             supplied_id = request.get("requestId") if isinstance(request, dict) else None
             if isinstance(supplied_id, str) and re.fullmatch(r"[0-9a-f]{32,64}", supplied_id):
                 request_id = supplied_id
-            validate_read_request(request, self.domain + "-observer.mesh-candidate.v1")
+            validate_read_request(request, self.profile.descriptor.profile_id)
             request_id = request["requestId"]
             selection = request["selection"]
             # Resolve all selections before opening any source, even for watch.
@@ -245,7 +245,7 @@ class Reader:
                               "scope": [e.host for e in selected], "catalogRevision": self.catalog_revision})
         sequence = state.sequence + 1
         revision = state.revision + (fingerprint != state.fingerprint)
-        response = {"protocol": self.domain + "-observer.mesh-candidate.v1", "schemaVersion": 1,
+        response = {"protocol": self.profile.descriptor.profile_id, "schemaVersion": 1,
                     "mesh": {"meshProtocol": 1, "requestId": request_id, "operation": operation, "access": "cached",
                              "scope": {"hostIds": [e.host for e in selected]},
                              "catalog": {"state": "ready" if self.catalog_revision else "local_only",

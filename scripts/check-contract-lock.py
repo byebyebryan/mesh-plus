@@ -18,7 +18,7 @@ def require(condition, message):
 
 def main():
     lock = json.loads((ROOT / "contracts/LOCK.json").read_text())
-    require(lock["lockRevision"] == 2 and lock["status"] == "frozen_for_implementation", "lock disposition")
+    require(lock["lockRevision"] == 3 and lock["status"] == "frozen_for_implementation", "lock disposition")
     require(lock["products"] == ["state"], "unsupported product promoted")
     require(lock["capabilities"] == ["snapshot", "proof", "subscribe"], "unsupported capability promoted")
     require(lock["backends"] == ["ipc", "ssh-stdio", "wss"], "unsupported backend promoted")
@@ -33,6 +33,7 @@ def main():
     expected.update(file["path"] for profile in lock["nativeInputs"].values() for file in profile["schemas"])
     expected.update("contracts/wss-v1/" + name for name in
                     ("contract.md", "registry.schema.json", "authorization.schema.json"))
+    expected.update("contracts/agent-profile-v2/" + name for name in ("contract.md", "profile.schema.json"))
     require(set(lock["normativeDigests"]) == expected, "normative inventory changed")
     require("wss-runtime" not in lock["excluded"], "WSS disposition")
     for name in ("registry", "authorization"):
@@ -57,12 +58,21 @@ def main():
     host = ROOT / "reference/rofi-ssh-plus/contracts/host-mesh-v1/schemas"
     copies.update({"host-" + path.name: path for path in host.glob("*.json")})
     copies["tmux-native.schema.json"] = ROOT / "reference/tmux-observer/contracts/observation-v1/schema.json"
+    copies["read-agent-v2.profile.schema.json"] = ROOT / "contracts/agent-profile-v2/profile.schema.json"
     packaged = ROOT / "src/mesh_plus/schemas"
     require({path.name for path in packaged.glob("*.json")} == set(copies), "schema copy inventory changed")
     for name, path in copies.items():
         require((packaged / name).read_bytes() == path.read_bytes(), "packaged schema drift: " + name)
     for name in ("tmux", "agent"):
         require(lock["profiles"][name] == name + "-observer.mesh-candidate.v1", "profile binding")
+    require(set(lock["profileExtensions"]) == {"agent-observer.mesh-candidate.v2"}, "profile extension binding")
+    extension = lock["profileExtensions"]["agent-observer.mesh-candidate.v2"]
+    require(extension == {"domain": "agent", "sdkInterface": 1, "nativeProtocol": "agent-observer.snapshot",
+                          "nativeVersion": 5, "serviceProtocol": 3,
+                          "schema": "contracts/agent-profile-v2/profile.schema.json"}, "timing profile disposition")
+    native = json.loads((ROOT / "reference/agent-observer-timing/agent_observer/contracts/snapshot.schema.json").read_text())
+    profile = json.loads((ROOT / extension["schema"]).read_text())
+    require(profile["properties"]["sessions"]["items"] == native["properties"]["sessions"]["items"], "timing native projection")
     print(f"PASS: {len(expected)} locked inputs, {len(copies)} identical packaged schemas; state core only")
 
 

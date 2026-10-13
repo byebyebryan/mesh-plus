@@ -57,20 +57,25 @@ class StateProfile(Protocol):
     def record_eligible(self, record: JsonObject, state: NativeState) -> bool: ...
 
 
-@lru_cache(maxsize=2)
-def descriptor(domain):
+@lru_cache(maxsize=3)
+def descriptor(domain, *, profile_id=None):
     check(domain in {"tmux", "agent"}, "observer_domain")
-    raw = files("mesh_plus").joinpath("schemas", "read-" + domain + ".profile.schema.json").read_bytes()
-    return ProfileDescriptor(1, domain + "-observer.mesh-candidate.v1",
+    default = domain + "-observer.mesh-candidate.v1"
+    profile_id = default if profile_id is None else profile_id
+    timing = domain == "agent" and profile_id == "agent-observer.mesh-candidate.v2"
+    check(profile_id == default or timing, "profile_descriptor")
+    raw = files("mesh_plus").joinpath("schemas", "read-" + domain + ("-v2" if timing else "") + ".profile.schema.json").read_bytes()
+    return ProfileDescriptor(1, profile_id,
                              "tmux-observer.observation.v1" if domain == "tmux" else "agent-observer.snapshot",
-                             1 if domain == "tmux" else 4, "sha256:" + hashlib.sha256(raw).hexdigest(),
+                             1 if domain == "tmux" else 5 if timing else 4, "sha256:" + hashlib.sha256(raw).hexdigest(),
                              1064960 if domain == "tmux" else 8404992)
 
 
 def resolve_profile(domain, profile=None):
-    expected = descriptor(domain)
     profile = ReferenceProfile(domain) if profile is None else profile
     actual = getattr(profile, "descriptor", None)
+    check(isinstance(actual, ProfileDescriptor), "profile_descriptor")
+    expected = descriptor(domain, profile_id=actual.profile_id)
     check(isinstance(actual, ProfileDescriptor) and actual == expected and
           all(type(getattr(actual, k)) is int for k in ("sdk_version", "native_version", "frame_bytes")),
           "profile_descriptor")

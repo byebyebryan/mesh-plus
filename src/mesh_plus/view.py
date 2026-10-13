@@ -26,14 +26,18 @@ def plain_json(value):
     return kind in (str, int, float, bool, type(None))
 
 
-@lru_cache(maxsize=2)
-def profile_validator(domain):
+@lru_cache(maxsize=3)
+def profile_validator(domain, profile_id=None):
+    # Descriptor admission limits identifiers before they select package paths.
+    from .state import descriptor
+    selected = descriptor(domain, profile_id=profile_id)
     registry = Registry()
     for path in files("mesh_plus").joinpath("schemas").iterdir():
         schema = json.loads(path.read_text())
         if "$id" in schema:
             registry = registry.with_resource(schema["$id"], Resource.from_contents(schema))
-    profile = json.loads(files("mesh_plus").joinpath("schemas", "read-" + domain + ".profile.schema.json").read_text())
+    suffix = "-v2" if selected.profile_id == "agent-observer.mesh-candidate.v2" else ""
+    profile = json.loads(files("mesh_plus").joinpath("schemas", "read-" + domain + suffix + ".profile.schema.json").read_text())
     return Draft202012Validator(profile, registry=registry)
 
 
@@ -57,6 +61,7 @@ def reconstructed(response, host, *, profile=None):
 def _validated_response(response, profile=None):
     domain = "tmux" if response.get("protocol") == "tmux-observer.mesh-candidate.v1" else "agent"
     profile = resolve_profile(domain, profile)
+    profile_id = profile.descriptor.profile_id
     # A composed response passes several independent consumers in one process.
     # Reuse only static schema success for identical complete JSON bytes. Native
     # validation, proofs, receipts, chronology and current-time checks still run.
@@ -64,13 +69,13 @@ def _validated_response(response, profile=None):
     try:
         encoded = encode(response)
     except ValueError:
-        profile_validator(domain).validate(response)
+        profile_validator(domain, profile_id).validate(response)
         raise
     key = hashlib.sha256(encoded).digest() if plain_json(response) else None
-    if key is None or _PROFILE_DIGESTS.get(domain) != key:
-        profile_validator(domain).validate(response)
+    if key is None or _PROFILE_DIGESTS.get(profile_id) != key:
+        profile_validator(domain, profile_id).validate(response)
         if key is not None:
-            _PROFILE_DIGESTS[domain] = key
+            _PROFILE_DIGESTS[profile_id] = key
     check(len(encoded) + 1 <= 16 * 1024 * 1024, "aggregate_capacity")
     profile.validate_response(response)
     mesh = response["mesh"]
@@ -195,7 +200,7 @@ class ReadGuard:
     def __init__(self, domain, request_id, *, host_ids=None, profile=None):
         check(domain in {"tmux", "agent"}, "observer_domain")
         self.state_profile = resolve_profile(domain, profile)
-        self.profile = domain + "-observer.mesh-candidate.v1"
+        self.profile = self.state_profile.descriptor.profile_id
         self.request_id, self.host_ids = request_id, None if host_ids is None else tuple(host_ids)
         self.binding, self.sequence, self.revision = None, 0, 0
         self.encoded_at, self.scope, self.catalog = 0, None, None

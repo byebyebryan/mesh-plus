@@ -352,7 +352,7 @@ class _NetworkTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_gap_restart_and_catalog_change_revoke_without_native_imports(self):
         profile = self._profile()
-        response = next(c.response for c in profile_cases(self.domain) if c.case_id == self.domain + "-local")
+        response = next(c.response for c in self.profile_cases if c.case_id == self.domain + "-local")
         response["mesh"].update(operation="watch", requestId="a" * 32)
         guard = ReadGuard(self.domain, "a" * 32, profile=profile)
         guard.accept(response)
@@ -392,14 +392,18 @@ class _NetworkTests(unittest.IsolatedAsyncioTestCase):
         finally:
             await watch.aclose()
 
-def network_suite(profile_factory, *, domain, publisher_factory=None):
+def network_suite(profile_factory, *, domain, publisher_factory=None, cases=None):
     """Create owned lifecycle tests; connector binding uses IPC, not actual SSH."""
     if domain not in {"tmux", "agent"}:
         raise ValueError("conformance_domain")
+    selected = tuple(profile_cases(domain) if cases is None else cases)
+    if not selected or any(case.domain != domain for case in selected):
+        raise ValueError("conformance_cases")
     def publisher(domain, host, source, profile):
         return Publisher(domain, host, source, profile=profile)
     test_class = type("OwnerNetworkTests", (_NetworkTests,), {
         "domain": domain, "factory": staticmethod(profile_factory),
         "publisher_factory": staticmethod(publisher_factory or publisher),
+        "profile_cases": selected,
     })
     return unittest.defaultTestLoader.loadTestsFromTestCase(test_class)

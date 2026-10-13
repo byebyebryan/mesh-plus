@@ -12,7 +12,7 @@
     "ProfileCase": "(case_id: str, domain: str, response: dict, native: dict, states: dict, identities: list, selections: list) -> None",
     "profile_cases": "(domain)",
     "profile_suite": "(profile_factory, *, domain, cases=None)",
-    "network_suite": "(profile_factory, *, domain, publisher_factory=None)",
-    "run_suite": "(suite, *, domain)"
+    "network_suite": "(profile_factory, *, domain, publisher_factory=None, cases=None)",
+    "run_suite": "(suite, *, domain, profile=None)"
   }
 }

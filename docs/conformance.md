@@ -28,7 +28,15 @@ Case IDs use lowercase letters, digits, underscores or hyphens. Empty suites
 and evaluation lists are rejected. Validate owner fixture provenance separately;
 do not derive the expected oracle by invoking the profile being tested.
 
-`run_suite(suite, domain=...)` runs synchronously outside an active async runner.
+`run_suite(suite, domain=..., profile=None)` runs synchronously outside an active async runner.
+An explicit successor profile binds the reported descriptor and checks selected
+test factories against it. The default retains the frozen v1 corpus/profile.
+For Agent v2, provide independent native-v5 `ProfileCase` objects to
+`profile_suite(..., cases=...)` and `network_suite(..., cases=...)`, plus an owned
+`publisher_factory` for the latter. This is test-fixture selection; it does not
+convert old runtime data or broaden default native acceptance.
+`corpusDigest` identifies the unchanged built-in reference corpus;
+`selectedCaseDigests` attributes supplied profile cases independently.
 It returns `mesh-plus.conformance.v1`, interface/SDK versions, fixed descriptor,
 corpus digest, stable case IDs, counts and `ok`. Every selected case must have an
 explicit passing outcome. Failures, unrelated exceptions, skips, expected failures
