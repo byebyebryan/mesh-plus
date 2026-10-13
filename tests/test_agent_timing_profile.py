@@ -63,7 +63,7 @@ class TimingDescriptorTests(unittest.TestCase):
         self.assertEqual(new.frame_bytes, descriptor("agent").frame_bytes)
 
     def test_unregistered_and_wrong_domain_or_version_reject(self):
-        for domain, name in (("tmux", PROFILE), ("agent", "agent-observer.mesh-candidate.v3")):
+        for domain, name in (("tmux", PROFILE), ("agent", "agent-observer.mesh-candidate.v99")):
             with self.assertRaises(ProtocolError):
                 descriptor(domain, profile_id=name)
         profile = TimingProfile()

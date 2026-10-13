@@ -166,3 +166,5 @@ revision 3 preserves every preceding schema and native-input byte. Existing
 Agent v1/Tmux v1 defaults and transport contracts remain frozen; only an explicit
 v2 owner profile selects the new packaged schema. Its independent acceptance
 does not select a deployment.
+
+The reviewed [Agent system classification addendum](../contracts/agent-profile-v3/contract.md) adds explicit Agent v3 under lock revision 4. Prior profile schemas remain frozen.

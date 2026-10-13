@@ -57,18 +57,22 @@ class StateProfile(Protocol):
     def record_eligible(self, record: JsonObject, state: NativeState) -> bool: ...
 
 
-@lru_cache(maxsize=3)
+@lru_cache(maxsize=4)
 def descriptor(domain, *, profile_id=None):
     check(domain in {"tmux", "agent"}, "observer_domain")
     default = domain + "-observer.mesh-candidate.v1"
     profile_id = default if profile_id is None else profile_id
-    timing = domain == "agent" and profile_id == "agent-observer.mesh-candidate.v2"
-    check(profile_id == default or timing, "profile_descriptor")
-    raw = files("mesh_plus").joinpath("schemas", "read-" + domain + ("-v2" if timing else "") + ".profile.schema.json").read_bytes()
+    versions = {"agent-observer.mesh-candidate.v2": ("-v2", 5),
+                "agent-observer.mesh-candidate.v3": ("-v3", 6)}
+    extension = versions.get(profile_id) if domain == "agent" else None
+    check(profile_id == default or extension is not None, "profile_descriptor")
+    suffix, version = extension or ("", 1 if domain == "tmux" else 4)
+    raw = files("mesh_plus").joinpath("schemas", "read-" + domain + suffix + ".profile.schema.json").read_bytes()
     return ProfileDescriptor(1, profile_id,
                              "tmux-observer.observation.v1" if domain == "tmux" else "agent-observer.snapshot",
-                             1 if domain == "tmux" else 5 if timing else 4, "sha256:" + hashlib.sha256(raw).hexdigest(),
+                             version, "sha256:" + hashlib.sha256(raw).hexdigest(),
                              1064960 if domain == "tmux" else 8404992)
+
 
 
 def resolve_profile(domain, profile=None):
