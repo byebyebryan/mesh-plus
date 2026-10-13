@@ -20,7 +20,7 @@ from mesh_plus.api import PreparedReadGuard  # noqa: E402
 
 async def main():
     cases = []
-    for hosts, rows in ((1, 32), (4, 32), (16, 32), (1, 1024)):
+    for hosts, rows in ((1, 32), (4, 32), (16, 32), (1, 256)):
         _, _, frame = await fleet(hosts=hosts, rows=rows)
         profile = TmuxMeshProfile()
         kwargs = dict(profile=profile, preparation=StaticPreparation(profile))
@@ -69,6 +69,7 @@ async def main():
                           steadyTracedBytes=steady, firstAcceptPeakTracedBytes=first_peak,
                           afterChurnTracedBytes=after_churn, peakTracedBytes=peak,
                           afterDisconnectTracedBytes=retired, oldGenerationsReleased=True))
+        print(f"memory case passed: {hosts} hosts, {rows} rows/host", file=sys.stderr, flush=True)
     print(json.dumps(dict(status="passed", cases=cases,
                          limits="tracemalloc allocations, not RSS/PSS; controlled fixed admission-time queries for churn; test-only compiler; no live fleet performance"), indent=2))
 

@@ -275,4 +275,4 @@ class PreparedTests(unittest.IsolatedAsyncioTestCase):
             with self.assertRaisesRegex(ProtocolError, "read_scope_binding"):
                 guard.accept(response)
             compile.assert_not_called()
-        self.assertIsNone(guard.snapshot())
+            self.assertIsNone(guard.snapshot())
