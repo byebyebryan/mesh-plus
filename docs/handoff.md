@@ -16,6 +16,10 @@ compare IPC/SSH/WSS with a pinned pure Tmux profile, without Agent development
 inputs. It records a multi-upstream sharing benefit and rejects a copying
 prototype; there is no runtime release or new downstream wiring prerequisite.
 
+The proposed [compact-proof/encoding/TCP research sequence](compact-proof-research-plan.md)
+starts with native state-identity feasibility. It is a study plan, not a runtime
+capability or required Observer migration; normative promotion is a separate review.
+
 The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The
 wire boundary is frozen by [the state contract](contract-freeze.md) and
