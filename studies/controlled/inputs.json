@@ -1,0 +1,29 @@
+{
+  "python": "3.13.7",
+  "packages": {
+    "mesh-plus": "0.1.0a15",
+    "tmux-observer": "0.6.0a7",
+    "jsonschema": "4.26.0",
+    "attrs": "26.1.0",
+    "jsonschema-specifications": "2025.9.1",
+    "referencing": "0.37.0",
+    "rpds-py": "2026.9.1",
+    "websockets": "17.2"
+  },
+  "runtimeFingerprints": {
+    "mesh_plus": "1e76175f41d12666cf796a3d7161fe66fb9c031b4b1d7077f557eed06a48dc3c",
+    "tmux_observer": "4283604cfff50b76c379c180fe46a8bdc545f7c4b4f8d97dacc7ff460219d87f"
+  },
+  "wheelSha256": {
+    "mesh-plus": "42b25045f8f89afda61e56525f443a189dcc6769637aee5bcab959f096527f0f",
+    "tmux-observer": "e73a88f89b38242631766dd45f6e669f43c54e36857e5716595c0a56321e5091"
+  },
+  "profile": "tmux_observer.mesh_profile.TmuxMeshProfile",
+  "excluded": [
+    "Agent Observer",
+    "ordinary services",
+    "managed deployment",
+    "tailnet",
+    "physical suspend"
+  ]
+}
