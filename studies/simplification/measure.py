@@ -109,9 +109,14 @@ async def run(args):
 
     # Warm schema/input paths separately; no acquisition or copy cost omitted
     # inside measured pipeline. Reports expose oracle-inclusive workload scope.
+    before_classifications = profile.classifications
+    await operation()
+    classifications_per_operation = profile.classifications - before_classifications
+    # Count once outside timing; direct owner callbacks during timed work avoid
+    # penalizing the baseline for the measurement hook itself.
+    profile.record_host = profile.base.record_host
     await operation()
     before_reads = native_reads
-    before_classifications = profile.classifications
     cpu, wall = time.process_time_ns(), time.perf_counter_ns()
     for _ in range(args.rounds):
         result = await operation()
@@ -129,7 +134,8 @@ async def run(args):
     import mesh_plus
     runtime = Path(mesh_plus.__file__).parent
     return {"status": "passed", "phase": args.phase, "hosts": args.hosts, "rowsPerHost": args.rows,
-            "rounds": args.rounds, "nativeProfile": args.native_profile, "expectedRowsSha256": hashlib.sha256(json.dumps(expected).encode()).hexdigest(), "nativeReads": reads, "classifications": profile.classifications - before_classifications,
+            "rounds": args.rounds, "nativeProfile": args.native_profile, "expectedRowsSha256": hashlib.sha256(json.dumps(expected).encode()).hexdigest(), "nativeReads": reads, "classifications": classifications_per_operation * args.rounds,
+            "classificationScope": "Mesh hooks counted in one untimed operation, multiplied by rounds; no counter in timed callbacks",
             "cpuNs": cpu_ns, "wallNs": wall_ns, "peakRssKiB": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
             "python": sys.version.split()[0], "packages": {n: importlib.metadata.version(n) for n in
                 ("mesh-plus", "jsonschema", "attrs", "referencing", "rpds-py")},
