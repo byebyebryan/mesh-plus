@@ -16,6 +16,12 @@ from .state import inspect_state, resolve_profile
 _PROFILE_DIGESTS = {}
 
 
+@lru_cache(maxsize=2)
+def _control_validator(kind):
+    schema = json.loads(files("mesh_plus").joinpath("schemas", "read-" + kind + ".schema.json").read_text())
+    return Draft202012Validator(schema)
+
+
 def plain_json(value):
     """Cache only ordinary JSON types; tuples and coercible keys are distinct."""
     kind = type(value)
@@ -92,9 +98,13 @@ def _validated_response(response, profile=None):
         check(mesh["catalog"]["revision"] is not None, "catalog_revision")
     references = []
     host_positions = []
+    positions = {host: index for index, host in enumerate(scope)}
+    records = {host: [] for host in scope}
     for row in response["sessions"]:
-        check(profile.record_host(row) in scope, "row_host_scope")
-        host_positions.append(scope.index(profile.record_host(row)))
+        host_id = profile.record_host(row)
+        check(host_id in positions, "row_host_scope")
+        host_positions.append(positions[host_id])
+        records[host_id].append(row)
         identity = profile.record_identity(row)
         check(type(identity) is tuple and bool(identity) and all(type(v) in {str, int} for v in identity),
               "record_identity")
@@ -103,6 +113,7 @@ def _validated_response(response, profile=None):
     check(host_positions == sorted(host_positions), "row_host_order")
     admitted = {}
     for host in hosts:
+        host_records = records[host["hostId"]]
         local = host["hostId"] == local_host
         check(host["local"] == local and (host["delivery"]["path"] == "ipc") == local, "local_binding")
         delivery = host["delivery"]
@@ -111,19 +122,20 @@ def _validated_response(response, profile=None):
         current = [r for r in host["receipts"] if r["health"] in {"current", "partial"}]
         check((host["viewState"] == "current") == bool(current), "current_receipt_binding")
         if host["owner"] is None:
-            check(not host["receipts"] and not any(profile.record_host(row) == host["hostId"] for row in response["sessions"]),
+            check(not host["receipts"] and not host_records,
                   "rows_without_owner")
             continue
-        frame = reconstructed(response, host, profile=profile)
+        # Reconstruction may mutate its records list. Keep the admission's
+        # grouped rows separate so that projection equality still detects loss.
+        frame = profile.restore_native(host["owner"], list(host_records))
         codec = profile.bind(host["hostId"], "default")
         state = inspect_state(profile, codec, frame)
         admitted[host["hostId"]] = state
-        check(state.owner == host["owner"] and list(state.records) == [row for row in response["sessions"]
-              if profile.record_host(row) == host["hostId"]], "owner_projection")
+        check(state.owner == host["owner"] and list(state.records) == host_records, "owner_projection")
         snapshot = state.owner["metadata"]
         check(host["owner"]["protocol"] == profile.descriptor.native_protocol
               and host["owner"]["version"] == profile.descriptor.native_version, "owner_version")
-        check(snapshot is not None or not any(profile.record_host(row) == host["hostId"] for row in response["sessions"]),
+        check(snapshot is not None or not host_records,
               "warming_rows")
         native = {(r["sourceId"], r["component"]): r for r in state.receipts}
         keys = [(r["sourceId"], r["component"]) for r in host["receipts"]]
@@ -211,8 +223,7 @@ class ReadGuard:
     def accept(self, frame):
         check(not self.closed, "read_terminal_barrier")
         if "error" in frame and "mesh" not in frame:
-            schema = json.loads(files("mesh_plus").joinpath("schemas", "read-error.schema.json").read_text())
-            Draft202012Validator(schema).validate(frame)
+            _control_validator("error").validate(frame)
             check(len(encode(frame)) <= 16384, "error_capacity")
             check(frame["requestId"] == self.request_id, "read_request_binding")
             self.closed = True
@@ -221,8 +232,7 @@ class ReadGuard:
         mesh = frame["mesh"]
         control = mesh["kind"] in {"gap", "heartbeat"}
         if control:
-            schema = json.loads(files("mesh_plus").joinpath("schemas", "read-control.schema.json").read_text())
-            Draft202012Validator(schema).validate(frame)
+            _control_validator("control").validate(frame)
             check(len(encode(frame)) <= 16384, "control_capacity")
             check(self.binding is not None, "read_baseline_required")
         else:
