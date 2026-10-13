@@ -2,8 +2,11 @@
 
 import asyncio
 import copy
+import inspect
+import json
 import unittest
 from dataclasses import replace
+from pathlib import Path
 from unittest.mock import patch
 
 from prepared_fixture import StaticPreparation
@@ -15,6 +18,16 @@ from mesh_plus.transport import boottime_ms
 
 
 class PreparedTests(unittest.IsolatedAsyncioTestCase):
+    def test_additive_interface_signature_baseline(self):
+        from mesh_plus import api
+        baseline = json.loads((Path(__file__).parent / "fixtures/prepared-interface-v1.json").read_text())
+        self.assertEqual(api.PREPARATION_INTERFACE_VERSION, baseline["interfaceVersion"])
+        for name, signature in baseline["signatures"].items():
+            actual = api
+            for part in name.split("."):
+                actual = getattr(actual, part)
+            self.assertEqual(str(inspect.signature(actual)), signature)
+
     def guard(self, profile, *, preparation=None, **kwargs):
         return PreparedReadGuard("tmux" if profile.descriptor.profile_id.startswith("tmux") else "agent",
                                  "a" * 32, profile=profile,
@@ -228,6 +241,21 @@ class PreparedTests(unittest.IsolatedAsyncioTestCase):
                 self.guard(profile, preparation=preparation)
         with self.assertRaisesRegex(ProtocolError, "preparation_descriptor"):
             self.guard(profile, preparation=object())
+        preparation = StaticPreparation(profile)
+        preparation.descriptor = replace(preparation.descriptor,
+                                         profile=replace(profile.descriptor, native_version=True))
+        with self.assertRaisesRegex(ProtocolError, "preparation_descriptor"):
+            self.guard(profile, preparation=preparation)
+
+    async def test_equal_boolean_descriptor_replacement_invalidates(self):
+        profile, _, response = await fleet()
+        preparation = StaticPreparation(profile)
+        guard = self.guard(profile, preparation=preparation)
+        guard.accept(response)
+        preparation.descriptor = replace(preparation.descriptor, interface_version=True)
+        with self.assertRaisesRegex(ProtocolError, "preparation_binding"):
+            guard.current(boottime_ms(), response["mesh"]["reader"]["clock"])
+        self.assertIsNone(guard._generation)
 
     async def test_reentrant_acceptance_cannot_publish_outer_result(self):
         profile, _, response = await fleet()

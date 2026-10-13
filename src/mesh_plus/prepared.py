@@ -49,6 +49,11 @@ class StatePreparation(Protocol):
     def prepare_rules(self, state: PreparationState) -> tuple[PreparedRule, ...]: ...
 
 
+def _profile_matches(actual, expected):
+    return (isinstance(actual, ProfileDescriptor) and actual == expected and
+            all(type(getattr(actual, key)) is int for key in ("sdk_version", "native_version", "frame_bytes")))
+
+
 def _freeze(value):
     if type(value) is dict:
         return MappingProxyType({key: _freeze(child) for key, child in value.items()})
@@ -100,7 +105,7 @@ class PreparedReadGuard:
         actual = getattr(preparation, "descriptor", None)
         check(type(actual) is PreparationDescriptor and type(actual.interface_version) is int and
               actual.interface_version == PREPARATION_INTERFACE_VERSION and
-              actual.profile == self._profile.descriptor and
+              _profile_matches(actual.profile, self._profile.descriptor) and
               type(actual.implementation_id) is str and 0 < len(actual.implementation_id) <= 256,
               "preparation_descriptor")
         self._compile = getattr(preparation, "prepare_rules", None)
@@ -113,8 +118,10 @@ class PreparedReadGuard:
 
     def _binding(self):
         try:
-            check(self._profile.descriptor == self._descriptor.profile and
-                  self._preparation.descriptor == self._descriptor and
+            actual = self._preparation.descriptor
+            check(_profile_matches(self._profile.descriptor, self._descriptor.profile) and
+                  type(actual) is PreparationDescriptor and type(actual.interface_version) is int and
+                  _profile_matches(actual.profile, self._descriptor.profile) and actual == self._descriptor and
                   self._preparation.prepare_rules == self._compile, "preparation_binding")
         except BaseException:
             self.disconnect()

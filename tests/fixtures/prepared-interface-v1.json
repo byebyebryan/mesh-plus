@@ -1,0 +1,13 @@
+{
+  "interfaceVersion": 1,
+  "signatures": {
+    "PreparationDescriptor": "(interface_version: int, profile: mesh_plus.state.ProfileDescriptor, implementation_id: str) -> None",
+    "PreparationState": "(owner: Mapping, records: tuple, clock: Mapping, publisher: str, emitted_ms: int, receipts: tuple) -> None",
+    "PreparedRule": "(identity: tuple[str | int, ...], required: frozenset[tuple[str, str]] | None, eligible: bool) -> None",
+    "PreparedReadGuard": "(domain, request_id, *, profile, preparation, host_ids=None)",
+    "PreparedReadGuard.accept": "(self, frame)",
+    "PreparedReadGuard.current": "(self, now_ms, clock)",
+    "PreparedReadGuard.snapshot": "(self)",
+    "PreparedReadGuard.disconnect": "(self)"
+  }
+}
