@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0a16 source/private-wheel checkpoints
+
+- Keep the explicit Agent v2 timing profile through SDK 1 / lock 3, preserving
+  existing Agent v1 and Tmux defaults and preceding schema bytes.
+- Remove repeated host scans within admission and reuse fixed control schemas;
+  legacy consumers still fully revalidate mutable views.
+- Add opt-in PreparedReadGuard and versioned static StatePreparation rules for
+  owned watch generations. Share full admission once; retain original leases,
+  copied exports, stream barriers and fail-closed preparation errors.
+- Qualify private candidate bytes with pinned Tmux and independent Agent fixtures.
+  Owner preparation certification, publication and live selection remain separate.
+
 ## 0.1.0a15
 
 - Add public explicit-profile CachedSource/CachedPublication/CachedPublisher for

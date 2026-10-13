@@ -66,12 +66,18 @@ schema digest. `implementation_id` is a nonempty string of at most 256 character
 identifying reviewed owner compiler/package semantics. It is a caller-selected
 provenance label, **not** package attestation performed by Mesh.
 
+The additive signature baseline is
+[`tests/fixtures/prepared-interface-v1.json`](../tests/fixtures/prepared-interface-v1.json).
+It is checked independently of the unchanged legacy signature baseline and
+frozen wire lock; future changes to these local guarantees require review.
+
 Construction rejects missing/mismatched/unsupported interfaces before any I/O.
 The guard binds the descriptor and callable and compares them before use and
 after compilation. An observed change retires it with `preparation_binding`.
 These comparisons cannot detect changes inside closures, globals or live code;
 owners must explicitly retire guards before those semantics or installed bytes
 change. No profile is automatically opted in, including ReferenceProfile.
+Changed bindings continue to reject use; retirement does not repair them.
 
 `PreparationState` contains owner, records, clock, publisher, emitted_ms and
 receipts from the fully admitted `NativeState`. Its JSON maps are recursively
@@ -115,7 +121,8 @@ separately. A trusted compiler can allocate memory; Mesh does not sandbox it.
 Schema/native exceptions retain their existing exception types. Mesh preparation
 checks raise `ProtocolError` with `preparation_descriptor`, `preparation_interface`,
 `preparation_binding`, `preparation_rule_count`, `preparation_rule_identity`,
-`preparation_receipt_keys`, `preparation_receipt_scope`, `prepared_capacity` or
+`preparation_receipt_keys`, `preparation_receipt_scope`, `preparation_json`,
+`prepared_capacity` or
 `prepared_retired` or `prepared_reentrant`. Owner compiler exceptions are re-raised after retirement.
 Do not translate an error into an unchecked success or reconnect the same guard.
 

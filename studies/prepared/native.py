@@ -88,6 +88,17 @@ async def main():
                     rows = guard.current(boottime_ms(), frame["mesh"]["reader"]["clock"])
                     if rows and rows[0]["name"] == "simplification-changed":
                         break
+            await retire()
+            async with asyncio.timeout(8):
+                while True:
+                    frame = await anext(watch)
+                    legacy.accept(frame)
+                    guard.accept(frame)
+                    now = boottime_ms()
+                    rows = guard.current(now, frame["mesh"]["reader"]["clock"])
+                    assert rows == legacy.current(now, frame["mesh"]["reader"]["clock"])
+                    if not rows:
+                        break
             await watch.aclose()
             watch = None
             guard.disconnect()

@@ -146,3 +146,12 @@ wire changes still require explicit contract review. Plus clients, provider
 collection, desktop presentation and live artifact selection remain owner work.
 Project docs, scripts and evidence live in the owning repository; chezmoi holds
 only deployment configuration that actually needs management.
+
+## Additive opt-in consumer preparation
+
+The [prepared consumer interface 1](prepared-consumer-api.md) is an explicit
+local Python extension through SDK 1. Existing export signatures, legacy
+mutable-view/later-callback checks, profile defaults and wire bytes stay intact.
+PreparedReadGuard admits watch generations once and requires a separately
+reviewed StatePreparation promising static rules. Existing profile-only
+consumers remain independent; no native facade is automatically opted in.

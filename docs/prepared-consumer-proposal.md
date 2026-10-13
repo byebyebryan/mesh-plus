@@ -1,6 +1,9 @@
 # Opt-in prepared consumer ownership proposal
 
 2026-10-13. **Draft for explicit API/guarantee review, not SDK 1 acceptance.**
+Historical proposal: the subsequent user-authorized implementation defines the
+additive [prepared interface](prepared-consumer-api.md). This document and its
+study evidence retain their original scope; they do not certify implementation.
 Builds on the [simplification assessment](evidence/2026-10-13-simplification/README.md).
 Accepted source main is `c4ec7ca`; this branch includes the compatible
 simplification checkpoint `cd4acc5`. SDK 1 / lock 3 and all packaged bytes stay

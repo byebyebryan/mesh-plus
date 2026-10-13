@@ -27,6 +27,14 @@ provides an opt-in API proposal for repeated reads. Static compilation is not
 accepted SDK 1 behavior: mutation and later callback rejection remain legacy
 checks. The study model is unpromoted and imposes no owner migration.
 
+The subsequent [prepared consumer interface](prepared-consumer-api.md) implements
+that explicit opt-in path with one full admission and privately owned serialized
+state. It is an additive local API; existing consumers and the wire freeze stay
+unchanged. The [candidate qualification](evidence/2026-10-13-prepared/README.md)
+separates source/wheel, native Tmux and measured consumer evidence. No published
+owner preparation facade, release or live selection is claimed. Polling continues
+through existing snapshot APIs; PreparedReadGuard owns watch generations only.
+
 The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The
 wire boundary is frozen by [the state contract](contract-freeze.md) and
