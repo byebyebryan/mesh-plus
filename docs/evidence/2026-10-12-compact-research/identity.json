@@ -1,0 +1,489 @@
+{
+  "status": "passed",
+  "nativeInput": "tmux-observer 0.6.0a7 pinned wheel",
+  "scope": "disposable actual native default-server namespace and owner; cached make_publisher proof after fresh nonce",
+  "pairs": [
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "unchanged_cached_read",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "new_accepted_evidence_same_records",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/accepted",
+        "/receipt/acceptedAt",
+        "/receipt/acceptedAttempt",
+        "/receipt/attempted",
+        "/receipt/expiresAt",
+        "/receipt/lastAttemptAt",
+        "/receipt/remainingMs",
+        "/receipt/startedAt",
+        "/requestId",
+        "/snapshot/sample/finishedAt",
+        "/snapshot/sample/observedAt",
+        "/snapshot/sample/startedAt"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": false,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "watch_to_status_proof",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/kind",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "idle_native_watch_to_proof",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/kind",
+        "/receipt/accepted",
+        "/receipt/acceptedAt",
+        "/receipt/acceptedAttempt",
+        "/receipt/attempted",
+        "/receipt/expiresAt",
+        "/receipt/lastAttemptAt",
+        "/receipt/remainingMs",
+        "/receipt/startedAt",
+        "/requestId",
+        "/snapshot/sample/finishedAt",
+        "/snapshot/sample/observedAt",
+        "/snapshot/sample/startedAt"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": false,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "changed_native_records",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/accepted",
+        "/receipt/acceptedAt",
+        "/receipt/acceptedAttempt",
+        "/receipt/attempted",
+        "/receipt/expiresAt",
+        "/receipt/lastAttemptAt",
+        "/receipt/remainingMs",
+        "/receipt/startedAt",
+        "/requestId",
+        "/snapshot/sample/finishedAt",
+        "/snapshot/sample/observedAt",
+        "/snapshot/sample/startedAt",
+        "/snapshot/sessions/0/name",
+        "/viewRevision"
+      ],
+      "sameRecords": false,
+      "sameOriginalReceipts": false,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 1,
+      "freshRows": 1
+    },
+    {
+      "case": "ready_empty",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/receipt/remainingMs",
+        "/requestId"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": true,
+      "samePublisher": true,
+      "sameClock": true,
+      "retainedRows": 0,
+      "freshRows": 0
+    },
+    {
+      "case": "owner_restart",
+      "rawDigestMatch": false,
+      "changedPaths": [
+        "/encodedAt",
+        "/publisherId",
+        "/receipt/accepted",
+        "/receipt/acceptedAt",
+        "/receipt/acceptedAttempt",
+        "/receipt/attempted",
+        "/receipt/expiresAt",
+        "/receipt/lastAttemptAt",
+        "/receipt/remainingMs",
+        "/receipt/startedAt",
+        "/requestId",
+        "/snapshot/sample/finishedAt",
+        "/snapshot/sample/observedAt",
+        "/snapshot/sample/startedAt",
+        "/viewRevision"
+      ],
+      "sameRecords": true,
+      "sameOriginalReceipts": false,
+      "samePublisher": false,
+      "sameClock": true,
+      "retainedRows": 0,
+      "freshRows": 0
+    }
+  ],
+  "pureOwnerCases": [
+    {
+      "case": "warming",
+      "nativeHealth": [
+        "stale"
+      ]
+    },
+    {
+      "case": "expired",
+      "nativeHealth": [
+        "stale"
+      ]
+    },
+    {
+      "case": "failed",
+      "nativeHealth": [
+        "stale"
+      ]
+    },
+    {
+      "case": "unsupported",
+      "nativeHealth": [
+        "stale"
+      ]
+    }
+  ],
+  "excluded": [
+    "active Agent",
+    "ordinary tmux server",
+    "compact runtime",
+    "field exclusions"
+  ],
+  "idleWatch": "no replacement within five seconds; native source filters idle heartbeat frames",
+  "sourceLoss": {
+    "status": "rejected_fresh_proof",
+    "exceptionType": "FileNotFoundError",
+    "wrapperSequenceUnchanged": true
+  },
+  "rawMatches": 0,
+  "partialNativeState": "not a declared Tmux service receipt state; no invented partial native fixture",
+  "declaredPublisherCapabilities": [
+    "snapshot",
+    "proof",
+    "subscribe"
+  ],
+  "compactFacade": "no reviewed stable-state/overlay interface in pinned SDK/profile; no generic exclusions applied",
+  "cleanup": true,
+  "scriptSha256": "82dd8c3aee8e6d2b57d9154d65faa40580ef1c6e17c5f19e93ea681c0e888627"
+}

@@ -1,0 +1,16 @@
+{
+  "status": "pinned_accepted_baseline",
+  "source": "0345ea579664495d2729b592bddc84e4f511cacc",
+  "plan": "50a81733ca34666da1eaced5757849954c0f53ec",
+  "lockRevision": 2,
+  "meshWheelSha256": "42b25045f8f89afda61e56525f443a189dcc6769637aee5bcab959f096527f0f",
+  "tmuxWheelSha256": "e73a88f89b38242631766dd45f6e669f43c54e36857e5716595c0a56321e5091",
+  "python": "3.13.7",
+  "benchmarkEnvironment": "released a15/a7 with controlled inputs manifest; source gates use separate editable baseline .venv",
+  "coordination": "main checkout has active uncommitted Agent timing/profile changes; branch excludes them, no lock rollback or shared edits",
+  "limits": [
+    "no Agent imports/live tests",
+    "no ordinary services",
+    "no runtime promotion"
+  ]
+}
