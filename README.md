@@ -76,6 +76,11 @@ pinned, exact-work IPC/SSH/WSS comparisons; its
 [assessment](docs/evidence/2026-10-12-controlled-performance/README.md) retains
 SSH defaults and unchanged runtime bytes.
 
+The [admission simplification assessment](docs/evidence/2026-10-13-simplification/README.md)
+removes repeated fleet scans and reuses fixed control schemas while preserving
+full boundary admission, mutable-view checks and the accepted Agent timing extension.
+Its private a16 wheels are separate from the published release and live pins.
+
 The [state contract freeze](docs/contract-freeze.md) defines the interfaces ready
 for independent implementation. [The checked lock](contracts/LOCK.json) binds
 normative inputs and native schema baselines; CI rejects unreviewed drift.

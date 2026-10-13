@@ -16,6 +16,12 @@ compare IPC/SSH/WSS with a pinned pure Tmux profile, without Agent development
 inputs. It records a multi-upstream sharing benefit and rejects a copying
 prototype; there is no runtime release or new downstream wiring prerequisite.
 
+The [admission simplification pass](evidence/2026-10-13-simplification/README.md)
+keeps full public-boundary validation and removes repeated host scans within
+one operation. Fixed error/control schema validators are reused; retained
+mutable views are still revalidated. No Observer hook or downstream migration
+is required, and candidate wheel acceptance does not change live selections.
+
 The cached-state core is integrated with both Observers. It supports polling and
 pushed replacement state over private local IPC and persistent SSH stdio. The
 wire boundary is frozen by [the state contract](contract-freeze.md) and

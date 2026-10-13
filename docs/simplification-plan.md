@@ -1,7 +1,9 @@
 # Admission and ownership simplification
 
 2026-10-13. Current accepted source is `c4ec7ca`, version 0.1.0a16,
-SDK 1 / lock 3. Published a15 and its preceding transport/copy measurements
+SDK 1 / lock 3. [Execution assessment](evidence/2026-10-13-simplification/README.md)
+records completed gates, the kept simplification and the deferred admission cache.
+Published a15 and its preceding transport/copy measurements
 remain separate evidence. No older lock is restored or new capability advertised.
 
 ## Review findings
