@@ -1,0 +1,86 @@
+{
+  "state": "passed",
+  "resourceScope": "headless-cached-delivery",
+  "gate": "cached-delivery-resources",
+  "transport": "mesh",
+  "cleanup": true,
+  "normalResourceAssessment": {
+    "snap": {
+      "fleetTargetMiB": 96,
+      "ownerTargetMiB": 64,
+      "combinedCpuTargetPercent": 5,
+      "fleetAndAssociatedBridgeMaxObservedRssBytes": 87334912,
+      "ownerMaxObservedRssBytes": 23846912,
+      "combinedCpuPercent": 4.339224032974919,
+      "withinSelectedTargets": true
+    },
+    "starship": {
+      "fleetTargetMiB": 96,
+      "ownerTargetMiB": 64,
+      "combinedCpuTargetPercent": 5,
+      "fleetAndAssociatedBridgeMaxObservedRssBytes": 86110208,
+      "ownerMaxObservedRssBytes": 24928256,
+      "combinedCpuPercent": 2.4560745871874903,
+      "withinSelectedTargets": true
+    }
+  },
+  "limits": [
+    "Sampled RSS can miss transient peaks",
+    "Existing default-server clients and matching desktop windows are read passively; no viewer launch or Rofi proof",
+    "Two physical hosts and private catalog/preferences; no managed selection",
+    "Desktop readiness and positive viewer associations were not assessed"
+  ],
+  "artifactInput": {
+    "state": "built_unaccepted",
+    "source": {
+      "commit": "fcaa8a868ce875b033bec7a0efcd2186a4baa533",
+      "epoch": 1791789546,
+      "tree": "d3ebc248f51569c538a5b326f9327f23e939b330"
+    },
+    "wheelSha256": "e73a88f89b38242631766dd45f6e669f43c54e36857e5716595c0a56321e5091",
+    "descriptorSha256": "4bb030c22f9cf6c0d77d743dfa2b467529d785d56a9d8ff747794a6f7c5eeab1",
+    "sourceFilesMatchHarness": true
+  },
+  "meshInputs": [
+    {
+      "file": "mesh_plus-0.1.0a15-py3-none-any.whl",
+      "sha256": "42b25045f8f89afda61e56525f443a189dcc6769637aee5bcab959f096527f0f"
+    },
+    {
+      "bytes": 67548,
+      "file": "attrs-26.1.0-py3-none-any.whl",
+      "name": "attrs",
+      "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+      "version": "26.1.0"
+    },
+    {
+      "bytes": 90630,
+      "file": "jsonschema-4.26.0-py3-none-any.whl",
+      "name": "jsonschema",
+      "sha256": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce",
+      "version": "4.26.0"
+    },
+    {
+      "bytes": 18437,
+      "file": "jsonschema_specifications-2025.9.1-py3-none-any.whl",
+      "name": "jsonschema-specifications",
+      "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe",
+      "version": "2025.9.1"
+    },
+    {
+      "bytes": 26766,
+      "file": "referencing-0.37.0-py3-none-any.whl",
+      "name": "referencing",
+      "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231",
+      "version": "0.37.0"
+    },
+    {
+      "bytes": 371623,
+      "file": "rpds_py-2026.9.1-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "name": "rpds-py",
+      "sha256": "eac2f5dbafd585dfe31f86a23ebf0d3ba480a9d49ebc87947267b5608d4ea0cd",
+      "version": "2026.9.1"
+    }
+  ],
+  "privateReportSha256": "06882dc7b9d7b964558bd0565c67fd43f0086675d4d35d699b6875a1826b5442"
+}
