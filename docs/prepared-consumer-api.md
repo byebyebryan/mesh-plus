@@ -116,7 +116,7 @@ Schema/native exceptions retain their existing exception types. Mesh preparation
 checks raise `ProtocolError` with `preparation_descriptor`, `preparation_interface`,
 `preparation_binding`, `preparation_rule_count`, `preparation_rule_identity`,
 `preparation_receipt_keys`, `preparation_receipt_scope`, `prepared_capacity` or
-`prepared_retired`. Owner compiler exceptions are re-raised after retirement.
+`prepared_retired` or `prepared_reentrant`. Owner compiler exceptions are re-raised after retirement.
 Do not translate an error into an unchecked success or reconnect the same guard.
 
 Existing consumers need no migration. Opt in only after owner certification and

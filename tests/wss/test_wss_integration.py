@@ -11,9 +11,10 @@ from importlib.resources import files
 from pathlib import Path
 from unittest.mock import patch
 
+from prepared_fixture import StaticPreparation
 from wss_fixtures import BroadcastPublisher, ReferenceProfile, certificates, contexts, fingerprint
 
-from mesh_plus.api import Client, ReadGuard
+from mesh_plus.api import Client, PreparedReadGuard, ReadGuard
 from mesh_plus.bridge import Bridge
 from mesh_plus.evidence import clock_domain
 from mesh_plus.protocol import ProtocolError
@@ -102,11 +103,17 @@ class IntegrationCase(unittest.IsolatedAsyncioTestCase):
                             self.assertEqual(response["mesh"]["catalog"]["revision"], selection.revision)
                             self.assertEqual(reader.inspect()["byteScope"], "mixed")
                             guard = ReadGuard(domain, "a" * 32, profile=profile)
+                            prepared = PreparedReadGuard(domain, "a" * 32, profile=profile,
+                                                         preparation=StaticPreparation(profile))
                             watch = reader.watch(request_id="a" * 32, proof_interval=.1)
                             try:
                                 for _ in range(20):
                                     frame = await asyncio.wait_for(anext(watch), 4)
                                     guard.accept(frame)
+                                    prepared.accept(frame)
+                                    now = boottime_ms()
+                                    self.assertEqual(prepared.current(now, clock_domain()),
+                                                     guard.current(now, clock_domain()))
                                     if frame["mesh"]["status"] == "complete":
                                         break
                                 self.assertEqual(frame["mesh"]["status"], "complete")
@@ -115,12 +122,18 @@ class IntegrationCase(unittest.IsolatedAsyncioTestCase):
                                 for _ in range(20):
                                     frame = await asyncio.wait_for(anext(watch), 4)
                                     guard.accept(frame)
+                                    prepared.accept(frame)
+                                    now = boottime_ms()
+                                    self.assertEqual(prepared.current(now, clock_domain()),
+                                                     guard.current(now, clock_domain()))
                                     if frame["mesh"]["hosts"][1]["owner"]["service"]["viewRevision"] == publisher.frame["viewRevision"]:
                                         break
                                 self.assertEqual(frame["mesh"]["hosts"][1]["owner"]["service"]["viewRevision"],
                                                  publisher.frame["viewRevision"])
                             finally:
                                 await watch.aclose()
+                                prepared.disconnect()
+                                self.assertIsNone(prepared.snapshot())
                             await listener.close()
                             response = await reader.snapshot()
                             self.assertEqual(response["mesh"]["status"], "partial")

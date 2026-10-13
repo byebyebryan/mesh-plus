@@ -93,7 +93,7 @@ class PreparedReadGuard:
     Reconnect or installed preparation/profile changes require a fresh guard.
     """
 
-    __slots__ = ("_guard", "_profile", "_preparation", "_descriptor", "_compile", "_generation")
+    __slots__ = ("_guard", "_profile", "_preparation", "_descriptor", "_compile", "_generation", "_accepting")
 
     def __init__(self, domain, request_id, *, profile, preparation, host_ids=None):
         self._profile = resolve_profile(domain, profile)
@@ -109,6 +109,7 @@ class PreparedReadGuard:
         self._preparation = preparation
         self._guard = _OwnedAdmission(domain, request_id, profile=profile, host_ids=host_ids)
         self._generation = None
+        self._accepting = False
 
     def _binding(self):
         try:
@@ -157,7 +158,11 @@ class PreparedReadGuard:
 
     def accept(self, frame):
         """Admit exactly once before compilation; no partial publication or fallback."""
+        if self._accepting:
+            self.disconnect()
+            check(False, "prepared_reentrant")
         try:
+            self._accepting = True
             self._binding()
             owned = copy.deepcopy(frame)
             self._guard.accept(owned)
@@ -173,6 +178,7 @@ class PreparedReadGuard:
             raise
         finally:
             self._guard.admitted = None
+            self._accepting = False
         return frame
 
     def current(self, now_ms, clock):

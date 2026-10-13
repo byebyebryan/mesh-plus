@@ -229,6 +229,22 @@ class PreparedTests(unittest.IsolatedAsyncioTestCase):
         with self.assertRaisesRegex(ProtocolError, "preparation_descriptor"):
             self.guard(profile, preparation=object())
 
+    async def test_reentrant_acceptance_cannot_publish_outer_result(self):
+        profile, _, response = await fleet()
+        preparation = StaticPreparation(profile)
+        original = preparation.prepare_rules
+
+        def compile(state):
+            with self.assertRaisesRegex(ProtocolError, "prepared_reentrant"):
+                guard.accept(response)
+            return original(state)
+
+        preparation.prepare_rules = compile
+        guard = self.guard(profile, preparation=preparation)
+        with self.assertRaisesRegex(ProtocolError, "prepared_retired"):
+            guard.accept(response)
+        self.assertIsNone(guard.snapshot())
+
     async def test_legacy_mutable_revalidation_and_later_rejection_unchanged(self):
         profile, _, response = await fleet()
         legacy = ReadGuard("tmux", "a" * 32, profile=profile)
@@ -242,3 +258,21 @@ class PreparedTests(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(ValueError):
                 current_sessions(response, boottime_ms(), response["mesh"]["reader"]["clock"], profile=profile)
             self.assertEqual(len(prepared.current(boottime_ms(), response["mesh"]["reader"]["clock"])), 32)
+
+    async def test_serialized_capacity_failure_closes(self):
+        profile, _, response = await fleet()
+        guard = self.guard(profile)
+        with patch("mesh_plus.prepared._CAPACITY", 256):
+            with self.assertRaisesRegex(ProtocolError, "prepared_capacity"):
+                guard.accept(response)
+        self.assertIsNone(guard.snapshot())
+
+    async def test_expected_scope_rejects_before_compilation(self):
+        profile, _, response = await fleet()
+        preparation = StaticPreparation(profile)
+        with patch.object(preparation, "prepare_rules", wraps=preparation.prepare_rules) as compile:
+            guard = self.guard(profile, preparation=preparation, host_ids=["foreign"])
+            with self.assertRaisesRegex(ProtocolError, "read_scope_binding"):
+                guard.accept(response)
+            compile.assert_not_called()
+        self.assertIsNone(guard.snapshot())
