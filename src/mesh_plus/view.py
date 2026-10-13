@@ -220,6 +220,12 @@ class ReadGuard:
         self.view = None
         self.host_bindings = {}
 
+    def _admit(self, frame):
+        return _validated_response(frame, self.state_profile)[1]
+
+    def _retain(self, frame):
+        return copy.deepcopy(frame)
+
     def accept(self, frame):
         check(not self.closed, "read_terminal_barrier")
         if "error" in frame and "mesh" not in frame:
@@ -236,7 +242,7 @@ class ReadGuard:
             check(len(encode(frame)) <= 16384, "control_capacity")
             check(self.binding is not None, "read_baseline_required")
         else:
-            _, admitted = _validated_response(frame, self.state_profile)
+            admitted = self._admit(frame)
         check(frame["protocol"] == self.profile and mesh["requestId"] == self.request_id and
               mesh["operation"] == "watch", "read_request_binding")
         reader = mesh["reader"]
@@ -276,7 +282,7 @@ class ReadGuard:
         else:
             self.scope, self.catalog = scope, copy.deepcopy(catalog)
             self.needs_resync = False
-            self.view = copy.deepcopy(frame)
+            self.view = self._retain(frame)
             self.host_bindings = next_hosts
         return frame
 

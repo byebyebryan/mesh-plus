@@ -3,6 +3,14 @@
 from .bridge import Bridge, Publication
 from .client import Client, DeliveryError, Subscription
 from .configured_read import configured_reader
+from .prepared import (
+    PREPARATION_INTERFACE_VERSION,
+    PreparationDescriptor,
+    PreparationState,
+    PreparedReadGuard,
+    PreparedRule,
+    StatePreparation,
+)
 from .publisher import CachedPublication, CachedPublisher, CachedSource
 from .reader import Endpoint, Reader
 from .state import (
@@ -22,4 +30,6 @@ __all__ = [
     "ReceiptKey", "ReferenceProfile", "descriptor", "Endpoint", "Reader", "configured_reader",
     "ReadGuard", "current_sessions", "reconstructed", "validate_response", "Bridge", "Publication",
     "Client", "Subscription", "DeliveryError", "CachedSource", "CachedPublication", "CachedPublisher",
+    "PREPARATION_INTERFACE_VERSION", "PreparationDescriptor", "PreparationState", "PreparedRule",
+    "StatePreparation", "PreparedReadGuard",
 ]
