@@ -1,7 +1,9 @@
 # Coordinated networking performance execution
 
-2026-10-12. Active execution of the [accepted plan](../../performance-and-wss-plan.md).
-Current disposition: **P0 complete; P1 publisher/reader attribution recorded; P2 native WSS functional/admission gates pass; P3 private Agent a21 candidate installed; full matched measurement next.**
+2026-10-12. Decision recorded for the [accepted plan](../../performance-and-wss-plan.md).
+**Retain SSH for both domains; keep WSS optional; do not promote the private Agent
+a21 candidate.** The [decision and remaining gates](decision.md) distinguish
+128 measured windows from comparable performance evidence.
 Ordinary clients remain on IPC/SSH; no collector, native source, shared launcher,
 chezmoi selector or runtime package was changed by these diagnostics.
 
@@ -71,9 +73,10 @@ storage. Permanent policy, SSH access and normal units are unchanged. The
 reviewed helpers in `studies/performance/material.py` and `firewall.py` prepare
 private credentials and reversible trial rules; no secret material is published.
 
-P2 baseline measurements and later candidate/fault/resource/rollback gates remain
-active. The listeners are owned foreground processes, not enabled deployment
-units. Final acceptance must retire them and remove both owned runtime rules.
+Listeners are owned foreground processes, not enabled deployment units. The
+final preservation receipt records retirement and removal of the owned rules.
+Two explicit six-hour rule renewals supported the long serial measurement pass;
+permanent policy was unchanged.
 
 ## Reviewed cost and correctness checkpoint
 
@@ -116,7 +119,7 @@ short candidate SSH/WSS pilots also pass. Pilot CPU values exclude full proof
 cycles and certify no gain. A mixed a21-local/a20-remote complete fleet sample
 passes on Snap with original proofs/receipts and owned retirement.
 
-The timed matrix now compares baseline SSH/WSS for both domains and directions,
+The completed timed matrix compares baseline SSH/WSS for both domains and directions,
 and baseline/candidate SSH plus candidate SSH/WSS for Agent only. Candidate
 Tmux cells are omitted because no Mesh or Tmux runtime changes. Four ABBA blocks
 per pair and host role, 15-second warmup and 120-second measurement are retained.
@@ -125,3 +128,19 @@ restart decision-driving windows with one final harness pin after candidate
 correctness work. All interruptions/discarded attempts remain private and
 produce no paired performance acceptance. Native health/current/stored row
 counts are recorded separately; transport readiness never implies native truth.
+
+## Final measurement disposition
+
+See [matched summaries](matched-summary.json), [raw metadata](matched-windows.json.gz),
+[normal Tmux acceptance](tmux-normal.json) and the [per-domain decision](decision.md).
+Passed per-window guards do not certify matched traffic, frozen native content or
+causal gains. No runtime Mesh/Tmux change or ordinary transport switch is selected.
+
+[Agent normal endpoint windows](agent-normal.json), [installed native capacity](agent-capacity.json)
+and [final two-host preservation](preservation.json) retain their explicit scopes.
+Both selected runtime/control bytes and ordinary service incarnations match the
+starting baseline. Final IPC/SSH fleet poll/watch and remote proofs pass, with
+zero retained connections. Owned WSS listeners, trial rules and credentials are gone.
+
+[Final regression gate](final-gates.json) reruns the canonical native/SSH/WSS
+gate after measurement without changing the reviewed historical producer inputs.

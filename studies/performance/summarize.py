@@ -28,6 +28,10 @@ def run(args):
         source = args.root / ("matrix-" + pair)
         cases = [json.loads(p.read_text()) for p in sorted(source.glob("*.json")) if p.name != "index.json"]
         for case in cases:
+            for stage in ("controlsBefore", "controlsAfter"):
+                for endpoint in case.get(stage, []):
+                    # Preserve direct/relay evidence without publishing WAN endpoints.
+                    endpoint.get("path", {}).pop("currentAddress", None)
             case["pair"] = pair
             case["timedTraffic"] = traffic(case)
             case["accessiblePssMiB"] = pss(case)

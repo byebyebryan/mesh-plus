@@ -6,8 +6,8 @@
     "excluded_window": 4,
     "failed_window": 0
   },
-  "rawSha256": "42f3b7799e0b1cf0a709b4d4e0d0dc04e30cee20758c375cff48447b3f13d729",
-  "gzipSha256": "04f163d117d42f129e4f8b6526bdc0c42c764f58ab43dd98d19ff1d55d9f2b75",
+  "rawSha256": "901498f514c339cea117cc458e780e952ddabfbd4862ea83aa6c0d1550d5cbe3",
+  "gzipSha256": "7c3f020a3ef5f5182169bf36d55bde8bcb61d041b7c8d48c993ada7d53a90239",
   "blocks": [
     {
       "pair": "baseline-carrier",

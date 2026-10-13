@@ -1,0 +1,150 @@
+{
+  "status": "passed",
+  "hosts": [
+    {
+      "host": "snap",
+      "status": "passed",
+      "controlsIdentical": true,
+      "runtimeIdentical": true,
+      "ordinaryUnitIncarnationsIdentical": true,
+      "versions": {
+        "mesh": "0.1.0a15",
+        "tmux": "0.6.0a7",
+        "agent": "0.5.0a20"
+      },
+      "collectorVersion": "0.5.0a18",
+      "cleanup": {
+        "host": "snap",
+        "status": "passed",
+        "trialProcesses": 0,
+        "trialListeners": 0,
+        "ownedRuntimeRuleRemoved": true,
+        "privateCredentialDirectoryRemoved": true,
+        "permanentFirewallChanged": false
+      },
+      "cachedFleet": {
+        "host": "snap",
+        "status": "passed",
+        "domains": {
+          "tmux": {
+            "snapshot": "complete",
+            "watch": "complete",
+            "rows": 4,
+            "hosts": [
+              {
+                "host": "snap",
+                "path": "ipc",
+                "ready": true,
+                "proof": false
+              },
+              {
+                "host": "starship",
+                "path": "ssh",
+                "ready": true,
+                "proof": true
+              }
+            ],
+            "cleanup": true
+          },
+          "agent": {
+            "snapshot": "complete",
+            "watch": "complete",
+            "rows": 484,
+            "hosts": [
+              {
+                "host": "snap",
+                "path": "ipc",
+                "ready": true,
+                "proof": false
+              },
+              {
+                "host": "starship",
+                "path": "ssh",
+                "ready": true,
+                "proof": true
+              }
+            ],
+            "cleanup": true
+          }
+        },
+        "scope": "one complete cached poll/watch sample; no collection/actions/route writes/native oracle"
+      }
+    },
+    {
+      "host": "starship",
+      "status": "passed",
+      "controlsIdentical": true,
+      "runtimeIdentical": true,
+      "ordinaryUnitIncarnationsIdentical": true,
+      "versions": {
+        "mesh": "0.1.0a15",
+        "tmux": "0.6.0a7",
+        "agent": "0.5.0a20"
+      },
+      "collectorVersion": "0.5.0a18",
+      "cleanup": {
+        "host": "starship",
+        "status": "passed",
+        "trialProcesses": 0,
+        "trialListeners": 0,
+        "ownedRuntimeRuleRemoved": true,
+        "privateCredentialDirectoryRemoved": true,
+        "permanentFirewallChanged": false
+      },
+      "cachedFleet": {
+        "host": "starship",
+        "status": "passed",
+        "domains": {
+          "tmux": {
+            "snapshot": "complete",
+            "watch": "complete",
+            "rows": 4,
+            "hosts": [
+              {
+                "host": "starship",
+                "path": "ipc",
+                "ready": true,
+                "proof": false
+              },
+              {
+                "host": "snap",
+                "path": "ssh",
+                "ready": true,
+                "proof": true
+              }
+            ],
+            "cleanup": true
+          },
+          "agent": {
+            "snapshot": "complete",
+            "watch": "complete",
+            "rows": 484,
+            "hosts": [
+              {
+                "host": "starship",
+                "path": "ipc",
+                "ready": true,
+                "proof": false
+              },
+              {
+                "host": "snap",
+                "path": "ssh",
+                "ready": true,
+                "proof": true
+              }
+            ],
+            "cleanup": true
+          }
+        },
+        "scope": "one complete cached poll/watch sample; no collection/actions/route writes/native oracle"
+      }
+    }
+  ],
+  "scope": "baseline selected runtime/control bytes and ordinary unit incarnation comparison; owned rules/listeners/credentials removed; final cached IPC/SSH poll/watch/proofs",
+  "limits": [
+    "not physical suspend",
+    "not independent provider collection oracle",
+    "private wheels and native frame evidence retained outside repositories"
+  ],
+  "firewallRenewals": 2
+}

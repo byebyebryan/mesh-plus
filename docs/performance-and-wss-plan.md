@@ -1,6 +1,6 @@
 # Mesh and Observer networking performance pass
 
-2026-10-12. **Active authorized execution; ordinary transport remains SSH.**
+2026-10-12. **Assessment decision: retain SSH; no candidate promotion.**
 The [execution ledger](evidence/2026-10-12-performance/README.md) records current
 inputs, diagnostics, isolated trials and checkpoint limits. Tmux and Agent development are parked for this coordinated
 pass. Mesh owns this plan and cross-project evidence; any eventual source change
@@ -234,9 +234,20 @@ assets are never overwritten. Tag/source, private wheel, public release and live
 selection remain distinct. Any API/schema/authority change reopens its normative
 review rather than being smuggled into a performance fix.
 
-A following goal loop can authorize P0–P6 investigation, compatible source work
-across the three repos and **isolated** real-host WSS trials, committing checkpoints.
-It stops before ordinary transport/deployment selection unless that concrete action
-is separately authorized. Physical suspend requires a coordinated window because
+The authorized goal loop assessed P0–P6, made one compatible private Agent source
+candidate and ran **isolated** real-host WSS trials, committing checkpoints.
+It makes no ordinary transport/deployment selection. Physical suspend requires a
+coordinated window because
 other work and ordinary sessions may still be active even when the two agents
 are parked.
+
+## Execution disposition
+
+The [decision](evidence/2026-10-12-performance/decision.md) records the completed
+measurement matrix and conservative retain-SSH outcome. P0–P3 establish baseline,
+attribution, isolated WSS and one private compatible Agent candidate. P4 retains
+128 windows but excludes unmatched comparisons; it establishes no promotion gain.
+P5 supplies source/installed/native and normal receipts with explicit promotion
+exclusions, rather than declaring every operational gate closed. P6 recommends
+no release or managed change. Remaining WSS capacity/fanout/rotation/suspend gates
+are prerequisites only for a later selection proposal, not Observer SDK adoption.

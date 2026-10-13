@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "checkedAtUtc": "2026-10-13T02:42:20Z",
+  "sourceCheckpoint": "99e2dd9",
+  "runtimeChangedSinceReleasedA15": false,
+  "command": "rtk proxy .venv/bin/python scripts/check.py --native --wss",
+  "python": "3.13.7",
+  "nativeTestInputs": {
+    "tmux-observer": "0.6.0a5",
+    "agent-observer": "0.5.0a16",
+    "mesh-plus": "0.1.0a15",
+    "jsonschema": "4.26.0",
+    "websockets": "17.2"
+  },
+  "checks": {
+    "lockedInputs": 21,
+    "packagedSchemas": 20,
+    "readDesignOracle": 116,
+    "deliveryOracle": 169,
+    "nativeAndSSH": 151,
+    "nativeWSS": 43,
+    "accountingAdversarial": 3
+  },
+  "skips": [],
+  "exclusions": [
+    "current sibling exact historical HEAD parity (guard already rejected; frozen references preserved)",
+    "physical suspend",
+    "ordinary WSS selection",
+    "fixed-trace WSS fanout resource and maximum-domain capacity",
+    "real-host credential lifecycle promotion"
+  ]
+}

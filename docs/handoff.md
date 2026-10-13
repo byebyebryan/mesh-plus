@@ -6,8 +6,8 @@ Latest publication is [a15](evidence/2026-10-12-a15-release/README.md), with
 SDK interface 1, optional WSS and the generic cached publisher/factory seam.
 Release and installed-byte acceptance do not select an owner or live endpoint.
 The combined shared launcher now selects both accepted owner factories. The
-[coordinated performance/WSS pass](performance-and-wss-plan.md) is executing
-isolated trials and measurement; [its ledger](evidence/2026-10-12-performance/README.md)
+[coordinated performance/WSS pass](performance-and-wss-plan.md) records the
+retain-SSH decision after isolated trials and measurement; [its ledger](evidence/2026-10-12-performance/README.md)
 records current evidence. Ordinary readers remain on IPC/SSH.
 
 The cached-state core is integrated with both Observers. It supports polling and
@@ -110,8 +110,9 @@ one explicit trusted Python map for local IPC, fixed SSH and optional WSS.
 passes both profiles over IPC/fixed SSH/WSS and a10 interoperability.
 Native/resource/managed acceptance remains owner-specific; no live pins change.
 
-The next [coordinated performance/WSS pass](performance-and-wss-plan.md) plans
-measurement and compatible refinement against Tmux a7/Agent a20/Mesh a15.
+The [coordinated performance/WSS assessment](performance-and-wss-plan.md) retains
+SSH against Tmux a7/Agent a20/Mesh a15; its private Agent a21 candidate is not
+promoted.
 Both publisher factories are already deployed; shared launcher composition is
 no longer a pending prerequisite. Ordinary transport selection remains SSH.
 
