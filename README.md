@@ -1,11 +1,18 @@
 # Mesh Plus
 
+The **a19 source/private candidate** fixes cached publisher acquisition-history
+ordering and prototypes shared BOOTTIME expiry checks. Its
+[idle simplification evidence](docs/evidence/2026-10-14-idle-simplification/README.md)
+records isolated wheel acceptance; matched CPU qualification is still running.
+SDK 1, preparation interface 1, lock 4, schema bytes and managed selections remain
+unchanged. Tmux a9 is the separate matching private package pin.
+
 The [Tmux actual-pipeline qualification](docs/evidence/2026-10-14-tmux-preparation/README.md)
 certifies an optional Observer facade and retains the existing Fleet guard:
 that consumer performs no Mesh current queries. It also corrects the a18 runtime
 version banner and binds a distinct private wheel; no release or live pin changes.
 
-The **a18 source/private candidate** integrates the accepted Agent v3 profile
+The preceding **a18 source/private candidate** integrates the accepted Agent v3 profile
 with compatible admission simplification and opt-in prepared watch consumers.
 The [changing-watch qualification](docs/evidence/2026-10-14-watch/README.md)
 separates consumer CPU/allocation evidence, package acceptance and owner handoff.

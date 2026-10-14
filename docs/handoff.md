@@ -2,10 +2,13 @@
 
 ## Current disposition
 
-The [idle simplification plan](idle-simplification-plan.md) sequences refresh-race
-classification, measured Mesh scheduling, exact unchanged-host Observer reuse and
-conditional native command consolidation. It proposes unchanged SDK/wire/cadence
-and separate performance/installed gates; runtime implementation has not started.
+The [idle simplification execution](evidence/2026-10-14-idle-simplification/README.md)
+fixes the publisher receipt-history race and qualifies private Mesh a19 / Tmux a9
+packages. Shared BOOTTIME expiry checks remain under matched CPU qualification;
+native-document reuse stopped at its value gate, and native command consolidation
+is deferred to a separate producer-owned study. The frozen contract and source
+cadence are unchanged. Publication and managed adoption are separate. The
+[idle simplification plan](idle-simplification-plan.md) preserves the reviewed gates.
 
 The [actual Tmux idle profile](evidence/2026-10-14-idle-profile/README.md)
 identifies a substantial fixed CPU floor with an empty roster. Follow-up targets
