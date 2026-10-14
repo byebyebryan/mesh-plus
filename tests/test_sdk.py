@@ -41,6 +41,13 @@ ORIGINAL_IMPORT = builtins.__import__
 
 
 class SDKTests(unittest.IsolatedAsyncioTestCase):
+    def test_runtime_version_matches_installed_distribution_metadata(self):
+        from importlib.metadata import version
+
+        import mesh_plus
+
+        self.assertEqual(mesh_plus.__version__, version("mesh-plus"))
+
     def setUp(self):
         self.blocker = patch("builtins.__import__", side_effect=blocked_import)
         self.blocker.start()
