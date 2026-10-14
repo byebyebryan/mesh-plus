@@ -1,7 +1,7 @@
 # Actual Tmux idle cost and Mesh follow-up
 
 2026-10-14. Diagnostic study, not a runtime change, release or deployment.
-The [owning Observer receipt](https://github.com/byebyebryan/tmux-observer/blob/aed331e/docs/evidence/2026-10-14-idle-profile/README.md)
+The [owning Observer receipt](https://github.com/byebyebryan/tmux-observer/blob/ff6a163/docs/evidence/2026-10-14-idle-profile/README.md)
 binds live package roots, raw samples, controlled installed-runtime fixtures,
 function profiles, instrumentation exclusions and reproduction.
 
@@ -56,3 +56,10 @@ unchanged. This finding adds no downstream migration prerequisite. There is no
 reason from these measurements to prioritize WSS/TCP or a compact payload format.
 Agent, Plus, SSH Plus, ordinary services and chezmoi were untouched. Correctness
 and authority checks remain in force; no implementation prototype is promoted.
+
+The Observer hosted source gate passes, but the integration gate repeats the
+previous grouped-refresh `stale_scope` test failure with unchanged runtime/tests.
+The owning receipt preserves the failed run and leaves the cause unresolved.
+Investigate that race before implementing timer/scheduling changes; the profiling
+branches are not a fully green integration promotion. Successful diagnostic
+measurements and Mesh's passing design/hosted checks retain their separate scopes.
