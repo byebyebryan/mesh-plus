@@ -2,6 +2,11 @@
 
 ## Current disposition
 
+The [actual Tmux idle profile](evidence/2026-10-14-idle-profile/README.md)
+identifies a substantial fixed CPU floor with an empty roster. Follow-up targets
+are repeated scheduling/validation work and Observer native/desktop costs; this
+diagnostic pass changes no runtime, wire contract or downstream prerequisite.
+
 The [Tmux consumer qualification](evidence/2026-10-14-tmux-preparation/README.md)
 certifies Observer's optional preparation facade but rejects a mechanical Fleet
 guard switch: actual Fleet reads use Observer's prepared projection and perform
