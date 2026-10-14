@@ -1,0 +1,266 @@
+{
+  "receiptVersion": 1,
+  "status": "accepted",
+  "artifacts": {
+    "observer": {
+      "manifestVersion": 5,
+      "package": "agent-observer",
+      "version": "0.7.0a1",
+      "wheel": "agent_observer-0.7.0a1-py3-none-any.whl",
+      "wheelSha256": "07196b544576600297e8c0ae12f9b796c9d6eda52b76ad02901044fc75d4373f",
+      "sourceRevision": "8a93084f9369c24d1aec4c3853da5e04eef7c387",
+      "apiVersion": 4,
+      "schemas": {
+        "snapshot": 6,
+        "watch": 6
+      },
+      "write": {
+        "schema": 2
+      },
+      "service": {
+        "protocol": 4,
+        "schemas": {
+          "request": 4,
+          "frame": 4
+        }
+      },
+      "entrypoints": [
+        "agent-observer",
+        "agent-observer-write",
+        "agent-observer-service"
+      ],
+      "nativeContracts": [
+        "codex_daemon_status_v2",
+        "codex_database_only_catalog_v1",
+        "codex_saved_native_timing_v1",
+        "codex_client_system_classification_v1"
+      ]
+    },
+    "mesh": {
+      "manifestVersion": 4,
+      "package": "mesh-plus",
+      "version": "0.1.0a17",
+      "wheel": "mesh_plus-0.1.0a17-py3-none-any.whl",
+      "wheelSha256": "270bf1ce2a1ea950f1d6a1318ad2c6a1f45c8696460b1711a87efae98ea71154",
+      "sourceRevision": "ad3c256fef463396481ff6fd7acfac76d2ca4eb0",
+      "lockSha256": "fe850dcdd83f48f867ed2f4e5ee0057abbc894653a670414ee08c8f48fa88a83",
+      "agentProfile": "agent-observer.mesh-candidate.v3",
+      "sdkInterface": 1,
+      "stateSchemasSha256": "20197ad58fa893cf9364d939eff8d62935fb0a2665fa326b8b3ce81140d7cf02"
+    }
+  },
+  "conformance": {
+    "starship": {
+      "profile": {
+        "ok": true,
+        "testsRun": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "network": {
+        "ok": true,
+        "testsRun": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "snap": {
+      "profile": {
+        "ok": true,
+        "testsRun": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "network": {
+        "ok": true,
+        "testsRun": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "privateFleet": {
+    "status": "passed",
+    "scope": "installed candidate shared launcher, two-host private Agent service and ordinary cached Tmux source",
+    "domains": [
+      {
+        "domain": "agent",
+        "profile": "agent-observer.mesh-candidate.v3",
+        "snapshotRows": 482,
+        "watchRows": 482,
+        "hosts": [
+          {
+            "host": "snap",
+            "proof": true,
+            "delivery": "ready"
+          },
+          {
+            "host": "starship",
+            "proof": false,
+            "delivery": "ready"
+          }
+        ],
+        "expiryDisconnectCleanup": "passed"
+      },
+      {
+        "domain": "tmux",
+        "profile": "tmux-observer.mesh-candidate.v1",
+        "snapshotRows": 4,
+        "watchRows": 4,
+        "hosts": [
+          {
+            "host": "snap",
+            "proof": true,
+            "delivery": "ready"
+          },
+          {
+            "host": "starship",
+            "proof": false,
+            "delivery": "ready"
+          }
+        ],
+        "expiryDisconnectCleanup": "passed"
+      }
+    ],
+    "normalSelectionsChanged": false,
+    "harnessSha256": "34e3ffa14d17133a9ad3c84fa4f1d7e83a39b41d9a6e34bc1bf6acd32a1ffe2b"
+  },
+  "selectedFleet": {
+    "status": "passed",
+    "scope": "selected shared launcher, two-host ordinary cached Agent and Tmux sources",
+    "domains": [
+      {
+        "domain": "agent",
+        "profile": "agent-observer.mesh-candidate.v3",
+        "snapshotRows": 483,
+        "watchRows": 483,
+        "hosts": [
+          {
+            "host": "snap",
+            "proof": true,
+            "delivery": "ready"
+          },
+          {
+            "host": "starship",
+            "proof": false,
+            "delivery": "ready"
+          }
+        ],
+        "expiryDisconnectCleanup": "passed"
+      },
+      {
+        "domain": "tmux",
+        "profile": "tmux-observer.mesh-candidate.v1",
+        "snapshotRows": 4,
+        "watchRows": 4,
+        "hosts": [
+          {
+            "host": "snap",
+            "proof": true,
+            "delivery": "ready"
+          },
+          {
+            "host": "starship",
+            "proof": false,
+            "delivery": "ready"
+          }
+        ],
+        "expiryDisconnectCleanup": "passed"
+      }
+    ],
+    "ordinaryProviderActions": 0,
+    "harnessSha256": "16d1635b043e485ad3fe4d170cce3d0ce959f31704efb3e50e1231764211bb60"
+  },
+  "rollout": {
+    "starship": {
+      "status": "passed",
+      "stages": [
+        {
+          "stage": "baseline",
+          "serviceProtocol": 3,
+          "serviceId": "f7ad0566-55b4-4c69-b7fb-185f8c9278e7",
+          "rows": 385,
+          "readPublisherAccepted": true,
+          "assessmentCleanup": true
+        },
+        {
+          "stage": "candidate",
+          "serviceProtocol": 4,
+          "serviceId": "a4d7515f-f012-45e8-9c73-76ae968bb5b5",
+          "rows": 385,
+          "readPublisherAccepted": true,
+          "assessmentCleanup": true
+        },
+        {
+          "stage": "rollback",
+          "serviceProtocol": 3,
+          "serviceId": "715d0f33-eb31-4796-b2bb-6ac02c670f9c",
+          "rows": 385,
+          "readPublisherAccepted": true,
+          "assessmentCleanup": true
+        },
+        {
+          "stage": "reselected",
+          "serviceProtocol": 4,
+          "serviceId": "ea4850c5-e868-41c5-ab13-016e9072ddc3",
+          "rows": 385,
+          "readPublisherAccepted": true,
+          "assessmentCleanup": true
+        }
+      ],
+      "selectedTargets": 13,
+      "ordinaryProviderActions": 0,
+      "writerUnchanged": true,
+      "tmuxOwnerAndSelectionUnchanged": true,
+      "finalSelection": "0.7.0a1/mesh0.1.0a17",
+      "harnessSha256": "1effea176a534caecd6d7b736bcb29d8337d2fafa865b3071f15e6ea345c042d"
+    },
+    "snap": {
+      "status": "passed",
+      "stages": [
+        {
+          "stage": "baseline",
+          "serviceProtocol": 3,
+          "serviceId": "f87cf755-8ced-4719-b354-03025dba0a3f",
+          "rows": 97,
+          "readPublisherAccepted": true,
+          "assessmentCleanup": true
+        },
+        {
+          "stage": "candidate",
+          "serviceProtocol": 4,
+          "serviceId": "8515767d-9a12-4304-9a27-31cf69d4f0f1",
+          "rows": 97,
+          "readPublisherAccepted": true,
+          "assessmentCleanup": true
+        },
+        {
+          "stage": "rollback",
+          "serviceProtocol": 3,
+          "serviceId": "fce33262-08e4-4540-bae7-aea33a5c89ca",
+          "rows": 97,
+          "readPublisherAccepted": true,
+          "assessmentCleanup": true
+        },
+        {
+          "stage": "reselected",
+          "serviceProtocol": 4,
+          "serviceId": "5a256ce0-1612-47bd-8549-0388af22a37a",
+          "rows": 97,
+          "readPublisherAccepted": true,
+          "assessmentCleanup": true
+        }
+      ],
+      "selectedTargets": 13,
+      "ordinaryProviderActions": 0,
+      "writerUnchanged": true,
+      "tmuxOwnerAndSelectionUnchanged": true,
+      "finalSelection": "0.7.0a1/mesh0.1.0a17",
+      "harnessSha256": "1effea176a534caecd6d7b736bcb29d8337d2fafa865b3071f15e6ea345c042d"
+    }
+  }
+}

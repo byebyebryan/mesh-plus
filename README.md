@@ -1,9 +1,12 @@
 # Mesh Plus
 
-The [a16 source timing extension](docs/agent-timing-profile.md) adds an explicit
-Agent v2 profile for wire 5/Service 3 through SDK 1. Existing Agent v1/Tmux v1
-defaults and schema bytes are preserved. Exact package and owner rollout gates
-follow source acceptance; published a15 and normal IPC/SSH selections remain.
+The [a17 system classification extension](contracts/agent-profile-v3/contract.md)
+adds explicit Agent v3 for Observer wire 6/Service 4 through SDK 1. The
+[acceptance receipt](docs/evidence/2026-10-13-system-profile/README.md) records
+the exact installed a17 package and independent Observer adoption on Snap and
+Starship. Existing Agent v1/v2 and Tmux v1 schemas and defaults are preserved.
+The [a16 timing extension](docs/agent-timing-profile.md) retains its dated scope.
+Published a15 remains the latest hosted release; local adoption is separate.
 
 Mesh Plus owns request/reply and subscription delivery across a configured fleet. A
 mesh-aware domain contract has the same response shape for one local host and
