@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0a18 source/private candidate
+
+- Integrate the accepted Agent v3 profile and prepared watch consumer path,
+  preserving SDK 1, preparation interface 1, lock 4, schemas and defaults.
+- Qualify persistent changing publications and legacy/prepared allocation costs.
+  Owner preparation certification, publication and live adoption stay separate.
+
 ## 0.1.0a16 source/private-wheel checkpoints
 
 - Keep the explicit Agent v2 timing profile through SDK 1 / lock 3, preserving

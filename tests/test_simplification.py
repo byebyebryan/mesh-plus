@@ -6,6 +6,7 @@ import uuid
 from unittest.mock import patch
 
 from sdk_fixture import Profile, Publisher
+from test_agent_system_profile import SystemPublisher
 from test_agent_timing_profile import TimingPublisher
 
 from mesh_plus.api import Endpoint, Reader, ReadGuard, current_sessions, validate_response
@@ -14,16 +15,17 @@ from mesh_plus.transport import boottime_ms
 from mesh_plus.view import _control_validator
 
 
-async def fleet(domain="tmux", hosts=4, rows=8, *, timing=False):
-    profile = TimingPublisher().state_profile if timing else Profile(domain)
+async def fleet(domain="tmux", hosts=4, rows=8, *, timing=False, system=False):
+    factory = SystemPublisher if system else TimingPublisher if timing else None
+    profile = factory().state_profile if factory else Profile(domain)
     endpoints = [Endpoint("host" + str(i), i == 0, None if i == 0 else "sha256:" + "b" * 64,
                           None, profile.bind("host" + str(i), "default")) for i in range(hosts)]
     outcomes = {}
     reader = Reader(domain, endpoints, local_host="host0", catalog_revision="sha256:" + "a" * 64, profile=profile)
     for index in range(hosts):
         host = "host" + str(index)
-        publisher = TimingPublisher() if timing else Publisher(domain, host)
-        if timing:
+        publisher = factory() if factory else Publisher(domain, host)
+        if factory:
             def rebind(value):
                 if isinstance(value, dict):
                     for key, child in value.items():

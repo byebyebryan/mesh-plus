@@ -1,5 +1,11 @@
 # Mesh Plus
 
+The **a18 source/private candidate** integrates the accepted Agent v3 profile
+with compatible admission simplification and opt-in prepared watch consumers.
+The [changing-watch qualification](docs/evidence/2026-10-14-watch/README.md)
+separates consumer CPU/allocation evidence, package acceptance and owner handoff.
+SDK 1, lock 4, all accepted schemas, existing defaults and live pins remain.
+
 The [a17 system classification extension](contracts/agent-profile-v3/contract.md)
 adds explicit Agent v3 for Observer wire 6/Service 4 through SDK 1. The
 [acceptance receipt](docs/evidence/2026-10-13-system-profile/README.md) records

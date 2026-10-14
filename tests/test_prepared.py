@@ -34,8 +34,9 @@ class PreparedTests(unittest.IsolatedAsyncioTestCase):
                                  preparation=preparation or StaticPreparation(profile), **kwargs)
 
     async def test_all_profiles_golden_partial_missing_and_expiry(self):
-        for domain, timing in (("tmux", False), ("agent", False), ("agent", True)):
-            profile, _, response = await fleet(domain, hosts=4, rows=4, timing=timing)
+        for domain, timing, system in (("tmux", False, False), ("agent", False, False),
+                                       ("agent", True, False), ("agent", False, True)):
+            profile, _, response = await fleet(domain, hosts=4, rows=4, timing=timing, system=system)
             for unavailable in (False, True):
                 frame = copy.deepcopy(response)
                 if unavailable:
