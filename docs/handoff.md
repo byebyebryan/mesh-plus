@@ -4,9 +4,10 @@
 
 The [idle simplification execution](evidence/2026-10-14-idle-simplification/README.md)
 fixes the publisher receipt-history race and qualifies corrected private Mesh a20 / Tmux a10
-packages. Shared BOOTTIME expiry checks have a19 long-run evidence and a corrected a20
-installed-wheel CPU screen in progress;
-native-document reuse stopped at its value gate, and native command consolidation
+packages. Shared BOOTTIME expiry checks pass corrected a20 installed-wheel CPU screens
+(21.7% empty Fleet / 16.7% active-update Fleet reduction) with unchanged acquisition
+work; a19 long-run evidence remains separate.
+Native-document reuse stopped at its value gate, and native command consolidation
 is deferred to a separate producer-owned study. The frozen contract and source
 cadence are unchanged. Publication and managed adoption are separate. The
 [idle simplification plan](idle-simplification-plan.md) preserves the reviewed gates.
@@ -14,7 +15,7 @@ cadence are unchanged. Publication and managed adoption are separate. The
 The [actual Tmux idle profile](evidence/2026-10-14-idle-profile/README.md)
 identifies a substantial fixed CPU floor with an empty roster. Follow-up targets
 are repeated scheduling/validation work and Observer native/desktop costs; this
-diagnostic pass changes no runtime, wire contract or downstream prerequisite.
+earlier diagnostic checkpoint changed no runtime, wire contract or downstream prerequisite.
 
 The [Tmux consumer qualification](evidence/2026-10-14-tmux-preparation/README.md)
 certifies Observer's optional preparation facade but rejects a mechanical Fleet

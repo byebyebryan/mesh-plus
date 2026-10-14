@@ -1,7 +1,66 @@
 # Idle simplification execution
 
-2026-10-14. In progress; this report certifies only the checkpoints stated below.
+2026-10-14. Complete. Corrected Mesh a20 / Tmux a10 are the private handoff pair.
+This report certifies only the checkpoints stated below.
 No deployment or released artifact replacement is part of this pass.
+
+## Final disposition
+
+Keep the source-history correctness fix and the small owned-loop expiry checker,
+including a20's expired-waiter registration correction. SDK 1, preparation
+interface 1, lock 4, every accepted schema, SSH defaults and observation cadence
+remain unchanged. No release or managed deployment is performed.
+
+The [corrected installed-wheel assessment](a20-final-assessment.json) and
+[all eight final timing records](a20-final-runs.json) bind one 120-second ABBA
+block per case, with source-correctness baseline `7f5e26c` / Tmux `31e3625` versus
+installed a20/a10. The earlier two 300-second ABBA blocks qualify their a19
+prototype bytes separately; they are not relabeled as corrected-wheel acceptance.
+
+| Fleet CPU, percent of one core | Baseline | Corrected a20 | Saving |
+| --- | ---: | ---: | ---: |
+| Empty two-host fleet | 2.4625 | 1.9292 | 0.5333 points / 21.7% |
+| Two sessions per host, controlled updates | 3.0958 | 2.5792 | 0.5167 points / 16.7% |
+
+The effects exceed the observed within-block baseline ranges (0.0417 and 0.0250
+points). Active control counts match within one boundary operation; native
+accepted counts match within one window-edge sample, as declared. Source cadence,
+proof/lease parameters, native identities and attachment counts are unchanged.
+This is a bounded same-host result with uncontrolled frequency/desktop activity,
+not a confidence interval, whole-machine saving or selected live-fleet result.
+Owner self/reaped-command, Fleet, remote bridge and SSH CPU remain separate in raw
+records; SSH daemon helpers and tmux servers are excluded.
+
+Separate corrected-wheel counters preserve exactly 12 snapshots, 11 proofs,
+31,706 snapshot-result bytes, 30,473 proof-result bytes, 41 received frames and
+31 sent frames in both variants. Host projections and native admissions remain
+48 and 44. Loop turns decrease 2,769 -> 1,358; ready callbacks 2,159 -> 1,309.
+No request timeout/cancellation, connection failure or cleanup failure occurs;
+all Readers retire both connections. Input/dependency hashes remain equal after
+the study. This establishes reduced scheduling work, not reduced required data.
+
+[Matched resource-only snapshots](resources-final20.jsonl) place Fleet RSS at
+36,104 / 36,332 KiB and PSS at 23,766 / 24,029 KiB before/corrected. These short
+15-second fixtures are excluded from CPU qualification. Kernel peak RSS includes
+setup; PSS is a snapshot, not peak PSS or cgroup accounting. Broader earlier
+snapshots remain in resources.jsonl with their exact run names. One initial probe
+crossed a run boundary and correctly rejected the absent named fixture; no memory
+record from that attempt is accepted.
+
+Reject exact native-document reuse: its approximately 0.005-point projected
+saving for two-session hosts is too small to justify equality/cache machinery.
+Its patch and pure tests stay in the owning Tmux study; no cache code is shipped.
+Native command consolidation remains a separate producer-owned consistency study,
+not a hidden transport or metadata change. The independent action-fixture CI
+failure is retained in Tmux evidence; later green CI does not resolve that issue.
+
+All acceptance is source/private-artifact or controlled-fixture evidence.
+Real-host rollout/recovery, physical suspend and graphical behavior remain
+independent operational gates. Agent, Plus frontends, SSH Plus authority,
+chezmoi and live services are unchanged. The driver copies below are historical
+execution recipes using explicit private paths, not advertised product CLIs.
+
+Details below preserve each checkpoint's original inputs and evidence scope.
 
 ## S0: acquisition history race
 

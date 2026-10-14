@@ -3,8 +3,9 @@
 The **a20 source/private candidate** fixes cached publisher acquisition-history
 ordering and refines shared BOOTTIME expiry checks, including short-deadline rearming. Its
 [idle simplification evidence](docs/evidence/2026-10-14-idle-simplification/README.md)
-records corrected isolated wheel acceptance; the final installed-wheel CPU screen
-is still running. The preceding a19 prototype has separate long-run evidence.
+records corrected installed-wheel acceptance and matched CPU reductions of about
+22% for empty fleets and 17% under controlled updates. These are Fleet-process
+figures; the preceding a19 prototype has separate long-run evidence.
 SDK 1, preparation interface 1, lock 4, schema bytes and managed selections remain
 unchanged. Tmux a10 is the separate matching private package pin.
 

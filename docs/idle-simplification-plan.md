@@ -1,13 +1,13 @@
 # Idle work simplification plan
 
-2026-10-14. Status: execution in progress. S0 fixes a publisher acquisition-history
-race; S1/S2 have a tested scheduling candidate with matched CPU qualification
-running. S3 exact-document reuse is rejected by its bounded value screen; S4 is
-deferred to a producer-owned acquisition study. S5 has accepted corrected private
-a20/a10 wheels without release or deployment. Prior a19 long measurements remain
-separate from the corrected final-wheel screen. See the
+2026-10-14. Status: complete for this bounded pass. S0 fixes the publisher
+acquisition-history race; S1/S2 retain corrected shared expiry checks after
+matched value/compatibility gates. S3 exact-document reuse is rejected; S4 native
+command consolidation is deferred to a separate producer-owned study. S5 accepts
+corrected private a20/a10 wheels without release or deployment. Prior a19 long
+measurements remain separate from the final installed-wheel screen. See the
 [execution evidence](evidence/2026-10-14-idle-simplification/README.md) for exact
-inputs, completed gates and final performance disposition.
+inputs, results and remaining operational gates.
 
 ## Decision and evidence limits
 
