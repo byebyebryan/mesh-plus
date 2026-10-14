@@ -131,7 +131,8 @@ rtk proxy uv pip install --python .venv/bin/python -e . jsonschema==4.26.0 ruff=
 rtk proxy .venv/bin/python scripts/check.py
 ```
 
-This runs the lock, Read/Delivery oracles, core runtime tests and lint. It needs
+This runs the lock, Read/Delivery oracles, core runtime tests (including explicit
+Agent v2/v3 negotiation and delivery) and lint. It needs
 no Observer packages, providers, desktop tools or configured fleet. With the
 reviewed producer dependencies installed, `scripts/check.py --native` runs the
 full owned native/SSH suite. Add `--check-sources` to verify sibling source parity.
