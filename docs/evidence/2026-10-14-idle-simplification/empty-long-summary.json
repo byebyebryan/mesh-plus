@@ -1,0 +1,16 @@
+[
+  {
+    "block": 1,
+    "baseline": 2.213331684237028,
+    "candidate": 1.8233323134898203,
+    "savedPercentagePoints": 0.3899993707472078,
+    "relativeReductionPercent": 17.620466626159878
+  },
+  {
+    "block": 2,
+    "baseline": 2.4499972750341463,
+    "candidate": 1.9616657643579711,
+    "savedPercentagePoints": 0.4883315106761752,
+    "relativeReductionPercent": 19.931920563845082
+  }
+]

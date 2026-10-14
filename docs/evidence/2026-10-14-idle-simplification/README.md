@@ -117,3 +117,24 @@ Installed Python 3.14 fixtures observe controlled native updates under four cach
 readers and a 12-session/desktop/one-reader case, with bounded cleanup and unchanged
 native identities/attachment counts. These are short compatibility/resource
 checks, not matched CPU savings or physical suspend/GUI acceptance.
+
+## Long empty-fleet result (secondary gates pending)
+
+Both predeclared ABBA blocks complete all eight 300-second windows. The
+[raw long runs](empty-long-runs.json) and [block summary](empty-long-summary.json)
+record Fleet means of 2.2133 -> 1.8233 and 2.4500 -> 1.9617 CPU percent of one
+core: savings of 0.3900 and 0.4883 percentage points, or 17.6% and 19.9%.
+Every window accepts exactly 149 samples per host with unchanged native facts
+and complete cleanup. Each block's saving exceeds its baseline range; block 1's
+baseline range is 0.3267 points, block 2's is 0.0200. The initial 20% target is
+not strictly reached across both blocks; the repeated smaller saving is reported
+without rounding it into a target pass. Other-host activity/frequency remain
+uncontrolled, and these are observed block spreads rather than confidence bounds.
+
+Performance acceptance remains conditional on the predeclared secondary small-
+roster/active-update matrix and separate acquisition/traffic counters. No CPU
+saving is claimed for installed/live services, SSH daemon helpers or tmux servers.
+[Host inputs](host-start.json) and [runtime members](runtime-members.json) bind
+explicit power-state and runtime/dependency snapshots; final parity is checked
+after the study. Memory sampling is separate process RSS/PSS plus kernel peak RSS,
+not cgroup or peak-PSS accounting.

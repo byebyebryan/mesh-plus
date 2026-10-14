@@ -1,0 +1,474 @@
+{
+  "qualified-empty-1-1-before": {
+    "acceptedSamples": {
+      "local": 149,
+      "remote": 149
+    },
+    "cleanup": true,
+    "counters": false,
+    "cpu": {
+      "bridge-remote": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.5233330210151702
+      },
+      "fleet-local": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 2.049998776588087
+      },
+      "owner-local": {
+        "reapedChildCpuPercent": 0.6266662926805858,
+        "selfCpuPercent": 0.5133330269830332
+      },
+      "owner-remote": {
+        "reapedChildCpuPercent": 0.596666310584175,
+        "selfCpuPercent": 0.4999997016068505
+      },
+      "ssh-client": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.00666666268809134
+      }
+    },
+    "desktop": false,
+    "elapsedSeconds": 300.00017903599655,
+    "harnessSha256": "69b509b4e49b3bfdb117f0d8e1dc6aae73f2ad707fb3effce79dc460347f468f",
+    "limits": [
+      "explicit runtime roots; installed/source provenance must be recorded separately",
+      "two owned default-server namespaces and actual localhost SSH",
+      "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+      "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+      "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+      "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+    ],
+    "nativeFactsUnchanged": true,
+    "profiled": false,
+    "runtimeRoots": [
+      "/tmp/tmux-s1-idle-20261014/src",
+      "/tmp/mesh-s0-idle-20261014/src",
+      "/home/bryan/.local/share/mesh-plus/dependencies/attrs",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema-specifications",
+      "/home/bryan/.local/share/mesh-plus/dependencies/referencing",
+      "/home/bryan/.local/share/mesh-plus/dependencies/rpds-py"
+    ],
+    "seconds": 300,
+    "sessionsPerHost": 0,
+    "state": "passed",
+    "versions": {
+      "mesh": "0.1.0a18",
+      "observer": "0.6.0a8"
+    }
+  },
+  "qualified-empty-1-2-candidate": {
+    "acceptedSamples": {
+      "local": 149,
+      "remote": 149
+    },
+    "cleanup": true,
+    "counters": false,
+    "cpu": {
+      "bridge-remote": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.5033330217030845
+      },
+      "fleet-local": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 1.7299989289000057
+      },
+      "owner-local": {
+        "reapedChildCpuPercent": 0.6466662662940291,
+        "selfCpuPercent": 0.516666346781312
+      },
+      "owner-remote": {
+        "reapedChildCpuPercent": 0.6766662477200407,
+        "selfCpuPercent": 0.5466663282073235
+      },
+      "ssh-client": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.006666662539113702
+      }
+    },
+    "desktop": false,
+    "elapsedSeconds": 300.0001857399984,
+    "harnessSha256": "69b509b4e49b3bfdb117f0d8e1dc6aae73f2ad707fb3effce79dc460347f468f",
+    "limits": [
+      "explicit runtime roots; installed/source provenance must be recorded separately",
+      "two owned default-server namespaces and actual localhost SSH",
+      "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+      "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+      "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+      "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+    ],
+    "nativeFactsUnchanged": true,
+    "profiled": false,
+    "runtimeRoots": [
+      "/tmp/tmux-s1-idle-20261014/src",
+      "/tmp/mesh-s2-idle-20261014/src",
+      "/home/bryan/.local/share/mesh-plus/dependencies/attrs",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema-specifications",
+      "/home/bryan/.local/share/mesh-plus/dependencies/referencing",
+      "/home/bryan/.local/share/mesh-plus/dependencies/rpds-py"
+    ],
+    "seconds": 300,
+    "sessionsPerHost": 0,
+    "state": "passed",
+    "versions": {
+      "mesh": "0.1.0a18",
+      "observer": "0.6.0a8"
+    }
+  },
+  "qualified-empty-1-3-candidate": {
+    "acceptedSamples": {
+      "local": 149,
+      "remote": 149
+    },
+    "cleanup": true,
+    "counters": false,
+    "cpu": {
+      "bridge-remote": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.5466663904088002
+      },
+      "fleet-local": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 1.9166656980796348
+      },
+      "owner-local": {
+        "reapedChildCpuPercent": 0.6899996513086685,
+        "selfCpuPercent": 0.5899997018436441
+      },
+      "owner-remote": {
+        "reapedChildCpuPercent": 0.6966663146063368,
+        "selfCpuPercent": 0.5966663651413124
+      },
+      "ssh-client": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.009999994946502442
+      }
+    },
+    "desktop": false,
+    "elapsedSeconds": 300.00015160500334,
+    "harnessSha256": "69b509b4e49b3bfdb117f0d8e1dc6aae73f2ad707fb3effce79dc460347f468f",
+    "limits": [
+      "explicit runtime roots; installed/source provenance must be recorded separately",
+      "two owned default-server namespaces and actual localhost SSH",
+      "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+      "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+      "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+      "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+    ],
+    "nativeFactsUnchanged": true,
+    "profiled": false,
+    "runtimeRoots": [
+      "/tmp/tmux-s1-idle-20261014/src",
+      "/tmp/mesh-s2-idle-20261014/src",
+      "/home/bryan/.local/share/mesh-plus/dependencies/attrs",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema-specifications",
+      "/home/bryan/.local/share/mesh-plus/dependencies/referencing",
+      "/home/bryan/.local/share/mesh-plus/dependencies/rpds-py"
+    ],
+    "seconds": 300,
+    "sessionsPerHost": 0,
+    "state": "passed",
+    "versions": {
+      "mesh": "0.1.0a18",
+      "observer": "0.6.0a8"
+    }
+  },
+  "qualified-empty-1-4-before": {
+    "acceptedSamples": {
+      "local": 149,
+      "remote": 149
+    },
+    "cleanup": true,
+    "counters": false,
+    "cpu": {
+      "bridge-remote": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.6299994500230691
+      },
+      "fleet-local": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 2.3766645918859695
+      },
+      "owner-local": {
+        "reapedChildCpuPercent": 0.7099993801847286,
+        "selfCpuPercent": 0.5966661457890443
+      },
+      "owner-remote": {
+        "reapedChildCpuPercent": 0.7199993714549362,
+        "selfCpuPercent": 0.6066661370592518
+      },
+      "ssh-client": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.009999991270207446
+      }
+    },
+    "desktop": false,
+    "elapsedSeconds": 300.00026189400523,
+    "harnessSha256": "69b509b4e49b3bfdb117f0d8e1dc6aae73f2ad707fb3effce79dc460347f468f",
+    "limits": [
+      "explicit runtime roots; installed/source provenance must be recorded separately",
+      "two owned default-server namespaces and actual localhost SSH",
+      "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+      "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+      "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+      "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+    ],
+    "nativeFactsUnchanged": true,
+    "profiled": false,
+    "runtimeRoots": [
+      "/tmp/tmux-s1-idle-20261014/src",
+      "/tmp/mesh-s0-idle-20261014/src",
+      "/home/bryan/.local/share/mesh-plus/dependencies/attrs",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema-specifications",
+      "/home/bryan/.local/share/mesh-plus/dependencies/referencing",
+      "/home/bryan/.local/share/mesh-plus/dependencies/rpds-py"
+    ],
+    "seconds": 300,
+    "sessionsPerHost": 0,
+    "state": "passed",
+    "versions": {
+      "mesh": "0.1.0a18",
+      "observer": "0.6.0a8"
+    }
+  },
+  "qualified-empty-2-1-before": {
+    "acceptedSamples": {
+      "local": 149,
+      "remote": 149
+    },
+    "cleanup": true,
+    "counters": false,
+    "cpu": {
+      "bridge-remote": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.6533326214708098
+      },
+      "fleet-local": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 2.459997319619682
+      },
+      "owner-local": {
+        "reapedChildCpuPercent": 0.7066658966929169,
+        "selfCpuPercent": 0.6166659947556113
+      },
+      "owner-remote": {
+        "reapedChildCpuPercent": 0.7333325343039704,
+        "selfCpuPercent": 0.6299993135611381
+      },
+      "ssh-client": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.009999989104145048
+      }
+    },
+    "desktop": false,
+    "elapsedSeconds": 300.0003268760047,
+    "harnessSha256": "69b509b4e49b3bfdb117f0d8e1dc6aae73f2ad707fb3effce79dc460347f468f",
+    "limits": [
+      "explicit runtime roots; installed/source provenance must be recorded separately",
+      "two owned default-server namespaces and actual localhost SSH",
+      "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+      "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+      "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+      "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+    ],
+    "nativeFactsUnchanged": true,
+    "profiled": false,
+    "runtimeRoots": [
+      "/tmp/tmux-s1-idle-20261014/src",
+      "/tmp/mesh-s0-idle-20261014/src",
+      "/home/bryan/.local/share/mesh-plus/dependencies/attrs",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema-specifications",
+      "/home/bryan/.local/share/mesh-plus/dependencies/referencing",
+      "/home/bryan/.local/share/mesh-plus/dependencies/rpds-py"
+    ],
+    "seconds": 300,
+    "sessionsPerHost": 0,
+    "state": "passed",
+    "versions": {
+      "mesh": "0.1.0a18",
+      "observer": "0.6.0a8"
+    }
+  },
+  "qualified-empty-2-2-candidate": {
+    "acceptedSamples": {
+      "local": 149,
+      "remote": 149
+    },
+    "cleanup": true,
+    "counters": false,
+    "cpu": {
+      "bridge-remote": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.5633330728856739
+      },
+      "fleet-local": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 1.9566657620348555
+      },
+      "owner-local": {
+        "reapedChildCpuPercent": 0.7199996671201513,
+        "selfCpuPercent": 0.6233330451456865
+      },
+      "owner-remote": {
+        "reapedChildCpuPercent": 0.733332994289043,
+        "selfCpuPercent": 0.6399997041068011
+      },
+      "ssh-client": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.009999995376668767
+      }
+    },
+    "desktop": false,
+    "elapsedSeconds": 300.0001387000011,
+    "harnessSha256": "69b509b4e49b3bfdb117f0d8e1dc6aae73f2ad707fb3effce79dc460347f468f",
+    "limits": [
+      "explicit runtime roots; installed/source provenance must be recorded separately",
+      "two owned default-server namespaces and actual localhost SSH",
+      "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+      "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+      "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+      "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+    ],
+    "nativeFactsUnchanged": true,
+    "profiled": false,
+    "runtimeRoots": [
+      "/tmp/tmux-s1-idle-20261014/src",
+      "/tmp/mesh-s2-idle-20261014/src",
+      "/home/bryan/.local/share/mesh-plus/dependencies/attrs",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema-specifications",
+      "/home/bryan/.local/share/mesh-plus/dependencies/referencing",
+      "/home/bryan/.local/share/mesh-plus/dependencies/rpds-py"
+    ],
+    "seconds": 300,
+    "sessionsPerHost": 0,
+    "state": "passed",
+    "versions": {
+      "mesh": "0.1.0a18",
+      "observer": "0.6.0a8"
+    }
+  },
+  "qualified-empty-2-3-candidate": {
+    "acceptedSamples": {
+      "local": 149,
+      "remote": 149
+    },
+    "cleanup": true,
+    "counters": false,
+    "cpu": {
+      "bridge-remote": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.5799997345805238
+      },
+      "fleet-local": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 1.9666657666810865
+      },
+      "owner-local": {
+        "reapedChildCpuPercent": 0.7299996659375558,
+        "selfCpuPercent": 0.6299997116995345
+      },
+      "owner-remote": {
+        "reapedChildCpuPercent": 0.7233330023216877,
+        "selfCpuPercent": 0.6266663798916005
+      },
+      "ssh-client": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.009999995423802133
+      }
+    },
+    "desktop": false,
+    "elapsedSeconds": 300.0001372859988,
+    "harnessSha256": "69b509b4e49b3bfdb117f0d8e1dc6aae73f2ad707fb3effce79dc460347f468f",
+    "limits": [
+      "explicit runtime roots; installed/source provenance must be recorded separately",
+      "two owned default-server namespaces and actual localhost SSH",
+      "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+      "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+      "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+      "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+    ],
+    "nativeFactsUnchanged": true,
+    "profiled": false,
+    "runtimeRoots": [
+      "/tmp/tmux-s1-idle-20261014/src",
+      "/tmp/mesh-s2-idle-20261014/src",
+      "/home/bryan/.local/share/mesh-plus/dependencies/attrs",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema-specifications",
+      "/home/bryan/.local/share/mesh-plus/dependencies/referencing",
+      "/home/bryan/.local/share/mesh-plus/dependencies/rpds-py"
+    ],
+    "seconds": 300,
+    "sessionsPerHost": 0,
+    "state": "passed",
+    "versions": {
+      "mesh": "0.1.0a18",
+      "observer": "0.6.0a8"
+    }
+  },
+  "qualified-empty-2-4-before": {
+    "acceptedSamples": {
+      "local": 149,
+      "remote": 149
+    },
+    "cleanup": true,
+    "counters": false,
+    "cpu": {
+      "bridge-remote": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.6633325804088435
+      },
+      "fleet-local": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 2.4399972304486104
+      },
+      "owner-local": {
+        "reapedChildCpuPercent": 0.709999194105948,
+        "selfCpuPercent": 0.6133326371619457
+      },
+      "owner-remote": {
+        "reapedChildCpuPercent": 0.7166658532055343,
+        "selfCpuPercent": 0.6299992849109116
+      },
+      "ssh-client": {
+        "reapedChildCpuPercent": 0.0,
+        "selfCpuPercent": 0.009999988649379548
+      }
+    },
+    "desktop": false,
+    "elapsedSeconds": 300.000340519,
+    "harnessSha256": "69b509b4e49b3bfdb117f0d8e1dc6aae73f2ad707fb3effce79dc460347f468f",
+    "limits": [
+      "explicit runtime roots; installed/source provenance must be recorded separately",
+      "two owned default-server namespaces and actual localhost SSH",
+      "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+      "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+      "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+      "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+    ],
+    "nativeFactsUnchanged": true,
+    "profiled": false,
+    "runtimeRoots": [
+      "/tmp/tmux-s1-idle-20261014/src",
+      "/tmp/mesh-s0-idle-20261014/src",
+      "/home/bryan/.local/share/mesh-plus/dependencies/attrs",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema",
+      "/home/bryan/.local/share/mesh-plus/dependencies/jsonschema-specifications",
+      "/home/bryan/.local/share/mesh-plus/dependencies/referencing",
+      "/home/bryan/.local/share/mesh-plus/dependencies/rpds-py"
+    ],
+    "seconds": 300,
+    "sessionsPerHost": 0,
+    "state": "passed",
+    "versions": {
+      "mesh": "0.1.0a18",
+      "observer": "0.6.0a8"
+    }
+  }
+}

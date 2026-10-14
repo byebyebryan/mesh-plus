@@ -1,0 +1,17 @@
+{
+  "observedAt": 1791971813.8494964,
+  "kernel": "7.2.9-arch1-1",
+  "machine": "x86_64",
+  "loadAverage": [
+    0.51806640625,
+    0.70849609375,
+    0.810546875
+  ],
+  "powerState": {
+    "/sys/firmware/acpi/platform_profile": "balanced",
+    "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+    "/sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference": "balance_performance",
+    "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq": "400879"
+  },
+  "limits": "Point-in-time power/load snapshot; no frequency or desktop activity control"
+}
