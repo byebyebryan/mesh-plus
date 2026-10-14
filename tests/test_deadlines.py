@@ -8,6 +8,28 @@ from mesh_plus.transport import _wait_until, boottime_ms, within_deadline
 
 
 class DeadlineTests(unittest.IsolatedAsyncioTestCase):
+    async def test_expired_waiter_does_not_hide_new_earlier_deadline(self):
+        loop = asyncio.get_running_loop()
+        now = [1000]
+        pending = [loop.create_future() for _ in range(3)]
+        with patch("mesh_plus.transport.boottime_ms", side_effect=lambda: now[0]):
+            jobs = [asyncio.create_task(_wait_until(task, deadline))
+                    for task, deadline in zip(pending[:2], (1100, 5000))]
+            await asyncio.sleep(0)
+            checks = loop._mesh_expiry_checks
+            checks.timer.cancel()
+            now[0] = 1100
+            checks.tick()
+            # The expired first waiter is still queued for coroutine retirement.
+            jobs.append(asyncio.create_task(_wait_until(pending[2], 1110)))
+            try:
+                await asyncio.sleep(0)
+                self.assertLessEqual(checks.timer.when(), loop.time() + .02)
+            finally:
+                for job in jobs:
+                    job.cancel()
+                await asyncio.gather(*jobs, return_exceptions=True)
+
     async def test_repeated_cancellation_waits_for_owned_read_cleanup(self):
         cleaning, release, finished = asyncio.Event(), asyncio.Event(), asyncio.Event()
 

@@ -138,3 +138,20 @@ saving is claimed for installed/live services, SSH daemon helpers or tmux server
 explicit power-state and runtime/dependency snapshots; final parity is checked
 after the study. Memory sampling is separate process RSS/PSS plus kernel peak RSS,
 not cgroup or peak-PSS accounting.
+
+## Expiry-registration refinement after a19 qualification
+
+A deterministic review test exposes an a19 edge case: after one expiry future is
+completed but before its waiting coroutine retires, registration still includes
+that expired entry when choosing the earliest deadline. A new 10 ms waiter can
+therefore inherit the existing 100 ms timer. Completed IO is still checked against
+BOOTTIME and cannot grant late validity, but short-deadline notification can be
+postponed. The regression test fails on a19 by approximately 80 ms.
+
+Ignore completed expiry futures when choosing the earliest live registration.
+The 100 ms suspend recheck, per-operation absolute deadline and ownership remain.
+All seven deadline cases pass after this one-expression fix. Preserve the a19
+wheel and long measurements as their own prototype checkpoint. Allocate a new
+Mesh a20 / Tmux a10 private pair; do not overwrite a19/a9. Qualification now adds
+a bounded final empty/active ABBA screen on corrected installed bytes, plus new
+traffic and installed gates. Old a19 measurements are not attributed to a20.

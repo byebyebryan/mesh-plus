@@ -60,7 +60,8 @@ class _ExpiryChecks:
             self.schedule()
 
     def add(self, waiter, deadline):
-        earliest = min(self.waiters.values(), default=deadline)
+        earliest = min((value for pending, value in self.waiters.items() if not pending.done()),
+                       default=deadline)
         self.waiters[waiter] = deadline
         if self.timer is None or deadline < earliest:
             if self.timer is not None:
