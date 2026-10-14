@@ -1,0 +1,92 @@
+{
+  "hostProjections": 48,
+  "loopTurns": 1360,
+  "nativeAdmissions": 44,
+  "readerMetrics": {
+    "activeConnections": 0,
+    "byKind": {
+      "received": {
+        "control": {
+          "bytes": 2962,
+          "frames": 12
+        },
+        "data": {
+          "bytes": 5460,
+          "frames": 2
+        },
+        "hello": {
+          "bytes": 849,
+          "frames": 2
+        },
+        "result": {
+          "bytes": 62179,
+          "frames": 23
+        },
+        "subscribed": {
+          "bytes": 644,
+          "frames": 2
+        }
+      },
+      "sent": {
+        "close": {
+          "bytes": 324,
+          "frames": 2
+        },
+        "credit": {
+          "bytes": 460,
+          "frames": 2
+        },
+        "hello": {
+          "bytes": 767,
+          "frames": 2
+        },
+        "request": {
+          "bytes": 6029,
+          "frames": 23
+        },
+        "subscribe": {
+          "bytes": 550,
+          "frames": 2
+        }
+      }
+    },
+    "byteScope": "completed-json-lines",
+    "catalogCheckMs": 14,
+    "catalogChecks": 7,
+    "cleanupFailures": 0,
+    "connectionAttempts": 2,
+    "connectionFailures": 0,
+    "connectionsClosed": 2,
+    "connectionsOpened": 2,
+    "domain": "tmux",
+    "format": "mesh-plus.reader-metrics.v1",
+    "instrumentedConnections": 2,
+    "operations": {
+      "otherResultBytes": 0,
+      "proofRequests": 11,
+      "proofResultBytes": 30473,
+      "requestCancellations": 0,
+      "requestTimeouts": 0,
+      "rotationRejections": 0,
+      "snapshotRequests": 12,
+      "snapshotResultBytes": 31706,
+      "unprocessedResultBytes": 0
+    },
+    "partial": false,
+    "peakClientBufferedBytes": 2733,
+    "peakClientBufferedControlBytes": 246,
+    "peakConnections": 2,
+    "peakRetainedHandles": 13,
+    "peakSubscriptionQueueFrames": 1,
+    "receivedBytes": 72094,
+    "receivedFrames": 41,
+    "rotations": 0,
+    "sentBytes": 8130,
+    "sentFrames": 31,
+    "uninstrumentedConnections": 0
+  },
+  "readyCallbacks": 1308,
+  "timers:host_loop": 33,
+  "timers:other": 308,
+  "timers:within_deadline": 31
+}

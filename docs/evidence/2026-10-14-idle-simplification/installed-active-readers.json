@@ -1,0 +1,57 @@
+{
+  "state": "passed",
+  "sessionsPerHost": 2,
+  "seconds": 15,
+  "desktop": false,
+  "profiled": false,
+  "counters": false,
+  "active": true,
+  "cachedReaders": 4,
+  "versions": {
+    "observer": "0.6.0a9",
+    "mesh": "0.1.0a19"
+  },
+  "harnessSha256": "8804f4abb5d806fde519bef2b295e67dd9bf1c0cb931b478940670ec0e3b870d",
+  "runtimeRoots": [
+    "/tmp/mesh-idle-artifacts-20261014/runtime314"
+  ],
+  "limits": [
+    "explicit runtime roots; installed/source provenance must be recorded separately",
+    "two owned default-server namespaces and actual localhost SSH",
+    "fixed authority excludes catalog CLI; desktop opt-in reads actual captured compositor",
+    "CPU timing separates persistent SSH client and remote bridge; excludes SSH daemon/server helpers and tmux server CPU",
+    "per-process reaped child CPU includes short-lived native commands; not a whole-host budget",
+    "process-wide CPython 3.14 profiles use wall time and include runtime setup/cleanup; not CPU shares"
+  ],
+  "elapsedSeconds": 15.000348791996657,
+  "controlledChanges": 15,
+  "controlledCachedReads": 60,
+  "cpu": {
+    "owner-local": {
+      "selfCpuPercent": 0.5999860486445417,
+      "reapedChildCpuPercent": 0.7333162816766622
+    },
+    "owner-remote": {
+      "selfCpuPercent": 0.666651165160602,
+      "reapedChildCpuPercent": 0.666651165160602
+    },
+    "fleet-local": {
+      "selfCpuPercent": 3.133260476254829,
+      "reapedChildCpuPercent": 0.0
+    },
+    "bridge-remote": {
+      "selfCpuPercent": 0.933311631224843,
+      "reapedChildCpuPercent": 0.0
+    },
+    "ssh-client": {
+      "selfCpuPercent": 0.0,
+      "reapedChildCpuPercent": 0.0
+    }
+  },
+  "acceptedSamples": {
+    "local": 7,
+    "remote": 7
+  },
+  "nativeFactsUnchanged": false,
+  "cleanup": true
+}

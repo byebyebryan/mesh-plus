@@ -178,3 +178,18 @@ passes 16 installed deadline/publisher-focused tests. Historical native WSS uses
 its explicit a5/a16 tuple and passes 43 cases against current a20 source bytes.
 All stated suites have zero skips. Compressed logs preserve the exact gates.
 This accepts functional/package checkpoints; final a20 CPU qualification follows.
+
+The complete [a19 prototype assessment](assessment-a19.json) preserves all
+[16 original timing records](all-a19-runs.json). Secondary two-session/active
+means are lower but baseline spread exceeds those small effects, and later
+windows overlap the a20 functional/packaging work. Treat them as regression
+screens, not accepted savings. The predeclared final a20 screen runs serially
+after all original fixtures and functional gates finish.
+
+Separate 30-second counter runs have exactly 12 snapshot requests, 11 proofs,
+31,706 snapshot-result bytes and 30,473 proof-result bytes in both variants.
+Fleet loop turns decrease 2,753 -> 1,360 and both Readers retire all connections
+with zero request timeout/cancellation, connection failure or cleanup failure.
+These instrumented runs are not CPU samples. Short installed a19 compatibility
+receipts cover active changes/four cached readers, desktop/12 sessions/one reader,
+and headless/one reader; their own result files retain scope and cleanup.

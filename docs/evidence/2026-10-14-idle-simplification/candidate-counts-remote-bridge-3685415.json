@@ -1,0 +1,6 @@
+{
+  "loopTurns": 939,
+  "readyCallbacks": 736,
+  "timers:other": 287,
+  "timers:within_deadline": 87
+}

@@ -1,0 +1,17 @@
+{
+  "artifact": "a20/a10",
+  "mesh": "f7bef1e",
+  "observer": "f693674",
+  "cases": [
+    "empty",
+    "active-two"
+  ],
+  "order": [
+    "before",
+    "installed20",
+    "installed20",
+    "before"
+  ],
+  "seconds": 120,
+  "reason": "bounded final-wheel regression screen after completed-expiry registration fix; a19 long runs remain separate"
+}
