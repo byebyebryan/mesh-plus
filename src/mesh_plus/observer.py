@@ -7,6 +7,7 @@ import re
 import uuid
 from pathlib import Path
 
+from ._receipt_history import ReceiptHistory
 from .bridge import Publication
 from .evidence import bridge_validator, clock_domain, digest  # compatibility re-exports
 from .protocol import check
@@ -95,26 +96,20 @@ class ObserverAdapter(ObserverCodec):
         self.profile = domain + "-observer.mesh-candidate.v1"
         self.bridge_id = str(uuid.uuid4())
         self.sequence = 0
-        self.accepted = {}
-        self.owner_binding = None
+        self._read_history = ReceiptHistory()
+        self._read_lock = asyncio.Lock()
 
     def wrap(self, frame, nonce=None):
+        return self._wrap(frame, nonce, self._read_history)
+
+    def _wrap(self, frame, nonce, history):
         self.native(frame)
         check(self.clock(frame) == clock_domain(), "source_clock_context")
         now = boottime_ms()
         check(self.emitted(frame) <= now, "source_future_frame")
         binding = (self.epoch(frame), tuple(sorted(self.clock(frame).items())))
         receipts = self.receipts(frame)
-        if binding == self.owner_binding:
-            for receipt in receipts:
-                key = receipt["sourceId"], receipt["component"]
-                previous = self.accepted.get(key)
-                if previous:
-                    check(receipt["accepted"] >= previous[0], "source_receipt_regression")
-                    check(receipt["accepted"] != previous[0] or receipt["expiry"] == previous[1], "source_lease_renewal")
-        self.owner_binding = binding
-        self.accepted = {(r["sourceId"], r["component"]): (r["accepted"], r["expiry"]) for r in receipts}
-        self.sequence += 1
+        history.check(binding, receipts)
         remaining = []
         if nonce is not None:
             for receipt in self.receipts(frame):
@@ -122,10 +117,13 @@ class ObserverAdapter(ObserverCodec):
                 lease = max(0, expiry - now) if receipt["health"] in {"current", "partial"} else 0
                 remaining.append({**receipt, "remainingMs": lease})
         result = {"meshProtocol": 1, "kind": "proof" if nonce else "candidate", "nonce": nonce,
-                  "bridgeId": self.bridge_id, "sequence": self.sequence, "sourceId": self.source,
+                  "bridgeId": self.bridge_id, "sequence": self.sequence + 1, "sourceId": self.source,
                   "hostId": self.host, "clock": self.clock(frame), "encodedAtMs": now, "ownerFrame": frame,
                   "ownerDigest": digest(frame), "remaining": remaining, "error": None}
-        return self.validate(result)
+        self.validate(result)
+        history.commit(binding, receipts)
+        self.sequence += 1
+        return result
 
     async def frames(self, operation):
         channel = await connect_ipc(self.path, maximum=self.maximum)
@@ -170,28 +168,31 @@ class ObserverAdapter(ObserverCodec):
 
     async def snapshot(self, parameters):
         check(parameters == {}, "snapshot_parameters")
-        iterator = self.frames("status")
-        try:
-            return self.wrap(await anext(iterator))
-        finally:
-            await iterator.aclose()
+        async with self._read_lock:
+            iterator = self.frames("status")
+            try:
+                return self.wrap(await anext(iterator))
+            finally:
+                await iterator.aclose()
 
     async def proof(self, parameters):
         check(set(parameters) == {"nonce"} and isinstance(parameters["nonce"], str) and
               re.fullmatch(r"[0-9a-f]{32,64}", parameters["nonce"]), "proof_parameters")
-        iterator = self.frames("status")
-        try:
-            # Open/read occurs after nonce receipt; no retained pipe copy proves source liveness.
-            return self.wrap(await anext(iterator), parameters["nonce"])
-        finally:
-            await iterator.aclose()
+        async with self._read_lock:
+            iterator = self.frames("status")
+            try:
+                # Acquire after nonce admission, not from a retained watch copy.
+                return self.wrap(await anext(iterator), parameters["nonce"])
+            finally:
+                await iterator.aclose()
 
     async def watch(self):
+        history = ReceiptHistory()
         iterator = self.frames("watch")
         try:
             async for frame in iterator:
                 if frame["kind"] == "heartbeat":
                     continue
-                yield Publication(self.wrap(frame), self.epoch(frame), {"viewRevision": frame["viewRevision"]})
+                yield Publication(self._wrap(frame, None, history), self.epoch(frame), {"viewRevision": frame["viewRevision"]})
         finally:
             await iterator.aclose()

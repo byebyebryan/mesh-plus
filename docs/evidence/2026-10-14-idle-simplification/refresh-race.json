@@ -1,0 +1,242 @@
+{
+  "iteration": 10,
+  "events": [
+    {
+      "t": 60487.292113,
+      "kind": "accept",
+      "before": null,
+      "after": [
+        "1a242ac2-bdea-42cf-bf62-9d075868cc1a",
+        1,
+        null,
+        null
+      ],
+      "epoch": 1,
+      "status": "connecting",
+      "error": null,
+      "receipt": null
+    },
+    {
+      "t": 60487.305981,
+      "kind": "accept",
+      "before": [
+        "1a242ac2-bdea-42cf-bf62-9d075868cc1a",
+        1,
+        null,
+        null
+      ],
+      "after": [
+        "1a242ac2-bdea-42cf-bf62-9d075868cc1a",
+        1,
+        [
+          "a84a385e-f46d-410a-aa71-e07b6f05623d",
+          1000,
+          "default",
+          "eda0f0ce-5494-4ec7-982f-05861c999557",
+          "time:4026531834"
+        ],
+        null
+      ],
+      "epoch": 2,
+      "status": "ready",
+      "error": null,
+      "receipt": {
+        "state": "ready",
+        "attempted": 1,
+        "accepted": 1,
+        "acceptedAttempt": 1,
+        "startedAt": 60532227,
+        "acceptedAt": 60532238,
+        "expiresAt": 60542227,
+        "lastAttemptAt": 60532227,
+        "lastAttemptResult": "complete",
+        "leaseMs": 10000,
+        "remainingMs": 9973,
+        "inFlight": false
+      }
+    },
+    {
+      "t": 60487.320289,
+      "kind": "accept",
+      "before": [
+        "1a242ac2-bdea-42cf-bf62-9d075868cc1a",
+        1,
+        [
+          "a84a385e-f46d-410a-aa71-e07b6f05623d",
+          1000,
+          "default",
+          "eda0f0ce-5494-4ec7-982f-05861c999557",
+          "time:4026531834"
+        ],
+        null
+      ],
+      "after": [
+        "1a242ac2-bdea-42cf-bf62-9d075868cc1a",
+        1,
+        [
+          "a84a385e-f46d-410a-aa71-e07b6f05623d",
+          1000,
+          "default",
+          "eda0f0ce-5494-4ec7-982f-05861c999557",
+          "time:4026531834"
+        ],
+        null
+      ],
+      "epoch": 2,
+      "status": "ready",
+      "error": null,
+      "receipt": {
+        "state": "ready",
+        "attempted": 1,
+        "accepted": 1,
+        "acceptedAttempt": 1,
+        "startedAt": 60532227,
+        "acceptedAt": 60532238,
+        "expiresAt": 60542227,
+        "lastAttemptAt": 60532227,
+        "lastAttemptResult": "complete",
+        "leaseMs": 10000,
+        "remainingMs": 9964,
+        "inFlight": false
+      }
+    },
+    {
+      "t": 60488.317793,
+      "kind": "send",
+      "op": "refresh",
+      "binding": [
+        2,
+        [
+          "a84a385e-f46d-410a-aa71-e07b6f05623d",
+          1000,
+          "default",
+          "eda0f0ce-5494-4ec7-982f-05861c999557",
+          "time:4026531834"
+        ],
+        null
+      ],
+      "state": [
+        2,
+        [
+          "a84a385e-f46d-410a-aa71-e07b6f05623d",
+          1000,
+          "default",
+          "eda0f0ce-5494-4ec7-982f-05861c999557",
+          "time:4026531834"
+        ],
+        null
+      ]
+    },
+    {
+      "t": 60488.347975,
+      "kind": "wrap_error",
+      "error": "source_receipt_regression",
+      "receipt": {
+        "state": "ready",
+        "attempted": 2,
+        "accepted": 1,
+        "acceptedAttempt": 1,
+        "startedAt": 60532227,
+        "acceptedAt": 60532238,
+        "expiresAt": 60542227,
+        "lastAttemptAt": 60533286,
+        "lastAttemptResult": "complete",
+        "leaseMs": 10000,
+        "remainingMs": 8925,
+        "inFlight": true
+      }
+    },
+    {
+      "t": 60488.348945,
+      "kind": "snapshot_error",
+      "error": "ProtocolError('source_receipt_regression')",
+      "trace": "Traceback (most recent call last):\n  File \"/tmp/trace-refresh-20261014.py\", line 26, in snapshot\n    try: return await old_snapshot(self,parameters)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/mesh-idle-review-20261014/src/mesh_plus/publisher.py\", line 104, in snapshot\n    return self.wrap(await self.native.snapshot())\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/trace-refresh-20261014.py\", line 33, in wrap\n    try: return old_wrap(self,frame,nonce)\n                ~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/tmp/mesh-idle-review-20261014/src/mesh_plus/publisher.py\", line 65, in wrap\n    check(receipt[\"accepted\"] >= previous[0], \"source_receipt_regression\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/mesh-idle-review-20261014/src/mesh_plus/protocol.py\", line 28, in check\n    raise ProtocolError(code)\nmesh_plus.protocol.ProtocolError: source_receipt_regression\n"
+    },
+    {
+      "t": 60488.350314,
+      "kind": "reader_error",
+      "error": "DeliveryError('Cached source request failed')",
+      "trace": "Traceback (most recent call last):\n  File \"/tmp/mesh-idle-review-20261014/src/mesh_plus/reader.py\", line 362, in host_loop\n    replacement = await self.read_host(client, endpoint, epoch, _state=admitted)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/mesh-idle-review-20261014/src/mesh_plus/reader.py\", line 193, in read_host\n    reply = await client.request()\n            ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/mesh-idle-review-20261014/src/mesh_plus/client.py\", line 192, in request\n    return future.result()\n           ~~~~~~~~~~~~~^^\nmesh_plus.client.DeliveryError: Cached source request failed\n"
+    },
+    {
+      "t": 60488.358964,
+      "kind": "accept",
+      "before": [
+        "1a242ac2-bdea-42cf-bf62-9d075868cc1a",
+        1,
+        [
+          "a84a385e-f46d-410a-aa71-e07b6f05623d",
+          1000,
+          "default",
+          "eda0f0ce-5494-4ec7-982f-05861c999557",
+          "time:4026531834"
+        ],
+        null
+      ],
+      "after": [
+        "1a242ac2-bdea-42cf-bf62-9d075868cc1a",
+        1,
+        null,
+        null
+      ],
+      "epoch": 3,
+      "status": "failed",
+      "error": {
+        "code": "source_unavailable",
+        "message": "Source delivery unavailable"
+      },
+      "receipt": {
+        "state": "ready",
+        "attempted": 1,
+        "accepted": 1,
+        "acceptedAttempt": 1,
+        "startedAt": 60532227,
+        "acceptedAt": 60532238,
+        "expiresAt": 60542227,
+        "lastAttemptAt": 60532227,
+        "lastAttemptResult": "complete",
+        "leaseMs": 10000,
+        "remainingMs": 9964,
+        "inFlight": false
+      }
+    },
+    {
+      "t": 60488.358973,
+      "kind": "ticket_fail",
+      "host": "fixture-local",
+      "code": "stale_scope",
+      "state": "stale_scope",
+      "message": "owner subscription scope changed before settlement"
+    },
+    {
+      "t": 60488.359085,
+      "kind": "control_fail",
+      "code": "stale_scope",
+      "message": "Mesh owner is unavailable",
+      "binding": [
+        2,
+        [
+          "a84a385e-f46d-410a-aa71-e07b6f05623d",
+          1000,
+          "default",
+          "eda0f0ce-5494-4ec7-982f-05861c999557",
+          "time:4026531834"
+        ],
+        null
+      ],
+      "state": [
+        3,
+        null,
+        null
+      ]
+    },
+    {
+      "t": 60488.35909,
+      "kind": "ticket_fail",
+      "host": "fixture-local",
+      "code": "stale_scope",
+      "state": "stale_scope",
+      "message": "owner subscription ended"
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import uuid
 from dataclasses import dataclass
 from typing import AsyncGenerator, Protocol
 
+from ._receipt_history import ReceiptHistory
 from .bridge import Publication
 from .evidence import clock_domain, digest
 from .protocol import check
@@ -43,14 +44,17 @@ class CachedPublisher:
         self.native = native
         self.bridge_id = str(uuid.uuid4())
         self.sequence = 0
-        self.owner_binding = None
-        self.accepted = {}
+        self._read_history = ReceiptHistory()
+        self._read_lock = asyncio.Lock()
 
     def validate(self, payload):
         validate_bridge(self.state_profile, self.codec, payload)
         return payload
 
     def wrap(self, frame, nonce=None):
+        return self._wrap(frame, nonce, self._read_history)
+
+    def _wrap(self, frame, nonce, history):
         # A native source may retain its input; queued publication owns its bytes.
         frame = copy.deepcopy(frame)
         state = inspect_state(self.state_profile, self.codec, frame)
@@ -58,15 +62,7 @@ class CachedPublisher:
         now = boottime_ms()
         check(state.emitted_ms <= now, "source_future_frame")
         binding = state.publisher, tuple(sorted(state.clock.items()))
-        if binding == self.owner_binding:
-            for receipt in state.receipts:
-                previous = self.accepted.get((receipt["sourceId"], receipt["component"]))
-                if previous is not None:
-                    check(receipt["accepted"] >= previous[0], "source_receipt_regression")
-                    check(
-                        receipt["accepted"] != previous[0] or receipt["expiry"] == previous[1],
-                        "source_lease_renewal",
-                    )
+        history.check(binding, state.receipts)
         remaining = [
             {
                 **{key: value for key, value in receipt.items() if key != "expiry"},
@@ -93,15 +89,14 @@ class CachedPublisher:
         }
         self.validate(result)
         # Failed admission cannot mutate the last accepted binding/counters.
-        self.accepted = {(r["sourceId"], r["component"]): (r["accepted"], r["expiry"])
-                         for r in state.receipts}
-        self.owner_binding = binding
+        history.commit(binding, state.receipts)
         self.sequence += 1
         return result
 
     async def snapshot(self, parameters):
         check(isinstance(parameters, dict) and parameters == {}, "snapshot_parameters")
-        return self.wrap(await self.native.snapshot())
+        async with self._read_lock:
+            return self.wrap(await self.native.snapshot())
 
     async def proof(self, parameters):
         check(
@@ -112,9 +107,11 @@ class CachedPublisher:
             "proof_parameters",
         )
         # A new checked cached reply follows nonce admission, never a watch copy.
-        return self.wrap(await self.native.snapshot(), parameters["nonce"])
+        async with self._read_lock:
+            return self.wrap(await self.native.snapshot(), parameters["nonce"])
 
     async def watch(self):
+        history = ReceiptHistory()
         iterator = self.native.watch().__aiter__()
         check(callable(getattr(iterator, "aclose", None)), "cached_watch_close_required")
         try:
@@ -123,7 +120,7 @@ class CachedPublisher:
                 state = inspect_state(self.state_profile, self.codec, native.frame)
                 check(native.epoch == state.publisher, "native_epoch_binding")
                 yield Publication(
-                    self.wrap(native.frame), native.epoch, copy.deepcopy(native.barrier)
+                    self._wrap(native.frame, None, history), native.epoch, copy.deepcopy(native.barrier)
                 )
         finally:
             await finish_owned(asyncio.create_task(iterator.aclose()))

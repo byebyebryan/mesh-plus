@@ -84,10 +84,10 @@ class PublisherTests(unittest.IsolatedAsyncioTestCase):
                                      (expiry, receipt[expiry] + 1, "source_lease_renewal")):
                 old = receipt[key]
                 receipt[key] = value
-                before = (publisher.sequence, copy.deepcopy(publisher.accepted), publisher.owner_binding)
+                before = (publisher.sequence, copy.deepcopy(publisher._read_history.accepted), publisher._read_history.owner_binding)
                 with self.assertRaisesRegex(ProtocolError, code):
                     await publisher.snapshot({})
-                self.assertEqual(before, (publisher.sequence, publisher.accepted, publisher.owner_binding))
+                self.assertEqual(before, (publisher.sequence, publisher._read_history.accepted, publisher._read_history.owner_binding))
                 receipt[key] = old
             with patch.object(publisher, "validate", side_effect=ProtocolError("test_reject")):
                 before = publisher.sequence
@@ -100,6 +100,86 @@ class PublisherTests(unittest.IsolatedAsyncioTestCase):
                 frame["clockDomain"] = "time:[999]"
             with self.assertRaisesRegex(ProtocolError, "source_clock_context"):
                 await publisher.snapshot({})
+
+    async def test_cross_stream_completion_order_does_not_revoke_receipts(self):
+        for domain in ("tmux", "agent"):
+            publisher, source = self.make(domain)
+            entered, release = asyncio.Event(), asyncio.Event()
+            old = copy.deepcopy(source.fixture.frame)
+
+            async def delayed_snapshot():
+                entered.set()
+                await release.wait()
+                return old
+
+            source.snapshot = delayed_snapshot
+            read = asyncio.create_task(publisher.snapshot({}))
+            await entered.wait()
+            watch = publisher.watch()
+            receipt = (source.fixture.frame["receipt"] if domain == "tmux"
+                       else source.fixture.frame["sources"][0]["components"][0])
+            receipt["accepted"] += 1
+            publication = await anext(watch)
+            release.set()
+            result = await read
+            self.assertEqual(result["ownerFrame"], old)
+            self.assertLess(publication.payload["sequence"], result["sequence"])
+            await watch.aclose()
+
+    async def test_each_watch_checks_its_own_history_despite_newer_reads(self):
+        for domain in ("tmux", "agent"):
+            publisher, source = self.make(domain)
+            receipt = (source.fixture.frame["receipt"] if domain == "tmux"
+                       else source.fixture.frame["sources"][0]["components"][0])
+            receipt["accepted"] = 2
+            watch = publisher.watch()
+            await anext(watch)
+            original = receipt["accepted"]
+            receipt["accepted"] = original + 1
+            await publisher.proof({"nonce": "a" * 32})
+            receipt["accepted"] = original
+            source.fixture.changes.put_nowait(None)
+            await anext(watch)  # Older than the independent proof, same watch receipt.
+            expiry = "expiresAt" if domain == "tmux" else "expiresBoottimeMs"
+            receipt[expiry] += 1
+            source.fixture.changes.put_nowait(None)
+            with self.assertRaisesRegex(ProtocolError, "source_lease_renewal"):
+                await anext(watch)
+            await watch.aclose()
+            receipt[expiry] -= 1
+            watch = publisher.watch()
+            await anext(watch)
+            receipt["accepted"] = original - 1
+            source.fixture.changes.put_nowait(None)
+            with self.assertRaisesRegex(ProtocolError, "source_receipt_regression"):
+                await anext(watch)
+            await watch.aclose()
+
+    async def test_snapshot_and_proof_serialize_native_acquisition_and_cancel_waiters(self):
+        publisher, source = self.make()
+        entered, release = asyncio.Event(), asyncio.Event()
+        calls = []
+
+        async def delayed():
+            calls.append(len(calls))
+            entered.set()
+            await release.wait()
+            return source.fixture.frame
+
+        source.snapshot = delayed
+        first = asyncio.create_task(publisher.snapshot({}))
+        await entered.wait()
+        cancelled = asyncio.create_task(publisher.proof({"nonce": "a" * 32}))
+        await asyncio.sleep(0)
+        self.assertEqual(len(calls), 1)
+        cancelled.cancel()
+        with self.assertRaises(asyncio.CancelledError):
+            await cancelled
+        release.set()
+        await first
+        await publisher.proof({"nonce": "b" * 32})
+        self.assertEqual(len(calls), 2)
+        self.assertFalse(publisher._read_lock.locked())
 
     async def test_watch_epoch_barrier_ownership_and_cleanup(self):
         for domain in ("tmux", "agent"):
