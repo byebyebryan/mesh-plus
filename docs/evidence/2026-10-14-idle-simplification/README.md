@@ -47,3 +47,24 @@ historical native tuple requires a5; this is recorded as an input-gate rejection
 not WSS runtime failure. Standalone WSS and the exact historical native-WSS tuple
 are checked separately. A first full run against current Agent a3 is excluded:
 its Service 4 facade does not validate the legacy Service 2 fixtures.
+
+## S1/S2 scheduling prototype (value gate pending)
+
+A 30-second two-session-per-host counter run records 2,755 Fleet loop turns,
+2,166 ready callbacks and 1,059 timer registrations. The prototype records 1,359
+turns, 1,308 ready callbacks and 373 timers with the same 15 accepted samples per
+host. Remote bridge turns decrease from 1,252 to 931. These count runs include
+setup/cleanup and instrumentation, so their CPU figures are not savings evidence.
+The initial baseline counter run used the preceding diagnostic script; both script
+hashes are retained in raw records. Timing comparisons use one fixed harness.
+
+The prototype has one owned BOOTTIME recheck timer per active event loop. Each
+operation wakes on its own IO completion or expiry, not a broadcast tick. The
+last waiter removes the timer/loop attachment. Reader proof boundaries retain
+the pending subscription read; final retirement cancels it. Existing 100 ms
+suspend recheck responsiveness and absolute budgets remain. Focused tests cover
+BOOTTIME-only advance, earlier registration, simultaneous/late completion, ordinary
+proof-boundary ownership, cancellation and repeated cancellation during cleanup.
+Mesh native runtime passes 191 tests before the final repeated-cancellation case;
+Tmux Mesh integration passes 42 tests. Final complete gates follow qualification.
+This commit is a source prototype, not a promoted artifact or measured win.

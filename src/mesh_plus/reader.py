@@ -11,7 +11,7 @@ from .client import DeliveryError
 from .evidence import clock_domain, digest
 from .protocol import check
 from .state import check_binding, legacy_codec, resolve_profile, validate_bridge
-from .transport import boottime_ms, finish_owned, within_deadline
+from .transport import _wait_until, boottime_ms, finish_owned, within_deadline
 from .view import remote_expiry, validate_response
 
 
@@ -371,8 +371,7 @@ class Reader:
                         while boottime_ms() < deadline:
                             if next_frame is None:
                                 next_frame = asyncio.create_task(anext(sub))
-                            done, _ = await asyncio.wait({next_frame}, timeout=min(.1, max(0, (deadline - boottime_ms()) / 1000)))
-                            if done:
+                            if await _wait_until(next_frame, deadline):
                                 frame = next_frame.result()
                                 next_frame = None
                                 if frame["kind"] == "control" and frame["control"] == "heartbeat":

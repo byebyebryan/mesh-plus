@@ -38,22 +38,71 @@ async def finish_owned(task):
     return result
 
 
+class _ExpiryChecks:
+    """One BOOTTIME recheck timer while this loop has pending operations."""
+
+    def __init__(self, loop):
+        self.loop = loop
+        self.waiters = {}
+        self.timer = None
+
+    def schedule(self):
+        delay = min(.1, max(0, (min(deadline for waiter, deadline in self.waiters.items() if not waiter.done()) - boottime_ms()) / 1000))
+        self.timer = self.loop.call_later(delay, self.tick)
+
+    def tick(self):
+        self.timer = None
+        now = boottime_ms()
+        for waiter, deadline in tuple(self.waiters.items()):
+            if deadline <= now and not waiter.done():
+                waiter.set_result(None)
+        if any(not waiter.done() for waiter in self.waiters):
+            self.schedule()
+
+    def add(self, waiter, deadline):
+        earliest = min(self.waiters.values(), default=deadline)
+        self.waiters[waiter] = deadline
+        if self.timer is None or deadline < earliest:
+            if self.timer is not None:
+                self.timer.cancel()
+            self.schedule()
+
+    def remove(self, waiter):
+        self.waiters.pop(waiter)
+        if not self.waiters:
+            if self.timer is not None:
+                self.timer.cancel()
+            del self.loop._mesh_expiry_checks
+
+
+async def _wait_until(task, deadline_ms):
+    """Wait without cancelling the caller-owned task at an ordinary boundary."""
+    if not task.done() and boottime_ms() < deadline_ms:
+        loop = asyncio.get_running_loop()
+        checks = getattr(loop, "_mesh_expiry_checks", None)
+        if checks is None:
+            checks = loop._mesh_expiry_checks = _ExpiryChecks(loop)
+        expiry = loop.create_future()
+        checks.add(expiry, deadline_ms)
+        try:
+            await asyncio.wait({task, expiry}, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            checks.remove(expiry)
+            expiry.cancel()
+    return task.done() and boottime_ms() < deadline_ms
+
+
 async def within_deadline(awaitable, deadline_ms):
     """Include queue/write/validation time and notice suspend-aware expiry."""
     task = asyncio.ensure_future(awaitable)
     try:
-        while not task.done():
-            remaining = deadline_ms - boottime_ms()
-            if remaining <= 0:
-                raise TimeoutError("operation_deadline")
-            await asyncio.wait({task}, timeout=min(.1, remaining / 1000))
-        if boottime_ms() >= deadline_ms:
+        if not await _wait_until(task, deadline_ms):
             raise TimeoutError("operation_deadline")
         return task.result()
     finally:
         if not task.done():
             task.cancel()
-        await asyncio.gather(task, return_exceptions=True)
+        await finish_owned(asyncio.gather(task, return_exceptions=True))
 
 
 class LineChannel:
