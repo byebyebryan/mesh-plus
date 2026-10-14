@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0a19 source/private candidate
+
+- Scope cached publisher receipt histories to independent acquisition streams,
+  avoiding false regressions when cached reads overlap newer watch samples.
+- Consolidate active-loop BOOTTIME expiry checks while retaining absolute budgets,
+  pending subscription ownership and cancellation-safe cleanup.
+- Preserve SDK 1, preparation interface 1, lock 4, schemas, SSH defaults and cadence.
+  Measured promotion and independent managed adoption remain separate gates.
+
 ## 0.1.0a18 source/private candidate
 
 - Integrate the accepted Agent v3 profile and prepared watch consumer path,

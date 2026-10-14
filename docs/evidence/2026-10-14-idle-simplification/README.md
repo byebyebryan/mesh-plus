@@ -86,3 +86,34 @@ banner and distribution metadata agree. This allocation is not a release or live
 selection; performance promotion remains conditional on the predeclared gate.
 Tmux's matching private a9 package accepts a19 explicitly. Existing a18/a8 wheels,
 managed a15/a7 services and Agent/RLCD independent selections are unchanged.
+
+## Private wheel acceptance (performance gate still running)
+
+Mesh a19 source freeze `6e2e7e8` builds from a clean Git archive into a new private
+artifact directory. [Wheel manifest](wheel-manifest.json) binds SHA256
+`b3a1d00c06abcba4548a6f9894f51931dde517b80bc905d5d991e498834546ec`;
+all 63 runtime/schema/data members match source. The measured S2 archive matches
+62 members exactly; only the deliberate version banner differs. Build generator
+and source epoch are recorded; no existing artifact was overwritten.
+
+The isolated wheel first passes canonical standalone checks with no Observer
+packages: 154 core tests and 34 optional WSS tests, zero skips. The external
+[installed conformance caller](standalone-conformance.json) passes 35 cases with
+actual owned SSH and confirms both Observer packages absent. Then install the
+independent Tmux a9 / legacy Agent a16 packages into that disposable environment:
+full Mesh native acceptance passes 192 tests, zero skips; installed Tmux acceptance
+passes 42 tests, zero skips. Compressed logs bind each stated checkpoint.
+Python 3.11.10 standalone core/WSS passes 154+34 with zero skips; Python 3.14.8
+installed deadline/publisher-focused acceptance passes 15 tests. Tmux's own source
+gate passes 404 tests and lint with unchanged collection/runtime policy.
+
+Historical native WSS acceptance is separate: its wrapper requires exactly Tmux a5
+and Agent a16. That explicit tuple passes 43 cases on Python 3.13.7. Its report
+predates the a19 version banner, binds the same runtime bytes except that banner,
+and does not certify Tmux a9 as the wrapper's historical native input. A rejected
+a8/a9 wrapper tuple is an input-gate rejection, not a skipped runtime test.
+
+Installed Python 3.14 fixtures observe controlled native updates under four cached
+readers and a 12-session/desktop/one-reader case, with bounded cleanup and unchanged
+native identities/attachment counts. These are short compatibility/resource
+checks, not matched CPU savings or physical suspend/GUI acceptance.
