@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0a20 source/private candidate
+
+- Rearm newly registered short deadlines even while an expired waiter is awaiting
+  retirement; retain a19 receipt-history and owned expiry scheduling fixes.
+- Qualify a distinct corrected wheel with matching private Tmux a10 metadata.
+  Prior a19 measurements remain tied to their original runtime bytes.
+- Preserve SDK 1, preparation interface 1, lock 4, schema bytes and live pins.
+
 ## 0.1.0a19 source/private candidate
 
 - Scope cached publisher receipt histories to independent acquisition streams,

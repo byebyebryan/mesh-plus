@@ -1,11 +1,12 @@
 # Mesh Plus
 
-The **a19 source/private candidate** fixes cached publisher acquisition-history
-ordering and prototypes shared BOOTTIME expiry checks. Its
+The **a20 source/private candidate** fixes cached publisher acquisition-history
+ordering and refines shared BOOTTIME expiry checks, including short-deadline rearming. Its
 [idle simplification evidence](docs/evidence/2026-10-14-idle-simplification/README.md)
-records isolated wheel acceptance; matched CPU qualification is still running.
+records corrected isolated wheel acceptance; the final installed-wheel CPU screen
+is still running. The preceding a19 prototype has separate long-run evidence.
 SDK 1, preparation interface 1, lock 4, schema bytes and managed selections remain
-unchanged. Tmux a9 is the separate matching private package pin.
+unchanged. Tmux a10 is the separate matching private package pin.
 
 The [Tmux actual-pipeline qualification](docs/evidence/2026-10-14-tmux-preparation/README.md)
 certifies an optional Observer facade and retains the existing Fleet guard:

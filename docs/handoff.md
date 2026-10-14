@@ -3,8 +3,9 @@
 ## Current disposition
 
 The [idle simplification execution](evidence/2026-10-14-idle-simplification/README.md)
-fixes the publisher receipt-history race and qualifies private Mesh a19 / Tmux a9
-packages. Shared BOOTTIME expiry checks remain under matched CPU qualification;
+fixes the publisher receipt-history race and qualifies corrected private Mesh a20 / Tmux a10
+packages. Shared BOOTTIME expiry checks have a19 long-run evidence and a corrected a20
+installed-wheel CPU screen in progress;
 native-document reuse stopped at its value gate, and native command consolidation
 is deferred to a separate producer-owned study. The frozen contract and source
 cadence are unchanged. Publication and managed adoption are separate. The
