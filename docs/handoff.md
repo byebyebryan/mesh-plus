@@ -2,6 +2,15 @@
 
 ## Current disposition
 
+The [a18 changing-watch candidate](evidence/2026-10-14-watch/README.md) integrates
+prepared consumers with accepted Agent v3 main. SDK 1, optional preparation
+interface 1 and accepted lock 4 stay distinct from package version a18. The
+Agent v3 [a17 adoption receipt](evidence/2026-10-13-system-profile/README.md)
+retains its own exact installed tuple; this candidate changes no live selections.
+Changing-publication CPU and paired legacy/prepared allocation results supersede
+static-publication performance assumptions, without changing earlier evidence.
+Owner preparation certification remains independent and optional.
+
 Latest publication is [a15](evidence/2026-10-12-a15-release/README.md), with
 SDK interface 1, optional WSS and the generic cached publisher/factory seam.
 Release and installed-byte acceptance do not select an owner or live endpoint.

@@ -1,0 +1,103 @@
+{
+  "status": "passed",
+  "cases": 12,
+  "blocks": [
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "legacy": {
+        "steadyTracedBytes": 22551,
+        "retainedTracedBytes": 36996,
+        "peakTracedBytes": 276111,
+        "retiredTracedBytes": 15844
+      },
+      "prepared": {
+        "steadyTracedBytes": 26516,
+        "retainedTracedBytes": 61200,
+        "peakTracedBytes": 325027,
+        "retiredTracedBytes": 42805
+      }
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "legacy": {
+        "steadyTracedBytes": 79485,
+        "retainedTracedBytes": 92145,
+        "peakTracedBytes": 451592,
+        "retiredTracedBytes": 13729
+      },
+      "prepared": {
+        "steadyTracedBytes": 81758,
+        "retainedTracedBytes": 127599,
+        "peakTracedBytes": 570370,
+        "retiredTracedBytes": 60599
+      }
+    },
+    {
+      "change": "envelope",
+      "hosts": 16,
+      "legacy": {
+        "steadyTracedBytes": 308838,
+        "retainedTracedBytes": 311178,
+        "peakTracedBytes": 1169402,
+        "retiredTracedBytes": 3530
+      },
+      "prepared": {
+        "steadyTracedBytes": 298150,
+        "retainedTracedBytes": 321744,
+        "peakTracedBytes": 1446077,
+        "retiredTracedBytes": 59975
+      }
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "legacy": {
+        "steadyTracedBytes": 21752,
+        "retainedTracedBytes": 24870,
+        "peakTracedBytes": 264019,
+        "retiredTracedBytes": 3718
+      },
+      "prepared": {
+        "steadyTracedBytes": 24841,
+        "retainedTracedBytes": 51107,
+        "peakTracedBytes": 315206,
+        "retiredTracedBytes": 32678
+      }
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "legacy": {
+        "steadyTracedBytes": 79814,
+        "retainedTracedBytes": 85095,
+        "peakTracedBytes": 444746,
+        "retiredTracedBytes": 6679
+      },
+      "prepared": {
+        "steadyTracedBytes": 82310,
+        "retainedTracedBytes": 126040,
+        "peakTracedBytes": 569203,
+        "retiredTracedBytes": 58951
+      }
+    },
+    {
+      "change": "native",
+      "hosts": 16,
+      "legacy": {
+        "steadyTracedBytes": 309073,
+        "retainedTracedBytes": 313011,
+        "peakTracedBytes": 1171282,
+        "retiredTracedBytes": 5363
+      },
+      "prepared": {
+        "steadyTracedBytes": 299814,
+        "retainedTracedBytes": 323542,
+        "peakTracedBytes": 1448272,
+        "retiredTracedBytes": 61179
+      }
+    }
+  ],
+  "scope": "separate traced guard allocations"
+}

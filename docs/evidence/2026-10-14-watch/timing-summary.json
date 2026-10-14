@@ -1,0 +1,439 @@
+{
+  "status": "passed",
+  "cases": 192,
+  "blocks": [
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 1,
+      "block": 0,
+      "legacyCpuNs": 95972535.5,
+      "preparedCpuNs": 83516508,
+      "cpuReductionPercent": 12.978741715123277
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 1,
+      "block": 1,
+      "legacyCpuNs": 90869298.5,
+      "preparedCpuNs": 86579234,
+      "cpuReductionPercent": 4.721137469769287
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 1,
+      "block": 2,
+      "legacyCpuNs": 93439951,
+      "preparedCpuNs": 85765647,
+      "cpuReductionPercent": 8.213086498729005
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 1,
+      "block": 3,
+      "legacyCpuNs": 94290653.5,
+      "preparedCpuNs": 88693460,
+      "cpuReductionPercent": 5.936106381954387
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 4,
+      "block": 0,
+      "legacyCpuNs": 156604617.5,
+      "preparedCpuNs": 96146730.5,
+      "cpuReductionPercent": 38.60543064766273
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 4,
+      "block": 1,
+      "legacyCpuNs": 151688641.5,
+      "preparedCpuNs": 93419230.5,
+      "cpuReductionPercent": 38.413826126856044
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 4,
+      "block": 2,
+      "legacyCpuNs": 152323262.5,
+      "preparedCpuNs": 95015372,
+      "cpuReductionPercent": 37.62254665468448
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 4,
+      "block": 3,
+      "legacyCpuNs": 158877460,
+      "preparedCpuNs": 93778188,
+      "cpuReductionPercent": 40.974517090089435
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 16,
+      "block": 0,
+      "legacyCpuNs": 406223063.5,
+      "preparedCpuNs": 132307619,
+      "cpuReductionPercent": 67.42981113380333
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 16,
+      "block": 1,
+      "legacyCpuNs": 395046680.5,
+      "preparedCpuNs": 130988406,
+      "cpuReductionPercent": 66.84229675485149
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 16,
+      "block": 2,
+      "legacyCpuNs": 388551347,
+      "preparedCpuNs": 137235743,
+      "cpuReductionPercent": 64.68015255651656
+    },
+    {
+      "change": "envelope",
+      "hosts": 1,
+      "reads": 16,
+      "block": 3,
+      "legacyCpuNs": 394987388,
+      "preparedCpuNs": 132031095,
+      "cpuReductionPercent": 66.5733390454482
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 1,
+      "block": 0,
+      "legacyCpuNs": 363210765,
+      "preparedCpuNs": 325035810.5,
+      "cpuReductionPercent": 10.510413836440113
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 1,
+      "block": 1,
+      "legacyCpuNs": 356164247.5,
+      "preparedCpuNs": 320488307,
+      "cpuReductionPercent": 10.016710197729772
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 1,
+      "block": 2,
+      "legacyCpuNs": 364662501,
+      "preparedCpuNs": 321948158,
+      "cpuReductionPercent": 11.713390568776905
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 1,
+      "block": 3,
+      "legacyCpuNs": 365449500.5,
+      "preparedCpuNs": 323374232.5,
+      "cpuReductionPercent": 11.513291971239125
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 4,
+      "block": 0,
+      "legacyCpuNs": 624173487.5,
+      "preparedCpuNs": 372987132,
+      "cpuReductionPercent": 40.24303507444314
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 4,
+      "block": 1,
+      "legacyCpuNs": 643165973,
+      "preparedCpuNs": 362053389,
+      "cpuReductionPercent": 43.7076269269612
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 4,
+      "block": 2,
+      "legacyCpuNs": 599896714.5,
+      "preparedCpuNs": 370554559.5,
+      "cpuReductionPercent": 38.23027355486543
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 4,
+      "block": 3,
+      "legacyCpuNs": 609989860.5,
+      "preparedCpuNs": 369336943,
+      "cpuReductionPercent": 39.45195372636854
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 16,
+      "block": 0,
+      "legacyCpuNs": 1631019785,
+      "preparedCpuNs": 531537707,
+      "cpuReductionPercent": 67.41071372104784
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 16,
+      "block": 1,
+      "legacyCpuNs": 1666515379,
+      "preparedCpuNs": 506447234.5,
+      "cpuReductionPercent": 69.61040738766565
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 16,
+      "block": 2,
+      "legacyCpuNs": 1627946739.5,
+      "preparedCpuNs": 518961639,
+      "cpuReductionPercent": 68.12170653940488
+    },
+    {
+      "change": "envelope",
+      "hosts": 4,
+      "reads": 16,
+      "block": 3,
+      "legacyCpuNs": 1650313534.5,
+      "preparedCpuNs": 526945194.5,
+      "cpuReductionPercent": 68.0699949746428
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 1,
+      "block": 0,
+      "legacyCpuNs": 95279572,
+      "preparedCpuNs": 90178984,
+      "cpuReductionPercent": 5.353286011822133
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 1,
+      "block": 1,
+      "legacyCpuNs": 97272889.5,
+      "preparedCpuNs": 87434785.5,
+      "cpuReductionPercent": 10.113921824024775
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 1,
+      "block": 2,
+      "legacyCpuNs": 99498629.5,
+      "preparedCpuNs": 91732986,
+      "cpuReductionPercent": 7.804774336112841
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 1,
+      "block": 3,
+      "legacyCpuNs": 96365444,
+      "preparedCpuNs": 90292767.5,
+      "cpuReductionPercent": 6.30171589309545
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 4,
+      "block": 0,
+      "legacyCpuNs": 166760668,
+      "preparedCpuNs": 102232331.5,
+      "cpuReductionPercent": 38.69517751032275
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 4,
+      "block": 1,
+      "legacyCpuNs": 174825335.5,
+      "preparedCpuNs": 109348042.5,
+      "cpuReductionPercent": 37.452977174466795
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 4,
+      "block": 2,
+      "legacyCpuNs": 173105037.5,
+      "preparedCpuNs": 102728209,
+      "cpuReductionPercent": 40.65556353321029
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 4,
+      "block": 3,
+      "legacyCpuNs": 185366400.5,
+      "preparedCpuNs": 105287476,
+      "cpuReductionPercent": 43.20034498377174
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 16,
+      "block": 0,
+      "legacyCpuNs": 466488362.5,
+      "preparedCpuNs": 157930052.5,
+      "cpuReductionPercent": 66.14491052818065
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 16,
+      "block": 1,
+      "legacyCpuNs": 435332218.5,
+      "preparedCpuNs": 144964421,
+      "cpuReductionPercent": 66.70027743420971
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 16,
+      "block": 2,
+      "legacyCpuNs": 428070604,
+      "preparedCpuNs": 151919568,
+      "cpuReductionPercent": 64.51062825140873
+    },
+    {
+      "change": "native",
+      "hosts": 1,
+      "reads": 16,
+      "block": 3,
+      "legacyCpuNs": 446469999,
+      "preparedCpuNs": 149498677,
+      "cpuReductionPercent": 66.515403647536
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 1,
+      "block": 0,
+      "legacyCpuNs": 424965081,
+      "preparedCpuNs": 367066991,
+      "cpuReductionPercent": 13.624199396279336
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 1,
+      "block": 1,
+      "legacyCpuNs": 406113255.5,
+      "preparedCpuNs": 363889705,
+      "cpuReductionPercent": 10.396988999537838
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 1,
+      "block": 2,
+      "legacyCpuNs": 420866695.5,
+      "preparedCpuNs": 377861098.5,
+      "cpuReductionPercent": 10.218341688668975
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 1,
+      "block": 3,
+      "legacyCpuNs": 411636130.5,
+      "preparedCpuNs": 372785290.5,
+      "cpuReductionPercent": 9.438151105154269
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 4,
+      "block": 0,
+      "legacyCpuNs": 683465267,
+      "preparedCpuNs": 402423844.5,
+      "cpuReductionPercent": 41.120073845683805
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 4,
+      "block": 1,
+      "legacyCpuNs": 697834895.5,
+      "preparedCpuNs": 425830439.5,
+      "cpuReductionPercent": 38.978339683788434
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 4,
+      "block": 2,
+      "legacyCpuNs": 702897505,
+      "preparedCpuNs": 424854862.5,
+      "cpuReductionPercent": 39.55664097854494
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 4,
+      "block": 3,
+      "legacyCpuNs": 701479087.5,
+      "preparedCpuNs": 414426082.5,
+      "cpuReductionPercent": 40.92110657539737
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 16,
+      "block": 0,
+      "legacyCpuNs": 1868896355,
+      "preparedCpuNs": 584082891,
+      "cpuReductionPercent": 68.74717587000698
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 16,
+      "block": 1,
+      "legacyCpuNs": 1796732134.5,
+      "preparedCpuNs": 590847375.5,
+      "cpuReductionPercent": 67.11544452537869
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 16,
+      "block": 2,
+      "legacyCpuNs": 1796672063.5,
+      "preparedCpuNs": 587714361,
+      "cpuReductionPercent": 67.2887238055505
+    },
+    {
+      "change": "native",
+      "hosts": 4,
+      "reads": 16,
+      "block": 3,
+      "legacyCpuNs": 2114117137,
+      "preparedCpuNs": 1220116058,
+      "cpuReductionPercent": 42.28720648225841
+    }
+  ],
+  "scope": "persistent changing-publication consumer CPU; no network/source performance"
+}

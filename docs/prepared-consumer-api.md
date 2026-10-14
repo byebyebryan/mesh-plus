@@ -130,3 +130,16 @@ Existing consumers need no migration. Opt in only after owner certification and
 measured benefit for the actual read/publication ratio, including accept/setup,
 allocation, exports and teardown. Publication and operational selection remain
 later explicit gates with rollback to ReadGuard.
+
+## Changing-publication qualification
+
+The [a18 candidate assessment](evidence/2026-10-14-watch/README.md) measures
+persistent consumers across changed envelopes and native fixture publications,
+including full profile-schema admission for each publication. Use those results
+alongside actual workload measurements rather than treating identical warmed
+publication timings as changing-stream or whole-pipeline savings. Preparation
+can increase transient allocation; it is not a memory-saving guarantee.
+
+The implementation also retains Agent v3 support from accepted main. Its
+independent frozen fixture is covered by golden prepared/legacy comparison;
+that does not certify an active Agent compiler or opt in any native profile.
