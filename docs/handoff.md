@@ -2,6 +2,11 @@
 
 ## Current disposition
 
+The [idle simplification plan](idle-simplification-plan.md) sequences refresh-race
+classification, measured Mesh scheduling, exact unchanged-host Observer reuse and
+conditional native command consolidation. It proposes unchanged SDK/wire/cadence
+and separate performance/installed gates; runtime implementation has not started.
+
 The [actual Tmux idle profile](evidence/2026-10-14-idle-profile/README.md)
 identifies a substantial fixed CPU floor with an empty roster. Follow-up targets
 are repeated scheduling/validation work and Observer native/desktop costs; this
