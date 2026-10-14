@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "hosts": 1,
+      "rowsPerHost": 32,
+      "replacements": 128,
+      "bodyBytes": 12192,
+      "steadyTracedBytes": 18033,
+      "firstAcceptPeakTracedBytes": 105106,
+      "afterChurnTracedBytes": 80091,
+      "peakTracedBytes": 396460,
+      "afterDisconnectTracedBytes": 62083,
+      "oldGenerationsReleased": true
+    },
+    {
+      "hosts": 4,
+      "rowsPerHost": 32,
+      "replacements": 128,
+      "bodyBytes": 48270,
+      "steadyTracedBytes": 66359,
+      "firstAcceptPeakTracedBytes": 293718,
+      "afterChurnTracedBytes": 133710,
+      "peakTracedBytes": 690302,
+      "afterDisconnectTracedBytes": 67270,
+      "oldGenerationsReleased": true
+    },
+    {
+      "hosts": 16,
+      "rowsPerHost": 32,
+      "replacements": 128,
+      "bodyBytes": 192798,
+      "steadyTracedBytes": 261071,
+      "firstAcceptPeakTracedBytes": 1044238,
+      "afterChurnTracedBytes": 330344,
+      "peakTracedBytes": 1814478,
+      "afterDisconnectTracedBytes": 69281,
+      "oldGenerationsReleased": true
+    },
+    {
+      "hosts": 1,
+      "rowsPerHost": 256,
+      "replacements": 128,
+      "bodyBytes": 82752,
+      "steadyTracedBytes": 116993,
+      "firstAcceptPeakTracedBytes": 666976,
+      "afterChurnTracedBytes": 166603,
+      "peakTracedBytes": 1101269,
+      "afterDisconnectTracedBytes": 49571,
+      "oldGenerationsReleased": true
+    }
+  ],
+  "limits": "tracemalloc allocations, not RSS/PSS; controlled fixed admission-time queries for churn; test-only compiler; no live fleet performance"
+}
