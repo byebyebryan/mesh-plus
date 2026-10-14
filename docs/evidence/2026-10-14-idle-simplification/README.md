@@ -155,3 +155,26 @@ wheel and long measurements as their own prototype checkpoint. Allocate a new
 Mesh a20 / Tmux a10 private pair; do not overwrite a19/a9. Qualification now adds
 a bounded final empty/active ABBA screen on corrected installed bytes, plus new
 traffic and installed gates. Old a19 measurements are not attributed to a20.
+
+## Corrected private a20/a10 installed acceptance
+
+The [corrected tuple](a20-tuple.json) binds Mesh a20 source freeze `f7bef1e` and
+Tmux a10 source freeze `f693674`. Mesh wheel SHA256 is
+`e02306b2323ddd845fec2c1ee82dd25b429878edefcee4cf8ac2b552535fc200`;
+Tmux wheel SHA256 is
+`5d7c922ec9229e8e34149cfa13cde86f9c3877339e78d41ddfcc9dbb3d45c913`.
+All 63 Mesh runtime/schema/data members match the clean archived source.
+Tmux's constrained builder verifies all 182 wheel members and keeps its descriptor
+`built_unaccepted`; this independent acceptance does not mutate that descriptor.
+
+The new isolated environment first has no Observer packages: canonical standalone
+acceptance passes 155 tests and optional WSS 34, with zero skips. The external
+[conformance caller](a20-conformance.json) passes 35 cases, including owned SSH,
+and confirms no Observer packages. After installing the paired Observer and
+separately recorded legacy Agent fixture dependency, canonical full native
+acceptance passes 193 tests; [installed Tmux acceptance](a20-tmux-installed.json)
+passes 42. Python 3.11.10 passes 155+34 standalone/WSS cases, and Python 3.14.8
+passes 16 installed deadline/publisher-focused tests. Historical native WSS uses
+its explicit a5/a16 tuple and passes 43 cases against current a20 source bytes.
+All stated suites have zero skips. Compressed logs preserve the exact gates.
+This accepts functional/package checkpoints; final a20 CPU qualification follows.

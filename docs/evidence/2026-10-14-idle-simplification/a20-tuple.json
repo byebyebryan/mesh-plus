@@ -1,0 +1,15 @@
+{
+  "mesh": "e02306b2323ddd845fec2c1ee82dd25b429878edefcee4cf8ac2b552535fc200",
+  "observer": {
+    "bytes": 259858,
+    "file": "tmux_observer-0.6.0a10-py3-none-any.whl",
+    "sha256": "5d7c922ec9229e8e34149cfa13cde86f9c3877339e78d41ddfcc9dbb3d45c913"
+  },
+  "observerSource": {
+    "commit": "f6936741e0c63ff1048451dc3e807a94fc28d888",
+    "epoch": 1791974601,
+    "tree": "9f7039ba8e7cb7bfc3ec0dbf0421ccd4c1f252fb"
+  },
+  "agentLegacyWheelSha256": "94705baebfa51a9664e9dbfa7603dcb932d6301146cf9a59017017c5285b3b17",
+  "scope": "private a20/a10 installed acceptance; legacy Agent wheel is a native-profile test input, not a managed change"
+}
