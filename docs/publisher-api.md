@@ -32,8 +32,11 @@ Delivery baseline schema and are producer-owned, bounded JSON.
 Mesh deep-copies admitted frames/barriers, checks profile binding, lossless native
 reconstruction, local clock and chronology, constructs canonical owner digests,
 and derives remaining leases exclusively from original receipts. For receipts
-present in consecutive accepted samples under the same publisher/clock, counters
-cannot regress or change expiry without advancing acceptance. Tracking commits
+present in consecutive accepted acquisitions within one stream under the same
+publisher/clock, counters cannot regress or change expiry without advancing
+acceptance. Each watch owns its history; snapshot/proof acquisitions are serialized
+and share a separate history. Independent reads and watches can finish in a
+different order from their native observations. Tracking commits
 only after successful validation. The native source must enforce its own sample
 ordering, including disappearance/reappearance of components; this helper is
 not an unbounded history of retired native namespaces.

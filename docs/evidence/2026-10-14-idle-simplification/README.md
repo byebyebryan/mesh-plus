@@ -68,3 +68,21 @@ proof-boundary ownership, cancellation and repeated cancellation during cleanup.
 Mesh native runtime passes 191 tests before the final repeated-cancellation case;
 Tmux Mesh integration passes 42 tests. Final complete gates follow qualification.
 This commit is a source prototype, not a promoted artifact or measured win.
+
+## Qualification and package boundary
+
+Empty headless two-host Fleet is the primary current rare-session workload.
+Before long-run results, declare two ABBA blocks of 300 seconds per run with
+fixed S0 (`7f5e26c`) versus S2 (`ef4d4cc`) source archives and Tmux `31e3625`.
+Two-session fleets receive a separate 120-second ABBA screen; desktop-on, larger
+roster and active updates have distinct compatibility/resource checks. Initial
+short-screen cases overlap source tests or the projection study; record that
+interference and do not promote their short timings into final acceptance.
+Long timing fixtures run serially and contain no counters/profiler. Other desktop
+activity and host frequency/load remain uncontrolled and are explicit limits.
+
+Allocate a new private Mesh a19 candidate for changed runtime bytes. Its version
+banner and distribution metadata agree. This allocation is not a release or live
+selection; performance promotion remains conditional on the predeclared gate.
+Tmux's matching private a9 package accepts a19 explicitly. Existing a18/a8 wheels,
+managed a15/a7 services and Agent/RLCD independent selections are unchanged.
