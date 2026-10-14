@@ -1,5 +1,10 @@
 # Mesh Plus
 
+The [Tmux actual-pipeline qualification](docs/evidence/2026-10-14-tmux-preparation/README.md)
+certifies an optional Observer facade and retains the existing Fleet guard:
+that consumer performs no Mesh current queries. It also corrects the a18 runtime
+version banner and binds a distinct private wheel; no release or live pin changes.
+
 The **a18 source/private candidate** integrates the accepted Agent v3 profile
 with compatible admission simplification and opt-in prepared watch consumers.
 The [changing-watch qualification](docs/evidence/2026-10-14-watch/README.md)

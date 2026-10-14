@@ -2,6 +2,12 @@
 
 ## Current disposition
 
+The [Tmux consumer qualification](evidence/2026-10-14-tmux-preparation/README.md)
+certifies Observer's optional preparation facade but rejects a mechanical Fleet
+guard switch: actual Fleet reads use Observer's prepared projection and perform
+no Mesh current queries. The pass also reopens the old a18 installed version
+checkpoint and binds the corrected private wheel. No downstream migration is required.
+
 The [a18 changing-watch candidate](evidence/2026-10-14-watch/README.md) integrates
 prepared consumers with accepted Agent v3 main. SDK 1, optional preparation
 interface 1 and accepted lock 4 stay distinct from package version a18. The

@@ -143,3 +143,13 @@ can increase transient allocation; it is not a memory-saving guarantee.
 The implementation also retains Agent v3 support from accepted main. Its
 independent frozen fixture is covered by golden prepared/legacy comparison;
 that does not certify an active Agent compiler or opt in any native profile.
+
+## Actual Tmux consumer qualification
+
+The [Tmux owner/pipeline receipt](evidence/2026-10-14-tmux-preparation/README.md)
+certifies the optional Observer-owned preparation facade against a corrected a18
+private wheel. Its production Fleet worker never calls Mesh current(), so a
+mechanical guard replacement removes no repeated work; ReadGuard remains selected.
+Forty native IPC/localhost SSH cases do not establish a consistent diagnostic
+preparation gain. This qualifies the actual consumer separately from Mesh's
+repeated-current benchmark; no Observer or Agent migration is implied.
