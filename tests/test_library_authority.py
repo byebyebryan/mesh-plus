@@ -10,10 +10,15 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from sdk_fixture import Publisher
+
+from mesh_plus.api import Bridge
 from mesh_plus.authority import route_health_path
 from mesh_plus.authority_cli import main
+from mesh_plus.configured_read import configured_reader
 from mesh_plus.library_authority import MAX_SOURCE_BYTES, LibraryMeshAuthority, source_file
 from mesh_plus.protocol import ProtocolError
+from mesh_plus.transport import IPCServer
 
 
 class LibraryAuthorityTests(unittest.IsolatedAsyncioTestCase):
@@ -69,6 +74,44 @@ class LibraryAuthorityTests(unittest.IsolatedAsyncioTestCase):
             self.config.write_text("invalid = true\n")
             with self.assertRaises(ValueError):
                 await authority.load()
+
+    async def test_configured_watch_fresh_library_checks_revoke_and_close_owned_transport(self):
+        for invalid, expected in ((False, "scope_changed"), (True, "catalog_unavailable")):
+            with self.subTest(invalid=invalid):
+                self.config.write_text('schema_version = 1\nlocal_id = "fixture"\n')
+                authority = self.authority()
+                publisher = Publisher("tmux", "fixture", "tmux")
+                path = self.root / "mesh.sock"
+                server = await IPCServer(path, Bridge(publisher).serve).start()
+                reader = await configured_reader("tmux", source="tmux", socket=str(path),
+                                                 authority=authority, report_routes=False,
+                                                 profile=publisher.state_profile)
+                watch = reader.watch(catalog_interval=.02, proof_interval=.1)
+                try:
+                    while True:
+                        frame = await asyncio.wait_for(anext(watch), 2)
+                        if frame["mesh"]["status"] == "complete":
+                            break
+                    original_revision = reader.catalog_revision
+                    health = route_health_path(self.environment)
+                    health.write_text('{"version":1,"routes":{}}')
+                    self.assertEqual(await reader.catalog_check(), original_revision)
+                    self.config.write_text("invalid = true\n" if invalid else
+                                           'schema_version = 1\nlocal_id = "replacement"\n')
+                    while True:
+                        frame = await asyncio.wait_for(anext(watch), 2)
+                        if "error" in frame:
+                            break
+                    self.assertEqual(frame["error"]["code"], expected)
+                    with self.assertRaises(StopAsyncIteration):
+                        await anext(watch)
+                finally:
+                    await watch.aclose()
+                    await server.close()
+                    authority.close()
+                self.assertEqual(reader.inspect()["activeConnections"], 0)
+                self.assertEqual(publisher.watchers, 0)
+                self.assertFalse(authority.thread.is_alive())
 
     async def test_special_source_and_capacity_do_not_block_or_synthesize_fallback(self):
         authority = self.authority()

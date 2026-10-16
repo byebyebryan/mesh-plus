@@ -1,0 +1,52 @@
+{
+  "$id": "urn:agent-observer:active-request:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "activeFeedProtocol": {
+      "const": 1
+    },
+    "hostScope": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "status",
+        "snapshot",
+        "watch"
+      ]
+    },
+    "selector": {
+      "const": {
+        "kinds": [
+          "unknown",
+          "user"
+        ],
+        "providers": [
+          "codex"
+        ],
+        "runtimeHealths": [
+          "current"
+        ],
+        "runtimeValues": [
+          "running"
+        ],
+        "version": 1
+      }
+    },
+    "selectorDigest": {
+      "const": "sha256:73d08f0217e03cea283820e18abed0b06cd5e4c52428e431bab5da1d760ff9d6"
+    }
+  },
+  "required": [
+    "activeFeedProtocol",
+    "operation",
+    "hostScope",
+    "selector",
+    "selectorDigest"
+  ],
+  "type": "object"
+}

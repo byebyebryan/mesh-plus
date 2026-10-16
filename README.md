@@ -1,5 +1,12 @@
 # Mesh Plus
 
+The **a23 source/private candidate** adds the explicit
+[projected Agent active profile](docs/active-feed-api.md) under lock 5. SDK 1,
+Read 1, Delivery 1, old full/Tmux schema bytes and original proof/receipt rules
+remain. The new native/profile route is opt-in; installed producer qualification
+and later role selection are separate. The [agreed G0 boundary](docs/active-feed-g0-proposal.md)
+records the producer/consumer ownership and lifecycle choices.
+
 The **a22 source/private candidate** adds [owned admission, row-free context and
 whole-roster selection summaries](docs/cpu-admission-api.md) for explicitly opted-in
 prepared watch consumers. It retains accepted a20 receipt/deadline fixes, SDK 1,

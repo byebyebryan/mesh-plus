@@ -1,0 +1,2337 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:read:1:agent-active-profile",
+  "type": "object",
+  "properties": {
+    "protocol": {
+      "const": "agent-observer.mesh-active.v1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "mesh": {
+      "allOf": [
+        {
+          "$ref": "urn:mesh-plus:read:1:mesh"
+        },
+        {
+          "properties": {
+            "hosts": {
+              "items": {
+                "properties": {
+                  "owner": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "protocol": {
+                            "const": "agent-observer.active-feed"
+                          },
+                          "version": {
+                            "const": 1
+                          },
+                          "metadata": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "scopes": {
+                                    "items": {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "contextGeneration": {
+                                          "maximum": 9007199254740991,
+                                          "minimum": 0,
+                                          "type": "integer"
+                                        },
+                                        "continuity": {
+                                          "maximum": 9007199254740991,
+                                          "minimum": 1,
+                                          "type": "integer"
+                                        },
+                                        "coverage": {
+                                          "additionalProperties": false,
+                                          "properties": {
+                                            "reason": {
+                                              "maxLength": 128,
+                                              "minLength": 1,
+                                              "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                                              "type": "string"
+                                            },
+                                            "status": {
+                                              "enum": [
+                                                "complete",
+                                                "partial",
+                                                "warming",
+                                                "stale",
+                                                "unavailable",
+                                                "unsupported"
+                                              ]
+                                            },
+                                            "supports": {
+                                              "items": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                  "accepted": {
+                                                    "maximum": 9007199254740991,
+                                                    "minimum": 1,
+                                                    "type": "integer"
+                                                  },
+                                                  "component": {
+                                                    "enum": [
+                                                      "runtime",
+                                                      "history"
+                                                    ]
+                                                  },
+                                                  "contextGeneration": {
+                                                    "maximum": 9007199254740991,
+                                                    "minimum": 0,
+                                                    "type": "integer"
+                                                  },
+                                                  "expiresBoottimeMs": {
+                                                    "maximum": 9007199254740991,
+                                                    "minimum": 0,
+                                                    "type": "integer"
+                                                  },
+                                                  "namespace": {
+                                                    "maxLength": 71,
+                                                    "minLength": 1,
+                                                    "pattern": "^sha256:[0-9a-f]{64}$",
+                                                    "type": "string"
+                                                  },
+                                                  "provider": {
+                                                    "enum": [
+                                                      "codex"
+                                                    ]
+                                                  },
+                                                  "sampledBoottimeMs": {
+                                                    "maximum": 9007199254740991,
+                                                    "minimum": 0,
+                                                    "type": "integer"
+                                                  },
+                                                  "serviceId": {
+                                                    "maxLength": 36,
+                                                    "minLength": 1,
+                                                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                    "type": "string"
+                                                  }
+                                                },
+                                                "required": [
+                                                  "serviceId",
+                                                  "provider",
+                                                  "namespace",
+                                                  "contextGeneration",
+                                                  "component",
+                                                  "accepted",
+                                                  "sampledBoottimeMs",
+                                                  "expiresBoottimeMs"
+                                                ],
+                                                "type": "object"
+                                              },
+                                              "maxItems": 2,
+                                              "type": "array"
+                                            }
+                                          },
+                                          "required": [
+                                            "status",
+                                            "reason",
+                                            "supports"
+                                          ],
+                                          "type": "object"
+                                        },
+                                        "members": {
+                                          "items": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                              "fieldSupports": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                  "activity": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "kind": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "lastUpdated": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "latestTurn": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "outcome": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "phase": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "runtime": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "savedIdentity": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  },
+                                                  "workspace": {
+                                                    "anyOf": [
+                                                      {
+                                                        "additionalProperties": false,
+                                                        "properties": {
+                                                          "accepted": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 1,
+                                                            "type": "integer"
+                                                          },
+                                                          "component": {
+                                                            "enum": [
+                                                              "runtime",
+                                                              "history"
+                                                            ]
+                                                          },
+                                                          "contextGeneration": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "expiresBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "namespace": {
+                                                            "maxLength": 71,
+                                                            "minLength": 1,
+                                                            "pattern": "^sha256:[0-9a-f]{64}$",
+                                                            "type": "string"
+                                                          },
+                                                          "provider": {
+                                                            "enum": [
+                                                              "codex"
+                                                            ]
+                                                          },
+                                                          "sampledBoottimeMs": {
+                                                            "maximum": 9007199254740991,
+                                                            "minimum": 0,
+                                                            "type": "integer"
+                                                          },
+                                                          "serviceId": {
+                                                            "maxLength": 36,
+                                                            "minLength": 1,
+                                                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                            "type": "string"
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "serviceId",
+                                                          "provider",
+                                                          "namespace",
+                                                          "contextGeneration",
+                                                          "component",
+                                                          "accepted",
+                                                          "sampledBoottimeMs",
+                                                          "expiresBoottimeMs"
+                                                        ],
+                                                        "type": "object"
+                                                      },
+                                                      {
+                                                        "type": "null"
+                                                      }
+                                                    ]
+                                                  }
+                                                },
+                                                "required": [
+                                                  "runtime",
+                                                  "phase",
+                                                  "kind",
+                                                  "savedIdentity",
+                                                  "activity",
+                                                  "outcome",
+                                                  "workspace",
+                                                  "lastUpdated",
+                                                  "latestTurn"
+                                                ],
+                                                "type": "object"
+                                              },
+                                              "identity": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                  "hostScope": {
+                                                    "maxLength": 256,
+                                                    "minLength": 1,
+                                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                                                    "type": "string"
+                                                  },
+                                                  "namespace": {
+                                                    "maxLength": 71,
+                                                    "minLength": 1,
+                                                    "pattern": "^sha256:[0-9a-f]{64}$",
+                                                    "type": "string"
+                                                  },
+                                                  "nativeId": {
+                                                    "maxLength": 36,
+                                                    "minLength": 1,
+                                                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                    "type": "string"
+                                                  },
+                                                  "nativeIdKind": {
+                                                    "enum": [
+                                                      "thread",
+                                                      "session"
+                                                    ]
+                                                  },
+                                                  "provider": {
+                                                    "enum": [
+                                                      "codex",
+                                                      "claude"
+                                                    ]
+                                                  }
+                                                },
+                                                "required": [
+                                                  "hostScope",
+                                                  "provider",
+                                                  "namespace",
+                                                  "nativeIdKind",
+                                                  "nativeId"
+                                                ],
+                                                "type": "object"
+                                              }
+                                            },
+                                            "required": [
+                                              "identity",
+                                              "fieldSupports"
+                                            ],
+                                            "type": "object"
+                                          },
+                                          "maxItems": 4096,
+                                          "type": "array"
+                                        },
+                                        "namespace": {
+                                          "maxLength": 71,
+                                          "minLength": 1,
+                                          "pattern": "^sha256:[0-9a-f]{64}$",
+                                          "type": "string"
+                                        },
+                                        "nonmembers": {
+                                          "items": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                              "horizonBoottimeMs": {
+                                                "maximum": 9007199254740991,
+                                                "minimum": 0,
+                                                "type": "integer"
+                                              },
+                                              "identity": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                  "hostScope": {
+                                                    "maxLength": 256,
+                                                    "minLength": 1,
+                                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                                                    "type": "string"
+                                                  },
+                                                  "namespace": {
+                                                    "maxLength": 71,
+                                                    "minLength": 1,
+                                                    "pattern": "^sha256:[0-9a-f]{64}$",
+                                                    "type": "string"
+                                                  },
+                                                  "nativeId": {
+                                                    "maxLength": 36,
+                                                    "minLength": 1,
+                                                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                    "type": "string"
+                                                  },
+                                                  "nativeIdKind": {
+                                                    "enum": [
+                                                      "thread",
+                                                      "session"
+                                                    ]
+                                                  },
+                                                  "provider": {
+                                                    "enum": [
+                                                      "codex",
+                                                      "claude"
+                                                    ]
+                                                  }
+                                                },
+                                                "required": [
+                                                  "hostScope",
+                                                  "provider",
+                                                  "namespace",
+                                                  "nativeIdKind",
+                                                  "nativeId"
+                                                ],
+                                                "type": "object"
+                                              },
+                                              "reason": {
+                                                "enum": [
+                                                  "parked",
+                                                  "excluded_kind"
+                                                ]
+                                              },
+                                              "supports": {
+                                                "items": {
+                                                  "additionalProperties": false,
+                                                  "properties": {
+                                                    "accepted": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": 1,
+                                                      "type": "integer"
+                                                    },
+                                                    "component": {
+                                                      "enum": [
+                                                        "runtime",
+                                                        "history"
+                                                      ]
+                                                    },
+                                                    "contextGeneration": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": 0,
+                                                      "type": "integer"
+                                                    },
+                                                    "expiresBoottimeMs": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": 0,
+                                                      "type": "integer"
+                                                    },
+                                                    "namespace": {
+                                                      "maxLength": 71,
+                                                      "minLength": 1,
+                                                      "pattern": "^sha256:[0-9a-f]{64}$",
+                                                      "type": "string"
+                                                    },
+                                                    "provider": {
+                                                      "enum": [
+                                                        "codex"
+                                                      ]
+                                                    },
+                                                    "sampledBoottimeMs": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": 0,
+                                                      "type": "integer"
+                                                    },
+                                                    "serviceId": {
+                                                      "maxLength": 36,
+                                                      "minLength": 1,
+                                                      "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                      "type": "string"
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "serviceId",
+                                                    "provider",
+                                                    "namespace",
+                                                    "contextGeneration",
+                                                    "component",
+                                                    "accepted",
+                                                    "sampledBoottimeMs",
+                                                    "expiresBoottimeMs"
+                                                  ],
+                                                  "type": "object"
+                                                },
+                                                "maxItems": 2,
+                                                "type": "array"
+                                              },
+                                              "value": {
+                                                "enum": [
+                                                  "parked",
+                                                  "child",
+                                                  "system"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "identity",
+                                              "reason",
+                                              "value",
+                                              "supports",
+                                              "horizonBoottimeMs"
+                                            ],
+                                            "type": "object"
+                                          },
+                                          "maxItems": 4096,
+                                          "type": "array"
+                                        },
+                                        "provider": {
+                                          "enum": [
+                                            "codex"
+                                          ]
+                                        },
+                                        "uncertain": {
+                                          "items": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                              "horizonBoottimeMs": {
+                                                "maximum": 9007199254740991,
+                                                "minimum": 0,
+                                                "type": "integer"
+                                              },
+                                              "identity": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                  "hostScope": {
+                                                    "maxLength": 256,
+                                                    "minLength": 1,
+                                                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                                                    "type": "string"
+                                                  },
+                                                  "namespace": {
+                                                    "maxLength": 71,
+                                                    "minLength": 1,
+                                                    "pattern": "^sha256:[0-9a-f]{64}$",
+                                                    "type": "string"
+                                                  },
+                                                  "nativeId": {
+                                                    "maxLength": 36,
+                                                    "minLength": 1,
+                                                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                    "type": "string"
+                                                  },
+                                                  "nativeIdKind": {
+                                                    "enum": [
+                                                      "thread",
+                                                      "session"
+                                                    ]
+                                                  },
+                                                  "provider": {
+                                                    "enum": [
+                                                      "codex",
+                                                      "claude"
+                                                    ]
+                                                  }
+                                                },
+                                                "required": [
+                                                  "hostScope",
+                                                  "provider",
+                                                  "namespace",
+                                                  "nativeIdKind",
+                                                  "nativeId"
+                                                ],
+                                                "type": "object"
+                                              },
+                                              "priorSupport": {
+                                                "anyOf": [
+                                                  {
+                                                    "additionalProperties": false,
+                                                    "properties": {
+                                                      "accepted": {
+                                                        "maximum": 9007199254740991,
+                                                        "minimum": 1,
+                                                        "type": "integer"
+                                                      },
+                                                      "component": {
+                                                        "enum": [
+                                                          "runtime",
+                                                          "history"
+                                                        ]
+                                                      },
+                                                      "contextGeneration": {
+                                                        "maximum": 9007199254740991,
+                                                        "minimum": 0,
+                                                        "type": "integer"
+                                                      },
+                                                      "expiresBoottimeMs": {
+                                                        "maximum": 9007199254740991,
+                                                        "minimum": 0,
+                                                        "type": "integer"
+                                                      },
+                                                      "namespace": {
+                                                        "maxLength": 71,
+                                                        "minLength": 1,
+                                                        "pattern": "^sha256:[0-9a-f]{64}$",
+                                                        "type": "string"
+                                                      },
+                                                      "provider": {
+                                                        "enum": [
+                                                          "codex"
+                                                        ]
+                                                      },
+                                                      "sampledBoottimeMs": {
+                                                        "maximum": 9007199254740991,
+                                                        "minimum": 0,
+                                                        "type": "integer"
+                                                      },
+                                                      "serviceId": {
+                                                        "maxLength": 36,
+                                                        "minLength": 1,
+                                                        "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "serviceId",
+                                                      "provider",
+                                                      "namespace",
+                                                      "contextGeneration",
+                                                      "component",
+                                                      "accepted",
+                                                      "sampledBoottimeMs",
+                                                      "expiresBoottimeMs"
+                                                    ],
+                                                    "type": "object"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "reason": {
+                                                "maxLength": 128,
+                                                "minLength": 1,
+                                                "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                                                "type": "string"
+                                              },
+                                              "support": {
+                                                "anyOf": [
+                                                  {
+                                                    "additionalProperties": false,
+                                                    "properties": {
+                                                      "accepted": {
+                                                        "maximum": 9007199254740991,
+                                                        "minimum": 1,
+                                                        "type": "integer"
+                                                      },
+                                                      "component": {
+                                                        "enum": [
+                                                          "runtime",
+                                                          "history"
+                                                        ]
+                                                      },
+                                                      "contextGeneration": {
+                                                        "maximum": 9007199254740991,
+                                                        "minimum": 0,
+                                                        "type": "integer"
+                                                      },
+                                                      "expiresBoottimeMs": {
+                                                        "maximum": 9007199254740991,
+                                                        "minimum": 0,
+                                                        "type": "integer"
+                                                      },
+                                                      "namespace": {
+                                                        "maxLength": 71,
+                                                        "minLength": 1,
+                                                        "pattern": "^sha256:[0-9a-f]{64}$",
+                                                        "type": "string"
+                                                      },
+                                                      "provider": {
+                                                        "enum": [
+                                                          "codex"
+                                                        ]
+                                                      },
+                                                      "sampledBoottimeMs": {
+                                                        "maximum": 9007199254740991,
+                                                        "minimum": 0,
+                                                        "type": "integer"
+                                                      },
+                                                      "serviceId": {
+                                                        "maxLength": 36,
+                                                        "minLength": 1,
+                                                        "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                                        "type": "string"
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "serviceId",
+                                                      "provider",
+                                                      "namespace",
+                                                      "contextGeneration",
+                                                      "component",
+                                                      "accepted",
+                                                      "sampledBoottimeMs",
+                                                      "expiresBoottimeMs"
+                                                    ],
+                                                    "type": "object"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "identity",
+                                              "reason",
+                                              "priorSupport",
+                                              "support",
+                                              "horizonBoottimeMs"
+                                            ],
+                                            "type": "object"
+                                          },
+                                          "maxItems": 4096,
+                                          "type": "array"
+                                        }
+                                      },
+                                      "required": [
+                                        "provider",
+                                        "namespace",
+                                        "contextGeneration",
+                                        "continuity",
+                                        "coverage",
+                                        "members",
+                                        "uncertain",
+                                        "nonmembers"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    "maxItems": 1,
+                                    "type": "array"
+                                  }
+                                },
+                                "required": [
+                                  "scopes"
+                                ],
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "service": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "activeFeedProtocol": {
+                                "const": 1
+                              },
+                              "bootId": {
+                                "maxLength": 36,
+                                "minLength": 1,
+                                "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                "type": "string"
+                              },
+                              "clock": {
+                                "enum": [
+                                  "boottime"
+                                ]
+                              },
+                              "clockDomain": {
+                                "maxLength": 128,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "emittedAt": {
+                                "maximum": 4000000000000,
+                                "minimum": 0,
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "emittedBoottimeMs": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "hostScope": {
+                                "maxLength": 256,
+                                "minLength": 1,
+                                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                                "type": "string"
+                              },
+                              "kind": {
+                                "enum": [
+                                  "status",
+                                  "view",
+                                  "heartbeat",
+                                  "gap",
+                                  "resync",
+                                  "error"
+                                ]
+                              },
+                              "reason": {
+                                "maxLength": 128,
+                                "minLength": 1,
+                                "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                                "type": "string"
+                              },
+                              "selector": {
+                                "const": {
+                                  "kinds": [
+                                    "unknown",
+                                    "user"
+                                  ],
+                                  "providers": [
+                                    "codex"
+                                  ],
+                                  "runtimeHealths": [
+                                    "current"
+                                  ],
+                                  "runtimeValues": [
+                                    "running"
+                                  ],
+                                  "version": 1
+                                }
+                              },
+                              "selectorDigest": {
+                                "const": "sha256:73d08f0217e03cea283820e18abed0b06cd5e4c52428e431bab5da1d760ff9d6"
+                              },
+                              "sequence": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "serviceId": {
+                                "maxLength": 36,
+                                "minLength": 1,
+                                "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                                "type": "string"
+                              },
+                              "sources": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "components": {
+                                      "items": {
+                                        "additionalProperties": false,
+                                        "properties": {
+                                          "accepted": {
+                                            "maximum": 9007199254740991,
+                                            "minimum": 0,
+                                            "type": "integer"
+                                          },
+                                          "attempts": {
+                                            "maximum": 9007199254740991,
+                                            "minimum": 0,
+                                            "type": "integer"
+                                          },
+                                          "expiresBoottimeMs": {
+                                            "maximum": 4000000000000,
+                                            "minimum": 0,
+                                            "type": [
+                                              "integer",
+                                              "null"
+                                            ]
+                                          },
+                                          "health": {
+                                            "enum": [
+                                              "warming",
+                                              "current",
+                                              "partial",
+                                              "stale",
+                                              "unavailable"
+                                            ]
+                                          },
+                                          "inFlight": {
+                                            "type": "boolean"
+                                          },
+                                          "lastResult": {
+                                            "maxLength": 128,
+                                            "minLength": 1,
+                                            "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                                            "type": "string"
+                                          },
+                                          "name": {
+                                            "enum": [
+                                              "runtime",
+                                              "history"
+                                            ]
+                                          },
+                                          "sampledBoottimeMs": {
+                                            "maximum": 4000000000000,
+                                            "minimum": 0,
+                                            "type": [
+                                              "integer",
+                                              "null"
+                                            ]
+                                          }
+                                        },
+                                        "required": [
+                                          "name",
+                                          "attempts",
+                                          "accepted",
+                                          "sampledBoottimeMs",
+                                          "expiresBoottimeMs",
+                                          "health",
+                                          "lastResult",
+                                          "inFlight"
+                                        ],
+                                        "type": "object"
+                                      },
+                                      "maxItems": 2,
+                                      "type": "array"
+                                    },
+                                    "configHome": {
+                                      "maxLength": 4096,
+                                      "minLength": 1,
+                                      "type": "string"
+                                    },
+                                    "configHomeKind": {
+                                      "enum": [
+                                        "default",
+                                        "explicit"
+                                      ]
+                                    },
+                                    "contextGeneration": {
+                                      "maximum": 9007199254740991,
+                                      "minimum": 0,
+                                      "type": "integer"
+                                    },
+                                    "namespace": {
+                                      "maxLength": 71,
+                                      "minLength": 1,
+                                      "pattern": "^sha256:[0-9a-f]{64}$",
+                                      "type": "string"
+                                    },
+                                    "provider": {
+                                      "enum": [
+                                        "codex",
+                                        "claude"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "provider",
+                                    "namespace",
+                                    "configHome",
+                                    "configHomeKind",
+                                    "contextGeneration",
+                                    "components"
+                                  ],
+                                  "type": "object"
+                                },
+                                "maxItems": 1,
+                                "type": "array"
+                              },
+                              "state": {
+                                "enum": [
+                                  "warming",
+                                  "ready",
+                                  "stopping"
+                                ]
+                              },
+                              "uid": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "viewRevision": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "serviceId",
+                              "bootId",
+                              "uid",
+                              "hostScope",
+                              "sequence",
+                              "viewRevision",
+                              "kind",
+                              "state",
+                              "emittedAt",
+                              "emittedBoottimeMs",
+                              "clock",
+                              "clockDomain",
+                              "reason",
+                              "sources",
+                              "activeFeedProtocol",
+                              "selector",
+                              "selectorDigest"
+                            ],
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "protocol",
+                          "version",
+                          "metadata",
+                          "service"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "identity": {
+            "type": "object",
+            "properties": {
+              "hostScope": {
+                "type": "string",
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$"
+              },
+              "provider": {
+                "enum": [
+                  "codex",
+                  "claude"
+                ]
+              },
+              "namespace": {
+                "type": "string",
+                "maxLength": 71,
+                "minLength": 1,
+                "pattern": "^sha256:[0-9a-f]{64}$"
+              },
+              "nativeIdKind": {
+                "enum": [
+                  "thread",
+                  "session"
+                ]
+              },
+              "nativeId": {
+                "type": "string",
+                "maxLength": 36,
+                "minLength": 1,
+                "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+              }
+            },
+            "required": [
+              "hostScope",
+              "provider",
+              "namespace",
+              "nativeIdKind",
+              "nativeId"
+            ],
+            "additionalProperties": false
+          },
+          "nativeIds": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "threadId": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                  },
+                  "sessionTreeRootId": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                  }
+                },
+                "required": [
+                  "threadId",
+                  "sessionTreeRootId"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "sessionId": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1,
+                    "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+                  }
+                },
+                "required": [
+                  "sessionId"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "user",
+              "child",
+              "system",
+              "unknown"
+            ]
+          },
+          "cwd": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 4096
+          },
+          "cwdSource": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9_]{0,127}$"
+          },
+          "inventory": {
+            "enum": [
+              "live",
+              "saved"
+            ]
+          },
+          "hasSavedHistory": {
+            "type": "boolean"
+          },
+          "phase": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "working",
+                      "blocked",
+                      "waiting",
+                      "unknown"
+                    ]
+                  },
+                  "observedAt": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 4000000000000
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 128,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "health": {
+                    "enum": [
+                      "current",
+                      "stale",
+                      "unavailable",
+                      "unsupported",
+                      "ambiguous"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "clock": {
+                    "enum": [
+                      "native",
+                      "sample",
+                      null
+                    ]
+                  },
+                  "lastKnownValue": {
+                    "enum": [
+                      "working",
+                      "blocked",
+                      "waiting"
+                    ]
+                  }
+                },
+                "required": [
+                  "value",
+                  "observedAt",
+                  "source",
+                  "health",
+                  "reason",
+                  "clock"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "runtime": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "enum": [
+                  "running",
+                  "parked",
+                  "unknown"
+                ]
+              },
+              "observedAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "health": {
+                "enum": [
+                  "current",
+                  "stale",
+                  "unavailable",
+                  "unsupported",
+                  "ambiguous"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "clock": {
+                "enum": [
+                  "native",
+                  "sample",
+                  null
+                ]
+              },
+              "lastKnownValue": {
+                "enum": [
+                  "running",
+                  "parked"
+                ]
+              }
+            },
+            "required": [
+              "value",
+              "observedAt",
+              "source",
+              "health",
+              "reason",
+              "clock"
+            ],
+            "additionalProperties": false
+          },
+          "outcome": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "enum": [
+                  "completed",
+                  "failed",
+                  "cancelled",
+                  "unknown"
+                ]
+              },
+              "observedAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "health": {
+                "enum": [
+                  "current",
+                  "stale",
+                  "unavailable",
+                  "unsupported",
+                  "ambiguous"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "clock": {
+                "enum": [
+                  "native",
+                  "sample",
+                  null
+                ]
+              },
+              "lastKnownValue": {
+                "enum": [
+                  "completed",
+                  "failed",
+                  "cancelled"
+                ]
+              }
+            },
+            "required": [
+              "value",
+              "observedAt",
+              "source",
+              "health",
+              "reason",
+              "clock"
+            ],
+            "additionalProperties": false
+          },
+          "blockedReasons": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "approval",
+                "question"
+              ]
+            },
+            "maxItems": 2
+          },
+          "createdAt": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 4000000000000
+          },
+          "activity": {
+            "type": "object",
+            "properties": {
+              "at": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "health": {
+                "enum": [
+                  "current",
+                  "stale",
+                  "unavailable",
+                  "unsupported",
+                  "ambiguous"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "lastKnownAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              }
+            },
+            "required": [
+              "at",
+              "source",
+              "health",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "lastUpdated": {
+            "type": "object",
+            "properties": {
+              "at": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "timestampPrecisionMs": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1,
+                "maximum": 4000000000000
+              },
+              "observedAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "health": {
+                "enum": [
+                  "current",
+                  "stale",
+                  "unavailable",
+                  "unsupported",
+                  "ambiguous"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "receipt": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "component": {
+                        "enum": [
+                          "runtime",
+                          "history"
+                        ]
+                      },
+                      "sampledBoottimeMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "observedBoottimeMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "contextGeneration": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "component",
+                      "sampledBoottimeMs",
+                      "observedBoottimeMs",
+                      "contextGeneration"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "lastKnownAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "lastKnownTimestampPrecisionMs": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1,
+                "maximum": 4000000000000
+              }
+            },
+            "required": [
+              "at",
+              "timestampPrecisionMs",
+              "observedAt",
+              "source",
+              "health",
+              "reason",
+              "receipt"
+            ],
+            "additionalProperties": false
+          },
+          "latestTurn": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 512
+                      },
+                      "status": {
+                        "enum": [
+                          "in_progress",
+                          "completed",
+                          "failed",
+                          "cancelled",
+                          "unknown"
+                        ]
+                      },
+                      "startedAt": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 4000000000000
+                      },
+                      "completedAt": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 4000000000000
+                      },
+                      "durationMs": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 4000000000000
+                      },
+                      "timestampPrecisionMs": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 1,
+                        "maximum": 4000000000000
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "status",
+                      "startedAt",
+                      "completedAt",
+                      "durationMs",
+                      "timestampPrecisionMs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "observedAt": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 4000000000000
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "health": {
+                "enum": [
+                  "current",
+                  "stale",
+                  "unavailable",
+                  "unsupported",
+                  "ambiguous"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_]{0,127}$"
+              },
+              "receipt": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "component": {
+                        "enum": [
+                          "runtime",
+                          "history"
+                        ]
+                      },
+                      "sampledBoottimeMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "observedBoottimeMs": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "contextGeneration": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "component",
+                      "sampledBoottimeMs",
+                      "observedBoottimeMs",
+                      "contextGeneration"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "lastKnownValue": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 512
+                  },
+                  "status": {
+                    "enum": [
+                      "in_progress",
+                      "completed",
+                      "failed",
+                      "cancelled",
+                      "unknown"
+                    ]
+                  },
+                  "startedAt": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 4000000000000
+                  },
+                  "completedAt": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 4000000000000
+                  },
+                  "durationMs": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 4000000000000
+                  },
+                  "timestampPrecisionMs": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 1,
+                    "maximum": 4000000000000
+                  }
+                },
+                "required": [
+                  "id",
+                  "status",
+                  "startedAt",
+                  "completedAt",
+                  "durationMs",
+                  "timestampPrecisionMs"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "value",
+              "observedAt",
+              "source",
+              "health",
+              "reason",
+              "receipt"
+            ],
+            "additionalProperties": false
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "health": {
+                    "enum": [
+                      "current",
+                      "unavailable",
+                      "unsupported"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$"
+                  },
+                  "root": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 4096
+                  },
+                  "rootKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$"
+                  },
+                  "relativePath": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 4096
+                  },
+                  "projectKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 256,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$"
+                  },
+                  "repo": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "root": {
+                            "type": "string",
+                            "maxLength": 4096,
+                            "minLength": 1
+                          },
+                          "commonDir": {
+                            "type": "string",
+                            "maxLength": 4096,
+                            "minLength": 1
+                          },
+                          "relativePath": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "maxLength": 4096
+                          }
+                        },
+                        "required": [
+                          "root",
+                          "commonDir",
+                          "relativePath"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "health",
+                  "reason",
+                  "root",
+                  "rootKey",
+                  "relativePath",
+                  "projectKey",
+                  "repo"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadataIssues": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[a-z][a-z0-9_]{0,127}$"
+            },
+            "maxItems": 128
+          }
+        },
+        "required": [
+          "identity",
+          "nativeIds",
+          "title",
+          "kind",
+          "cwd",
+          "cwdSource",
+          "inventory",
+          "hasSavedHistory",
+          "phase",
+          "runtime",
+          "outcome",
+          "blockedReasons",
+          "createdAt",
+          "activity",
+          "lastUpdated",
+          "latestTurn",
+          "workspace",
+          "metadataIssues"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 65536
+    }
+  },
+  "required": [
+    "protocol",
+    "schemaVersion",
+    "mesh",
+    "sessions"
+  ],
+  "additionalProperties": false,
+  "$comment": "Native frame SHA-256: 0db6cfe16880467ff4c62b180ca2ae94db9e580543f43f9dcf9258c8a64d0b05; selector sha256:73d08f0217e03cea283820e18abed0b06cd5e4c52428e431bab5da1d760ff9d6"
+}

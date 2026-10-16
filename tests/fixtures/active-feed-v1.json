@@ -1,0 +1,215 @@
+{
+  "serviceId": "00000000-0000-0000-0000-000000000007",
+  "bootId": "00000000-0000-0000-0000-000000000001",
+  "uid": 1000,
+  "hostScope": "fixture",
+  "sequence": 1,
+  "viewRevision": 1,
+  "kind": "view",
+  "state": "ready",
+  "emittedAt": 1700000020000,
+  "emittedBoottimeMs": 15000,
+  "clock": "boottime",
+  "reason": "source_accepted",
+  "sources": [
+    {
+      "provider": "codex",
+      "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+      "configHome": "/fixture/codex",
+      "configHomeKind": "explicit",
+      "contextGeneration": 1,
+      "components": [
+        {
+          "name": "runtime",
+          "attempts": 1,
+          "accepted": 1,
+          "sampledBoottimeMs": 10000,
+          "expiresBoottimeMs": 20000,
+          "health": "current",
+          "lastResult": "accepted",
+          "inFlight": false
+        },
+        {
+          "name": "history",
+          "attempts": 1,
+          "accepted": 1,
+          "sampledBoottimeMs": 10000,
+          "expiresBoottimeMs": 20000,
+          "health": "current",
+          "lastResult": "accepted",
+          "inFlight": false
+        }
+      ]
+    }
+  ],
+  "clockDomain": "time:[fixture]",
+  "activeFeedProtocol": 1,
+  "selector": {
+    "kinds": [
+      "unknown",
+      "user"
+    ],
+    "providers": [
+      "codex"
+    ],
+    "runtimeHealths": [
+      "current"
+    ],
+    "runtimeValues": [
+      "running"
+    ],
+    "version": 1
+  },
+  "selectorDigest": "sha256:73d08f0217e03cea283820e18abed0b06cd5e4c52428e431bab5da1d760ff9d6",
+  "projection": {
+    "scopes": [
+      {
+        "provider": "codex",
+        "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+        "contextGeneration": 1,
+        "continuity": 1,
+        "coverage": {
+          "status": "complete",
+          "reason": "daemon_threads_complete",
+          "supports": [
+            {
+              "serviceId": "00000000-0000-0000-0000-000000000007",
+              "provider": "codex",
+              "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+              "contextGeneration": 1,
+              "component": "runtime",
+              "accepted": 1,
+              "sampledBoottimeMs": 10000,
+              "expiresBoottimeMs": 20000
+            }
+          ]
+        },
+        "members": [
+          {
+            "identity": {
+              "hostScope": "fixture",
+              "provider": "codex",
+              "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+              "nativeIdKind": "thread",
+              "nativeId": "00000000-0000-0000-0000-000000000002"
+            },
+            "fieldSupports": {
+              "runtime": {
+                "serviceId": "00000000-0000-0000-0000-000000000007",
+                "provider": "codex",
+                "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+                "contextGeneration": 1,
+                "component": "runtime",
+                "accepted": 1,
+                "sampledBoottimeMs": 10000,
+                "expiresBoottimeMs": 20000
+              },
+              "phase": {
+                "serviceId": "00000000-0000-0000-0000-000000000007",
+                "provider": "codex",
+                "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+                "contextGeneration": 1,
+                "component": "runtime",
+                "accepted": 1,
+                "sampledBoottimeMs": 10000,
+                "expiresBoottimeMs": 20000
+              },
+              "kind": {
+                "serviceId": "00000000-0000-0000-0000-000000000007",
+                "provider": "codex",
+                "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+                "contextGeneration": 1,
+                "component": "runtime",
+                "accepted": 1,
+                "sampledBoottimeMs": 10000,
+                "expiresBoottimeMs": 20000
+              },
+              "savedIdentity": null,
+              "activity": null,
+              "outcome": null,
+              "workspace": null,
+              "lastUpdated": null,
+              "latestTurn": null
+            }
+          }
+        ],
+        "uncertain": [],
+        "nonmembers": []
+      }
+    ],
+    "sessions": [
+      {
+        "identity": {
+          "hostScope": "fixture",
+          "provider": "codex",
+          "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+          "nativeIdKind": "thread",
+          "nativeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "nativeIds": {
+          "threadId": "00000000-0000-0000-0000-000000000002",
+          "sessionTreeRootId": "00000000-0000-0000-0000-000000000002"
+        },
+        "title": "Fixture Codex 2",
+        "kind": "user",
+        "cwd": "/fixture/project",
+        "cwdSource": "codex_rpc",
+        "inventory": "live",
+        "phase": {
+          "value": "blocked",
+          "observedAt": 1700000020000,
+          "source": "codex_rpc",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "runtime": {
+          "value": "running",
+          "observedAt": 1700000020000,
+          "source": "codex_rpc",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "outcome": {
+          "value": "unknown",
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "outcome_source_unproved",
+          "clock": null
+        },
+        "createdAt": 1700000000000,
+        "activity": {
+          "at": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "activity_source_unproved"
+        },
+        "workspace": null,
+        "metadataIssues": [],
+        "blockedReasons": [
+          "approval"
+        ],
+        "hasSavedHistory": true,
+        "lastUpdated": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "at": null,
+          "timestampPrecisionMs": null
+        },
+        "latestTurn": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "value": null
+        }
+      }
+    ]
+  }
+}

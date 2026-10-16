@@ -57,6 +57,7 @@ def configured_adapter(path, source, *, publisher_factories=None):
         if domain == "agent":
             supported.add(descriptor(domain, profile_id="agent-observer.mesh-candidate.v2").profile_id)
             supported.add(descriptor(domain, profile_id="agent-observer.mesh-candidate.v3").profile_id)
+            supported.add(descriptor(domain, profile_id="agent-observer.mesh-active.v1").profile_id)
         check(getattr(adapter, "host", None) == host and getattr(adapter, "source", None) == source and
               isinstance(getattr(adapter, "profile", None), str) and adapter.profile in supported, "publisher_factory_binding")
         capabilities = getattr(adapter, "capabilities", None)

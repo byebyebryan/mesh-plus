@@ -2,6 +2,16 @@
 
 ## Current disposition
 
+The a23 source/private candidate adds the separate
+[active profile and supported seams](active-feed-api.md), with Observer's committed
+projected native schema input and new lock 5. All 29 previous normative digests
+remain unchanged. Selected bodies retain API 4 row meaning; the supported pure
+Observer facade independently leases coverage/decisions through public prepared
+context. Generic transport gains no collection, retirement policy, new capability
+or digest-only proof. Existing full/Tmux defaults remain explicit and independent.
+The catalog lane qualifies the existing opt-in library against the selected
+process facade using disposable files; it changes no authority or writer code.
+
 The a22 CPU candidate adds [owned admission and selected prepared reads](cpu-admission-api.md).
 Reader's optional admitted stream avoids a second full prepared admission; row-free
 context and whole-roster summaries avoid decoding every full body on each query.

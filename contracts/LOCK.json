@@ -1,6 +1,6 @@
 {
-  "lockId": "mesh-plus-state-agent-system-2026-10-13",
-  "lockRevision": 4,
+  "lockId": "mesh-plus-state-agent-active-2026-10-16",
+  "lockRevision": 5,
   "status": "frozen_for_implementation",
   "meshProtocol": 1,
   "deliveryProtocol": "mesh-plus.delivery-candidate.v1",
@@ -74,6 +74,19 @@
           "sha256": "f3f493a206e3375ac81d6432d4d8168f9116a529bfc56caf368c492de2424905"
         }
       ]
+    },
+    "agent-observer-active": {
+      "sourceCommit": "4ffd376441fcb556cbe291d55d983e0814c20551",
+      "schemas": [
+        {
+          "path": "reference/agent-observer-active/agent_observer/contracts/active-frame.schema.json",
+          "sha256": "0db6cfe16880467ff4c62b180ca2ae94db9e580543f43f9dcf9258c8a64d0b05"
+        },
+        {
+          "path": "reference/agent-observer-active/agent_observer/contracts/active-request.schema.json",
+          "sha256": "ada83b6a33fced2d9c1c62bf541b609ce887425a379ad49003802ee4a71f497c"
+        }
+      ]
     }
   },
   "excluded": [
@@ -115,7 +128,11 @@
     "contracts/agent-profile-v3/contract.md": "01422f6ce97a54e858644db5b18f3938f34ece87903a790bc3ef582f4204b7d5",
     "contracts/agent-profile-v3/profile.schema.json": "f36c2298ac9f5f6b6282c23a994711247486ca9791fbca4bcc70e3fb110d0261",
     "reference/agent-observer-system/agent_observer/contracts/snapshot.schema.json": "f3f493a206e3375ac81d6432d4d8168f9116a529bfc56caf368c492de2424905",
-    "reference/agent-observer-system/agent_observer/contracts/service-frame.schema.json": "97441fd743d2cb14a2457f82513e4fd837a98abee8e64c601e0bca946a7c897e"
+    "reference/agent-observer-system/agent_observer/contracts/service-frame.schema.json": "97441fd743d2cb14a2457f82513e4fd837a98abee8e64c601e0bca946a7c897e",
+    "reference/agent-observer-active/agent_observer/contracts/active-frame.schema.json": "0db6cfe16880467ff4c62b180ca2ae94db9e580543f43f9dcf9258c8a64d0b05",
+    "reference/agent-observer-active/agent_observer/contracts/active-request.schema.json": "ada83b6a33fced2d9c1c62bf541b609ce887425a379ad49003802ee4a71f497c",
+    "contracts/agent-active-v1/contract.md": "a3b4c24a3f5f7c96c7027e8bb845b12160fce9ad372e98e1b82cc0a97328111c",
+    "contracts/agent-active-v1/profile.schema.json": "9f29bfd0fe1803f4ccf30c4cbfbc8f63de4423fdb6eda234291685d99bef46ae"
   },
   "profileExtensions": {
     "agent-observer.mesh-candidate.v2": {
@@ -133,6 +150,15 @@
       "nativeVersion": 6,
       "serviceProtocol": 4,
       "schema": "contracts/agent-profile-v3/profile.schema.json"
+    },
+    "agent-observer.mesh-active.v1": {
+      "domain": "agent",
+      "sdkInterface": 1,
+      "nativeProtocol": "agent-observer.active-feed",
+      "nativeVersion": 1,
+      "schema": "contracts/agent-active-v1/profile.schema.json",
+      "nativeSchema": "reference/agent-observer-active/agent_observer/contracts/active-frame.schema.json",
+      "requestSchema": "reference/agent-observer-active/agent_observer/contracts/active-request.schema.json"
     }
   }
 }

@@ -32,7 +32,7 @@ def plain_json(value):
     return kind in (str, int, float, bool, type(None))
 
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=8)
 def profile_validator(domain, profile_id=None):
     # Descriptor admission limits identifiers before they select package paths.
     from .state import descriptor
@@ -42,7 +42,8 @@ def profile_validator(domain, profile_id=None):
         schema = json.loads(path.read_text())
         if "$id" in schema:
             registry = registry.with_resource(schema["$id"], Resource.from_contents(schema))
-    suffix = {"agent-observer.mesh-candidate.v2": "-v2", "agent-observer.mesh-candidate.v3": "-v3"}.get(selected.profile_id, "")
+    suffix = {"agent-observer.mesh-candidate.v2": "-v2", "agent-observer.mesh-candidate.v3": "-v3",
+              "agent-observer.mesh-active.v1": "-active"}.get(selected.profile_id, "")
     profile = json.loads(files("mesh_plus").joinpath("schemas", "read-" + domain + suffix + ".profile.schema.json").read_text())
     return Draft202012Validator(profile, registry=registry)
 

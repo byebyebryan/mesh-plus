@@ -1,0 +1,561 @@
+{
+  "serviceProtocol": 4,
+  "serviceId": "00000000-0000-0000-0000-000000000007",
+  "bootId": "00000000-0000-0000-0000-000000000001",
+  "uid": 1000,
+  "hostScope": "fixture",
+  "sequence": 1,
+  "viewRevision": 1,
+  "kind": "view",
+  "state": "ready",
+  "emittedAt": 1700000020000,
+  "emittedBoottimeMs": 15000,
+  "clock": "boottime",
+  "reason": "source_accepted",
+  "sources": [
+    {
+      "provider": "codex",
+      "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+      "configHome": "/fixture/codex",
+      "configHomeKind": "explicit",
+      "contextGeneration": 1,
+      "components": [
+        {
+          "name": "runtime",
+          "attempts": 1,
+          "accepted": 1,
+          "sampledBoottimeMs": 10000,
+          "expiresBoottimeMs": 20000,
+          "health": "current",
+          "lastResult": "accepted",
+          "inFlight": false
+        },
+        {
+          "name": "history",
+          "attempts": 1,
+          "accepted": 1,
+          "sampledBoottimeMs": 10000,
+          "expiresBoottimeMs": 20000,
+          "health": "current",
+          "lastResult": "accepted",
+          "inFlight": false
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+      "configHome": "/fixture/claude",
+      "configHomeKind": "explicit",
+      "contextGeneration": 1,
+      "components": [
+        {
+          "name": "runtime",
+          "attempts": 1,
+          "accepted": 1,
+          "sampledBoottimeMs": 10000,
+          "expiresBoottimeMs": 20000,
+          "health": "current",
+          "lastResult": "accepted",
+          "inFlight": false
+        },
+        {
+          "name": "history",
+          "attempts": 1,
+          "accepted": 1,
+          "sampledBoottimeMs": 10000,
+          "expiresBoottimeMs": 20000,
+          "health": "current",
+          "lastResult": "accepted",
+          "inFlight": false
+        }
+      ]
+    }
+  ],
+  "snapshot": {
+    "schemaVersion": 6,
+    "collectionId": "00000000-0000-0000-0000-000000000001",
+    "collectedAt": 1700000020000,
+    "host": {
+      "authority": "fixture",
+      "authoritySource": "caller",
+      "nativeHostname": "fixture-host",
+      "uid": 1000
+    },
+    "sourceHealth": "current",
+    "sources": [
+      {
+        "provider": "codex",
+        "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+        "runtimeNamespace": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "configHome": "/fixture/codex",
+        "configHomeKind": "explicit",
+        "runtime": {
+          "version": "0.160.0",
+          "binarySha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "topology": "native_managed_endpoint",
+          "bootId": "00000000-0000-0000-0000-000000000001",
+          "pid": 123,
+          "startTicks": 123,
+          "endpoint": "/fixture/socket"
+        },
+        "sourceHealth": "current",
+        "coverage": {
+          "saved": {
+            "status": "complete",
+            "reason": "native_snapshot"
+          },
+          "runtime": {
+            "status": "complete",
+            "reason": "native_snapshot",
+            "scope": "daemon_threads"
+          }
+        },
+        "capabilities": {
+          "phase": [
+            "working",
+            "blocked",
+            "waiting"
+          ],
+          "blockedReasons": [
+            "approval"
+          ],
+          "runtime": [
+            "running"
+          ],
+          "activity": false,
+          "timing": {
+            "lastUpdated": false,
+            "latestTurn": false
+          }
+        },
+        "errors": [],
+        "limitations": [
+          "activity_source_unproved",
+          "parked_predicate_unproved",
+          "questions_unproved",
+          "client_binding_unproved",
+          "offline_history_unavailable",
+          "unloaded_work_state_unavailable"
+        ],
+        "discovery": null
+      },
+      {
+        "provider": "claude",
+        "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+        "runtimeNamespace": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "configHome": "/fixture/claude",
+        "configHomeKind": "explicit",
+        "runtime": {
+          "version": "2.1.287",
+          "binarySha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "topology": "private_session_registry_and_job_store",
+          "bootId": "00000000-0000-0000-0000-000000000001",
+          "pid": 123,
+          "startTicks": 123,
+          "endpoint": "/fixture/socket"
+        },
+        "sourceHealth": "current",
+        "coverage": {
+          "saved": {
+            "status": "complete",
+            "reason": "native_snapshot"
+          },
+          "runtime": {
+            "status": "complete",
+            "reason": "native_snapshot",
+            "scope": "provider_sessions"
+          }
+        },
+        "capabilities": {
+          "phase": [
+            "working",
+            "blocked",
+            "waiting"
+          ],
+          "blockedReasons": [
+            "approval"
+          ],
+          "runtime": [
+            "running"
+          ],
+          "activity": false,
+          "timing": {
+            "lastUpdated": false,
+            "latestTurn": false
+          }
+        },
+        "errors": [],
+        "limitations": [
+          "activity_source_unproved",
+          "parked_predicate_unproved",
+          "questions_unproved",
+          "client_binding_unproved",
+          "interactive_readiness_unproved",
+          "waiting_requires_completed_background_context"
+        ],
+        "discovery": null
+      }
+    ],
+    "sessions": [
+      {
+        "identity": {
+          "hostScope": "fixture",
+          "provider": "codex",
+          "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+          "nativeIdKind": "thread",
+          "nativeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "nativeIds": {
+          "threadId": "00000000-0000-0000-0000-000000000002",
+          "sessionTreeRootId": "00000000-0000-0000-0000-000000000002"
+        },
+        "title": "Fixture Codex 2",
+        "kind": "user",
+        "cwd": "/fixture/project",
+        "cwdSource": "codex_rpc",
+        "inventory": "live",
+        "phase": {
+          "value": "blocked",
+          "observedAt": 1700000020000,
+          "source": "codex_rpc",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "runtime": {
+          "value": "running",
+          "observedAt": 1700000020000,
+          "source": "codex_rpc",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "outcome": {
+          "value": "unknown",
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "outcome_source_unproved",
+          "clock": null
+        },
+        "createdAt": 1700000000000,
+        "activity": {
+          "at": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "activity_source_unproved"
+        },
+        "workspace": null,
+        "metadataIssues": [],
+        "blockedReasons": [
+          "approval"
+        ],
+        "hasSavedHistory": true,
+        "lastUpdated": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "at": null,
+          "timestampPrecisionMs": null
+        },
+        "latestTurn": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "value": null
+        }
+      },
+      {
+        "identity": {
+          "hostScope": "fixture",
+          "provider": "codex",
+          "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+          "nativeIdKind": "thread",
+          "nativeId": "00000000-0000-0000-0000-000000000003"
+        },
+        "nativeIds": {
+          "threadId": "00000000-0000-0000-0000-000000000003",
+          "sessionTreeRootId": "00000000-0000-0000-0000-000000000003"
+        },
+        "title": "Fixture Codex 3",
+        "kind": "user",
+        "cwd": "/fixture/project",
+        "cwdSource": "codex_rpc",
+        "inventory": "live",
+        "phase": {
+          "value": "waiting",
+          "observedAt": 1700000020000,
+          "source": "codex_rpc",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "runtime": {
+          "value": "running",
+          "observedAt": 1700000020000,
+          "source": "codex_rpc",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "outcome": {
+          "value": "unknown",
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "outcome_source_unproved",
+          "clock": null
+        },
+        "createdAt": 1700000000000,
+        "activity": {
+          "at": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "activity_source_unproved"
+        },
+        "workspace": null,
+        "metadataIssues": [],
+        "blockedReasons": [],
+        "hasSavedHistory": true,
+        "lastUpdated": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "at": null,
+          "timestampPrecisionMs": null
+        },
+        "latestTurn": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "value": null
+        }
+      },
+      {
+        "identity": {
+          "hostScope": "fixture",
+          "provider": "codex",
+          "namespace": "sha256:3c8163925e07b2dda5954b37a6fec2e3a24888768884aff30939f2bf48f2eb9d",
+          "nativeIdKind": "thread",
+          "nativeId": "00000000-0000-0000-0000-000000000004"
+        },
+        "nativeIds": {
+          "threadId": "00000000-0000-0000-0000-000000000004",
+          "sessionTreeRootId": "00000000-0000-0000-0000-000000000004"
+        },
+        "title": "Fixture Codex 4",
+        "kind": "child",
+        "cwd": "/fixture/project",
+        "cwdSource": "codex_rpc",
+        "inventory": "live",
+        "phase": {
+          "value": "working",
+          "observedAt": 1700000020000,
+          "source": "codex_rpc",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "runtime": {
+          "value": "running",
+          "observedAt": 1700000020000,
+          "source": "codex_rpc",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "outcome": {
+          "value": "unknown",
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "outcome_source_unproved",
+          "clock": null
+        },
+        "createdAt": 1700000000000,
+        "activity": {
+          "at": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "activity_source_unproved"
+        },
+        "workspace": null,
+        "metadataIssues": [],
+        "blockedReasons": [],
+        "hasSavedHistory": true,
+        "lastUpdated": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "at": null,
+          "timestampPrecisionMs": null
+        },
+        "latestTurn": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "value": null
+        }
+      },
+      {
+        "identity": {
+          "hostScope": "fixture",
+          "provider": "claude",
+          "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+          "nativeIdKind": "session",
+          "nativeId": "00000000-0000-0000-0000-000000000005"
+        },
+        "nativeIds": {
+          "sessionId": "00000000-0000-0000-0000-000000000005"
+        },
+        "title": "Fixture Claude 5",
+        "kind": "unknown",
+        "cwd": "/fixture/project",
+        "cwdSource": "claude_registry",
+        "inventory": "live",
+        "phase": {
+          "value": "working",
+          "observedAt": 1700000020000,
+          "source": "claude_registry",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "runtime": {
+          "value": "running",
+          "observedAt": 1700000020000,
+          "source": "claude_registry",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "sample"
+        },
+        "outcome": {
+          "value": "unknown",
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "outcome_source_unproved",
+          "clock": null
+        },
+        "createdAt": 1700000000000,
+        "activity": {
+          "at": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "activity_source_unproved"
+        },
+        "workspace": null,
+        "metadataIssues": [],
+        "blockedReasons": [],
+        "hasSavedHistory": true,
+        "lastUpdated": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "at": null,
+          "timestampPrecisionMs": null
+        },
+        "latestTurn": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "value": null
+        }
+      },
+      {
+        "identity": {
+          "hostScope": "fixture",
+          "provider": "claude",
+          "namespace": "sha256:9a437845594bdb34dd26451be43c068143f83601c03d7d62718d6f90a637fd5d",
+          "nativeIdKind": "session",
+          "nativeId": "00000000-0000-0000-0000-000000000006"
+        },
+        "nativeIds": {
+          "sessionId": "00000000-0000-0000-0000-000000000006"
+        },
+        "title": "Fixture Claude 6",
+        "kind": "unknown",
+        "cwd": "/fixture/project",
+        "cwdSource": "claude_registry",
+        "inventory": "saved",
+        "phase": {
+          "value": "unknown",
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "interactive_readiness_unproved",
+          "clock": null
+        },
+        "runtime": {
+          "value": "unknown",
+          "observedAt": null,
+          "source": null,
+          "health": "unavailable",
+          "reason": "unobserved",
+          "clock": null
+        },
+        "outcome": {
+          "value": "completed",
+          "observedAt": 1700000020000,
+          "source": "claude_job_store",
+          "health": "current",
+          "reason": "native_snapshot",
+          "clock": "native"
+        },
+        "createdAt": 1700000000000,
+        "activity": {
+          "at": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "activity_source_unproved"
+        },
+        "workspace": null,
+        "metadataIssues": [],
+        "blockedReasons": [],
+        "hasSavedHistory": true,
+        "lastUpdated": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "at": null,
+          "timestampPrecisionMs": null
+        },
+        "latestTurn": {
+          "observedAt": null,
+          "source": null,
+          "health": "unsupported",
+          "reason": "timing_source_unproved",
+          "receipt": null,
+          "value": null
+        }
+      }
+    ],
+    "errors": [],
+    "limitations": [
+      "prerelease_contract",
+      "host_local_only",
+      "sampled_watch",
+      "no_native_event_replay"
+    ]
+  },
+  "clockDomain": "time:[fixture]"
+}
