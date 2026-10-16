@@ -73,8 +73,13 @@ NativeRoot = H("mesh-sync-native\0" || F(C(NativeBinding))
 SourceRoot = H("mesh-sync-source\0" || F(C(SourceBinding)) || NativeRoot)
 ```
 
-`NativeBinding` has exact contract/schema digest, native host/UID, view/selector,
-owner incarnation, boot/time context and projection continuity. Their concrete
+`NativeBinding` has exact contract/schema digest, native `hostScope`/UID,
+view/selector, owner incarnation, boot/time context, the complete original
+provider/namespace source-context map and projection continuity. The context map
+keeps the reviewed native context tuple for each provider/namespace; it is not
+replaced by a Mesh alias, receipt key or digest supplied by a peer. Contexts are
+committed even for empty/unavailable scopes. A context change requires the
+existing new-epoch/baseline path and revokes dependent authority. Their concrete
 native field names belong to Observer's reviewed new descriptor. No Mesh alias,
 Mesh import or Mesh profile is required by the engine/service.
 `SourceBinding` has exact configured authenticated host, source alias, sync
@@ -101,7 +106,12 @@ Adopt this eight-table registry for the first Agent sync descriptors; fixed
 full/active descriptors define different scope schemas, not different root math.
 Keys below are logical keys, independently reconstructed at each boundary.
 Tuple notation means a JSON array. Identity order is exactly
-`[host,provider,namespace,nativeKind,nativeId]`. Birth is
+`[hostScope,provider,namespace,nativeIdKind,nativeId]`. These are the existing
+identity names, not renamed classification fields. The normalizer binds each
+element losslessly to the reviewed native identity fields/frame hostScope;
+`nativeIdKind` is never inferred from record classification `kind`, nor
+`hostScope` invented from a Mesh alias. Export reconstructs the original native
+row identity exactly and admission rejects a mismatch. Birth is
 `[ownerEpoch,creationGeneration]`, referring to accepted sampled-state removal
 and reinsertion, not an unobserved provider lifecycle between samples.
 
@@ -251,12 +261,17 @@ refs are revocable cache lookups, not owning graph pointers.
 CachedSyncSource.baseline() -> BaselineTicket[bytes, NativeTag, Cursor]
 CachedSyncSource.changes(base: NativeTag, *, target: NativeTag,
                          limits: CatchupLimits) -> tuple[bytes, ...] | ResyncRequired
-CachedSyncSource.watch(cursor: Cursor) -> AsyncIterator[bytes | SyncControl]
+CachedSyncSource.watch(cursor: Cursor) -> SourceWatch[bytes | SyncControl]
 CachedSyncSource.head_after_nonce(challenge: HeadChallenge) -> bytes
+CachedSyncSource.aclose() -> awaitable[None]
+SourceWatch.__aiter__() / __aenter__() / __aexit__(...) / aclose()
 
 create_sync_publisher(source: CachedSyncSource, profile: SyncProfile,
-                      source_binding: SourceBinding, budgets: SyncBudgets) -> SyncPublisher
+                      source_binding: SourceBinding, budgets: SyncBudgets,
+                      owns_source: bool = True) -> SyncPublisher
 create_sync_reader(config: SyncConfig, profile: SyncProfile) -> SyncReader
+SyncPublisher.aclose() -> awaitable[None]
+SyncReader.aclose() -> awaitable[None]
 
 SyncProfile.descriptor: SyncDescriptor
 SyncProfile.admit_baseline(ctx: PublicStageContext) -> DomainIndexPatch
@@ -274,7 +289,8 @@ OwnedSyncCache.acquire() -> ViewRef
 OwnedSyncCache.revoke(reason: SyncReason) -> None
 OwnedSyncCache.disconnect() -> None
 
-SyncReader.updates(request: SyncRequest) -> AsyncIterator[AggregateCommit | SyncControl]
+SyncReader.updates(request: SyncRequest) -> SyncUpdateStream[AggregateCommit | SyncControl]
+SyncUpdateStream.__aiter__() / __aenter__() / __aexit__(...) / aclose()
 AggregateCommit.hosts() -> ordered bounded host statuses/tags
 AggregateCommit.host(host: str) -> ViewRef | UnavailableHost
 
@@ -285,6 +301,33 @@ ViewRef.index(name: str) -> PublicIndexRef
 ViewRef.context(now_ms: int, clock: ReaderClock) -> bounded detached header
 ViewRef.export_committed() -> explicit O(N) detached domain DTO
 ```
+
+Source/client ownership is explicit. `CachedSyncSource` is an owned connection/
+client of the native service; closing it closes its sockets, pending baseline/
+change/head requests and watches, **never** the shared native owner service.
+Each SourceWatch owns one subscription and its cursor/queued references;
+`aclose()` unsubscribes and retires only those resources, leaving its parent
+client and other subscribers usable. Use `async with source.watch(...)` or
+explicitly await `aclose()` when stopping early; iteration alone does not transfer
+cleanup ownership to an unrelated task.
+
+A publisher owns its cache, pending stages/proof waiters and transport tasks.
+By default it also closes the injected source client. With `owns_source=False`
+the external source owner retains that close obligation; publisher close still
+closes its own watches/requests. Two aliases may share an externally owned source
+client; closing either publisher cannot stop the other or its native service.
+A reader owns its channels/streams, caches and proof/stage work. A stream close
+revokes its request epoch/handles and cancels/awaits its own tasks, subscriptions
+and pending I/O; reader close does this for all its streams and channels.
+
+Close is idempotent and uses existing transport/cleanup deadlines. Cancellation,
+failed setup or callback error executes the same bounded cleanup and releases
+budget reservations, watch/base references, sockets and waiters. Cleanup remains
+owned/awaited under repeated caller cancellation; no detached background task
+or exception can skip retirement. Late work checks the retired epoch before
+publishing. Cache `disconnect()` revokes handles/stages immediately; the owning
+reader/publisher then awaits I/O cleanup. No source lifecycle action, provider
+action or service shutdown is a client cleanup operation.
 
 CandidateRef is minted by one cache and tied to profile/callback identities,
 source/owner/request epochs and staged root. It cannot be used in another cache,

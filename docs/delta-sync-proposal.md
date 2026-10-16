@@ -426,7 +426,7 @@ real local IPC and disposable fixed SSH; simulated proof traffic is labeled.
 | --- | --- |
 | Full unchanged / one / 1% sparse, 500/2,000 rows | >=90% fewer cohort-only bytes and >=75% fewer sparse-body bytes on **each** local service and Mesh boundary; >=70% lower incremental sync CPU across publisher/Reader/facade and owned descendants |
 | Full four-read end to end, 500/2,000 | >=50% lower total measured CPU for unchanged, true same-set renewal, one/1% body updates **and real N-row timestamp refresh**, including generation/diff/hash/cache/local IPC/proof/facade/application |
-| Real N-row timestamp refresh | >=50% fewer total application bytes over >=6 generations including baseline and all facets/support; timestamp work is K=N and is not an all-body-change regression case |
+| Real N-row timestamp refresh | >=50% fewer total application bytes at each local-service and Mesh boundary over >=6 generations including baseline and all facets/support; timestamp work is K=N and is not an all-body-change regression case |
 | Compact unchanged head | <=2 ms median service+source CPU, <=8 KiB application bytes at <=4 receipts; 2,000-row cost <=2x 100-row cost at equal P |
 | Repeated unchanged-body work | Zero unchanged-body decode/schema admission/hash/materialization after baseline except explicit exports/oracle; count every boundary, not just Reader |
 | Producer generation/diff overhead | Target <=10% CPU above matched a7 generation at each scale, hard promotion ceiling <=25%; report target misses; no slower native collection/cadence |
@@ -465,8 +465,9 @@ Mesh accepts Observer's exact nine token-extraction inputs, lossless moved paths
 birth-bound sealed cohorts, ordering and native/source two-root split. Mesh also
 accepts the coordinator's final proof/catch-up, host revocation, root/journal,
 budget, concurrency and numeric requirements. The appendix supplies concrete
-generic message/API/hash framing. Independent Observer vector reproduction and
-both owners' review of that appendix remain pending; RLCD records final closure.
+generic message/API/hash framing. RLCD's shared plan records Observer's independent
+arithmetic reproduction of prior captured revisions. Exact final-revision
+API/domain and vector confirmation remains pending; RLCD records final closure.
 
 After RLCD closes G0, Mesh proceeds on an isolated branch without another user
 go-ahead: reviewed addendum/lock/native references, generic owned sync/cache,
