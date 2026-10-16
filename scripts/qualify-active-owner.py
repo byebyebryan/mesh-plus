@@ -8,6 +8,7 @@ independently installed packages; --development allows an explicit source screen
 
 import argparse
 import asyncio
+import copy
 import importlib.metadata
 import json
 import os
@@ -40,7 +41,7 @@ def require(value, reason):
         raise AssertionError(reason)
 
 
-def state_fixture(empty):
+def state_fixture(empty, history_first=False):
     value = json.loads((ROOT / "tests/fixtures/active-baseline-full-service4.json").read_text())["snapshot"]
     value["sources"] = value["sources"][:1]
     value["sessions"] = value["sessions"][:1]
@@ -52,15 +53,36 @@ def state_fixture(empty):
     if empty:
         value["sessions"][0].update(phase=None, blockedReasons=[], inventory="saved", hasSavedHistory=True)
         value["sessions"][0]["runtime"].update(value="parked", reason="native_not_loaded")
+    if history_first:
+        value["sessions"][0]["kind"] = "unknown"
+        value["sessions"][0]["activity"] = {
+            "at": 1700000020000, "source": "codex_turn_metadata", "health": "current",
+            "reason": "native_conversation_event",
+        }
     state = ServiceState(host_scope="fixture", configs={"codex": (source["configHome"], source["configHomeKind"])})
     state.native_hostname = value["host"]["nativeHostname"]
     state.attempt("codex", "history")
-    require(state.accept("codex", "history", value, sampled_ms=boottime_ms(), ttl_ms=600000,
-                         runtime_ttl_ms=600000), "synthetic native acceptance")
+    require(state.accept("codex", "history", value, sampled_ms=boottime_ms(),
+                         ttl_ms=300000 if history_first else 600000,
+                         runtime_ttl_ms=600000 if history_first else 300000), "synthetic native acceptance")
+    if history_first:
+        # A history sample is also accepted into runtime. Existing activity tie
+        # precedence therefore chooses runtime for that one-sample fixture.
+        # A separate runtime observation with no activity leaves the actual
+        # activity producer at history, whose shorter lease we can now expire.
+        runtime_value = copy.deepcopy(value)
+        runtime_value["sessions"][0]["activity"] = {
+            "at": None, "source": None, "health": "unsupported", "reason": "activity_source_unproved",
+        }
+        state.attempt("codex", "runtime")
+        require(state.accept("codex", "runtime", runtime_value, sampled_ms=boottime_ms(), ttl_ms=600000),
+                "separate runtime fixture acceptance")
+        require(state.active_frame("status", 1)["projection"]["scopes"][0]["members"][0]
+                ["fieldSupports"]["activity"]["component"] == "history", "actual history field support fixture")
     return state
 
 
-async def exercise(connect, profile, *, remote, empty):
+async def exercise(connect, profile, *, remote, empty, history_first=False):
     codec = profile.bind("fixture", "active")
     clients = []
     async def open_client():
@@ -97,10 +119,18 @@ async def exercise(connect, profile, *, remote, empty):
         # Each remote proof has its own conservative RTT translation. Test the
         # current watch generation's exact deadlines, not a prior snapshot's.
         watch_clock = result.context["reader"]["clock"]
-        now = max(r["expiresAtMs"] or 0 for r in result.context["hosts"][0]["receipts"])
+        receipts = {r["component"]: r for r in result.context["hosts"][0]["receipts"]}
+        first, later = ("history", "runtime") if history_first else ("runtime", "history")
+        now = receipts[first]["expiresAtMs"]
+        require(receipts[later]["expiresAtMs"] > now, "independent expiry fixture missing")
         expired = facade.read(now, watch_clock)
-        require(not expired.members and all(s["coverage"]["status"] != "complete" for s in expired.scopes),
-                "native metadata authority survived original translated expiry")
+        if history_first:
+            require(len(expired.members) == 1 and expired.members[0]["activity"]["at"] is None
+                    and expired.members[0]["activity"]["lastKnownAt"] == result.members[0]["activity"]["at"],
+                    "whole-body ineligibility lost valid runtime or renewed expired activity")
+        else:
+            require(not expired.members and all(s["coverage"]["status"] != "complete" for s in expired.scopes),
+                    "native metadata authority survived original runtime expiry while history stayed healthy")
         # Returned bodies/headers are detached; the owned cache never borrows exports.
         result.members.clear()
         facade.disconnect()
@@ -112,7 +142,7 @@ async def exercise(connect, profile, *, remote, empty):
     require(reader.inspect()["activeConnections"] == 0 and reader.inspect()["cleanupFailures"] == 0,
             "reader cleanup failure")
     return {"path": "fixed-ssh" if remote else "ipc", "empty": empty, "snapshots": len(snapshots),
-            "watch": True, "originalExpiryChecked": True, "cleanup": True}
+            "watch": True, "originalExpiryChecked": True, "historyExpiresFirst": history_first, "cleanup": True}
 
 
 async def qualify(args):
@@ -120,8 +150,8 @@ async def qualify(args):
         require(not Path(mesh_plus.__file__).resolve().is_relative_to(ROOT), "installed Mesh wheel required")
         require("site-packages" in str(Path(agent_observer.__file__).resolve()), "installed Observer wheel required")
     reports = []
-    for empty in (False, True):
-        state = state_fixture(empty)
+    for empty, history_first in ((False, False), (True, False), (False, True)):
+        state = state_fixture(empty, history_first)
         generations = state.active_projector.generations
         with tempfile.TemporaryDirectory(prefix="mesh-active-native-") as directory:
             root = Path(directory)
@@ -145,7 +175,8 @@ async def qualify(args):
                 publisher = make_publisher("fixture", "active", str(read_socket), profile_id=ACTIVE_PROFILE_ID)
                 mesh_socket = root / "mesh.sock"
                 server = await IPCServer(mesh_socket, Bridge(publisher).serve).start()
-                reports.append(await exercise(lambda: connect_ipc(mesh_socket), profile, remote=False, empty=empty))
+                reports.append(await exercise(lambda: connect_ipc(mesh_socket), profile, remote=False,
+                                              empty=empty, history_first=history_first))
                 # The ordinary three-argument factory still produces unchanged full Agent v3.
                 full = make_publisher("fixture", "full", str(read_socket))
                 payload = await full.snapshot({})
@@ -164,7 +195,8 @@ async def qualify(args):
                                  for module in (agent_observer, mesh_plus)]
                         command = ["/usr/bin/env", "PYTHONPATH=" + os.pathsep.join(roots), *command]
                     async with ssh_server(Path(ssh_directory), command, "active") as connector:
-                        reports.append(await exercise(connector, profile, remote=True, empty=empty))
+                        reports.append(await exercise(connector, profile, remote=True,
+                                                      empty=empty, history_first=history_first))
                 require(state.active_projector.generations == generations, "reads/proofs reprojected native generation")
                 require(runtime.counts["workerStarts"] == 0, "unexpected provider worker")
             finally:

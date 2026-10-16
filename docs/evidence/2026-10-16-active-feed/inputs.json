@@ -1,0 +1,58 @@
+{
+  "baselineSource": "f773154",
+  "runtimeSource": "19788054edcd859f6228a90026695280f746723d",
+  "branch": "mesh-active-feed-20261016",
+  "g0Documentation": "80a9496",
+  "nativeSchemaSource": "4ffd376441fcb556cbe291d55d983e0814c20551",
+  "observerRuntimeSource": "7807160384ba39b4d438c5c7f1b5f316c3608dcd",
+  "artifacts": [
+    {
+      "path": "/home/bryan/code/mesh-plus/dist/private/0.1.0a23-1978805-73455186/mesh_plus-0.1.0a23-py3-none-any.whl",
+      "sha256": "73455186e187198c8e44b6ae6c381926809931a176f17614864141c62ff850c2"
+    },
+    {
+      "path": "/home/bryan/code/agent-observer/dist/private/0.7.0a7-7807160-5eafd4c1/agent_observer-0.7.0a7-py3-none-any.whl",
+      "sha256": "5eafd4c126fb31a0574c3c0500998084c6ccc8d4d813df1805e6d21ce4b85bb0"
+    },
+    {
+      "path": "/home/bryan/.local/share/agent-observer/0.5.0a16-94705baebfa51a96-mesh-a10-bridge/artifact/agent_observer-0.5.0a16-py3-none-any.whl",
+      "sha256": "94705baebfa51a9664e9dbfa7603dcb932d6301146cf9a59017017c5285b3b17"
+    },
+    {
+      "path": "/home/bryan/code/mesh-plus/.cache/cpu-admission-20261015/native-inputs/tmux_observer-0.6.0a5-py3-none-any.whl",
+      "sha256": "19f6616293b6b1b5b6ef410564aeb233f6d8c1dc1738986fdff59daf339ff4ba"
+    }
+  ],
+  "priorNormativeHashesPreserved": 29,
+  "newNormativeInputs": [
+    "reference/agent-observer-active/agent_observer/contracts/active-frame.schema.json",
+    "reference/agent-observer-active/agent_observer/contracts/active-request.schema.json",
+    "contracts/agent-active-v1/contract.md",
+    "contracts/agent-active-v1/profile.schema.json"
+  ],
+  "changedRuntimeModules": [
+    "__init__.py",
+    "cli.py",
+    "state.py",
+    "view.py"
+  ],
+  "unchangedCoreModules": [
+    "reader.py",
+    "prepared.py",
+    "publisher.py",
+    "authority.py",
+    "library_authority.py"
+  ],
+  "dependencies": {
+    "python": ">=3.11",
+    "jsonschema": ">=4.26,<5",
+    "optionalWss": "websockets>=17.1,<18"
+  },
+  "scopeExclusions": [
+    "No production install/service/launcher or provider/session actions",
+    "No normal catalog load/write; selected CLI qualification uses disposable XDG namespaces",
+    "No --check-sources against drifting old sibling heads",
+    "No claim of native populated provider census from Mesh synthetic service fixture",
+    "No accepted full2000-row tracemalloc allocation value; unchanged deadline rejection"
+  ]
+}

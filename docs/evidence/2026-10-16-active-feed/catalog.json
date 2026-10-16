@@ -1,0 +1,252 @@
+{
+  "status": "passed",
+  "scope": "owned disposable catalog inputs; serial ABBA without profiler",
+  "checks": [
+    "configured process/library semantic parity (generatedAt excluded)",
+    "fresh health-only read changes routes, preserves config revision",
+    "fresh full load observes same-size/same-mtime atomic config replacement",
+    "invalid config/health reject independently; recovery/missing-file semantics match",
+    "zero config/health/history content writes; canonical locks/permissions allowed",
+    "all bounded subprocesses reaped, catalog threads retired, fd count unchanged"
+  ],
+  "cases": [
+    {
+      "case": "configured",
+      "bothRejected": false,
+      "equal": true
+    },
+    {
+      "case": "health_only",
+      "bothRejected": false,
+      "equal": true
+    },
+    {
+      "case": "same_metadata_replacement",
+      "bothRejected": false,
+      "equal": true
+    },
+    {
+      "case": "invalid_config",
+      "bothRejected": true,
+      "equal": false,
+      "failures": [
+        {
+          "error": "ValueError",
+          "reason": "invalid_config"
+        },
+        {
+          "error": "MeshError",
+          "reason": "unknown configuration key: unknown"
+        }
+      ]
+    },
+    {
+      "case": "invalid_config_recovery",
+      "bothRejected": false,
+      "equal": true
+    },
+    {
+      "case": "invalid_health",
+      "bothRejected": true,
+      "equal": false,
+      "failures": [
+        {
+          "error": "ValueError",
+          "reason": "persistence_failed"
+        },
+        {
+          "error": "MeshPersistenceError",
+          "reason": "invalid route-health state"
+        }
+      ]
+    },
+    {
+      "case": "invalid_health_recovery",
+      "bothRejected": false,
+      "equal": true
+    },
+    {
+      "case": "missing_config_local_only",
+      "bothRejected": false,
+      "equal": true
+    },
+    {
+      "case": "missing_health",
+      "bothRejected": false,
+      "equal": true
+    },
+    {
+      "case": "restored",
+      "bothRejected": false,
+      "equal": true
+    }
+  ],
+  "summary": {
+    "process": {
+      "calls": 72,
+      "meanCpuMsPerLoad": 49.070888888888895,
+      "equivalentPercentOneCoreAtFiveSeconds": 0.9814177777777778,
+      "meanBatchLatencyMs": 49.11127554158965
+    },
+    "library": {
+      "calls": 72,
+      "meanCpuMsPerLoad": 0.876527777777777,
+      "equivalentPercentOneCoreAtFiveSeconds": 0.01753055555555554,
+      "meanBatchLatencyMs": 0.8555874167844498
+    },
+    "cpuReductionPercent": 98.21375198692141
+  },
+  "batches": [
+    {
+      "round": 0,
+      "kind": "process",
+      "calls": 12,
+      "parentCpuSeconds": 0.012121999999999994,
+      "reapedChildCpuSeconds": 0.5838199999999999,
+      "totalCpuSeconds": 0.5959419999999999,
+      "wallSeconds": 0.596344024001155,
+      "meanLatencyMs": 49.691791161118694,
+      "maxLatencyMs": 51.60165499546565
+    },
+    {
+      "round": 0,
+      "kind": "library",
+      "calls": 12,
+      "parentCpuSeconds": 0.011367000000000002,
+      "reapedChildCpuSeconds": 0.0,
+      "totalCpuSeconds": 0.011367000000000002,
+      "wallSeconds": 0.01112499600276351,
+      "meanLatencyMs": 0.9251488275670757,
+      "maxLatencyMs": 1.1228270013816655
+    },
+    {
+      "round": 0,
+      "kind": "library",
+      "calls": 12,
+      "parentCpuSeconds": 0.01031,
+      "reapedChildCpuSeconds": 0.0,
+      "totalCpuSeconds": 0.01031,
+      "wallSeconds": 0.010077899001771584,
+      "meanLatencyMs": 0.8383865812599348,
+      "maxLatencyMs": 1.0323460155632347
+    },
+    {
+      "round": 0,
+      "kind": "process",
+      "calls": 12,
+      "parentCpuSeconds": 0.012358999999999981,
+      "reapedChildCpuSeconds": 0.5799540000000001,
+      "totalCpuSeconds": 0.5923130000000001,
+      "wallSeconds": 0.5927288430102635,
+      "meanLatencyMs": 49.38878524990287,
+      "maxLatencyMs": 51.52365501271561
+    },
+    {
+      "round": 1,
+      "kind": "process",
+      "calls": 12,
+      "parentCpuSeconds": 0.011933000000000027,
+      "reapedChildCpuSeconds": 0.573477,
+      "totalCpuSeconds": 0.58541,
+      "wallSeconds": 0.5862154830247164,
+      "meanLatencyMs": 48.847531089753225,
+      "maxLatencyMs": 51.53630400309339
+    },
+    {
+      "round": 1,
+      "kind": "library",
+      "calls": 12,
+      "parentCpuSeconds": 0.01077599999999998,
+      "reapedChildCpuSeconds": 0.0,
+      "totalCpuSeconds": 0.01077599999999998,
+      "wallSeconds": 0.010547942016273737,
+      "meanLatencyMs": 0.8773193355106438,
+      "maxLatencyMs": 1.2744380219373852
+    },
+    {
+      "round": 1,
+      "kind": "library",
+      "calls": 12,
+      "parentCpuSeconds": 0.010132999999999975,
+      "reapedChildCpuSeconds": 0.0,
+      "totalCpuSeconds": 0.010132999999999975,
+      "wallSeconds": 0.009920509008225054,
+      "meanLatencyMs": 0.8254265873498904,
+      "maxLatencyMs": 1.02978601353243
+    },
+    {
+      "round": 1,
+      "kind": "process",
+      "calls": 12,
+      "parentCpuSeconds": 0.012113000000000013,
+      "reapedChildCpuSeconds": 0.5714419999999998,
+      "totalCpuSeconds": 0.5835549999999998,
+      "wallSeconds": 0.5837891379778739,
+      "meanLatencyMs": 48.644944833843816,
+      "maxLatencyMs": 50.31467700609937
+    },
+    {
+      "round": 2,
+      "kind": "process",
+      "calls": 12,
+      "parentCpuSeconds": 0.011503999999999986,
+      "reapedChildCpuSeconds": 0.5740949999999998,
+      "totalCpuSeconds": 0.5855989999999998,
+      "wallSeconds": 0.5858627599955071,
+      "meanLatencyMs": 48.81807749673802,
+      "maxLatencyMs": 50.22900699987076
+    },
+    {
+      "round": 2,
+      "kind": "library",
+      "calls": 12,
+      "parentCpuSeconds": 0.010280000000000011,
+      "reapedChildCpuSeconds": 0.0,
+      "totalCpuSeconds": 0.010280000000000011,
+      "wallSeconds": 0.010032279009465128,
+      "meanLatencyMs": 0.8345490835684662,
+      "maxLatencyMs": 1.0275760141666979
+    },
+    {
+      "round": 2,
+      "kind": "library",
+      "calls": 12,
+      "parentCpuSeconds": 0.010243999999999975,
+      "reapedChildCpuSeconds": 0.0,
+      "totalCpuSeconds": 0.010243999999999975,
+      "wallSeconds": 0.010011099016992375,
+      "meanLatencyMs": 0.8326940854506878,
+      "maxLatencyMs": 1.1045669962186366
+    },
+    {
+      "round": 2,
+      "kind": "process",
+      "calls": 12,
+      "parentCpuSeconds": 0.013095999999999997,
+      "reapedChildCpuSeconds": 0.5771890000000006,
+      "totalCpuSeconds": 0.5902850000000006,
+      "wallSeconds": 0.5913666520209517,
+      "meanLatencyMs": 49.27652341818126,
+      "maxLatencyMs": 51.19665298843756
+    }
+  ],
+  "inputs": {
+    "meshPackage": "/tmp/mesh-active-a23-core-1978805/lib/python3.14/site-packages/mesh_plus/__init__.py",
+    "processExecutable": "/home/bryan/.local/bin/rofi-ssh-plus",
+    "processExecutableSha256": "eab686234450931f268547defeea75a886a59d6772196e4194b20a7900944d22",
+    "selectedBackend": "mesh-plus",
+    "selectedAuthority": "/home/bryan/.local/share/mesh-plus/python/mesh_plus/authority.py",
+    "selectedAuthoritySha256": "188570bdf706fcd758dae0b94be022645957313aaf7917d2b24fe65d856097b0",
+    "candidateAuthoritySha256": "8ea029cf68987064c5dfad0e0dc31a354ef35d037dc65ff280a1510dfbaf2136"
+  },
+  "memory": {
+    "combinedWorkerPeakRssKiB": 32952,
+    "largestReapedChildPeakRssKiB": 32952
+  },
+  "limits": [
+    "Not a live catalog/service selection or absolute five-second failure bound",
+    "No route-report writer exercised; health read has canonical lock/permission effects",
+    "Library explicitly limits each config/health source to 4MiB and regular files",
+    "Memory high-water marks are cumulative, not independent per-mode RSS comparisons"
+  ]
+}

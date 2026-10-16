@@ -1,0 +1,62 @@
+{
+  "checkedAtUtc": "2026-10-16T05:50:22.987153+00:00",
+  "environments": [
+    {
+      "meshRoot": "/tmp/mesh-active-a23-core-1978805/lib/python3.14/site-packages/mesh_plus",
+      "meshVersion": "0.1.0a23",
+      "observerPresent": false,
+      "meshFileCount": 67,
+      "meshWheelParity": true,
+      "environment": "core",
+      "python": "/tmp/mesh-active-a23-core-1978805/bin/python"
+    },
+    {
+      "meshRoot": "/tmp/mesh-active-a23-native-1978805/lib/python3.14/site-packages/mesh_plus",
+      "meshVersion": "0.1.0a23",
+      "observerPresent": true,
+      "observerVersion": "0.5.0a16",
+      "observerRoot": "/tmp/mesh-active-a23-native-1978805/lib/python3.14/site-packages/agent_observer",
+      "meshFileCount": 67,
+      "meshWheelParity": true,
+      "environment": "native",
+      "python": "/tmp/mesh-active-a23-native-1978805/bin/python"
+    },
+    {
+      "meshRoot": "/tmp/mesh-active-a23-py311-1978805/lib/python3.11/site-packages/mesh_plus",
+      "meshVersion": "0.1.0a23",
+      "observerPresent": false,
+      "meshFileCount": 67,
+      "meshWheelParity": true,
+      "environment": "py311",
+      "python": "/tmp/mesh-active-a23-py311-1978805/bin/python"
+    },
+    {
+      "meshRoot": "/tmp/mesh-active-a23-owner-1978805/lib/python3.14/site-packages/mesh_plus",
+      "meshVersion": "0.1.0a23",
+      "observerPresent": true,
+      "observerVersion": "0.7.0a7",
+      "observerRoot": "/tmp/mesh-active-a23-owner-1978805/lib/python3.14/site-packages/agent_observer",
+      "meshFileCount": 67,
+      "meshWheelParity": true,
+      "observerWheelParity": true,
+      "observerFileCount": 63,
+      "environment": "owner",
+      "python": "/tmp/mesh-active-a23-owner-1978805/bin/python"
+    },
+    {
+      "meshRoot": "/tmp/mesh-active-a23-owner311-1978805/lib/python3.11/site-packages/mesh_plus",
+      "meshVersion": "0.1.0a23",
+      "observerPresent": true,
+      "observerVersion": "0.7.0a7",
+      "observerRoot": "/tmp/mesh-active-a23-owner311-1978805/lib/python3.11/site-packages/agent_observer",
+      "meshFileCount": 67,
+      "meshWheelParity": true,
+      "observerWheelParity": true,
+      "observerFileCount": 63,
+      "environment": "owner311",
+      "python": "/tmp/mesh-active-a23-owner311-1978805/bin/python"
+    }
+  ],
+  "meshWheelSha256": "73455186e187198c8e44b6ae6c381926809931a176f17614864141c62ff850c2",
+  "observerWheelSha256": "5eafd4c126fb31a0574c3c0500998084c6ccc8d4d813df1805e6d21ce4b85bb0"
+}

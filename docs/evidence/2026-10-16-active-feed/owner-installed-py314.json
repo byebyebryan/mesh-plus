@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "reports": [
+    {
+      "path": "ipc",
+      "empty": false,
+      "snapshots": 2,
+      "watch": true,
+      "originalExpiryChecked": true,
+      "historyExpiresFirst": false,
+      "cleanup": true
+    },
+    {
+      "path": "fixed-ssh",
+      "empty": false,
+      "snapshots": 2,
+      "watch": true,
+      "originalExpiryChecked": true,
+      "historyExpiresFirst": false,
+      "cleanup": true
+    },
+    {
+      "path": "ipc",
+      "empty": true,
+      "snapshots": 2,
+      "watch": true,
+      "originalExpiryChecked": true,
+      "historyExpiresFirst": false,
+      "cleanup": true
+    },
+    {
+      "path": "fixed-ssh",
+      "empty": true,
+      "snapshots": 2,
+      "watch": true,
+      "originalExpiryChecked": true,
+      "historyExpiresFirst": false,
+      "cleanup": true
+    },
+    {
+      "path": "ipc",
+      "empty": false,
+      "snapshots": 2,
+      "watch": true,
+      "originalExpiryChecked": true,
+      "historyExpiresFirst": true,
+      "cleanup": true
+    },
+    {
+      "path": "fixed-ssh",
+      "empty": false,
+      "snapshots": 2,
+      "watch": true,
+      "originalExpiryChecked": true,
+      "historyExpiresFirst": true,
+      "cleanup": true
+    }
+  ],
+  "providerWorkerStarts": 0,
+  "projectionCacheReused": true,
+  "fullDefaultPreserved": true,
+  "versions": {
+    "mesh-plus": "0.1.0a23",
+    "agent-observer": "0.7.0a7"
+  },
+  "modules": {
+    "mesh": "/tmp/mesh-active-a23-owner-1978805/lib/python3.14/site-packages/mesh_plus/__init__.py",
+    "observer": "/tmp/mesh-active-a23-owner-1978805/lib/python3.14/site-packages/agent_observer/__init__.py"
+  },
+  "development": false,
+  "limits": [
+    "Synthetic accepted native input in owned collect=False service, not real provider census",
+    "Local machine and disposable localhost SSH; no operational fleet/device selection"
+  ]
+}

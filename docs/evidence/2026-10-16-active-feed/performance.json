@@ -1,0 +1,593 @@
+{
+  "status": "passed",
+  "scope": "serial exact installed a7+a23 owned localIPC publisher+Reader+facade; fixed5active",
+  "endedAtUtc": "2026-10-16T05:56:15.791213+00:00",
+  "lock": "/home/bryan/.cache/agent-active-feed-cpu.lock",
+  "cases": [
+    {
+      "dormant": 100,
+      "active": 5,
+      "order": [
+        "full",
+        "active",
+        "active",
+        "full"
+      ],
+      "meanFullCpuMs": 951.942629,
+      "meanActiveCpuMs": 163.802415,
+      "cpuReductionPercent": 82.79282700344329,
+      "fullBytes": [
+        1729484,
+        1729484
+      ],
+      "activeBytes": [
+        201134,
+        201134
+      ],
+      "semanticSignaturesEqual": true
+    },
+    {
+      "dormant": 500,
+      "active": 5,
+      "order": [
+        "full",
+        "active",
+        "active",
+        "full"
+      ],
+      "meanFullCpuMs": 4342.4310805000005,
+      "meanActiveCpuMs": 156.5663695,
+      "cpuReductionPercent": 96.39449961098812,
+      "fullBytes": [
+        8141084,
+        8141084
+      ],
+      "activeBytes": [
+        201134,
+        201134
+      ],
+      "semanticSignaturesEqual": true
+    },
+    {
+      "dormant": 2000,
+      "active": 5,
+      "order": [
+        "full",
+        "active",
+        "active",
+        "full"
+      ],
+      "meanFullCpuMs": 17380.862222000003,
+      "meanActiveCpuMs": 156.8915495,
+      "cpuReductionPercent": 99.09733160820173,
+      "fullBytes": [
+        32197649,
+        32197649
+      ],
+      "activeBytes": [
+        201134,
+        201134
+      ],
+      "semanticSignaturesEqual": true
+    }
+  ],
+  "runs": [
+    {
+      "status": "passed",
+      "mode": "full",
+      "active": 5,
+      "dormant": 100,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 962.4336890000001,
+      "wallMs": 967.7146570174955,
+      "wireReceivedBytes": 1729484,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 1890,
+      "fullNativeBytes": 132379,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 207.38719101063907,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 37216,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 0,
+      "recordedAtUtc": "2026-10-16T05:53:33.159989+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "active",
+      "active": 5,
+      "dormant": 100,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 166.96144,
+      "wallMs": 167.5909049808979,
+      "wireReceivedBytes": 201134,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 0,
+      "fullNativeBytes": 132379,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 34.9482559831813,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 32892,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 1,
+      "recordedAtUtc": "2026-10-16T05:53:33.514149+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "active",
+      "active": 5,
+      "dormant": 100,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 160.64339,
+      "wallMs": 161.2483450153377,
+      "wireReceivedBytes": 201134,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 0,
+      "fullNativeBytes": 132379,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 33.237765019293875,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 34336,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 2,
+      "recordedAtUtc": "2026-10-16T05:53:33.842548+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "full",
+      "active": 5,
+      "dormant": 100,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 941.451569,
+      "wallMs": 944.7224409959745,
+      "wireReceivedBytes": 1729484,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 1890,
+      "fullNativeBytes": 132379,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 214.72634602105245,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 37336,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 3,
+      "recordedAtUtc": "2026-10-16T05:53:35.092208+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "full",
+      "active": 5,
+      "dormant": 500,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 4324.285725000001,
+      "wallMs": 4338.418614992406,
+      "wireReceivedBytes": 8141084,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 9090,
+      "fullNativeBytes": 625579,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 973.7690559995826,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 51144,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 0,
+      "recordedAtUtc": "2026-10-16T05:53:40.395554+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "active",
+      "active": 5,
+      "dormant": 500,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 155.93859,
+      "wallMs": 156.5634639991913,
+      "wireReceivedBytes": 201134,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 0,
+      "fullNativeBytes": 625579,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 31.96641700924374,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 35464,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 1,
+      "recordedAtUtc": "2026-10-16T05:53:40.754757+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "active",
+      "active": 5,
+      "dormant": 500,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 157.194149,
+      "wallMs": 157.80470200115815,
+      "wireReceivedBytes": 201134,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 0,
+      "fullNativeBytes": 625579,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 32.374059985158965,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 35668,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 2,
+      "recordedAtUtc": "2026-10-16T05:53:41.106096+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "full",
+      "active": 5,
+      "dormant": 500,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 4360.576435999999,
+      "wallMs": 4375.803455011919,
+      "wireReceivedBytes": 8141084,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 9090,
+      "fullNativeBytes": 625579,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 979.8051819961984,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 50940,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 3,
+      "recordedAtUtc": "2026-10-16T05:53:46.467356+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "full",
+      "active": 5,
+      "dormant": 2000,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 17396.155612000002,
+      "wallMs": 17449.96121499571,
+      "wireReceivedBytes": 32197649,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 36090,
+      "fullNativeBytes": 2476084,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 3915.019552980084,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 103632,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 0,
+      "recordedAtUtc": "2026-10-16T05:54:07.435477+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "active",
+      "active": 5,
+      "dormant": 2000,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 156.77896,
+      "wallMs": 157.4326720146928,
+      "wireReceivedBytes": 201134,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 0,
+      "fullNativeBytes": 2476084,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 31.885814998531714,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 42240,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 1,
+      "recordedAtUtc": "2026-10-16T05:54:07.934846+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "active",
+      "active": 5,
+      "dormant": 2000,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 157.00413899999998,
+      "wallMs": 157.6414730225224,
+      "wireReceivedBytes": 201134,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 0,
+      "fullNativeBytes": 2476084,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 32.017015997553244,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 42060,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 2,
+      "recordedAtUtc": "2026-10-16T05:54:08.396920+00:00"
+    },
+    {
+      "status": "passed",
+      "mode": "full",
+      "active": 5,
+      "dormant": 2000,
+      "generations": 6,
+      "readsPerGeneration": 3,
+      "cpuMs": 17365.568832,
+      "wallMs": 17420.15468599857,
+      "wireReceivedBytes": 32197649,
+      "nativeCachedReads": 6,
+      "selectedBodiesRead": 90,
+      "fullSummariesRead": 36090,
+      "fullNativeBytes": 2476084,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 3891.3022129854653,
+      "postSetupPeakAllocatedBytes": null,
+      "workerPeakRssKiBIncludingSetup": 105484,
+      "semanticSignature": "b490de708ee8c56c4bdd72b42ecc7f6e9e8051e484678ac0c91eb1473cb923fe",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ],
+      "order": 3,
+      "recordedAtUtc": "2026-10-16T05:54:29.294671+00:00"
+    }
+  ],
+  "memoryRuns": [
+    {
+      "status": "passed",
+      "mode": "full",
+      "active": 5,
+      "dormant": 100,
+      "generations": 1,
+      "readsPerGeneration": 1,
+      "cpuMs": null,
+      "wallMs": null,
+      "wireReceivedBytes": 399080,
+      "nativeCachedReads": 1,
+      "selectedBodiesRead": 5,
+      "fullSummariesRead": 105,
+      "fullNativeBytes": 132379,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 910.6193670013454,
+      "postSetupPeakAllocatedBytes": 2619463,
+      "workerPeakRssKiBIncludingSetup": 39328,
+      "semanticSignature": "6184e4a5b01923b710d2e34e42175980fcd89074c278538826465c239c80e4f0",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ]
+    },
+    {
+      "status": "passed",
+      "mode": "active",
+      "active": 5,
+      "dormant": 100,
+      "generations": 1,
+      "readsPerGeneration": 1,
+      "cpuMs": null,
+      "wallMs": null,
+      "wireReceivedBytes": 33520,
+      "nativeCachedReads": 1,
+      "selectedBodiesRead": 5,
+      "fullSummariesRead": 0,
+      "fullNativeBytes": 132379,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 115.28574899421073,
+      "postSetupPeakAllocatedBytes": 553102,
+      "workerPeakRssKiBIncludingSetup": 34828,
+      "semanticSignature": "6184e4a5b01923b710d2e34e42175980fcd89074c278538826465c239c80e4f0",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ]
+    },
+    {
+      "status": "passed",
+      "mode": "active",
+      "active": 5,
+      "dormant": 2000,
+      "generations": 1,
+      "readsPerGeneration": 1,
+      "cpuMs": null,
+      "wallMs": null,
+      "wireReceivedBytes": 33520,
+      "nativeCachedReads": 1,
+      "selectedBodiesRead": 5,
+      "fullSummariesRead": 0,
+      "fullNativeBytes": 2476084,
+      "projectedNativeBytes": 16100,
+      "maxReplacementLatencyMs": 122.2863330040127,
+      "postSetupPeakAllocatedBytes": 554217,
+      "workerPeakRssKiBIncludingSetup": 41592,
+      "semanticSignature": "6184e4a5b01923b710d2e34e42175980fcd89074c278538826465c239c80e4f0",
+      "cleanup": true,
+      "versions": {
+        "mesh-plus": "0.1.0a23",
+        "agent-observer": "0.7.0a7"
+      },
+      "limits": [
+        "Owned synthetic local IPC watch; total publisher+Reader+facade CPU, not RLCD/live percent",
+        "Full fixture, projection/collection and service hosting costs outside timed section",
+        "Synthetic original two-minute leases never renew during read/proof/watch",
+        "Separate --memory run is instrumented; CPU/wall timing intentionally omitted",
+        "Peak RSS includes setup/full-fixture creation; post-setup allocations are a separate measure"
+      ]
+    }
+  ],
+  "excludedAllocationSample": {
+    "case": "full2000 tracemalloc",
+    "reason": "instrumented probe exceeded unchanged15s replacement deadline; no accepted allocation or CPU measurement",
+    "log": "performance-installed.log"
+  },
+  "limits": [
+    "Two samples per mode/case; one host with uncontrolled frequency and unrelated workloads",
+    "Task-owned series serialized under shared advisory lock; no unrelated user workloads stopped",
+    "Fixture/projection/collection/service hosting outside timer; no liveRLCD or collector CPU claim",
+    "Memory100 modes and active2000 are instrumented separate samples, excluded fromCPU; full2000 allocation probe rejected"
+  ]
+}

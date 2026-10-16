@@ -1,0 +1,107 @@
+{
+  "status": "passed",
+  "checkedAtUtc": "2026-10-16T06:06:01.177325+00:00",
+  "wheelSha256": "73455186e187198c8e44b6ae6c381926809931a176f17614864141c62ff850c2",
+  "runtimeSource": "19788054edcd859f6228a90026695280f746723d",
+  "schemaLock": {
+    "revision": 5,
+    "lockedInputs": 33,
+    "packagedIdenticalSchemas": 25,
+    "priorNormativeDigestsPreserved": 29
+  },
+  "source": {
+    "python": "3.14.8",
+    "core": 172,
+    "native": 211,
+    "nativeWss": 43,
+    "designChecks": 116,
+    "deliveryChecks": 169,
+    "skips": 0,
+    "lint": "passed"
+  },
+  "installed": [
+    {
+      "environment": "core",
+      "python": "3.14.8",
+      "core": 172,
+      "wss": 34,
+      "observerPackages": false,
+      "skips": 0
+    },
+    {
+      "environment": "native",
+      "python": "3.14.8",
+      "runtimeNative": 211,
+      "nativeWss": 43,
+      "observerInputs": [
+        "agent-observer0.5.0a16",
+        "tmux-observer0.6.0a5"
+      ],
+      "skips": 0
+    },
+    {
+      "environment": "py311",
+      "python": "3.11.17",
+      "core": 172,
+      "observerPackages": false,
+      "skips": 0
+    },
+    {
+      "environment": "core outside-checkout",
+      "conformanceSuites": 6,
+      "conformanceCases": 35,
+      "ownedSsh": true,
+      "skips": 0
+    },
+    {
+      "environment": "owner",
+      "python": "3.14.8",
+      "ownerChainCases": 6,
+      "observer": "0.7.0a7",
+      "skips": 0
+    },
+    {
+      "environment": "owner311",
+      "python": "3.11.17",
+      "ownerChainCases": 6,
+      "observer": "0.7.0a7",
+      "skips": 0
+    }
+  ],
+  "performance": {
+    "transportSamples": 12,
+    "order": "ABBA",
+    "dormantRows": [
+      100,
+      500,
+      2000
+    ],
+    "activeRows": 5,
+    "generations": 6,
+    "readsPerGeneration": 3,
+    "selectedBodiesAndSignaturesEqual": true,
+    "taskOwnedHeavyWorkSerialized": true,
+    "catalogLoadsPerMode": 72,
+    "acceptedInstrumentedAllocationCases": [
+      "full100",
+      "active100",
+      "active2000"
+    ],
+    "rejectedAllocationProbe": "full2000 exceeded unchanged replacement deadline under tracemalloc; excluded"
+  },
+  "unchangedRuntimeReadback": true,
+  "skips": [],
+  "excluded": [
+    "--check-sources against old native references with drifting sibling heads",
+    "Native livefleet/device/deployment/physical suspend acceptance",
+    "No accepted full2000 instrumented allocation value"
+  ],
+  "sourceAndTestDigests": {
+    "scripts/qualify-active-owner.py": "95ffae25d3d5c99e31659a526087f8da75316129624a7511da4b599d994723e0",
+    "scripts/measure-active-transport.py": "132b20114e1627fd31c07cd868ed45f763d31d253b33cb7ae3c4c044a16b7ab6",
+    "scripts/qualify-library-authority.py": "a44d400705c7b583e9796ea1b0c4b8f07dc18f95a29cc43898b078cb1fa5f431",
+    "tests/test_agent_active_profile.py": "efc67bcd11ec79beff7d95606c8ce0dfd7bda0d0acb4349885f4256f5651bc0c",
+    "tests/test_agent_active_transport.py": "cd0514153402ee1870c348cf0b42281778a6575f228b85eb9d250c0150203106",
+    "tests/test_library_authority.py": "415275626006c4a0cddf421d41fef1067cad21e0ee56669092997fd9ee8ff6b2"
+  }
+}
