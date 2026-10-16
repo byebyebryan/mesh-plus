@@ -879,10 +879,9 @@ class ReconstructionStore:
             check(type(result) is NativeTag and result.binding == base.binding and
                   result.generation > base.generation, "sync_result_tag")
             check(cursor == (before.cursor[0], result.generation, result.root), "sync_cursor")
-            if self.candidate is not None and self.previous is not None:
-                # A chain's old candidate is the immutable input to its next
-                # stage. Retire the older predecessor before allocating that
-                # stage, keeping at most current + predecessor + one stage.
+            if self.previous is not None:
+                # Reclamation can visit a whole older generation. Do it in
+                # material staging, outside the compact nonce/proof operation.
                 self.ledger.release(self.previous)
                 self.previous = None
             tx = _Transaction(self, before, before.binding, result, cursor, tuple(operations),
@@ -908,9 +907,8 @@ class ReconstructionStore:
         with self._lock:
             self._check()
             check(self._transaction is None and self.candidate is not None, "sync_no_candidate")
+            check(self.previous is None, "sync_predecessor_not_retired")
             self._arena.clear()
-            if self.previous is not None:
-                self.ledger.release(self.previous)
             self.previous, self.current, self.candidate = self.current, self.candidate, None
             return self.current.tag
 

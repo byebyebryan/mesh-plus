@@ -2,6 +2,7 @@ import copy
 import os
 import unittest
 from hashlib import sha256
+from unittest.mock import patch
 
 from test_sync_reconstruction import BINDING, IDENTITY, OWNER, Profile, fixture, operations
 
@@ -11,6 +12,7 @@ from mesh_plus.sync.cache import MovedHead
 from mesh_plus.sync.canonical import Atom, canonical, decode
 from mesh_plus.sync.commitment import MerkleMap, binding_digest, framed, native_root
 from mesh_plus.sync.model import NativeTag
+from mesh_plus.sync.reconstruction import MaterialRoot
 
 CLOCK = {"bootId": "reader-boot", "timeNamespace": "time:2"}
 NATIVE_BINDING = {**BINDING, "uid": os.getuid(), "bootId": "owner-boot", "clockDomain": "time:[1]"}
@@ -110,6 +112,22 @@ class CacheTests(unittest.TestCase):
         raw = proof(self.cache, self.candidate)
         self.now += 20
         return self.cache.confirm(self.candidate, raw, CLOCK)
+
+    def test_confirmation_never_reclaims_an_older_material_generation(self):
+        self.confirm()
+        for generation in (2, 3, 4):
+            raw, self.maps, self.tag = transaction(self.profile, self.maps, self.tag, generation, generation)
+            self.candidate = self.cache.stage(raw)
+            self.assertIsNone(self.cache.store.previous)
+            original = self.cache.ledger.release
+
+            def release(value):
+                self.assertNotIsInstance(value, MaterialRoot, "material reclamation entered compact confirmation")
+                return original(value)
+
+            with patch.object(self.cache.ledger, "release", side_effect=release):
+                self.confirm()
+            self.assertEqual(self.cache.store.current.tag.generation, generation)
 
     def test_only_fresh_proof_publishes_and_old_receipt_is_not_renewed(self):
         with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):

@@ -239,7 +239,7 @@ class ReconstructionTests(unittest.TestCase):
             store.close()
         self.assertEqual(store.ledger.used, 0)
 
-    def test_chained_stage_retires_predecessor_before_next_callback(self):
+    def test_each_new_stage_retires_predecessor_before_next_callback(self):
         profile = Profile()
         store = ReconstructionStore(profile, host="fixture")
         try:
@@ -252,7 +252,7 @@ class ReconstructionTests(unittest.TestCase):
                 if generation == 2:
                     store.advance_material()
                 maps, tag = after, next_tag
-            self.assertIsNotNone(store.previous)
+            self.assertIsNone(store.previous)
             profile.callback = lambda ctx: self.assertIsNone(store.previous)
             _, after, next_tag, next_cursor = fixture(profile, 4, 4)
             store.stage_delta(tag, next_tag, next_cursor, operations(maps, after))

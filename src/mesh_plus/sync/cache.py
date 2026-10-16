@@ -426,7 +426,7 @@ class OwnedSyncCache:
 
     @admission_boundary
     def confirm(self, candidate, proof, clock):
-        with self._lock:
+        with self._lock, self.ledger.allocations():
             retained = pending = None
             try:
                 root = self._candidate(candidate)
