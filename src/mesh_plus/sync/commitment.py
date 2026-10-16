@@ -195,6 +195,33 @@ class MerkleMap:
             else:
                 stack.extend((node.right, node.left))
 
+    def leaf_at(self, rank):
+        """Internal rank lookup for revocable lazy enumeration, O(tree height)."""
+        check(type(rank) is int and 0 <= rank < len(self), "sync_entry_rank")
+        node = self.node
+        while isinstance(node, Branch):
+            self.work.node_reads += 1
+            if rank < node.left.count:
+                node = node.left
+            else:
+                rank -= node.left.count
+                node = node.right
+        self.work.node_reads += 1
+        self.work.iterated_entries += 1
+        return node
+
+    def leaves(self):
+        """Explicit full enumeration for baseline construction/export only."""
+        stack = [] if self.node is None else [self.node]
+        while stack:
+            node = stack.pop()
+            self.work.node_reads += 1
+            if isinstance(node, Leaf):
+                self.work.iterated_entries += 1
+                yield node
+            else:
+                stack.extend((node.right, node.left))
+
     @classmethod
     def baseline(cls, space, entries, *, work=None):
         return cls.baseline_atoms(space, ((key, Atom.own(value)) for key, value in entries), work=work)
@@ -248,8 +275,13 @@ def binding_digest(binding, *, native):
 
 
 def body_digest(descriptor_digest, content):
+    return body_digest_encoded(descriptor_digest, canonical(content))
+
+
+def body_digest_encoded(descriptor_digest, encoded):
     check(type(descriptor_digest) is bytes and len(descriptor_digest) == 32, "sync_descriptor_digest")
-    return digest(b"mesh-sync-body\0" + framed(descriptor_digest) + framed(canonical(content)))
+    check(type(encoded) is bytes, "sync_canonical_body")
+    return digest(b"mesh-sync-body\0" + framed(descriptor_digest) + framed(encoded))
 
 
 def field_digest(descriptor_digest, identity, birth, name, value):

@@ -8,8 +8,19 @@ from .canonical import Atom, FrozenObject
 from .commitment import Branch, Leaf, MerkleMap, Work
 
 
+class OwnedUnit:
+    """Internal immutable allocation-unit protocol; never accepted from JSON."""
+
+    __slots__ = ()
+
+    def owned_children(self):
+        return ()
+
+
 def children(value):
     kind = type(value)
+    if isinstance(value, OwnedUnit):
+        return value.owned_children()
     if kind is Branch:
         return (value.left, value.right)
     if kind is Leaf:
@@ -101,6 +112,7 @@ class AllocationLedger:
         self.entries = {}
         self.used = self.encoded = self.reserved = self.peak = 0
         self.visited = self.reclaimed = 0
+        self._since_compaction = 0
 
     def reserve(self, amount):
         check(type(amount) is int and amount >= 0, "sync_reservation")
@@ -165,7 +177,16 @@ class AllocationLedger:
                 self.used -= entry.cost
                 self.encoded -= entry.encoded
                 self.reclaimed += 1
+                self._since_compaction += 1
                 pending.extend(id(child) for child in children(entry.value))
+        if not self.entries:
+            self.entries = {}  # retire the peak-sized dictionary capacity too
+            self._since_compaction = 0
+        elif self._since_compaction > len(self.entries) // 2:
+            # Rebuild only after proportional reclamation, never per sparse
+            # transaction. Work is charged to the entries actually retired.
+            self.entries = dict(self.entries.items())
+            self._since_compaction = 0
 
     def inspect(self):
         return {"decodedBytes": self.used, "encodedBytes": self.encoded, "reservedBytes": self.reserved,

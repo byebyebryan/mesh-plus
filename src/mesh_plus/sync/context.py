@@ -1,0 +1,73 @@
+"""Revocable indexed value references; keeping one never pins an old tree."""
+
+from collections.abc import Mapping, Sequence
+
+from .canonical import FrozenObject, thaw
+
+
+def _detach_scalar(value):
+    if type(value) is str:
+        return value.encode("utf-8").decode("utf-8")
+    if type(value) is int and not -5 <= value <= 256:
+        return int(str(value))
+    return value
+
+
+def reference(owner, permit, location, path=()):
+    with owner.borrow(permit, location, path) as value:
+        if type(value) is FrozenObject:
+            return ObjectRef(owner, permit, location, path)
+        if type(value) is tuple:
+            return ArrayRef(owner, permit, location, path)
+        return _detach_scalar(value)
+
+
+class _ValueRef:
+    __slots__ = ("_owner", "_permit", "_location", "_path")
+
+    def __setattr__(self, name, value):
+        if hasattr(self, name):
+            raise AttributeError("immutable sync value reference")
+        object.__setattr__(self, name, value)
+
+    def __init__(self, owner, permit, location, path):
+        self._owner, self._permit, self._location, self._path = owner, permit, location, path
+
+    def materialize(self):
+        """Explicit O(value) detached output; never an implicit header operation."""
+        with self._owner.borrow(self._permit, self._location, self._path) as value:
+            return thaw(value)
+
+    def __len__(self):
+        with self._owner.borrow(self._permit, self._location, self._path) as value:
+            return len(value)
+
+
+class ObjectRef(_ValueRef, Mapping):
+    __slots__ = ()
+
+    def __getitem__(self, key):
+        if type(key) is not str:
+            raise KeyError(key)
+        return reference(self._owner, self._permit, self._location, (*self._path, key))
+
+    def __iter__(self):
+        for i in range(len(self)):
+            with self._owner.borrow(self._permit, self._location, self._path) as value:
+                key = _detach_scalar(value._items[i][0])
+            yield key
+
+
+class ArrayRef(_ValueRef, Sequence):
+    __slots__ = ()
+
+    def __getitem__(self, index):
+        if type(index) is slice:
+            return [self[i] for i in range(*index.indices(len(self)))]
+        if type(index) is not int:
+            raise TypeError("array index must be an integer")
+        count = len(self)
+        index = index + count if index < 0 else index
+        if not 0 <= index < count:
+            raise IndexError(index)
+        return reference(self._owner, self._permit, self._location, (*self._path, index))
