@@ -1,3 +1,4 @@
+import gc
 import math
 import random
 import unittest
@@ -9,6 +10,29 @@ from mesh_plus.sync.ordered import OrderedMap, index_key
 
 
 class OrderedIndexTests(unittest.TestCase):
+    def test_prepaid_ordered_generations_reclaim_without_cyclic_gc(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        ledger = AllocationLedger()
+        try:
+            with ledger.allocations():
+                tree = OrderedMap.baseline(([i], i) for i in range(512))
+                self.assertGreater(ledger.pending_units, 512)
+                ledger.retain(tree)
+            self.assertEqual(ledger.pending_units, 0)
+            for i in range(100):
+                with ledger.allocations():
+                    updated = tree.put([i], -i - 1)
+                    ledger.retain(updated)
+                    ledger.release(tree)
+                    tree = updated
+                self.assertEqual((ledger.pending_units, ledger.reserved), (0, 0))
+            ledger.release(tree)
+            self.assertEqual((ledger.used, ledger.encoded, ledger.reserved), (0, 0, 0))
+        finally:
+            if enabled:
+                gc.enable()
+
     def test_sparse_order_matches_sorted_oracle_and_prior_root_is_immutable(self):
         generator = random.Random(714)
         keys = list(range(2000))

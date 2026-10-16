@@ -278,7 +278,7 @@ class _Transaction:
         self.store, self.before, self.binding, self.tag, self.cursor = store, before, binding, tag, cursor
         self.operations, self.tables, self.groups = operations, tables, groups
         self.indexes = dict(before.indexes) if before is not None else {
-            name: OrderedMap() if spec.ordered else MerkleMap("index/" + name)
+            name: OrderedMap.owned() if spec.ordered else MerkleMap("index/" + name)
             for name, spec in store.index_specs.items()}
         self.indexes.setdefault("$fields", MerkleMap("index/$fields"))
         self.indexes.setdefault("$body_refs", MerkleMap("index/$body_refs"))
@@ -288,7 +288,7 @@ class _Transaction:
         self.visits = VisitMeter(2_000_000 if before is None else 256 + len(operations) * 128)
         self.budget = BudgetRef(store.ledger)
         self.budget.charge(1024 + len(operations) * (sys.getsizeof(object.__new__(PublicOperation)) + 16))
-        self.retired_refs = []
+        self.retired_refs = {}
         self.member_operations = [operation for operation in operations if operation.space == "memberships"]
         self.affected_scopes, self.invalidations = (), ()
 
@@ -506,62 +506,38 @@ class ReconstructionStore:
 
     def _patch(self, tx, patch):
         check(type(patch) is DomainIndexPatch, "sync_domain_patch")
-        seen = set()
+        count = sum(len(getattr(patch, name)) for name in patch.__slots__)
+        tx.budget.charge(1024 + count * 256 + len(tx.member_operations) * 128)
+        seen = {}
+
+        def remember(index, key, code):
+            marker = index, key.encoded
+            check(marker not in seen, code)
+            # The duplicate registry borrows canonical buffers from these
+            # charged packed atoms, rather than retaining uncharged bytes
+            # after each temporary decoded key has been released.
+            seen[marker] = packed(key)
+
+        # Removes precede inserts so a legitimate key replacement at the
+        # declared entry cap does not need twice the final index capacity.
+        for remove in patch.removes:
+            check(type(remove) is IndexRemove and remove.index in self.index_specs, "sync_index_remove")
+            key = Atom.own(remove.key)
+            remember(remove.index, key, "sync_duplicate_index_operation")
+            tx.indexes[remove.index] = tx.indexes[remove.index].remove(thaw(key.value))
         for write in patch.writes:
             check(type(write) is IndexWrite and write.index in self.index_specs, "sync_index_write")
             key, value = Atom.own(write.key), Atom.own(write.value)
-            check((write.index, key.encoded) not in seen, "sync_duplicate_index_operation")
-            seen.add((write.index, key.encoded))
+            remember(write.index, key, "sync_duplicate_index_operation")
             spec = self.index_specs[write.index]
             check(len(value.encoded) <= spec.max_value_bytes, "sync_index_value_capacity")
             self.validators[write.index][0].validate(key, self.ledger)
             self.validators[write.index][1].validate(value, self.ledger)
             tx.indexes[write.index] = tx.indexes[write.index].put_atom(thaw(key.value), packed(value))
             check(len(tx.indexes[write.index]) <= spec.max_entries, "sync_index_entry_capacity")
-        for remove in patch.removes:
-            check(type(remove) is IndexRemove and remove.index in self.index_specs, "sync_index_remove")
-            key = Atom.own(remove.key)
-            check((remove.index, key.encoded) not in seen, "sync_duplicate_index_operation")
-            seen.add((remove.index, key.encoded))
-            tx.indexes[remove.index] = tx.indexes[remove.index].remove(thaw(key.value))
-        fields, field_refs, field_owners = {}, {}, {}
-        changed_fields = []
-        for item in patch.field_tokens:
-            check(type(item) is FieldTokenWrite and item.field in self.descriptor.fields, "sync_field_token")
-            # One patch submission owns each shared ref once, like deepcopy's
-            # memo. This memo never survives the callback/transaction boundary.
-            source_id = id(item.record_ref)
-            key = field_owners.get(source_id)
-            if key is None:
-                key = field_owners[source_id] = Atom.own(item.record_ref)
-            if key.encoded not in field_refs:
-                ref = thaw(key.value)
-                _record_ref(ref, tx)
-                slot = tx.tables["records"].get(ref[0])
-                valid = slot is not ABSENT and thaw(slot["birth"]) == ref[1]
-                field_refs[key.encoded] = ref, valid
-            ref, valid = field_refs[key.encoded]
-            check(item.token is None or valid, "sync_field_record_birth")
-            check(("$fields", key.encoded, item.field) not in seen, "sync_duplicate_field_token")
-            seen.add(("$fields", key.encoded, item.field))
-            if key.encoded not in fields:
-                old = tx.indexes["$fields"].get(thaw(key.value))
-                fields[key.encoded] = (key, {} if old is ABSENT else thaw(old))
-            values = fields[key.encoded][1]
-            if item.token is None:
-                # Record removal already retires its complete field/rule index.
-                check(item.field in values or ref in tx.retired_refs, "sync_missing_field_token")
-                values.pop(item.field, None)
-            else:
-                token = hex_digest(item.token)
-                if values.get(item.field) != token:
-                    changed_fields.append((key, item.field, token))
-                values[item.field] = token
-        for key, values in fields.values():
-            if values:
-                tx.indexes["$fields"] = tx.indexes["$fields"].put_atom(thaw(key.value), packed(Atom.own(values)))
-            elif tx.indexes["$fields"].get(thaw(key.value)) is not ABSENT:
-                tx.indexes["$fields"] = tx.indexes["$fields"].remove(thaw(key.value))
+        layout = ({name: (position, len(canonical(name))) for position, name in enumerate(self.descriptor.fields)}
+                  if patch.field_tokens or tx.member_operations else {})
+        fields = self._field_patch(tx, patch.field_tokens, layout)
         member_keys = {operation.key.encoded for operation in tx.member_operations}
         for operation in patch.membership_expansion:
             # Normalization of compact groups is a native-adapter responsibility;
@@ -576,25 +552,36 @@ class ReconstructionStore:
             self._apply(tx, normalized)
         # Cross-check affected field/member links using at most 32 cohort heads,
         # without another N-cell reverse index or a walk over untouched members.
-        for record, field, token in changed_fields:
+        for group in fields.values():
+            record, _, _, changed, _ = group
+            if not changed:
+                continue
             ref = thaw(record.value)
-            _record_ref(ref, tx)
             for cohort, _ in tx.groups.values():
-                leaf = tx.tables["memberships"].find([thaw(cohort.value), *ref, field])
-                check(leaf is ABSENT or leaf.atom.value == token, "sync_member_content_token")
+                for position, field in enumerate(self.descriptor.fields):
+                    if changed & (1 << position):
+                        token = self._group_token(group, field, layout)
+                        leaf = tx.tables["memberships"].find([thaw(cohort.value), *ref, field])
+                        check(leaf is ABSENT or leaf.atom.encoded == token, "sync_member_content_token")
         for operation in tx.member_operations:
             if operation.op != "put":
                 continue
             key = thaw(operation.key.value)
             ref = canonical(key[1:3])
             current = fields.get(ref)
-            values = tx.indexes["$fields"].get(key[1:3]) if current is None else current[1]
-            check(values is not ABSENT and values.get(key[3]) == operation.value.value, "sync_member_content_token")
+            if current is None:
+                tx.budget.charge(512 + len(layout) * 40)
+                record = packed(Atom.own(key[1:3]))
+                leaf = tx.indexes["$fields"].find_encoded(ref)
+                atom = ABSENT if leaf is ABSENT else leaf.atom
+                offsets = None if atom is ABSENT else self._token_offsets(atom, atom.value, layout)
+                current = fields[record.encoded] = [record, None, atom, 0, offsets]
+            token = self._group_token(current, key[3], layout)
+            check(token is not ABSENT and token == operation.value.encoded, "sync_member_content_token")
         for item in patch.changed_rules:
             check(type(item) is RuleWrite, "sync_rule_write")
             key, value = Atom.own(item.key), Atom.own(item.value)
-            check(("$rules", key.encoded) not in seen, "sync_duplicate_rule")
-            seen.add(("$rules", key.encoded))
+            remember("$rules", key, "sync_duplicate_rule")
             ref = thaw(key.value)
             _record_ref(ref, tx)
             slot = tx.tables["records"].get(ref[0])
@@ -603,8 +590,7 @@ class ReconstructionStore:
             tx.indexes["$rules"] = tx.indexes["$rules"].put_atom(ref, packed(value))
         for key in patch.removed_rules:
             owned = Atom.own(key)
-            check(("$rules", owned.encoded) not in seen, "sync_duplicate_rule")
-            seen.add(("$rules", owned.encoded))
+            remember("$rules", owned, "sync_duplicate_rule")
             if tx.indexes["$rules"].get(thaw(owned.value)) is not ABSENT:
                 tx.indexes["$rules"] = tx.indexes["$rules"].remove(thaw(owned.value))
         # These remain immutable, bounded data. They describe affected output;
@@ -613,6 +599,80 @@ class ReconstructionStore:
         tx.invalidations = tuple(Atom.own(item) for item in patch.invalidations)
         check(len(tx.affected_scopes) <= TABLE_LIMITS["scopes"] and
               len(tx.invalidations) <= 4096, "sync_patch_capacity")
+
+    @staticmethod
+    def _token_offsets(atom, keys, layout):
+        """Offsets into the canonical flat, hex-only private field dictionary.
+
+        Tokens were independently shape-checked before construction. Offsets
+        retain no decoded string/container graph and do not copy encoded bytes.
+        """
+        offsets, position = [-1] * len(layout), 1
+        for number, name in enumerate(sorted(keys)):
+            column, size = layout[name]
+            position += int(number > 0) + size + 1
+            offsets[column] = position
+            position += 66  # quotes and exactly 64 ASCII hex digits
+        check(position + 1 == len(atom.encoded), "sync_field_encoding")
+        return tuple(offsets)
+
+    @staticmethod
+    def _group_token(group, field, layout):
+        if group[2] is ABSENT:
+            return ABSENT
+        offset = group[4][layout[field][0]]
+        return ABSENT if offset < 0 else memoryview(group[2].encoded)[offset:offset + 66]
+
+    def _field_patch(self, tx, items, layout):
+        """Group compact owned refs; decode field dictionaries one at a time."""
+        groups, last_ref, last_key = {}, None, None
+        for item in items:
+            check(type(item) is FieldTokenWrite and item.field in self.descriptor.fields, "sync_field_token")
+            if last_key is not None and item.record_ref is last_ref:
+                key = last_key
+            else:
+                key = packed(Atom.own(item.record_ref))
+                last_ref, last_key = item.record_ref, key
+            group = groups.get(key.encoded)
+            if group is None:
+                tx.budget.charge(512 + len(layout) * 40)
+                group = groups[key.encoded] = [key, [], ABSENT, 0, None]
+            else:
+                last_key = group[0]
+            group[1].append(item)
+        for key, changes, _, _, _ in groups.values():
+            ref = thaw(key.value)
+            _record_ref(ref, tx)
+            slot = tx.tables["records"].get(ref[0])
+            valid = slot is not ABSENT and thaw(slot["birth"]) == ref[1]
+            old = tx.indexes["$fields"].get(ref)
+            values, seen, changed = {} if old is ABSENT else thaw(old), set(), 0
+            for item in changes:
+                check(item.token is None or valid, "sync_field_record_birth")
+                check(item.field not in seen, "sync_duplicate_field_token")
+                seen.add(item.field)
+                previous = values.get(item.field, ABSENT)
+                if item.token is None:
+                    # Record retirement has already removed this whole index.
+                    check(previous is not ABSENT or key.encoded in tx.retired_refs, "sync_missing_field_token")
+                    values.pop(item.field, None)
+                    different = previous is not ABSENT
+                else:
+                    token = hex_digest(item.token)
+                    values[item.field] = token
+                    different = previous != token
+                if different:
+                    changed |= 1 << self.descriptor.fields.index(item.field)
+            atom = packed(Atom.own(values)) if values else ABSENT
+            if values:
+                tx.indexes["$fields"] = tx.indexes["$fields"].put_atom(ref, atom)
+            elif old is not ABSENT:
+                tx.indexes["$fields"] = tx.indexes["$fields"].remove(ref)
+            group = groups[key.encoded]
+            group[1].clear()  # borrowed patch entries are no longer needed
+            group[2], group[3] = atom, changed
+            group[4] = None if atom is ABSENT else self._token_offsets(atom, values, layout)
+        return groups
 
     def _links(self, tx):
         """Maintain record/body/observation references using affected keys only."""
@@ -680,9 +740,9 @@ class ReconstructionStore:
         if old is not ABSENT and (new is ABSENT or old["body"] != new["body"]):
             links = links.remove(old["body"])
         if old is not ABSENT and (new is ABSENT or old["birth"] != new["birth"]):
-            tx.budget.charge(1024 + sum(sys.getsizeof(part) for part in identity) + sys.getsizeof(old["birth"][0]))
             ref = [identity, thaw(old["birth"])]
-            tx.retired_refs.append(ref)
+            owned = packed(Atom.own(ref))
+            tx.retired_refs[owned.encoded] = owned
             if tx.indexes["$fields"].get(ref) is not ABSENT:
                 tx.indexes["$fields"] = tx.indexes["$fields"].remove(ref)
             if tx.indexes["$rules"].get(ref) is not ABSENT:
@@ -698,7 +758,8 @@ class ReconstructionStore:
         return links, False
 
     def _member_links(self, tx):
-        for identity, birth in tx.retired_refs:
+        for retired in tx.retired_refs.values():
+            identity, birth = thaw(retired.value)
             cohorts = {encoded: cohort for encoded, (cohort, _) in tx.groups.items()}
             if tx.before is not None:
                 cohorts.update({encoded: cohort for encoded, (cohort, _) in tx.before.groups})

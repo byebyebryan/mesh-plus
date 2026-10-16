@@ -5,10 +5,12 @@ null, bool, integer, string, array, object; composite values compare
 lexicographically. A facade chooses keys that encode its reviewed native order.
 """
 
+import sys
 from dataclasses import dataclass
 from functools import cmp_to_key
 
 from ..protocol import check
+from ._allocation import TrackedAllocation, finish, prepay
 from .budget import OwnedUnit
 from .canonical import Atom, FrozenObject, PackedAtom, thaw
 from .commitment import ABSENT
@@ -33,7 +35,7 @@ def compare(left, right):
 
 
 @dataclass(frozen=True, slots=True)
-class OrderedNode(OwnedUnit):
+class OrderedNode(OwnedUnit, TrackedAllocation):
     key: Atom
     atom: Atom
     left: object
@@ -42,7 +44,10 @@ class OrderedNode(OwnedUnit):
     count: int
 
     def owned_children(self):
-        return self.key, self.atom, self.left, self.right, self.height, self.count
+        return self.key, self.atom, self.left, self.right
+
+    def owned_intrinsic(self):
+        return sum(sys.getsizeof(value) for value in (self.height, self.count) if value > 256)
 
 
 def _height(node):
@@ -54,8 +59,13 @@ def _count(node):
 
 
 def _node(key, value, left=None, right=None):
-    return OrderedNode(key, value, left, right, 1 + max(_height(left), _height(right)),
-                       1 + _count(left) + _count(right))
+    reservation = prepay(1024)
+    try:
+        return finish(OrderedNode(key, value, left, right, 1 + max(_height(left), _height(right)),
+                                  1 + _count(left) + _count(right)), reservation)
+    finally:
+        if reservation is not None:
+            reservation.close()
 
 
 def _balance(key, value, left, right):
@@ -74,11 +84,20 @@ def _balance(key, value, left, right):
 
 
 @dataclass(frozen=True, slots=True)
-class OrderedMap(OwnedUnit):
+class OrderedMap(OwnedUnit, TrackedAllocation):
     node: OrderedNode | None = None
 
     def owned_children(self):
         return (self.node,)
+
+    @classmethod
+    def owned(cls, node=None):
+        reservation = prepay(512)
+        try:
+            return finish(cls(node), reservation)
+        finally:
+            if reservation is not None:
+                reservation.close()
 
     def __len__(self):
         return _count(self.node)
@@ -114,7 +133,7 @@ class OrderedMap(OwnedUnit):
             return _balance(node.key, node.atom, node.left, insert(node.right))
 
         try:
-            return OrderedMap(insert(self.node))
+            return OrderedMap.owned(insert(self.node))
         finally:
             insert = None
 
@@ -138,7 +157,7 @@ class OrderedMap(OwnedUnit):
             return _balance(successor.key, successor.atom, node.left, delete(node.right, successor.key.value))
 
         try:
-            return OrderedMap(delete(self.node, owned.value))
+            return OrderedMap.owned(delete(self.node, owned.value))
         finally:
             delete = None
 
@@ -167,10 +186,7 @@ class OrderedMap(OwnedUnit):
 
     @classmethod
     def baseline(cls, entries):
-        values = [(Atom.own(key), Atom.own(value)) for key, value in entries]
-        values.sort(key=cmp_to_key(lambda a, b: compare(a[0].value, b[0].value)))
-        check(all(compare(values[i - 1][0].value, values[i][0].value) != 0
-                  for i in range(1, len(values))), "sync_duplicate_key")
+        scratch, values = prepay(1024), []
 
         def build(start, stop):
             if start == stop:
@@ -180,10 +196,19 @@ class OrderedMap(OwnedUnit):
             return _node(key, value, build(start, middle), build(middle + 1, stop))
 
         try:
-            return cls(build(0, len(values)))
+            for key, value in entries:
+                if scratch is not None and len(values) % 64 == 0:
+                    scratch.grow(192 * 64)
+                values.append((Atom.own(key), Atom.own(value)))
+            values.sort(key=cmp_to_key(lambda a, b: compare(a[0].value, b[0].value)))
+            check(all(compare(values[i - 1][0].value, values[i][0].value) != 0
+                      for i in range(1, len(values))), "sync_duplicate_key")
+            return cls.owned(build(0, len(values)))
         finally:
             build = None
             values.clear()
+            if scratch is not None:
+                scratch.close()
 
 
 def index_key(node):

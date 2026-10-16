@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 from dataclasses import replace
 
 from mesh_plus.protocol import ProtocolError
@@ -11,6 +12,7 @@ from mesh_plus.sync.model import (
     DomainIndexPatch,
     FieldTokenWrite,
     HeadRules,
+    IndexRemove,
     IndexSpec,
     IndexWrite,
     NativeTag,
@@ -96,6 +98,91 @@ def operations(before, after):
 
 
 class ReconstructionTests(unittest.TestCase):
+    def test_atomic_index_key_replacement_needs_only_final_declared_capacity(self):
+        class Churn(Profile):
+            def _admit(self, ctx):
+                result = super()._admit(ctx)
+                value = result.writes[0].value["value"]
+                return replace(result, writes=(IndexWrite("facts", [value], {"value": value}),),
+                               removes=() if ctx.base_tag is None else (IndexRemove("facts", [value - 1]),))
+
+        profile = Churn()
+        profile.descriptor = replace(profile.descriptor, indexes=(replace(profile.descriptor.indexes[0], max_entries=1),))
+        store = ReconstructionStore(profile, host="fixture")
+        try:
+            tables, before, tag, cursor = fixture(profile)
+            store.stage_baseline(BINDING, tag, cursor, tables)
+            store.advance_material()
+            _, after, target, cursor = fixture(profile, 2, 2)
+            root = store.stage_delta(tag, target, cursor, operations(before, after))
+            self.assertEqual([(key, thaw(value)) for key, value in dict(root.indexes)["facts"].items()],
+                             [([2], {"value": 2})])
+        finally:
+            store.close()
+
+    def test_removing_field_token_cannot_leave_an_unchanged_membership_cell(self):
+        class RemoveField(Profile):
+            def stage_delta(self, ctx):
+                return DomainIndexPatch(field_tokens=(FieldTokenWrite([IDENTITY, BIRTH], "runtime", None),))
+
+        profile = RemoveField()
+        tables, _, _, _ = fixture(profile)
+        token = field_digest(bytes.fromhex(profile.descriptor.native_descriptor_digest), IDENTITY,
+                             BIRTH, "runtime", {"value": 1}).hex()
+        cohort = ["provider", "scope", "runtime"]
+        members = MerkleMap.baseline("cohort-members", [([IDENTITY, BIRTH, "runtime"], token)])
+        tables["memberships"] = [([cohort, IDENTITY, BIRTH, "runtime"], token)]
+        tables["cohorts"] = [(cohort, {"seal": [1, members.root.hex(), 1]})]
+        maps = {name: MerkleMap.baseline(name, values) for name, values in tables.items()}
+        binding = binding_digest(BINDING, native=True).hex()
+        before = NativeTag(binding, 1, native_root(BINDING, 1, maps).hex())
+        target = NativeTag(binding, 2, native_root(BINDING, 2, maps).hex())
+        store = ReconstructionStore(profile, host="fixture")
+        try:
+            store.stage_baseline(BINDING, before, (OWNER, 1, before.root), tables)
+            store.advance_material()
+            with self.assertRaisesRegex(ProtocolError, "sync_member_content_token"):
+                store.stage_delta(before, target, (OWNER, 2, target.root), ())
+            self.assertIsNone(store.candidate)
+            self.assertEqual(store.current.tag, before)
+        finally:
+            store.close()
+
+    def test_interleaved_field_groups_with_distinct_equal_refs_keep_all_tokens(self):
+        class Interleaved(Profile):
+            def _admit(self, ctx):
+                result = super()._admit(ctx)
+                extras = tuple(FieldTokenWrite(deepcopy(item.record_ref), field, "44" * 32)
+                               for field in ("phase", 'runtime"tail', "雪") for item in result.field_tokens)
+                return replace(result, field_tokens=extras + result.field_tokens)
+
+        profile = Interleaved()
+        profile.descriptor = replace(profile.descriptor, fields=(*profile.descriptor.fields, 'runtime"tail', "雪"))
+        tables, _, _, _ = fixture(profile)
+        other = [*IDENTITY[:-1], "other"]
+        body = {"identity": other, "value": 2}
+        digest = body_digest(bytes.fromhex(profile.descriptor.native_descriptor_digest), body).hex()
+        tables["records"].append((other, {"birth": BIRTH, "body": digest, "order": other, "scope": "scope"}))
+        tables["bodies"].append((digest, body))
+        tables["observations"].append(([other, BIRTH], {"stamp": 1}))
+        cohort = ["provider", "scope", "support"]
+        members = [([identity, BIRTH, field], "44" * 32)
+                   for identity in (IDENTITY, other) for field in ("phase", 'runtime"tail', "雪")]
+        tree = MerkleMap.baseline("cohort-members", members)
+        tables["memberships"] = [([cohort, *key], value) for key, value in members]
+        tables["cohorts"] = [(cohort, {"seal": [1, tree.root.hex(), len(tree)]})]
+        maps = {name: MerkleMap.baseline(name, values) for name, values in tables.items()}
+        tag = NativeTag(binding_digest(BINDING, native=True).hex(), 1, native_root(BINDING, 1, maps).hex())
+        store = ReconstructionStore(profile, host="fixture")
+        try:
+            root = store.stage_baseline(BINDING, tag, (OWNER, 1, tag.root), tables)
+            for identity in (IDENTITY, other):
+                values = dict(root.indexes)["$fields"].get([identity, BIRTH])
+                self.assertEqual(set(values), {"runtime", "phase", 'runtime"tail', "雪"})
+                self.assertEqual(values["phase"], "44" * 32)
+        finally:
+            store.close()
+
     def test_failed_schema_setup_releases_already_prepared_index_schemas(self):
         profile = Profile()
         large = IndexSpec("large", canonical({"type": "string", "description": "x" * 8192}), b"{}")

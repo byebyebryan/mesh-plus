@@ -27,14 +27,18 @@ def main():
     observer, output = args.observer_checkout.resolve(), args.output.resolve()
     if not output.is_relative_to(ROOT):
         parser.error("write evidence only inside the owning Mesh repository")
-    if output.exists():
+    if any(path.exists() for path in (output, output.with_suffix(".gate1.log"), output.with_suffix(".gate2.log"))):
         parser.error("preserve prior evidence; choose a new output path")
-    mesh_paths = [*ROOT.glob("src/mesh_plus/**/*.py"), *ROOT.glob("tests/test_sync_*.py"),
-                  *ROOT.glob("scripts/check*.py"), ROOT / "pyproject.toml", ROOT / "contracts/LOCK.json",
-                  ROOT / "docs/delta-sync-contract-appendix.md"]
-    observer_paths = [*observer.glob("agent_observer/*.py"), *observer.glob("agent_observer/contracts/*.json"),
-                      observer / "tests/test_mesh_sync_profile.py", observer / "tests/test_service_state.py"]
-    before = {"mesh": inputs(ROOT, mesh_paths), "observer": inputs(observer, observer_paths)}
+
+    def snapshot():
+        mesh_paths = [*ROOT.glob("src/mesh_plus/**/*.py"), *ROOT.glob("tests/test_sync_*.py"),
+                      *ROOT.glob("scripts/check*.py"), ROOT / "pyproject.toml", ROOT / "contracts/LOCK.json",
+                      ROOT / "docs/delta-sync-contract-appendix.md"]
+        observer_paths = [*observer.glob("agent_observer/*.py"), *observer.glob("agent_observer/contracts/*.json"),
+                          observer / "tests/test_mesh_sync_profile.py", observer / "tests/test_service_state.py"]
+        return {"mesh": inputs(ROOT, mesh_paths), "observer": inputs(observer, observer_paths)}
+
+    before = snapshot()
     output.parent.mkdir(parents=True, exist_ok=True)
     commands = [["rtk", "proxy", sys.executable, "scripts/check.py"],
                 ["rtk", "proxy", sys.executable, "-m", "unittest", "discover", "-s", str(observer / "tests"),
@@ -51,7 +55,7 @@ def main():
         runs.append({"argv": command, "exitCode": completed.returncode,
                      "tests": None if not counts else int(counts[-1]),
                      "log": str(log.relative_to(ROOT)), "logSha256": hashlib.sha256(log.read_bytes()).hexdigest()})
-    after = {"mesh": inputs(ROOT, mesh_paths), "observer": inputs(observer, observer_paths)}
+    after = snapshot()
     stable = before == after
     report = {"kind": "owned acquisition and preallocation source checkpoint; not G1/G2 acceptance",
               "checkedAtUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
