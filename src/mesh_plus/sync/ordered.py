@@ -10,7 +10,7 @@ from functools import cmp_to_key
 
 from ..protocol import check
 from .budget import OwnedUnit
-from .canonical import Atom, FrozenObject, thaw
+from .canonical import Atom, FrozenObject, PackedAtom, thaw
 from .commitment import ABSENT
 
 
@@ -100,7 +100,7 @@ class OrderedMap(OwnedUnit):
         return self.put_atom(key, Atom.own(value))
 
     def put_atom(self, key, atom):
-        check(type(atom) is Atom, "sync_owned_atom")
+        check(type(atom) in (Atom, PackedAtom), "sync_owned_atom")
         owned = Atom.own(key)
 
         def insert(node):

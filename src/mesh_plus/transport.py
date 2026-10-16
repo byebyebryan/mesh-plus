@@ -107,10 +107,11 @@ async def within_deadline(awaitable, deadline_ms):
 
 
 class LineChannel:
-    def __init__(self, reader, writer, incoming, *, process=None, io_timeout=2.0, reached_nonce=None):
+    def __init__(self, reader, writer, incoming, *, process=None, io_timeout=2.0, reached_nonce=None, codec=None):
         self.reader, self.writer, self.incoming = reader, writer, incoming
         self.outgoing = "server" if incoming == "client" else "client"
         self.process = process
+        self.codec = codec
         self.maximum = MAX_MESSAGE
         self.io_timeout = io_timeout
         self.lock = asyncio.Lock()
@@ -180,7 +181,8 @@ class LineChannel:
             raise EOFError("channel_closed") from error
         maximum = min(self.maximum, MAX_CONTROL) if self.incoming == "client" else self.maximum
         check(len(raw) <= maximum + 1 and b"\r" not in raw and b"\n" not in raw[:-1], "line_framing")
-        value = decode(raw[:-1], self.incoming, maximum)
+        value = (decode(raw[:-1], self.incoming, maximum) if self.codec is None else
+                 self.codec.decode(raw[:-1], self.incoming, maximum))
         check(self.reached_count <= 1, "duplicate_reached_marker")
         check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
         self._metrics["receivedFrames"] += 1
@@ -205,8 +207,12 @@ class LineChannel:
         return self._reached
 
     async def send(self, value):
-        raw = encode(value)
-        validate(value, self.outgoing, len(raw), self.maximum)
+        if self.codec is None:
+            raw = encode(value)
+            validate(value, self.outgoing, len(raw), self.maximum)
+        else:
+            raw = self.codec.encode(value)
+            self.codec.validate(value, self.outgoing, len(raw), self.maximum)
         async with self.lock:
             check(not self.closed, "channel_closed")
             self.writer.write(raw + b"\n")
@@ -258,7 +264,7 @@ def peer_uid(writer):
     return struct.unpack("3i", peer.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))[1]
 
 
-async def connect_ipc(path, *, timeout=2, maximum=MAX_MESSAGE):
+async def connect_ipc(path, *, timeout=2, maximum=MAX_MESSAGE, codec=None):
     path = Path(path)
     check(path.is_absolute() and path.parent.resolve() == path.parent, "ipc_socket_path")
     parent = path.parent.lstat()
@@ -277,27 +283,30 @@ async def connect_ipc(path, *, timeout=2, maximum=MAX_MESSAGE):
         with contextlib.suppress(Exception):
             await writer.wait_closed()
         raise
-    return LineChannel(reader, writer, "server")
+    channel = LineChannel(reader, writer, "server", codec=codec)
+    channel.maximum = maximum
+    return channel
 
 
-async def subprocess_channel(argv, *, reached_nonce=None):
+async def subprocess_channel(argv, *, reached_nonce=None, codec=None):
     """Local trusted argv only; never accept executable paths from wire metadata."""
     process = await asyncio.create_subprocess_exec(*argv, stdin=asyncio.subprocess.PIPE,
                                                  stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
                                                  limit=MAX_MESSAGE + 1)
-    return LineChannel(process.stdout, process.stdin, "server", process=process, reached_nonce=reached_nonce)
+    return LineChannel(process.stdout, process.stdin, "server", process=process, reached_nonce=reached_nonce, codec=codec)
 
 
 def ssh_argv(destination, source_id, *, bridge="mesh-plus", executable="ssh", nonce=None,
-             timeout_seconds=2, attempts=1):
+             timeout_seconds=2, attempts=1, sync=False):
     check(isinstance(destination, str) and bool(destination) and not destination.startswith("-") and
           not any(c.isspace() or ord(c) < 32 for c in destination), "ssh_destination")
     check(isinstance(source_id, str) and bool(source_id) and len(source_id) <= 128 and
           all(c.isascii() and (c.isalnum() or c in "_.-") for c in source_id), "source_id")
     check(bridge == "mesh-plus", "bridge_command")
+    check(type(sync) is bool, "bridge_command")
     check(type(timeout_seconds) is int and 1 <= timeout_seconds <= 60 and type(attempts) is int and
           1 <= attempts <= 10, "ssh_policy")
-    domain = [bridge, "bridge", "--source", source_id, "--stdio"]
+    domain = [bridge, "sync-bridge" if sync else "bridge", "--source", source_id, "--stdio"]
     if nonce is None:
         command = shlex.join(domain)
     else:
@@ -320,10 +329,11 @@ async def connect_ssh(destination, source_id, *, executable="ssh", timeout_secon
 class IPCServer:
     """Private leased listener; recovers only a proved abandoned owned socket."""
 
-    def __init__(self, path, handler, *, max_clients=32):
+    def __init__(self, path, handler, *, max_clients=32, codec=None):
         self.path = Path(path)
         self.handler = handler
         self.max_clients = max_clients
+        self.codec = codec
         self.tasks = set()
         self.server = None
         self.inode = None
@@ -387,7 +397,7 @@ class IPCServer:
 
     async def _accept(self, reader, writer):
         task = asyncio.current_task()
-        channel = LineChannel(reader, writer, "client")
+        channel = LineChannel(reader, writer, "client", codec=self.codec)
         if self.closing or len(self.tasks) >= self.max_clients or peer_uid(writer) != os.getuid():
             await channel.close()
             return

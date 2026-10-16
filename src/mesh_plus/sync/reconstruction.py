@@ -8,14 +8,16 @@ import contextlib
 import secrets
 import threading
 from dataclasses import dataclass
+from functools import wraps
 
 from jsonschema import Draft202012Validator
 
 from ..protocol import ProtocolError, check
 from .budget import AllocationLedger, OwnedUnit
-from .canonical import Atom, FrozenObject, canonical, decode, thaw
-from .commitment import ABSENT, MerkleMap, binding_digest, body_digest_encoded, native_root
+from .canonical import Atom, FrozenObject, PackedAtom, canonical, decode, packed, thaw
+from .commitment import ABSENT, MerkleMap, binding_digest, body_digest_encoded, native_root_encoded
 from .context import reference
+from .decoder import DecoderArena
 from .model import (
     SPACES,
     DomainIndexPatch,
@@ -31,6 +33,14 @@ from .ordered import OrderedMap, index_key
 
 TABLE_LIMITS = {"records": 4096, "bodies": 4096, "observations": 4096, "memberships": 9 * 4096,
                 "receipts": 32, "cohorts": 32, "scopes": 65536, "metadata": 65536}
+
+
+def _decoding(method):
+    @wraps(method)
+    def run(self, *args, **kwargs):
+        with self._arena.active():
+            return method(self, *args, **kwargs)
+    return run
 
 
 @dataclass(frozen=True, slots=True)
@@ -154,9 +164,6 @@ class PublicStateRef:
     def lookup(self, space, key):
         encoded = canonical(key)
         location = (self._side, "table", space, encoded)
-        with self._store.borrow(self._permit, location, ()) as value:
-            if value is ABSENT:
-                return ABSENT
         return reference(self._store, self._permit, location)
 
     def index(self, name):
@@ -176,9 +183,6 @@ class PublicIndexRef:
 
     def get(self, key):
         location = (self._side, "index", self._name, canonical(key))
-        with self._store.borrow(self._permit, location, ()) as value:
-            if value is ABSENT:
-                return ABSENT
         return reference(self._store, self._permit, location)
 
     def iter_keys(self, prefix=None):
@@ -279,15 +283,19 @@ class ReconstructionStore:
         self._fingerprint = self.fingerprint()
         self._metadata = (self.descriptor, self.host)
         self.ledger.retain(self._metadata)
+        try:
+            self._arena = DecoderArena(self.ledger)
+        except BaseException:
+            self.ledger.release(self._metadata)
+            raise
         self.last_work = {}
         self.native_descriptor_digest = bytes.fromhex(self.descriptor.native_descriptor_digest)
 
     def fingerprint(self):
         objects = [self.profile.descriptor]
-        objects.extend(getattr(self.profile.descriptor, name) for name in self.descriptor.__slots__)
-        for spec in self.profile.descriptor.indexes:
-            objects.append(spec)
-            objects.extend(getattr(spec, name) for name in spec.__slots__)
+        # SyncDescriptor/IndexSpec are exact frozen slotted types, containing
+        # only immutable scalars/bytes/tuples. Identity replacement is checked;
+        # there is no mutable field dictionary to walk on every value lookup.
         for name in ("admit_baseline", "stage_delta", "check_head", "export_committed"):
             callback = getattr(self.profile, name, None)
             check(callable(callback), "sync_profile_interface")
@@ -313,7 +321,7 @@ class ReconstructionStore:
 
     @contextlib.contextmanager
     def borrow(self, permit, location, path):
-        with self._lock:
+        with self._lock, self._arena.active():
             tx = self.check_permit(permit)
             tx.visits.charge()
             side, kind, space, encoded = location
@@ -331,11 +339,31 @@ class ReconstructionStore:
                 else:
                     maps = tx.tables if kind == "table" else tx.indexes
                 table = maps.get(space)
-                leaf = ABSENT if table is None else table.find(decode(encoded))
+                leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
+                                                      else table.find(decode(encoded)))
                 value = ABSENT if leaf is ABSENT else leaf.atom.value
             for part in path:
                 value = value[part]
             yield value
+
+    def materialization_budget(self, permit, location):
+        with self._lock:
+            tx = self.check_permit(permit)
+            tx.visits.charge()
+            side, kind, space, encoded = location
+            if side == "operation":
+                operation = tx.operations[int(space)]
+                atom = operation.key if kind == "key" else operation.value
+            elif kind == "binding":
+                atom = tx.binding
+            else:
+                maps = (tx.tables if kind == "table" else tx.indexes) if side == "after" else (
+                    {} if tx.before is None else dict(tx.before.tables if kind == "table" else tx.before.indexes))
+                table = maps.get(space)
+                leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
+                                                      else table.find(decode(encoded)))
+                atom = None if leaf is ABSENT else leaf.atom
+            return 0 if atom is None else atom.copy_budget
 
     def index_next(self, permit, side, name, rank, prefix):
         with self._lock:
@@ -392,11 +420,13 @@ class ReconstructionStore:
         old = tx.tables[operation.space]
         expected = ABSENT if operation.expected is None else bytes.fromhex(hex_digest(operation.expected))
         if operation.op == "put":
-            check(type(operation.value) is Atom, "sync_operation_value")
+            check(type(operation.value) in (Atom, PackedAtom), "sync_operation_value")
             if operation.space == "bodies":
                 check(type(key) is str and body_digest_encoded(self.native_descriptor_digest,
                                                               operation.value.encoded).hex() == key, "sync_body_digest")
-            tx.tables[operation.space] = old.put_atom(key, operation.value, expected=expected)
+            atom = (operation.value if operation.space in {"receipts", "cohorts", "metadata"}
+                    else packed(operation.value))
+            tx.tables[operation.space] = old.put_atom(key, atom, expected=expected)
         else:
             check(operation.expected is not None and operation.value is None, "sync_remove_shape")
             tx.tables[operation.space] = old.remove(key, expected=expected)
@@ -431,7 +461,7 @@ class ReconstructionStore:
             check(len(value.encoded) <= spec.max_value_bytes, "sync_index_value_capacity")
             self.validators[write.index][0].validate(thaw(key.value))
             self.validators[write.index][1].validate(thaw(value.value))
-            tx.indexes[write.index] = tx.indexes[write.index].put_atom(thaw(key.value), value)
+            tx.indexes[write.index] = tx.indexes[write.index].put_atom(thaw(key.value), packed(value))
             check(len(tx.indexes[write.index]) <= spec.max_entries, "sync_index_entry_capacity")
         for remove in patch.removes:
             check(type(remove) is IndexRemove and remove.index in self.index_specs, "sync_index_remove")
@@ -466,7 +496,7 @@ class ReconstructionStore:
                 values[item.field] = token
         for key, values in fields.values():
             if values:
-                tx.indexes["$fields"] = tx.indexes["$fields"].put(thaw(key.value), values)
+                tx.indexes["$fields"] = tx.indexes["$fields"].put_atom(thaw(key.value), packed(Atom.own(values)))
             elif tx.indexes["$fields"].get(thaw(key.value)) is not ABSENT:
                 tx.indexes["$fields"] = tx.indexes["$fields"].remove(thaw(key.value))
         for operation in patch.membership_expansion:
@@ -504,7 +534,7 @@ class ReconstructionStore:
             slot = tx.tables["records"].get(ref[0])
             check(slot is not ABSENT and thaw(slot["birth"]) == ref[1], "sync_rule_record_birth")
             check(len(value.encoded) <= 16384, "sync_rule_capacity")
-            tx.indexes["$rules"] = tx.indexes["$rules"].put_atom(ref, value)
+            tx.indexes["$rules"] = tx.indexes["$rules"].put_atom(ref, packed(value))
         for key in patch.removed_rules:
             owned = Atom.own(key)
             check(("$rules", owned.encoded) not in seen, "sync_duplicate_rule")
@@ -568,7 +598,7 @@ class ReconstructionStore:
                     updates.append((new["body"], identity))
         for body, identity in updates:
             check(links.find(body) is ABSENT, "sync_shared_record_body")
-            links = links.put(body, identity)
+            links = links.put_atom(body, packed(Atom.own(identity)))
         tx.indexes["$body_refs"] = links
         check(len(links) == len(tx.tables["bodies"]) == len(tx.tables["records"]), "sync_orphan_body")
         check(len(tx.tables["observations"]) == len(tx.tables["records"]), "sync_orphan_observations")
@@ -618,7 +648,7 @@ class ReconstructionStore:
         self._member_links(tx)
         self._seals(tx)
         tx.budget.close()
-        computed = native_root(thaw(tx.binding.value), tx.tag.generation, tx.tables).hex()
+        computed = native_root_encoded(tx.binding.encoded, tx.tag.generation, tx.tables).hex()
         check(computed == tx.tag.root, "sync_result_root")
         continuing = tx.before is not None and tx.before is self.candidate
         changes = {} if not continuing else {(item.space, item.key.encoded): item for item in tx.before.changes}
@@ -627,6 +657,7 @@ class ReconstructionStore:
         root = MaterialRoot(tx.binding, tx.tag, tx.cursor, tuple(tx.tables.items()), tuple(tx.indexes.items()),
                             tuple(tx.groups.items()), tuple(changes.values()), change_base,
                             tx.affected_scopes, tx.invalidations)
+        self._arena.clear()
         self.ledger.retain(root, reservation=reservation)
         if self.candidate is not None:
             self.ledger.release(self.candidate)
@@ -635,6 +666,7 @@ class ReconstructionStore:
                           "changedKeys": len(tx.changes), **self.ledger.inspect()}
         return root
 
+    @_decoding
     def stage_baseline(self, binding, tag, cursor, tables, *, reservation=None):
         with self._lock:
             self._check()
@@ -648,7 +680,9 @@ class ReconstructionStore:
             check(binding_digest(private_binding, native=True).hex() == tag.binding, "sync_binding_digest")
             check(type(cursor) is tuple and cursor == (private_binding["ownerEpoch"], tag.generation, tag.root), "sync_cursor")
             check(all(len(tables[name]) <= TABLE_LIMITS[name] for name in SPACES), "sync_table_capacity")
-            built = {name: MerkleMap.baseline(name, tables[name]) for name in SPACES}
+            built = {name: MerkleMap.baseline_atoms(name, ((key, Atom.own(value) if name in {"receipts", "cohorts", "metadata"}
+                                                          else packed(Atom.own(value))) for key, value in tables[name]))
+                     for name in SPACES}
             check(all(len(built[name]) <= TABLE_LIMITS[name] for name in SPACES), "sync_table_capacity")
             for leaf in built["bodies"].leaves():
                 check(body_digest_encoded(self.native_descriptor_digest, leaf.atom.encoded).hex() == decode(leaf.key),
@@ -665,6 +699,7 @@ class ReconstructionStore:
                 tx.budget.close()
                 self._transaction = None
 
+    @_decoding
     def stage_delta(self, base, result, cursor, operations, *, reservation=None):
         with self._lock:
             self._check()
@@ -699,16 +734,30 @@ class ReconstructionStore:
         with self._lock:
             self._check()
             check(self._transaction is None and self.candidate is not None, "sync_no_candidate")
+            self._arena.clear()
             if self.previous is not None:
                 self.ledger.release(self.previous)
             self.previous, self.current, self.candidate = self.current, self.candidate, None
             return self.current.tag
+
+    def retire_material(self):
+        """Explicit replacement boundary after authority/refs were revoked."""
+        with self._lock:
+            self._check()
+            check(self._transaction is None, "sync_reentrant_admission")
+            self._arena.clear()
+            for name in ("previous", "current", "candidate"):
+                root = getattr(self, name)
+                if root is not None:
+                    self.ledger.release(root)
+                    setattr(self, name, None)
 
     def close(self):
         with self._lock:
             if self._closed:
                 return
             self._closed = True
+            self._arena.close()
             for name in ("previous", "current", "candidate"):
                 root = getattr(self, name)
                 if root is not None:

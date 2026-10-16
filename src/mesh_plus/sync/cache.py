@@ -9,17 +9,27 @@ from dataclasses import dataclass
 from hashlib import sha256
 
 from ..evidence import clock_domain
-from ..protocol import ProtocolError, check
+from ..protocol import check
 from ..view import remote_expiry
+from ._boundary import MovedHead, admission_boundary
 from ._constants import SYNC_PROTOCOL
 from .budget import AllocationLedger, OwnedUnit
 from .canonical import Atom, canonical, decode, thaw
-from .commitment import ABSENT, binding_digest, source_root
+from .commitment import ABSENT, MerkleMap, binding_digest, source_root
 from .context import reference
 from .model import HeadRules, NativeTag, OriginalReceipt, SourceTag
 from .ordered import OrderedMap, index_key
 from .reconstruction import BudgetRef, PublicIndexRef, ReconstructionStore, VisitMeter
-from .wire import MAX_PROOF, closed, decode_reservation, entries, operations, owner_clock, read_native
+from .wire import (
+    MAX_NATIVE,
+    MAX_PROOF,
+    closed,
+    decode_reservation,
+    entries,
+    operations,
+    owner_clock,
+    read_native,
+)
 
 
 def _now():
@@ -84,9 +94,6 @@ class ViewRef:
 
     def lookup(self, space, key):
         location = ("view", "table", space, canonical(key))
-        with self._owner.borrow(self._permit, location, ()) as value:
-            if value is ABSENT:
-                return ABSENT
         return reference(self._owner, self._permit, location)
 
     def index(self, name):
@@ -126,12 +133,6 @@ class ChangeSet:
     keys: tuple
     affected_scopes: tuple
     invalidations: tuple
-
-
-class MovedHead(ProtocolError):
-    def __init__(self, tag):
-        super().__init__("sync_head_moved")
-        self.tag = tag
 
 
 @dataclass(frozen=True, slots=True)
@@ -184,6 +185,9 @@ class OwnedSyncCache:
         self.reason = "unconfirmed"
         self._closed = False
         self._transaction_tokens = ()
+        self._known_head = None
+        self._retired_bindings = ()
+        self._last_head_clock = None
 
     def _check(self):
         check(not self._closed, "sync_cache_closed")
@@ -221,20 +225,30 @@ class OwnedSyncCache:
             check(type(reason) is str and 0 < len(reason) <= 256, "sync_revoke_reason")
             self._view_permit = self._proof = self._proof_context = None
             self.reason = reason
+            self.store._arena.clear()
             if self._confirmation is not None:
                 self.ledger.release(self._confirmation)
                 self._confirmation = None
 
+    @admission_boundary
     def admit_baseline(self, raw):
         with self._lock:
             self._check()
             self.revoke("baseline_pending")
             self._discard_candidate()
             self._transaction_tokens = ()
+            # A replacement has no readable old root after revocation. Retire
+            # it before cold/recovery admission instead of retaining two full
+            # rosters during parsing. Deltas retain their immutable base.
+            self.store.retire_material()
+            retained_input = False
             try:
-                with self.ledger.reserve(decode_reservation(raw)):
-                    document = read_native(raw, self.descriptor)
-                    check(document["kind"] == "baseline", "sync_expected_baseline")
+                from .streaming import baseline_header
+                check(type(raw) is bytes and len(raw) <= MAX_NATIVE, "sync_message_capacity")
+                self.ledger.retain(raw)
+                retained_input = True
+                document, reservation = baseline_header(raw, self.descriptor, self.ledger)
+                with reservation:
                     root = self.store.stage_baseline(document["nativeBinding"], NativeTag.parse(document["tag"]),
                                                      tuple(document["cursor"]), document["tables"])
                 return self._mint(root)
@@ -242,7 +256,11 @@ class OwnedSyncCache:
                 self._discard_candidate()
                 self.revoke("invalid_baseline")
                 raise
+            finally:
+                if retained_input:
+                    self.ledger.release(raw)
 
+    @admission_boundary
     def stage(self, raw):
         with self._lock:
             self._check()
@@ -268,6 +286,7 @@ class OwnedSyncCache:
                 self.revoke("invalid_transaction")
                 raise
 
+    @admission_boundary
     def stage_batch(self, base, frames):
         with self._lock:
             self._check()
@@ -304,7 +323,7 @@ class OwnedSyncCache:
 
     @contextlib.contextmanager
     def borrow(self, permit, location, path):
-        with self._lock:
+        with self._lock, self.store._arena.active():
             root = self._view_root(permit)
             side, kind, space, encoded = location
             check(side == "view", "sync_reference_side")
@@ -316,7 +335,8 @@ class OwnedSyncCache:
             else:
                 maps = dict(root.tables if kind == "table" else root.indexes)
                 table = maps.get(space)
-                leaf = ABSENT if table is None else table.find(decode(encoded))
+                leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
+                                                      else table.find(decode(encoded)))
                 value = ABSENT if leaf is ABSENT else leaf.atom.value
             if self._proof_context is not None and permit == self._proof_context[0]:
                 self._proof_context[3].charge()
@@ -344,6 +364,26 @@ class OwnedSyncCache:
                     return None
             return None
 
+    def materialization_budget(self, permit, location):
+        with self._lock:
+            root = self._view_root(permit)
+            _, kind, space, encoded = location
+            if kind == "binding":
+                atom = root.binding
+            elif kind == "head":
+                check(self._proof_context is not None and permit == self._proof_context[0], "sync_reference_retired")
+                atom = self._proof_context[2]
+            else:
+                maps = dict(root.tables if kind == "table" else root.indexes)
+                table = maps.get(space)
+                leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
+                                                      else table.find(decode(encoded)))
+                atom = None if leaf is ABSENT else leaf.atom
+            if self._proof_context is not None and permit == self._proof_context[0]:
+                self._proof_context[3].charge()
+            return 0 if atom is None else atom.copy_budget
+
+    @admission_boundary
     def confirm(self, candidate, proof, clock):
         with self._lock:
             retained = None
@@ -367,10 +407,22 @@ class OwnedSyncCache:
                     check(canonical(head["challenge"]) == pending[1].encoded, "sync_nonce")
                     actual = NativeTag.parse(head["tag"])
                     check(canonical(document["sourceTag"]) == canonical(self._tag(actual).wire()), "sync_proof_source_root")
+                    known = self._known_head
+                    check(actual.binding not in self._retired_bindings, "sync_owner_retired")
+                    if known is not None and actual.binding == known.binding:
+                        check(actual.generation > known.generation or actual == known, "sync_head_regression")
+                    elif known is not None:
+                        check(len(self._retired_bindings) < 4, "sync_owner_history_capacity")
+                        self._retired_bindings = (*self._retired_bindings, known.binding)
+                    self._known_head = actual
                     if actual != root.tag:
                         raise MovedHead(actual)
                     native_binding = thaw(root.binding.value)
                     owner_clock(head["ownerClock"], native_binding)
+                    observed = head["ownerClock"]["boottimeMs"]
+                    previous_clock = self._last_head_clock
+                    check(previous_clock is None or previous_clock[0] != actual.binding or
+                          previous_clock[1] <= observed, "sync_head_clock_regression")
                     self._head_matches(root, head)
                     rules = self._head_rules(root, candidate._tag, head)
                     check(self._candidate(candidate) is root, "sync_candidate_retired")
@@ -384,6 +436,7 @@ class OwnedSyncCache:
                 if self._confirmation is not None:
                     self.ledger.release(self._confirmation)
                 self._confirmation = result
+                self._last_head_clock = actual.binding, observed
                 retained = None
                 self._view_permit = secrets.token_hex(16)
                 self.reason = "confirmed"
@@ -490,6 +543,7 @@ class OwnedSyncCache:
             confirmation = self._confirmation
             check(type(now_ms) is int and now_ms >= confirmation.received_ms and
                   canonical(clock) == self._clock.encoded, "sync_reader_clock")
+            now_ms = max(now_ms, self._now_ms())
             expiries = {key.encoded: expiry for key, expiry in confirmation.expiries}
             return {"status": "confirmed", "host": self._binding.value["host"], "source": self._binding.value["source"],
                     "profile": self.descriptor.profile_id, "tag": self._tag(root.tag).wire(),

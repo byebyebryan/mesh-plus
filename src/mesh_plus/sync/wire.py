@@ -4,7 +4,12 @@ import re
 from hashlib import sha256
 
 from ..protocol import check
-from .canonical import Atom, canonical, decode
+from .canonical import (  # noqa: F401 - public internal preflight seam
+    Atom,
+    canonical,
+    decode,
+    decode_reservation,
+)
 from .commitment import framed
 from .model import SPACES, NativeTag, hex_digest
 from .reconstruction import TABLE_LIMITS, Operation
@@ -111,31 +116,3 @@ def operations(document):
     return tuple(Operation(name, change[0], Atom.own(change[1]), change[2],
                            None if change[0] == "remove" else Atom.own(change[3]))
                  for name in SPACES for change in document["operations"][name])
-
-
-def decode_reservation(raw, maximum=MAX_NATIVE):
-    """Conservative lexical preflight before JSON allocates its object graph.
-
-    Scans received bytes only, never retained state. Container/string/scalar
-    bounds include temporary decoder allocations; malformed input is rejected
-    by the strict decoder after this bounded reservation is acquired.
-    """
-    check(type(raw) is bytes and len(raw) <= maximum, "sync_message_capacity")
-    strings = containers = scalars = 0
-    quoted = escaped = False
-    for byte in raw:
-        if quoted:
-            if escaped:
-                escaped = False
-            elif byte == 92:
-                escaped = True
-            elif byte == 34:
-                quoted = False
-        elif byte == 34:
-            quoted = True
-            strings += 1
-        elif byte in (91, 123):
-            containers += 1
-        elif byte in (44, 58):
-            scalars += 1
-    return 4096 + len(raw) * 4 + strings * 96 + containers * 256 + scalars * 32

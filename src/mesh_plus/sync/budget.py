@@ -4,7 +4,8 @@ import sys
 from dataclasses import dataclass
 
 from ..protocol import check
-from .canonical import Atom, FrozenObject
+from ._allocation import TrackedAllocation
+from .canonical import Atom, FrozenObject, PackedAtom
 from .commitment import Branch, Leaf, MerkleMap, Work
 
 
@@ -16,6 +17,9 @@ class OwnedUnit:
     def owned_children(self):
         return ()
 
+    def owned_intrinsic(self):
+        return 0
+
 
 def children(value):
     kind = type(value)
@@ -25,7 +29,7 @@ def children(value):
         return (value.left, value.right)
     if kind is Leaf:
         return (value.atom,)
-    if kind is Atom:
+    if kind in (Atom, PackedAtom):
         return ()
     if kind is FrozenObject:
         return (value._items,)
@@ -73,8 +77,11 @@ def allocation_size(value):
         buffers = (value.key, value.example, value.value_hash, value.root)
         size += sum(sys.getsizeof(buffer) for buffer in buffers)
         encoded = sum(len(buffer) for buffer in buffers)
-    elif kind is Atom:
-        size += sys.getsizeof(value.encoded) + _payload_size(value.value)
+    elif kind in (Atom, PackedAtom):
+        size += sys.getsizeof(value.encoded)
+        if kind is Atom:
+            size += _payload_size(value.value)
+        size += sys.getsizeof(value.copy_budget) if value.copy_budget > 256 else 0
         encoded = len(value.encoded)
     elif kind is MerkleMap:
         size += sum(sys.getsizeof(buffer) for buffer in (value._framed_space, value._empty))
@@ -83,6 +90,8 @@ def allocation_size(value):
         size += 512  # bounded counter integers, including future increments
     elif kind is bytes:
         encoded = len(value)
+    if isinstance(value, OwnedUnit):
+        size += value.owned_intrinsic()
     return size, encoded
 
 
@@ -97,10 +106,10 @@ class _Tracked:
 class AllocationLedger:
     """Only new paths are visited; shared held children terminate traversal.
 
-    Charges actual private object/container sizes plus a conservative per-unit allowance
-    for the ledger's dictionary, reference integer and bookkeeping allocations.
-    Grouping node-intrinsic bytes avoids a ledger object per hash/string. Owned
-    atoms have private payloads; aliases share the atom, not its borrowed tree.
+    Dominant immutable nodes/atoms carry private accounting slots, avoiding a
+    second dictionary/object graph per node. Other bounded composite allocations
+    use a small side table. Node-intrinsic buffers are grouped with their owner.
+    Owned atoms have private payloads; aliases share the atom, not its tree.
     Private byte buffers count toward the independent encoded retention cap too.
     This is a hard owned-cache budget, not a substitute for aggregate RSS gates.
     """
@@ -110,6 +119,8 @@ class AllocationLedger:
         check(type(encoded_maximum) is int and encoded_maximum > 0, "sync_encoded_budget")
         self.maximum, self.encoded_maximum = maximum, encoded_maximum
         self.entries = {}
+        self._roots = {}
+        self.units = 0
         self.used = self.encoded = self.reserved = self.peak = 0
         self.visited = self.reclaimed = 0
         self._since_compaction = 0
@@ -121,64 +132,129 @@ class AllocationLedger:
         self.peak = max(self.peak, self.used + self.reserved)
         return Reservation(self, amount)
 
+    def _state(self, value):
+        if isinstance(value, TrackedAllocation):
+            owner = getattr(value, "_allocation_owner", None)
+            check(owner is None or owner is self, "sync_allocation_owner")
+            return None if owner is None else value
+        return self.entries.get(id(value))
+
+    def _refs(self, value, state):
+        return state._allocation_refs if isinstance(value, TrackedAllocation) else state.refs
+
+    def _set_refs(self, value, state, refs):
+        if isinstance(value, TrackedAllocation):
+            object.__setattr__(state, "_allocation_refs", refs)
+        else:
+            state.refs = refs
+
+    def _create(self, value, cost, encoded):
+        if isinstance(value, TrackedAllocation):
+            for name, item in (("owner", self), ("refs", 1), ("cost", cost), ("encoded", encoded)):
+                object.__setattr__(value, "_allocation_" + name, item)
+        else:
+            self.entries[id(value)] = _Tracked(value, 1, cost, encoded)
+        self.units += 1
+        self.used += cost
+        self.encoded += encoded
+
+    def _forget(self, value, state):
+        if isinstance(value, TrackedAllocation):
+            cost, encoded = state._allocation_cost, state._allocation_encoded
+            object.__setattr__(state, "_allocation_owner", None)
+            for name in ("refs", "cost", "encoded"):
+                object.__setattr__(state, "_allocation_" + name, 0)
+        else:
+            cost, encoded = state.cost, state.encoded
+            del self.entries[id(value)]
+            self._since_compaction += 1
+        self.units -= 1
+        self.used -= cost
+        self.encoded -= encoded
+
     def retain(self, root, *, reservation=None):
-        plan = {}
-        visiting = set()
-
-        def visit(value):
-            key = id(value)
-            if key in self.entries or key in plan:
-                return
-            check(key not in visiting, "sync_owned_graph_cycle")
-            visiting.add(key)
-            edges = children(value)
-            # Edges are read directly from immutable units, not duplicated into
-            # a second retained graph of Python id integers/tuples.
-            intrinsic, encoded = allocation_size(value)
-            cost = intrinsic + 256
-            self.visited += 1
-            for child in edges:
-                visit(child)
-            visiting.remove(key)
-            plan[key] = _Tracked(value, 0, cost, encoded)
-
-        visit(root)
-        credit = 0
+        # A small rollback log replaces a second per-node planning graph. Every
+        # increment is undone on failure, including aliases to existing roots.
+        touched, active = [], set()
+        # The log is a flat list of borrowed object pointers, not one Python
+        # bookkeeping object per node. A fixed DFS allowance covers the bounded
+        # Patricia depth; the list's capacity is bounded before each append.
+        scratch_base = min(65536, self.maximum // 32)
+        scratch = scratch_base
+        credit = 0 if reservation is None else reservation.amount
         if reservation is not None:
             check(reservation.ledger is self and not reservation.closed, "sync_reservation")
-            credit = reservation.amount
-        added = sum(entry.cost for entry in plan.values())
-        encoded = sum(entry.encoded for entry in plan.values())
-        check(self.used + self.reserved - credit + added <= self.maximum, "sync_decoded_capacity")
-        check(self.encoded + encoded <= self.encoded_maximum, "sync_encoded_capacity")
-        # Validation/planning above has no retained-ledger mutation on failure.
-        for key, entry in plan.items():
-            self.entries[key] = entry
-        for entry in plan.values():
-            for child in children(entry.value):
-                self.entries[id(child)].refs += 1
-        self.entries[id(root)].refs += 1
-        self.used += added
-        self.encoded += encoded
-        if reservation is not None:
-            reservation.close()
-        self.peak = max(self.peak, self.used + self.reserved)
-        return root
+        root_cost = 224 if id(root) not in self._roots else 0
+        check(self.used + self.reserved - credit + root_cost + scratch_base <= self.maximum,
+              "sync_decoded_capacity")
+        self.reserved += root_cost + scratch_base
+
+        def visit(value):
+            nonlocal scratch
+            check(id(value) not in active, "sync_owned_graph_cycle")
+            state = self._state(value)
+            intrinsic, encoded = (0, 0) if state is not None else allocation_size(value)
+            # Slots include their four pointer slots. 96 further bytes cover
+            # their mutable size/ref integers. Root registrations are separate.
+            cost = 0 if state is not None else intrinsic + (96 if isinstance(value, TrackedAllocation) else 256)
+            check(self.used + self.reserved - credit + cost + 16 <= self.maximum, "sync_decoded_capacity")
+            check(self.encoded + encoded <= self.encoded_maximum, "sync_encoded_capacity")
+            self.reserved += 16  # flat rollback log capacity, before append
+            scratch += 16
+            touched.append(value)
+            if state is not None:
+                self._set_refs(value, state, self._refs(value, state) + 1)
+            else:
+                self._create(value, cost, encoded)
+                self.visited += 1
+                active.add(id(value))
+                for child in children(value):
+                    visit(child)
+                active.remove(id(value))
+            self.peak = max(self.peak, self.used + self.reserved - credit)
+
+        try:
+            visit(root)
+            key = id(root)
+            previous = self._roots.get(key)
+            self._roots[key] = (root, 1 if previous is None else previous[1] + 1)
+            self.used += root_cost
+            if reservation is not None:
+                reservation.close()
+            return root
+        except BaseException:
+            for value in reversed(touched):
+                state = self._state(value)
+                refs = self._refs(value, state) - 1
+                if refs:
+                    self._set_refs(value, state, refs)
+                else:
+                    self._forget(value, state)
+            raise
+        finally:
+            self.reserved -= scratch + root_cost
 
     def release(self, root):
-        pending = [id(root)]
+        registration = self._roots.get(id(root))
+        check(registration is not None, "sync_owned_release")
+        if registration[1] == 1:
+            del self._roots[id(root)]
+            self.used -= 224
+            if not self._roots:
+                self._roots = {}
+        else:
+            self._roots[id(root)] = (root, registration[1] - 1)
+        pending = [root]
         while pending:
-            key = pending.pop()
-            entry = self.entries.get(key)
-            check(entry is not None and entry.refs > 0, "sync_owned_release")
-            entry.refs -= 1
-            if entry.refs == 0:
-                del self.entries[key]
-                self.used -= entry.cost
-                self.encoded -= entry.encoded
+            value = pending.pop()
+            state = self._state(value)
+            check(state is not None and self._refs(value, state) > 0, "sync_owned_release")
+            refs = self._refs(value, state) - 1
+            self._set_refs(value, state, refs)
+            if refs == 0:
+                self._forget(value, state)
                 self.reclaimed += 1
-                self._since_compaction += 1
-                pending.extend(id(child) for child in children(entry.value))
+                pending.extend(children(value))
         if not self.entries:
             self.entries = {}  # retire the peak-sized dictionary capacity too
             self._since_compaction = 0
@@ -190,7 +266,7 @@ class AllocationLedger:
 
     def inspect(self):
         return {"decodedBytes": self.used, "encodedBytes": self.encoded, "reservedBytes": self.reserved,
-                "peakBytes": self.peak, "uniqueAllocations": len(self.entries),
+                "peakBytes": self.peak, "uniqueAllocations": self.units,
                 "newAllocationVisits": self.visited, "reclaimedAllocations": self.reclaimed}
 
 

@@ -172,3 +172,58 @@ publisher/Reader IPC and fixed-SSH transport, deadline/cancellation integration,
 new schema/lock review, resource/performance gates and installed qualification.
 The current lexical input reservation is deliberately conservative and is not
 evidence that the 2000-row dense fixture fits the accepted aggregate cap.
+
+## Packed values and streaming baseline checkpoint
+
+Material containers/long scalar values can retain their exact canonical bytes
+in a private packed atom. This changes no logical value, value hash, body ID or
+map/cohort/native/source root. Public refs use a 16-entry quota-accounted decoder
+arena; confirmation/revoke/replacement/close retires its decoded entries.
+`ref.materialization_bytes` supplies a pre-copy bound for detached containers,
+computed while owning new values, with no query-time traversal of a roster.
+
+Baseline input is now scanned into immutable byte spans and decoded one table
+entry at a time, including duplicate-key, number, Unicode, structure and whole
+native-envelope depth checks. It does not allocate a second full roster DTO.
+The input buffer, bounded header and entry parse reservations are charged.
+A baseline explicitly revokes and retires the prior material replacement before
+building its candidate; deltas retain their immutable base. A failed replacement
+has no confirmed view. This permits bounded cold/recovery admission rather than
+requiring two complete old/new rosters to survive the whole parse.
+
+Dominant immutable nodes/atoms use private accounting slots instead of a second
+per-node object/dictionary graph. Retain is transactional and rolls back alias
+counts after a quota failure. Public admission errors clear private stage frames
+from exception chains; retaining an error cannot retain a retired cache graph.
+Fresh heads also reject known generation/clock regressions and a retired binding.
+Bounded binding-history exhaustion requires a new request/cache lifecycle.
+
+`scripts/profile-sync-source.py` is an explicit, synthetic sibling-source
+diagnostic. It records exact input hashes and refuses a changing counterpart;
+it opens no service/socket and makes no package or sibling file changes.
+The valid fixture now records an attempt before accepting its sample, so the
+separate legacy Service 4 full frame passes its original receipt checks.
+The source diagnostic is not paired CPU/RSS or installed acceptance. The current
+500-row/four-membership case retains about 11 MB and peaks at about 17.4 MB
+accounted storage. Its expanded native baseline is 2,125,267 bytes versus the
+same full legacy frame's 683,333 bytes. At 2000 rows the expanded native baseline
+still fails `sync_frame_limit`; the legacy full frame is 2,726,333 bytes.
+Compact native packing is therefore a required remaining gate, not an optional
+improvement or a reason to enlarge the accepted bounds.
+
+The generic transport has an explicit opt-in codec seam and a fixed
+`sync-bridge` SSH command builder. No sync CLI/server route is advertised yet.
+The old default codec/command are preserved and covered by the core gate.
+The publisher role is under joint clarification: G0's O(1) source wrapper may
+permit a transport-only relay with no admitted/current query capabilities,
+while each authority Reader independently admits all material and proves its
+root. Full publisher admission remains the default requirement until that
+interpretation is explicitly settled. A fresh per-SSH publisher plus Reader
+cold admission must not silently exceed the absolute 15-second acquisition.
+
+Remaining resource work includes preallocation charging of every staged graph
+object, exact private validator accounting, dense nine-field/full+active
+aggregate cases, actual peak/RSS and reclamation gates. Publisher/Reader owned
+transport, compact normalization, concrete new schemas/vectors/lock review,
+installed wheels, all required matched performance trials and owner acceptance
+remain unfinished. No runtime/schema/artifact/rollout readiness is claimed.

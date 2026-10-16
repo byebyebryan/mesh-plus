@@ -129,6 +129,8 @@ class CacheTests(unittest.TestCase):
         refreshed = self.cache.confirm(self.candidate, raw, CLOCK)
         self.assertEqual(refreshed.context(self.now, CLOCK)["receipts"][0]["expiresMs"], expiry)
         self.assertFalse(refreshed.context(expiry, CLOCK)["receipts"][0]["current"])
+        self.now = expiry + 1
+        self.assertFalse(refreshed.context(11_020, CLOCK)["receipts"][0]["current"])
 
     def test_nonce_consumption_and_cross_cache_capability(self):
         raw = proof(self.cache, self.candidate)
@@ -155,6 +157,16 @@ class CacheTests(unittest.TestCase):
         with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
             self.cache.acquire()
 
+    def test_known_moved_head_cannot_reauthorize_the_older_material(self):
+        self.confirm()
+        _, _, moved = baseline(self.profile, 2, 2)
+        with self.assertRaises(MovedHead):
+            self.cache.confirm(self.candidate, proof(self.cache, self.candidate, tag=moved), CLOCK)
+        with self.assertRaisesRegex(ProtocolError, "sync_head_regression"):
+            self.cache.confirm(self.candidate, proof(self.cache, self.candidate), CLOCK)
+        with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
+            self.cache.acquire()
+
     def test_validation_time_is_inside_proof_deadline(self):
         def slow(ctx):
             self.now += 2001
@@ -165,6 +177,38 @@ class CacheTests(unittest.TestCase):
             self.cache.confirm(self.candidate, raw, CLOCK)
         self.assertIsNone(self.cache.store.current)
         self.assertIsNotNone(self.cache.store.candidate)
+
+    def test_pre_copy_bound_does_not_decode_or_export_the_roster(self):
+        view = self.confirm()
+        body = view.lookup("bodies", view.lookup("records", IDENTITY)["body"])
+        size = body.materialization_bytes
+        self.assertGreaterEqual(size, 248 + 72 * 2)
+        self.assertEqual(body["identity"].materialization_bytes, size)
+        detached = body.materialize()
+        detached["identity"][0] = "other"
+        self.assertEqual(body["identity"][0], "fixture")
+        self.cache.disconnect()
+        with self.assertRaisesRegex(ProtocolError, "sync_view_retired"):
+            body.materialization_bytes
+
+    def test_public_failure_traceback_keeps_no_private_stage_frames(self):
+        self.profile.head_callback = lambda ctx: (_ for _ in ()).throw(ValueError("native_domain_rejected"))
+        saved = None
+        try:
+            self.cache.confirm(self.candidate, proof(self.cache, self.candidate), CLOCK)
+        except ProtocolError as error:
+            saved = error
+        self.assertIsNotNone(saved)
+        self.assertEqual(str(saved), "native_domain_rejected")
+        self.assertIsNone(saved.__cause__)
+        self.assertIsNone(saved.__context__)
+        trace = saved.__traceback__
+        while trace is not None:
+            name = trace.tb_frame.f_code.co_name
+            self.assertNotIn(name, {"confirm", "_head_rules", "stage_baseline", "stage_delta"})
+            trace = trace.tb_next
+        self.cache.close()
+        self.assertEqual(self.cache.ledger.used, 0)
 
     def test_receipt_and_clock_mutations_fail_closed(self):
         cases = [lambda doc: doc["head"]["originalReceipts"][0][1].update(accepted=2),

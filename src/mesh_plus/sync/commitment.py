@@ -4,7 +4,8 @@ from dataclasses import dataclass
 from hashlib import sha256
 
 from ..protocol import check
-from .canonical import Atom, canonical, decode
+from ._allocation import TrackedAllocation
+from .canonical import Atom, PackedAtom, canonical, decode
 
 ABSENT = object()
 ANY = object()
@@ -32,7 +33,7 @@ class Work:
 
 
 @dataclass(frozen=True, slots=True)
-class Leaf:
+class Leaf(TrackedAllocation):
     key: bytes
     example: bytes
     atom: Atom
@@ -42,7 +43,7 @@ class Leaf:
 
 
 @dataclass(frozen=True, slots=True)
-class Branch:
+class Branch(TrackedAllocation):
     split: int
     prefix: bytes
     left: object
@@ -60,7 +61,7 @@ def _bit(value, bit):
     return (value[bit // 8] >> (7 - bit % 8)) & 1
 
 
-class MerkleMap:
+class MerkleMap(TrackedAllocation):
     """Immutable roots; updates return another map sharing unchanged subtrees.
 
     Work is an optional shared instrumentation counter. Enumeration is explicit;
@@ -116,6 +117,16 @@ class MerkleMap:
 
     def find(self, key):
         encoded, hashed = self._key(key)
+        return self._find(encoded, hashed)
+
+    def find_encoded(self, encoded):
+        """Lookup from an already-owned canonical query key, without decoding."""
+        check(type(encoded) is bytes, "sync_key_bytes")
+        self.work.key_hashes += 1
+        hashed = digest(b"mesh-sync-key\0" + self._framed_space + framed(encoded))
+        return self._find(encoded, hashed)
+
+    def _find(self, encoded, hashed):
         node = self.node
         while node is not None:
             self.work.node_reads += 1
@@ -137,7 +148,7 @@ class MerkleMap:
         return self.put_atom(key, Atom.own(value), expected=expected)
 
     def put_atom(self, key, atom, *, expected=ANY):
-        check(type(atom) is Atom, "sync_atom")
+        check(type(atom) in (Atom, PackedAtom), "sync_atom")
         encoded, hashed = self._key(key)
 
         def insert(node):
@@ -232,7 +243,7 @@ class MerkleMap:
         result = cls(space, work=work)
         leaves = []
         for key, atom in entries:
-            check(type(atom) is Atom, "sync_atom")
+            check(type(atom) in (Atom, PackedAtom), "sync_atom")
             encoded, hashed = result._key(key)
             leaves.append(result._leaf(encoded, hashed, atom))
         leaves.sort(key=lambda leaf: leaf.example)
@@ -258,9 +269,15 @@ class MerkleMap:
 
 
 def native_root(binding, generation, tables):
+    return native_root_encoded(canonical(binding), generation, tables)
+
+
+def native_root_encoded(encoded_binding, generation, tables):
+    """Internal fast path for an already privately owned canonical binding."""
+    check(type(encoded_binding) is bytes, "sync_native_binding")
     check(type(generation) is int and 0 <= generation < 2**64, "sync_generation")
     summary = [[name, table.root.hex(), len(table)] for name, table in sorted(tables.items())]
-    return digest(b"mesh-sync-native\0" + framed(canonical(binding)) + generation.to_bytes(8, "big") +
+    return digest(b"mesh-sync-native\0" + framed(encoded_binding) + generation.to_bytes(8, "big") +
                   framed(canonical(summary)))
 
 

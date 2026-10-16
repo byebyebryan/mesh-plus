@@ -156,6 +156,33 @@ class CommitmentTests(unittest.TestCase):
 
 
 class AllocationTests(unittest.TestCase):
+    def test_mid_graph_failure_rolls_back_alias_counts_on_existing_root(self):
+        ledger = AllocationLedger()
+        original = MerkleMap.baseline("records", [(str(i), {"value": i}) for i in range(500)])
+        ledger.retain(original)
+        before = ledger.used, ledger.encoded, ledger.units
+        changed = original.put("100", {"large": "x" * 16384}).put("200", {"changed": True})
+        ledger.maximum = ledger.used + 4096
+        with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+            ledger.retain(changed)
+        self.assertEqual((ledger.used, ledger.encoded, ledger.units), before)
+        self.assertEqual(ledger.reserved, 0)
+        self.assertEqual(original.get("100")["value"], 100)
+        ledger.release(original)
+        self.assertEqual((ledger.used, ledger.encoded, ledger.units), (0, 0, 0))
+
+    def test_private_nodes_cannot_escape_to_an_independent_accounting_pool(self):
+        first, second = AllocationLedger(), AllocationLedger()
+        tree = MerkleMap.baseline("records", [(str(i), i) for i in range(32)])
+        first.retain(tree)
+        with self.assertRaisesRegex(ProtocolError, "sync_allocation_owner"):
+            second.retain(tree)
+        self.assertEqual(second.used, 0)
+        first.release(tree)
+        second.retain(tree)
+        second.release(tree)
+        self.assertEqual(second.used, 0)
+
     def test_dense_nine_field_memberships_share_atoms_within_default_cap(self):
         fields = ("runtime", "phase", "kind", "savedIdentity", "activity", "outcome",
                   "workspace", "lastUpdated", "latestTurn")

@@ -38,6 +38,15 @@ class _ValueRef:
         with self._owner.borrow(self._permit, self._location, self._path) as value:
             return thaw(value)
 
+    @property
+    def materialization_bytes(self):
+        """Pre-copy bound for detached containers, without walking the value.
+
+        Subvalue refs conservatively use their containing atom's bound.
+        Immutable scalar leaves are shared, as in deepcopy; no root is shared.
+        """
+        return self._owner.materialization_budget(self._permit, self._location)
+
     def __len__(self):
         with self._owner.borrow(self._permit, self._location, self._path) as value:
             return len(value)
