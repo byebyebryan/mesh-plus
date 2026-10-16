@@ -1,0 +1,132 @@
+{
+  "scope": "G1 source-only generic commitment microfixture; not Agent admission, installed/native/performance acceptance",
+  "runtime_digests": {
+    "src/mesh_plus/sync/__init__.py": "a0e035da44e40dc72ba0d526634612a64b51ee1fcb2a527ab70bbb355e140e8a",
+    "src/mesh_plus/sync/budget.py": "6c2607537e566f8a8271c099e2bca33b8996aa11dd5af94be3c7c99babf59acb",
+    "src/mesh_plus/sync/canonical.py": "1f39d26e1fbe09d2535b2ab45c92634ba5e090fcee71c91ddc51e359e820ff2e",
+    "src/mesh_plus/sync/commitment.py": "d1fa2ee193d68c4293e9656e9e84e25c360e6596545123e1a93f5a628948dc38"
+  },
+  "cases": [
+    {
+      "members": 100,
+      "logicalMemberEdits": 1,
+      "groupedSealEdits": 1,
+      "cohortHeadEdits": 1,
+      "stableCohortId": "c0",
+      "work": [
+        {
+          "node_reads": 8,
+          "node_writes": 8,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 7,
+          "iterated_entries": 0
+        },
+        {
+          "node_reads": 8,
+          "node_writes": 8,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 7,
+          "iterated_entries": 0
+        },
+        {
+          "node_reads": 1,
+          "node_writes": 1,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 0,
+          "iterated_entries": 0
+        }
+      ],
+      "newAllocationVisits": 24,
+      "ownedAllocationBytesWithPredecessor": 325258,
+      "remainingOwnedBytesAfterClose": 0
+    },
+    {
+      "members": 500,
+      "logicalMemberEdits": 1,
+      "groupedSealEdits": 1,
+      "cohortHeadEdits": 1,
+      "stableCohortId": "c0",
+      "work": [
+        {
+          "node_reads": 11,
+          "node_writes": 11,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 10,
+          "iterated_entries": 0
+        },
+        {
+          "node_reads": 12,
+          "node_writes": 12,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 11,
+          "iterated_entries": 0
+        },
+        {
+          "node_reads": 1,
+          "node_writes": 1,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 0,
+          "iterated_entries": 0
+        }
+      ],
+      "newAllocationVisits": 31,
+      "ownedAllocationBytesWithPredecessor": 1566191,
+      "remainingOwnedBytesAfterClose": 0
+    },
+    {
+      "members": 2000,
+      "logicalMemberEdits": 1,
+      "groupedSealEdits": 1,
+      "cohortHeadEdits": 1,
+      "stableCohortId": "c0",
+      "work": [
+        {
+          "node_reads": 12,
+          "node_writes": 12,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 11,
+          "iterated_entries": 0
+        },
+        {
+          "node_reads": 12,
+          "node_writes": 12,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 11,
+          "iterated_entries": 0
+        },
+        {
+          "node_reads": 1,
+          "node_writes": 1,
+          "key_hashes": 1,
+          "value_hashes": 1,
+          "branch_hashes": 0,
+          "iterated_entries": 0
+        }
+      ],
+      "newAllocationVisits": 32,
+      "ownedAllocationBytesWithPredecessor": 6211311,
+      "remainingOwnedBytesAfterClose": 0
+    }
+  ],
+  "dense2000NineFieldMembershipsOnly": {
+    "decodedBytes": 47644268,
+    "encodedBytes": 8071396,
+    "reservedBytes": 0,
+    "peakBytes": 47644268,
+    "uniqueAllocations": 90003,
+    "newAllocationVisits": 90003,
+    "reclaimedAllocations": 0
+  },
+  "limitations": [
+    "Dense case contains memberships and grouped seal only; full cache/staging/export budgets remain pending.",
+    "No end-to-end CPU/bytes/native claim."
+  ]
+}
