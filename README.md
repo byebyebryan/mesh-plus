@@ -1,6 +1,12 @@
 # Mesh Plus
 
-The **a23 source/private candidate** adds the explicit
+Latest hosted prerelease: [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23).
+The release publishes the exact independently qualified wheel, with SHA256 and
+provenance assets; see the [producer acceptance](docs/evidence/2026-10-16-active-feed/README.md).
+It requires Python 3.11+ and pairs the opt-in Agent active route with Observer
+0.7.0a7. Publishing the package does not change any installed selection.
+
+The **a23 release** adds the explicit
 [projected Agent active profile](docs/active-feed-api.md) under lock 5. SDK 1,
 Read 1, Delivery 1, old full/Tmux schema bytes and original proof/receipt rules
 remain. The new native/profile route is opt-in; installed producer qualification
@@ -39,14 +45,14 @@ adds explicit Agent v3 for Observer wire 6/Service 4 through SDK 1. The
 the exact installed a17 package and independent Observer adoption on Snap and
 Starship. Existing Agent v1/v2 and Tmux v1 schemas and defaults are preserved.
 The [a16 timing extension](docs/agent-timing-profile.md) retains its dated scope.
-Published a15 remains the latest hosted release; local adoption is separate.
+The published a15 checkpoint remains historical; local adoption is separate.
 
 Mesh Plus owns request/reply and subscription delivery across a configured fleet. A
 mesh-aware domain contract has the same response shape for one local host and
 several hosts. Domain records keep their identity and meaning; networking adds
 host outcomes, delivery provenance and conservative validity information.
 
-Latest published prerelease: **0.1.0a15**, SDK interface 1, with optional WSS
+The preceding published **0.1.0a15** checkpoint supplies SDK interface 1, optional WSS
 and the Observer-owned publisher seam. [Release acceptance](docs/evidence/2026-10-12-a15-release/README.md)
 records unchanged accepted wheel bytes and independent published-download checks.
 Publication does not select live services.

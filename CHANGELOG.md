@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0a23 (2026-10-16)
+
+- Publish the independently qualified a23 wheel unchanged, paired with Observer
+  0.7.0a7 for the separate opt-in Agent active-feed native/profile route.
+- Add selected API 4 bodies and independently leased scope/decision metadata
+  under reviewed lock 5; preserve all 29 preceding normative input digests.
+- Include the accepted a19/a20 acquisition-ordering and deadline fixes, plus
+  a22 owned admission, row-free context and complete-roster selection support.
+- Preserve SDK/Read/Delivery/preparation/admission interface 1, existing full
+  Agent/Tmux defaults, original proof acquisition and conservative uncertainty.
+- Retain separate producer, consumer, deployment and physical acceptance bounds.
+
 ## 0.1.0a22 source/private candidate
 
 - Add an explicit owned Reader admission handoff for prepared watch consumers,

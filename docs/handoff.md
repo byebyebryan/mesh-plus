@@ -2,7 +2,12 @@
 
 ## Current disposition
 
-The a23 source/private candidate adds the separate
+The [a23 hosted prerelease](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23)
+publishes the accepted a23 wheel unchanged, with checksums and provenance.
+Its [installed producer gates](evidence/2026-10-16-active-feed/README.md) remain
+distinct from the [RLCD integration and deployment receipt](https://github.com/byebyebryan/esp32-rlcd/blob/21277453293007635fbc251f7e4f524f23262e7c/docs/evidence/2026-10-16-active-feed/REPORT.md).
+
+The a23 release adds the separate
 [active profile and supported seams](active-feed-api.md), with Observer's committed
 projected native schema input and new lock 5. All 29 previous normative digests
 remain unchanged. Selected bodies retain API 4 row meaning; the supported pure
@@ -50,7 +55,7 @@ Changing-publication CPU and paired legacy/prepared allocation results supersede
 static-publication performance assumptions, without changing earlier evidence.
 Owner preparation certification remains independent and optional.
 
-Latest publication is [a15](evidence/2026-10-12-a15-release/README.md), with
+The preceding [a15 publication](evidence/2026-10-12-a15-release/README.md) supplies
 SDK interface 1, optional WSS and the generic cached publisher/factory seam.
 Release and installed-byte acceptance do not select an owner or live endpoint.
 The combined shared launcher now selects both accepted owner factories. The
