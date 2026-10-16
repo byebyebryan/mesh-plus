@@ -3,6 +3,8 @@
 Latest hosted prerelease: [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23).
 The release publishes the exact independently qualified wheel, with SHA256 and
 provenance assets; see the [producer acceptance](docs/evidence/2026-10-16-active-feed/README.md).
+The [publication receipt](docs/evidence/2026-10-16-active-feed-publication/acceptance.json)
+verifies public downloads, signed assets/tags and fresh installed owner gates.
 It requires Python 3.11+ and pairs the opt-in Agent active route with Observer
 0.7.0a7. Publishing the package does not change any installed selection.
 
