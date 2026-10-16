@@ -90,6 +90,10 @@ roots above still hash the complete binding.
 Changing a binding requires a new epoch/baseline. Generations and roots both
 must match; equal body bytes or equal roots in another binding cannot be reused
 as an authority token. A received expected root is never the computed root.
+The native cursor is the deterministic tuple `(ownerEpoch,generation,NativeRoot)`,
+not an independent sequence or opaque owner counter. NativeRoot already commits
+all its components, so SourceRoot above binds the cursor without a per-alias
+roster hash. Subscription/channel sequence remains separate proof/delivery data.
 
 ## Typed state and compact membership encoding
 
@@ -108,7 +112,7 @@ and reinsertion, not an unobserved provider lifecycle between samples.
 | `observations` | `(identity,birth)` -> typed moved observation paths with exact optional/null preservation and support refs |
 | `memberships` | `(cohort ID,identity,birth,field name)` -> locally derived validated field-content token |
 | `receipts` | Original bounded receipt key -> exact original FactSupport tuple/context |
-| `cohorts` | Cohort ID -> producing receipt ref, immutable member-set root/count and original support head |
+| `cohorts` | Stable logical cohort ID -> producing receipt ref, immutable seal version/root/count and original support head |
 | `scopes` | Typed scope/fact key -> one coverage/continuity/member/uncertain/nonmember authority fact; roster-sized lists are flattened into per-identity entries |
 | `metadata` | Bounded native metadata key -> exact committed collection/publication anchors, counters, diagnostics and ordered arrays |
 
@@ -124,8 +128,15 @@ Each cohort's seal is a second Patricia map using space name `cohort-members`:
 key `(identity,birth,field name)` -> token. Its count and root are in `cohorts`.
 Generic code maintains this grouped membership index incrementally alongside
 the global membership table. It does not enumerate members to renew a head.
-An altered sealed set gets a new set ID/version; no membership is changed behind
-an already sealed ID. Current cohort heads remain bounded by the receipt map.
+Logical cohort ID is stable within its native receipt-key/context/owner scope.
+It is the namespace used in membership keys, not a content-addressed set ID.
+Changing one binding updates only that binding's map paths and the cohort head.
+It creates a new immutable seal version `(generation,memberRoot,count)` under
+the same logical ID; it does not rekey unchanged members. Earlier seals remain
+immutable under current/predecessor root retention. A support renewal names the
+exact committed seal version; an old version cannot inherit a newer head.
+G1 must demonstrate sparse changed-key/visit counts for one-member changes,
+not merely equal roots. Current cohort heads remain bounded by the receipt map.
 Context-only former bindings live with bounded original observation context,
 not a growing bank of current cohorts or historical receipts.
 Body reference counts, identity uniqueness, order and reverse dependencies are
