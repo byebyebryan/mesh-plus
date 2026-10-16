@@ -72,7 +72,7 @@ class DecoderArena:
             document = decode(atom.encoded)
             value = _freeze(document)
             owned = _Decoded(atom, value, _payload_size(value))
-            self.ledger.retain(owned)
+            self.ledger.retain(owned, finalize=False)
             try:
                 self.entries[key] = owned
             except BaseException:

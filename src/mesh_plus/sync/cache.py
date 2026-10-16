@@ -26,7 +26,6 @@ from .wire import (
     closed,
     decode_reservation,
     entries,
-    operations,
     owner_clock,
     read_native,
 )
@@ -188,6 +187,7 @@ class OwnedSyncCache:
         self._known_head = None
         self._retired_bindings = ()
         self._last_head_clock = None
+        self._acquisition = None
 
     def _check(self):
         check(not self._closed, "sync_cache_closed")
@@ -223,6 +223,8 @@ class OwnedSyncCache:
     def revoke(self, reason):
         with self._lock:
             check(type(reason) is str and 0 < len(reason) <= 256, "sync_revoke_reason")
+            if self._proof is not None:
+                self.ledger.release(self._proof[1])
             self._view_permit = self._proof = self._proof_context = None
             self.reason = reason
             self.store._arena.clear()
@@ -264,27 +266,38 @@ class OwnedSyncCache:
     def stage(self, raw):
         with self._lock:
             self._check()
+            retained_input = False
             try:
-                with self.ledger.reserve(decode_reservation(raw)):
-                    document = read_native(raw, self.descriptor)
-                    check(document["kind"] == "transaction", "sync_expected_transaction")
-                    before = self.store.candidate if self.store.candidate is not None else self.store.current
-                    token = document["transactionId"], tuple(document["resultTag"])
-                    if token in self._transaction_tokens and before is not None and before.tag.wire() == document["resultTag"]:
-                        # Exact canonical content is committed by transactionId.
-                        # Recognition does not readmit or refresh a lease.
-                        return self._candidate_ref if self._candidate_ref is not None else self._mint(before)
-                    self.revoke("head_changed")
-                    check(before is not None and tuple(document["baseCursor"]) == before.cursor, "sync_wrong_base_cursor")
-                    root = self.store.stage_delta(NativeTag.parse(document["baseTag"]),
-                                                  NativeTag.parse(document["resultTag"]), tuple(document["resultCursor"]),
-                                                  operations(document))
-                    self._transaction_tokens = (*self._transaction_tokens[-3:], token)
-                return self._mint(root)
+                check(type(raw) is bytes and len(raw) <= MAX_NATIVE, "sync_message_capacity")
+                self.ledger.retain(raw)
+                retained_input = True
+                from .transactions import transaction_input
+                with self.ledger.allocations():
+                    document, reservation = transaction_input(raw, self.descriptor, self.ledger)
+                    with reservation:
+                        return self._stage_document(document)
             except BaseException:
                 self._discard_candidate()
                 self.revoke("invalid_transaction")
                 raise
+            finally:
+                if retained_input:
+                    self.ledger.release(raw)
+
+    def _stage_document(self, document):
+        before = self.store.candidate if self.store.candidate is not None else self.store.current
+        token = document["transactionId"], tuple(document["resultTag"])
+        if token in self._transaction_tokens and before is not None and before.tag.wire() == document["resultTag"]:
+            # Exact canonical content is committed by transactionId.
+            # Recognition does not readmit or refresh a lease.
+            return self._candidate_ref if self._candidate_ref is not None else self._mint(before)
+        self.revoke("head_changed")
+        check(before is not None and tuple(document["baseCursor"]) == before.cursor, "sync_wrong_base_cursor")
+        root = self.store.stage_delta(NativeTag.parse(document["baseTag"]),
+                                      NativeTag.parse(document["resultTag"]), tuple(document["resultCursor"]),
+                                      document["operations"])
+        self._transaction_tokens = (*self._transaction_tokens[-3:], token)
+        return self._mint(root)
 
     @admission_boundary
     def stage_batch(self, base, frames):
@@ -293,9 +306,12 @@ class OwnedSyncCache:
             check(type(frames) is tuple and 0 < len(frames) <= 4 and
                   all(type(raw) is bytes for raw in frames) and sum(map(len, frames)) <= 8 * 1024 * 1024,
                   "sync_catchup_capacity")
-            check(type(base) is SourceTag and self.store.current is not None and
-                  base == self._tag(self.store.current.tag), "sync_wrong_base")
-            self._discard_candidate()
+            staged = self.store.candidate
+            before = staged if staged is not None and base == self._tag(staged.tag) else self.store.current
+            check(type(base) is SourceTag and before is not None and base == self._tag(before.tag), "sync_wrong_base")
+            if before is not staged:
+                self._discard_candidate()
+            self.ledger.retain(frames)
             try:
                 for raw in frames:
                     candidate = self.stage(raw)
@@ -303,15 +319,34 @@ class OwnedSyncCache:
             except BaseException:
                 self._discard_candidate()
                 raise
+            finally:
+                self.ledger.release(frames)
 
-    def _proof_request(self, candidate):
+    def _proof_request(self, candidate, *, deadline_ms=None):
         """Owned transport calls immediately before sending, never proof data."""
         with self._lock:
             self._candidate(candidate)
             challenge = {"nonce": secrets.token_hex(32), "target": sha256(canonical(candidate._tag.wire())).hexdigest(),
                          "request": sha256(self._request.encoded).hexdigest()}
-            self._proof = candidate, Atom.own(challenge), self._now_ms()
+            check(deadline_ms is None or type(deadline_ms) is int, "sync_acquisition_deadline")
+            with self.ledger.allocations():
+                owned = Atom.own(challenge)
+                self.ledger.retain(owned)
+            if self._proof is not None:
+                self.ledger.release(self._proof[1])
+            self._proof = candidate, owned, self._now_ms(), deadline_ms
             return challenge
+
+    def _observe_head(self, actual):
+        check(type(actual) is NativeTag, "sync_tag")
+        known = self._known_head
+        check(actual.binding not in self._retired_bindings, "sync_owner_retired")
+        if known is not None and actual.binding == known.binding:
+            check(actual.generation > known.generation or actual == known, "sync_head_regression")
+        elif known is not None:
+            check(len(self._retired_bindings) < 4, "sync_owner_history_capacity")
+            self._retired_bindings = (*self._retired_bindings, known.binding)
+        self._known_head = actual
 
     def _view_root(self, permit):
         self._check()
@@ -322,9 +357,15 @@ class OwnedSyncCache:
         return self.store.current
 
     @contextlib.contextmanager
-    def borrow(self, permit, location, path):
-        with self._lock, self.store._arena.active():
+    def _active_root(self, permit):
+        with self._lock:
             root = self._view_root(permit)
+            with self.store._arena.active():
+                yield root
+
+    @contextlib.contextmanager
+    def borrow(self, permit, location, path):
+        with self._active_root(permit) as root:
             side, kind, space, encoded = location
             check(side == "view", "sync_reference_side")
             if kind == "binding":
@@ -386,7 +427,7 @@ class OwnedSyncCache:
     @admission_boundary
     def confirm(self, candidate, proof, clock):
         with self._lock:
-            retained = None
+            retained = pending = None
             try:
                 root = self._candidate(candidate)
                 pending, self._proof = self._proof, None  # consume even failed attempts
@@ -407,14 +448,7 @@ class OwnedSyncCache:
                     check(canonical(head["challenge"]) == pending[1].encoded, "sync_nonce")
                     actual = NativeTag.parse(head["tag"])
                     check(canonical(document["sourceTag"]) == canonical(self._tag(actual).wire()), "sync_proof_source_root")
-                    known = self._known_head
-                    check(actual.binding not in self._retired_bindings, "sync_owner_retired")
-                    if known is not None and actual.binding == known.binding:
-                        check(actual.generation > known.generation or actual == known, "sync_head_regression")
-                    elif known is not None:
-                        check(len(self._retired_bindings) < 4, "sync_owner_history_capacity")
-                        self._retired_bindings = (*self._retired_bindings, known.binding)
-                    self._known_head = actual
+                    self._observe_head(actual)
                     if actual != root.tag:
                         raise MovedHead(actual)
                     native_binding = thaw(root.binding.value)
@@ -430,7 +464,8 @@ class OwnedSyncCache:
                     self.ledger.retain(result)
                     retained = result
                 self._check()
-                check(self._now_ms() <= pending[2] + 2000, "sync_proof_deadline")
+                check(self._now_ms() < pending[2] + 2000, "sync_proof_deadline")
+                check(pending[3] is None or self._now_ms() < pending[3], "sync_acquisition_deadline")
                 if self.store.candidate is root:
                     self.store.advance_material()
                 if self._confirmation is not None:
@@ -446,6 +481,9 @@ class OwnedSyncCache:
                     self.ledger.release(retained)
                 self.revoke("proof_failed")
                 raise
+            finally:
+                if pending is not None:
+                    self.ledger.release(pending[1])
 
     def _head_matches(self, root, head):
         tables = dict(root.tables)

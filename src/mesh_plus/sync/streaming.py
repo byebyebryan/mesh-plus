@@ -7,7 +7,7 @@ still crosses the strict decoder; it never parses a second full roster DTO.
 import re
 
 from ..protocol import check
-from .canonical import decode, decode_reservation
+from .canonical import PackedAtom, decode, decode_reservation
 from .model import SPACES, NativeTag
 from .reconstruction import TABLE_LIMITS
 from .wire import MAX_NATIVE, closed, cursor
@@ -114,11 +114,12 @@ def array_spans(data, start, end):
 
 
 class _Table:
-    __slots__ = ("_data", "_span", "_ledger", "_count")
+    __slots__ = ("_data", "_span", "_ledger", "_count", "_packed")
 
-    def __init__(self, data, span, ledger, maximum):
+    def __init__(self, data, span, ledger, maximum, *, packed_values=False):
         self._data, self._span, self._ledger = data, span, ledger
         self._count = 0
+        self._packed = packed_values
         for _ in array_spans(data, *span):
             self._count += 1
             check(self._count <= maximum, "sync_table_capacity")
@@ -128,11 +129,12 @@ class _Table:
 
     def __iter__(self):
         for start, end in array_spans(self._data, *self._span):
-            raw = self._data[start:end]
-            with self._ledger.reserve(decode_reservation(raw)):
-                row = decode(raw, _depth=3)
-                check(type(row) is list and len(row) == 2, "sync_table_entry")
-                yield row
+            with self._ledger.reserve(end - start + 256, encoded=end - start):
+                raw = self._data[start:end]
+                with self._ledger.reserve(decode_reservation(raw)):
+                    row = decode(raw, _depth=3)
+                    check(type(row) is list and len(row) == 2, "sync_table_entry")
+                    yield (row[0], PackedAtom._from_private_json(row[1])) if self._packed else row
 
 
 def baseline_header(raw, descriptor, ledger):
@@ -145,7 +147,7 @@ def baseline_header(raw, descriptor, ledger):
     for name, maximum in limits.items():
         start, end = spans[name]
         check(end - start <= maximum, "sync_baseline_header_capacity")
-        size += decode_reservation(raw[start:end], maximum)
+        size += end - start + decode_reservation(raw, maximum, _start=start, _end=end)
     reservation = ledger.reserve(size)
     try:
         document = {name: decode(raw[spans[name][0]:spans[name][1]], maximum, _depth=1)
@@ -160,7 +162,8 @@ def baseline_header(raw, descriptor, ledger):
         cursor(document["cursor"], tag, document["nativeBinding"].get("ownerEpoch"))
         tables = object_spans(raw, *spans["tables"])
         check(set(tables) == set(SPACES), "sync_table_registry")
-        document["tables"] = {name: _Table(raw, tables[name], ledger, TABLE_LIMITS[name]) for name in SPACES}
+        document["tables"] = {name: _Table(raw, tables[name], ledger, TABLE_LIMITS[name],
+                                          packed_values=name not in {"receipts", "cohorts", "metadata"}) for name in SPACES}
         closed(document, "kind descriptor nativeBinding tag cursor tables", "sync_baseline_shape")
         return document, reservation
     except BaseException:

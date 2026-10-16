@@ -1,19 +1,104 @@
 import json
 import random
 import unittest
+from hashlib import sha256
+from unittest.mock import patch
 
-from test_sync_cache import NATIVE_BINDING, baseline
-from test_sync_reconstruction import OWNER, Profile
+from test_sync_cache import NATIVE_BINDING, baseline, transaction
+from test_sync_reconstruction import OWNER, Profile, operations
 
 from mesh_plus.protocol import ProtocolError
 from mesh_plus.sync import OwnedSyncCache, SyncBudgets, source_binding
-from mesh_plus.sync.canonical import canonical, decode, decode_reservation
-from mesh_plus.sync.commitment import MerkleMap, binding_digest, body_digest, native_root
+from mesh_plus.sync.canonical import canonical, decode, decode_reservation, thaw
+from mesh_plus.sync.commitment import MerkleMap, binding_digest, body_digest, framed, native_root
 from mesh_plus.sync.model import SPACES, NativeTag
 from mesh_plus.sync.streaming import array_spans, object_spans
 
 
 class StreamingTests(unittest.TestCase):
+    def test_transaction_stream_matches_canonical_id_without_whole_frame_decode(self):
+        profile = Profile()
+        raw, maps, tag = baseline(profile)
+        tx, _, target = transaction(profile, maps, tag, 2, 2)
+        pretty = json.dumps(decode(tx), ensure_ascii=True, indent=2).encode()
+        cache = OwnedSyncCache(profile, source_binding("fixture", "source", profile.descriptor))
+        try:
+            cache.admit_baseline(raw)
+
+            def entry_decode(data, *args, **kwargs):
+                self.assertNotEqual(data, pretty)
+                self.assertLess(len(data), 16384)
+                return decode(data, *args, **kwargs)
+
+            with patch("mesh_plus.sync.transactions.decode", side_effect=entry_decode):
+                candidate = cache.stage(pretty)
+            self.assertEqual(candidate.tag.native, target)
+            self.assertEqual(cache.ledger.reserved, 0)
+        finally:
+            cache.close()
+
+    def test_transaction_nested_corruption_cannot_hide_in_a_streamed_value(self):
+        profile = Profile()
+        raw, maps, tag = baseline(profile)
+        tx, _, _ = transaction(profile, maps, tag, 2, 2)
+        for invalid in (tx.replace(b'"value":2', b'"value":2,"\\u0076alue":3'),
+                        tx.replace(b'"value":2', b'"value":2.0'),
+                        tx.replace(b'"value":2', b'"value":-0'), tx + b"x"):
+            cache = OwnedSyncCache(profile, source_binding("fixture", "source", profile.descriptor))
+            try:
+                cache.admit_baseline(raw)
+                with self.assertRaises(ProtocolError):
+                    cache.stage(invalid)
+                self.assertIsNone(cache.store.candidate)
+                self.assertEqual((cache.ledger.reserved, cache.ledger.pending_units), (0, 0))
+            finally:
+                cache.close()
+
+    def test_all_body_transaction_fits_without_whole_roster_decode_reservation(self):
+        profile = Profile()
+        snapshots = []
+        for generation in (1, 2):
+            tables = {name: [] for name in SPACES}
+            for i in range(100):
+                identity = ["fixture", "reference", "scope", "record", f"id-{i}"]
+                birth = [OWNER, 1]
+                body = {"identity": identity, "value": generation, "text": str(generation) * 32768}
+                digest = body_digest(bytes.fromhex(profile.descriptor.native_descriptor_digest), body).hex()
+                tables["records"].append([identity, {"birth": birth, "body": digest, "order": identity, "scope": "scope"}])
+                tables["bodies"].append([digest, body])
+                tables["observations"].append([[identity, birth], {"stamp": generation}])
+            maps = {name: MerkleMap.baseline(name, rows) for name, rows in tables.items()}
+            tag = NativeTag(binding_digest(NATIVE_BINDING, native=True).hex(), generation,
+                            native_root(NATIVE_BINDING, generation, maps).hex())
+            snapshots.append((tables, maps, tag))
+        tables, old, base = snapshots[0]
+        raw = canonical({"kind": "baseline", "descriptor": decode(profile.descriptor.native_descriptor),
+                         "nativeBinding": NATIVE_BINDING, "tag": base.wire(), "cursor": [OWNER, 1, base.root], "tables": tables})
+        _, new, target = snapshots[1]
+        changes = {name: [] for name in SPACES}
+        for operation in operations(old, new):
+            row = [operation.op, thaw(operation.key.value), operation.expected]
+            if operation.op == "put":
+                row.append(thaw(operation.value.value))
+            changes[operation.space].append(row)
+        content = {"kind": "transaction", "descriptor": decode(profile.descriptor.native_descriptor),
+                   "nativeBindingDigest": base.binding, "baseTag": base.wire(), "resultTag": target.wire(),
+                   "baseCursor": [OWNER, 1, base.root], "resultCursor": [OWNER, 2, target.root], "operations": changes}
+        tx = canonical({**content, "transactionId": sha256(b"mesh-sync-transaction\0" + framed(canonical(content))).hexdigest()})
+        maximum = 13 * 1024 * 1024
+        self.assertGreater(decode_reservation(tx), maximum)
+        cache = OwnedSyncCache(profile, source_binding("fixture", "source", profile.descriptor),
+                               SyncBudgets(decoded_bytes=maximum))
+        try:
+            cache.admit_baseline(raw)
+            candidate = cache.stage(tx)
+            self.assertEqual(candidate.tag.native, target)
+            self.assertLess(cache.ledger.peak, maximum)
+            self.assertEqual((cache.ledger.reserved, cache.ledger.pending_units), (0, 0))
+        finally:
+            cache.close()
+        self.assertEqual(cache.ledger.used, 0)
+
     def test_byte_spans_match_strict_decoder_for_nested_unicode_and_escapes(self):
         generator = random.Random(317)
 

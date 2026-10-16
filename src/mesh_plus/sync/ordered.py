@@ -113,7 +113,10 @@ class OrderedMap(OwnedUnit):
                 return _balance(node.key, node.atom, insert(node.left), node.right)
             return _balance(node.key, node.atom, node.left, insert(node.right))
 
-        return OrderedMap(insert(self.node))
+        try:
+            return OrderedMap(insert(self.node))
+        finally:
+            insert = None
 
     def remove(self, key):
         owned = Atom.own(key)
@@ -134,7 +137,10 @@ class OrderedMap(OwnedUnit):
                 successor = successor.left
             return _balance(successor.key, successor.atom, node.left, delete(node.right, successor.key.value))
 
-        return OrderedMap(delete(self.node, owned.value))
+        try:
+            return OrderedMap(delete(self.node, owned.value))
+        finally:
+            delete = None
 
     def leaf_at(self, rank):
         check(type(rank) is int and 0 <= rank < len(self), "sync_index_rank")
@@ -173,7 +179,11 @@ class OrderedMap(OwnedUnit):
             key, value = values[middle]
             return _node(key, value, build(start, middle), build(middle + 1, stop))
 
-        return cls(build(0, len(values)))
+        try:
+            return cls(build(0, len(values)))
+        finally:
+            build = None
+            values.clear()
 
 
 def index_key(node):

@@ -6,15 +6,25 @@ grant currentness; a separate owned proof operation must confirm an exact root.
 
 import contextlib
 import secrets
+import sys
 import threading
 from dataclasses import dataclass
 from functools import wraps
 
-from jsonschema import Draft202012Validator
-
 from ..protocol import ProtocolError, check
+from ._schema import OwnedSchema
 from .budget import AllocationLedger, OwnedUnit
-from .canonical import Atom, FrozenObject, PackedAtom, canonical, decode, packed, thaw
+from .canonical import (
+    Atom,
+    FrozenObject,
+    InputKey,
+    PackedAtom,
+    canonical,
+    decode,
+    decode_reservation,
+    packed,
+    thaw,
+)
 from .commitment import ABSENT, MerkleMap, binding_digest, body_digest_encoded, native_root_encoded
 from .context import reference
 from .decoder import DecoderArena
@@ -35,10 +45,18 @@ TABLE_LIMITS = {"records": 4096, "bodies": 4096, "observations": 4096, "membersh
                 "receipts": 32, "cohorts": 32, "scopes": 65536, "metadata": 65536}
 
 
+def _record_ref(ref, tx):
+    check(type(ref) is list and len(ref) == 2 and type(ref[0]) is list and len(ref[0]) == 5 and
+          all(type(part) is str and part for part in ref[0]) and ref[0][0] == tx.store.host and
+          type(ref[1]) is list and len(ref[1]) == 2 and type(ref[1][0]) is str and
+          ref[1][0] == tx.cursor[0] and type(ref[1][1]) is int and
+          0 <= ref[1][1] <= tx.tag.generation, "sync_record_ref")
+
+
 def _decoding(method):
     @wraps(method)
     def run(self, *args, **kwargs):
-        with self._arena.active():
+        with self.ledger.allocations(), self._arena.active():
             return method(self, *args, **kwargs)
     return run
 
@@ -101,28 +119,41 @@ class VisitMeter:
 
 
 class BudgetRef:
-    __slots__ = ("_ledger", "_reservations")
+    __slots__ = ("_ledger", "_reservations", "_charged", "_closed")
 
     def __init__(self, ledger):
-        self._ledger, self._reservations = ledger, []
+        self._ledger, self._reservations = ledger, set()
+        self._charged, self._closed = None, False
 
     @property
     def remaining(self):
+        check(not self._closed, "sync_reference_retired")
         return self._ledger.maximum - self._ledger.used - self._ledger.reserved
 
     @contextlib.contextmanager
     def reserve(self, amount):
+        check(not self._closed, "sync_reference_retired")
+        check(len(self._reservations) < 64, "sync_reservation_capacity")
         reservation = self._ledger.reserve(amount)
-        self._reservations.append(reservation)
+        self._reservations.add(reservation)
         try:
             yield None
         finally:
             reservation.close()
+            self._reservations.discard(reservation)
 
     def charge(self, amount):
-        self._reservations.append(self._ledger.reserve(amount))
+        check(not self._closed, "sync_reference_retired")
+        if self._charged is None:
+            self._charged = self._ledger.reserve(amount)
+        else:
+            self._charged.grow(amount)
 
     def close(self):
+        self._closed = True
+        if self._charged is not None:
+            self._charged.close()
+            self._charged = None
         for reservation in self._reservations:
             reservation.close()
         self._reservations.clear()
@@ -256,6 +287,7 @@ class _Transaction:
         self.permit = secrets.token_hex(16)
         self.visits = VisitMeter(2_000_000 if before is None else 256 + len(operations) * 128)
         self.budget = BudgetRef(store.ledger)
+        self.budget.charge(1024 + len(operations) * (sys.getsizeof(object.__new__(PublicOperation)) + 16))
         self.retired_refs = []
         self.member_operations = [operation for operation in operations if operation.space == "memberships"]
         self.affected_scopes, self.invalidations = (), ()
@@ -277,17 +309,29 @@ class ReconstructionStore:
         self._lock = threading.RLock()
         self._closed = False
         self.index_specs = {spec.name: spec for spec in self.descriptor.indexes}
-        self.validators = {spec.name: (Draft202012Validator(decode(spec.key_schema)),
-                                      Draft202012Validator(decode(spec.value_schema)))
-                           for spec in self.descriptor.indexes}
+        self.validators = {}
         self._fingerprint = self.fingerprint()
-        self._metadata = (self.descriptor, self.host)
-        self.ledger.retain(self._metadata)
+        schemas, retained = [], False
         try:
+            for spec in self.descriptor.indexes:
+                pair = []
+                for raw in (spec.key_schema, spec.value_schema):
+                    schema = OwnedSchema.retain(raw, self.ledger)
+                    schemas.append(schema)
+                    pair.append(schema)
+                self.validators[spec.name] = tuple(pair)
+            self._metadata = (self.descriptor, self.host, tuple(schemas))
+            self.ledger.retain(self._metadata)
+            retained = True
             self._arena = DecoderArena(self.ledger)
         except BaseException:
-            self.ledger.release(self._metadata)
+            if retained:
+                self.ledger.release(self._metadata)
+            self.validators.clear()
             raise
+        finally:
+            for schema in schemas:
+                self.ledger.release(schema)
         self.last_work = {}
         self.native_descriptor_digest = bytes.fromhex(self.descriptor.native_descriptor_digest)
 
@@ -401,17 +445,28 @@ class ReconstructionStore:
 
     def _groups(self, table):
         grouped = {}
-        for leaf in table.leaves():
-            key = decode(leaf.key)
-            check(type(key) is list and len(key) == 4, "sync_membership_key")
-            check(key[3] in self.descriptor.fields, "sync_membership_field")
-            hex_digest(thaw(leaf.atom.value))
-            cohort, remainder = key[0], key[1:]
-            encoded = canonical(cohort)
-            grouped.setdefault(encoded, (Atom.own(cohort), []))[1].append((remainder, leaf.atom))
-        check(len(grouped) <= 32, "sync_cohort_capacity")
-        return {key: (cohort, MerkleMap.baseline_atoms("cohort-members", values))
-                for key, (cohort, values) in grouped.items()}
+        with self.ledger.reserve(1024) as scratch:
+            try:
+                for leaf in table.leaves():
+                    with self.ledger.reserve(decode_reservation(leaf.key)):
+                        key = decode(leaf.key)
+                        check(type(key) is list and len(key) == 4, "sync_membership_key")
+                        check(key[3] in self.descriptor.fields, "sync_membership_field")
+                        hex_digest(thaw(leaf.atom.value))
+                        encoded = canonical(key[0])
+                        if encoded not in grouped:
+                            check(len(grouped) < 32, "sync_cohort_capacity")
+                            scratch.grow(1024)
+                            grouped[encoded] = Atom.own(key[0]), MerkleMap("cohort-members"), []
+                        _, tree, leaves = grouped[encoded]
+                        if len(leaves) % 64 == 0:
+                            scratch.grow(24 * 64)
+                        member, hashed = tree._key(key[1:])
+                        leaves.append(tree._leaf(member, hashed, leaf.atom))
+                return {key: (cohort, tree._baseline_leaves(leaves))
+                        for key, (cohort, tree, leaves) in grouped.items()}
+            finally:
+                grouped.clear()
 
     def _apply(self, tx, operation):
         check(type(operation) is Operation and operation.space in SPACES, "sync_operation")
@@ -459,8 +514,8 @@ class ReconstructionStore:
             seen.add((write.index, key.encoded))
             spec = self.index_specs[write.index]
             check(len(value.encoded) <= spec.max_value_bytes, "sync_index_value_capacity")
-            self.validators[write.index][0].validate(thaw(key.value))
-            self.validators[write.index][1].validate(thaw(value.value))
+            self.validators[write.index][0].validate(key, self.ledger)
+            self.validators[write.index][1].validate(value, self.ledger)
             tx.indexes[write.index] = tx.indexes[write.index].put_atom(thaw(key.value), packed(value))
             check(len(tx.indexes[write.index]) <= spec.max_entries, "sync_index_entry_capacity")
         for remove in patch.removes:
@@ -469,16 +524,24 @@ class ReconstructionStore:
             check((remove.index, key.encoded) not in seen, "sync_duplicate_index_operation")
             seen.add((remove.index, key.encoded))
             tx.indexes[remove.index] = tx.indexes[remove.index].remove(thaw(key.value))
-        fields = {}
+        fields, field_refs, field_owners = {}, {}, {}
         changed_fields = []
         for item in patch.field_tokens:
             check(type(item) is FieldTokenWrite and item.field in self.descriptor.fields, "sync_field_token")
-            key = Atom.own(item.record_ref)
-            ref = thaw(key.value)
-            check(type(ref) is list and len(ref) == 2, "sync_record_ref")
-            slot = tx.tables["records"].get(ref[0])
-            check(item.token is None or slot is not ABSENT and thaw(slot["birth"]) == ref[1],
-                  "sync_field_record_birth")
+            # One patch submission owns each shared ref once, like deepcopy's
+            # memo. This memo never survives the callback/transaction boundary.
+            source_id = id(item.record_ref)
+            key = field_owners.get(source_id)
+            if key is None:
+                key = field_owners[source_id] = Atom.own(item.record_ref)
+            if key.encoded not in field_refs:
+                ref = thaw(key.value)
+                _record_ref(ref, tx)
+                slot = tx.tables["records"].get(ref[0])
+                valid = slot is not ABSENT and thaw(slot["birth"]) == ref[1]
+                field_refs[key.encoded] = ref, valid
+            ref, valid = field_refs[key.encoded]
+            check(item.token is None or valid, "sync_field_record_birth")
             check(("$fields", key.encoded, item.field) not in seen, "sync_duplicate_field_token")
             seen.add(("$fields", key.encoded, item.field))
             if key.encoded not in fields:
@@ -499,6 +562,7 @@ class ReconstructionStore:
                 tx.indexes["$fields"] = tx.indexes["$fields"].put_atom(thaw(key.value), packed(Atom.own(values)))
             elif tx.indexes["$fields"].get(thaw(key.value)) is not ABSENT:
                 tx.indexes["$fields"] = tx.indexes["$fields"].remove(thaw(key.value))
+        member_keys = {operation.key.encoded for operation in tx.member_operations}
         for operation in patch.membership_expansion:
             # Normalization of compact groups is a native-adapter responsibility;
             # the engine still independently checks exact old tokens and roots.
@@ -506,15 +570,15 @@ class ReconstructionStore:
             check(type(operation) is DerivedMembershipOperation, "sync_membership_expansion")
             value = None if operation.op == "remove" else Atom.own(hex_digest(operation.value))
             normalized = Operation("memberships", operation.op, Atom.own(operation.key), operation.expected, value)
-            check(all(normalized.key.encoded != old.key.encoded for old in tx.member_operations),
-                  "sync_duplicate_operation")
+            check(normalized.key.encoded not in member_keys, "sync_duplicate_operation")
+            member_keys.add(normalized.key.encoded)
             tx.member_operations.append(normalized)
             self._apply(tx, normalized)
         # Cross-check affected field/member links using at most 32 cohort heads,
         # without another N-cell reverse index or a walk over untouched members.
         for record, field, token in changed_fields:
             ref = thaw(record.value)
-            check(type(ref) is list and len(ref) == 2, "sync_record_ref")
+            _record_ref(ref, tx)
             for cohort, _ in tx.groups.values():
                 leaf = tx.tables["memberships"].find([thaw(cohort.value), *ref, field])
                 check(leaf is ABSENT or leaf.atom.value == token, "sync_member_content_token")
@@ -522,7 +586,9 @@ class ReconstructionStore:
             if operation.op != "put":
                 continue
             key = thaw(operation.key.value)
-            values = tx.indexes["$fields"].get(key[1:3])
+            ref = canonical(key[1:3])
+            current = fields.get(ref)
+            values = tx.indexes["$fields"].get(key[1:3]) if current is None else current[1]
             check(values is not ABSENT and values.get(key[3]) == operation.value.value, "sync_member_content_token")
         for item in patch.changed_rules:
             check(type(item) is RuleWrite, "sync_rule_write")
@@ -530,7 +596,7 @@ class ReconstructionStore:
             check(("$rules", key.encoded) not in seen, "sync_duplicate_rule")
             seen.add(("$rules", key.encoded))
             ref = thaw(key.value)
-            check(type(ref) is list and len(ref) == 2, "sync_record_ref")
+            _record_ref(ref, tx)
             slot = tx.tables["records"].get(ref[0])
             check(slot is not ABSENT and thaw(slot["birth"]) == ref[1], "sync_rule_record_birth")
             check(len(value.encoded) <= 16384, "sync_rule_capacity")
@@ -550,14 +616,30 @@ class ReconstructionStore:
 
     def _links(self, tx):
         """Maintain record/body/observation references using affected keys only."""
-        touched = {}
+        touched = set()
+        records = tx.tables["records"]
+        old_records = None if tx.before is None else dict(tx.before.tables)["records"]
+
+        def touch(encoded):
+            if encoded not in touched:
+                if len(touched) % 64 == 0:
+                    tx.budget.charge(128 * 64)  # touched set and update pointer list
+                touched.add(encoded)
+
+        def touch_identity(identity):
+            leaf = records.find(identity)
+            if leaf is ABSENT and old_records is not None:
+                leaf = old_records.find(identity)
+            check(leaf is not ABSENT, "sync_observation_record_birth")
+            touch(leaf.key)  # borrow a charged leaf buffer, never an N-row DTO
+
         for operation in tx.operations:
             if operation.space == "records":
-                touched[operation.key.encoded] = thaw(operation.key.value)
+                touch(operation.key.encoded)
             elif operation.space == "observations":
                 key = thaw(operation.key.value)
                 check(type(key) is list and len(key) == 2, "sync_observation_key")
-                touched[canonical(key[0])] = key[0]
+                touch_identity(key[0])
                 if operation.op == "put":
                     slot = tx.tables["records"].get(key[0])
                     check(slot is not ABSENT and thaw(slot["birth"]) == key[1],
@@ -565,43 +647,55 @@ class ReconstructionStore:
             elif operation.space == "bodies" and tx.before is not None:
                 identity = dict(tx.before.indexes)["$body_refs"].get(thaw(operation.key.value))
                 if identity is not ABSENT:
-                    touched[canonical(thaw(identity))] = thaw(identity)
-        old_records = None if tx.before is None else dict(tx.before.tables)["records"]
+                    touch_identity(thaw(identity))
         links = tx.indexes["$body_refs"]
         updates = []
-        for identity in touched.values():
-            check(type(identity) is list and len(identity) == 5 and identity[0] == self.host and
-                  all(type(part) is str and part for part in identity), "sync_record_identity")
-            old = ABSENT if old_records is None else old_records.get(identity)
-            new = tx.tables["records"].get(identity)
-            for value in (old, new):
-                if value is not ABSENT:
-                    check(type(value) is FrozenObject and "body" in value and "birth" in value, "sync_record_slot")
-                    hex_digest(value["body"])
-                    check(type(value["birth"]) is tuple and len(value["birth"]) == 2, "sync_record_birth")
-            if old is not ABSENT and (new is ABSENT or old["body"] != new["body"]):
-                links = links.remove(old["body"])
-            if old is not ABSENT and (new is ABSENT or old["birth"] != new["birth"]):
-                ref = [identity, thaw(old["birth"])]
-                tx.retired_refs.append(ref)
-                if tx.indexes["$fields"].get(ref) is not ABSENT:
-                    tx.indexes["$fields"] = tx.indexes["$fields"].remove(ref)
-                if tx.indexes["$rules"].get(ref) is not ABSENT:
-                    tx.indexes["$rules"] = tx.indexes["$rules"].remove(ref)
-            if new is not ABSENT:
-                check(new["birth"][0] == tx.cursor[0] and type(new["birth"][1]) is int and
-                      0 <= new["birth"][1] <= tx.tag.generation, "sync_record_birth")
-                check(tx.tables["bodies"].find(new["body"]) is not ABSENT, "sync_dangling_body")
-                check(tx.tables["observations"].find([identity, thaw(new["birth"])]) is not ABSENT,
-                      "sync_missing_observations")
-                if old is ABSENT or old["body"] != new["body"]:
-                    updates.append((new["body"], identity))
-        for body, identity in updates:
-            check(links.find(body) is ABSENT, "sync_shared_record_body")
-            links = links.put_atom(body, packed(Atom.own(identity)))
+        for encoded in touched:
+            with self.ledger.reserve(decode_reservation(encoded)):
+                identity = decode(encoded)
+                links, update = self._record_links(tx, identity, old_records, links)
+            if update:
+                updates.append(encoded)
+        for encoded in updates:
+            with self.ledger.reserve(decode_reservation(encoded)):
+                identity = decode(encoded)
+                slot = records.find_encoded(encoded).atom.value
+                check(links.find(slot["body"]) is ABSENT, "sync_shared_record_body")
+                links = links.put_atom(slot["body"], packed(Atom.own(identity)))
         tx.indexes["$body_refs"] = links
         check(len(links) == len(tx.tables["bodies"]) == len(tx.tables["records"]), "sync_orphan_body")
         check(len(tx.tables["observations"]) == len(tx.tables["records"]), "sync_orphan_observations")
+
+    def _record_links(self, tx, identity, old_records, links):
+        """One affected identity; no decoded row survives this operation."""
+        check(type(identity) is list and len(identity) == 5 and identity[0] == self.host and
+              all(type(part) is str and part for part in identity), "sync_record_identity")
+        old = ABSENT if old_records is None else old_records.get(identity)
+        new = tx.tables["records"].get(identity)
+        for value in (old, new):
+            if value is not ABSENT:
+                check(type(value) is FrozenObject and "body" in value and "birth" in value, "sync_record_slot")
+                hex_digest(value["body"])
+                check(type(value["birth"]) is tuple and len(value["birth"]) == 2, "sync_record_birth")
+        if old is not ABSENT and (new is ABSENT or old["body"] != new["body"]):
+            links = links.remove(old["body"])
+        if old is not ABSENT and (new is ABSENT or old["birth"] != new["birth"]):
+            tx.budget.charge(1024 + sum(sys.getsizeof(part) for part in identity) + sys.getsizeof(old["birth"][0]))
+            ref = [identity, thaw(old["birth"])]
+            tx.retired_refs.append(ref)
+            if tx.indexes["$fields"].get(ref) is not ABSENT:
+                tx.indexes["$fields"] = tx.indexes["$fields"].remove(ref)
+            if tx.indexes["$rules"].get(ref) is not ABSENT:
+                tx.indexes["$rules"] = tx.indexes["$rules"].remove(ref)
+        if new is not ABSENT:
+            check(new["birth"][0] == tx.cursor[0] and type(new["birth"][1]) is int and
+                  0 <= new["birth"][1] <= tx.tag.generation, "sync_record_birth")
+            check(tx.tables["bodies"].find(new["body"]) is not ABSENT, "sync_dangling_body")
+            check(tx.tables["observations"].find([identity, thaw(new["birth"])]) is not ABSENT,
+                  "sync_missing_observations")
+            if old is ABSENT or old["body"] != new["body"]:
+                return links, True
+        return links, False
 
     def _member_links(self, tx):
         for identity, birth in tx.retired_refs:
@@ -612,11 +706,17 @@ class ReconstructionStore:
                 for field in self.descriptor.fields:
                     check(tx.tables["memberships"].find([thaw(cohort.value), identity, birth, field]) is ABSENT,
                           "sync_retired_membership")
+        checked = set()
         for operation in tx.member_operations:
             if operation.op != "put":
                 continue
             key = thaw(operation.key.value)
             check(type(key) is list and len(key) == 4, "sync_membership_key")
+            _record_ref(key[1:3], tx)
+            ref = operation.key.value[1:3]
+            if ref in checked:
+                continue
+            checked.add(ref)
             slot = tx.tables["records"].get(key[1])
             check(slot is not ABSENT and thaw(slot["birth"]) == key[2], "sync_member_record_birth")
 
@@ -652,7 +752,8 @@ class ReconstructionStore:
         check(computed == tx.tag.root, "sync_result_root")
         continuing = tx.before is not None and tx.before is self.candidate
         changes = {} if not continuing else {(item.space, item.key.encoded): item for item in tx.before.changes}
-        changes.update({(item.space, item.key.encoded): item for item in tx.changes})
+        if tx.before is not None:
+            changes.update({(item.space, item.key.encoded): item for item in tx.changes})
         change_base = None if tx.before is None else tx.before.change_base if continuing else tx.before.tag
         root = MaterialRoot(tx.binding, tx.tag, tx.cursor, tuple(tx.tables.items()), tuple(tx.indexes.items()),
                             tuple(tx.groups.items()), tuple(changes.values()), change_base,
@@ -674,30 +775,36 @@ class ReconstructionStore:
                 self.close()
                 raise ProtocolError("sync_reentrant_admission")
             check(type(tag) is NativeTag and set(tables) == set(SPACES), "sync_baseline_shape")
+            # A baseline is an explicit material replacement. Revoke public
+            # authority before entering this internal engine boundary.
+            self.retire_material()
             owned_binding = Atom.own(binding)
             private_binding = thaw(owned_binding.value)
             check(private_binding.get("hostScope") == self.host, "sync_host_binding")
             check(binding_digest(private_binding, native=True).hex() == tag.binding, "sync_binding_digest")
             check(type(cursor) is tuple and cursor == (private_binding["ownerEpoch"], tag.generation, tag.root), "sync_cursor")
             check(all(len(tables[name]) <= TABLE_LIMITS[name] for name in SPACES), "sync_table_capacity")
-            built = {name: MerkleMap.baseline_atoms(name, ((key, Atom.own(value) if name in {"receipts", "cohorts", "metadata"}
+            built = {name: MerkleMap.baseline_atoms(name, ((key, value if type(value) is PackedAtom else
+                                                          Atom.own(value) if name in {"receipts", "cohorts", "metadata"}
                                                           else packed(Atom.own(value))) for key, value in tables[name]))
                      for name in SPACES}
             check(all(len(built[name]) <= TABLE_LIMITS[name] for name in SPACES), "sync_table_capacity")
             for leaf in built["bodies"].leaves():
                 check(body_digest_encoded(self.native_descriptor_digest, leaf.atom.encoded).hex() == decode(leaf.key),
                       "sync_body_digest")
-            operations = tuple(Operation(name, "put", Atom.own(decode(leaf.key)), None, leaf.atom)
-                               for name in SPACES for leaf in built[name].leaves())
-            tx = _Transaction(self, None, owned_binding, tag, cursor, operations, built, self._groups(built["memberships"]))
-            self._transaction = tx
-            try:
-                self._links(tx)
-                patch = self.profile.admit_baseline(PublicStageContext(self, tx))
-                return self._finish(tx, patch, reservation)
-            finally:
-                tx.budget.close()
-                self._transaction = None
+            size = 1024 + sum(map(len, built.values())) * (sys.getsizeof(object.__new__(Operation)) + 16)
+            with self.ledger.reserve(size):
+                operations = tuple(Operation(name, "put", InputKey.borrow(leaf.key), None, leaf.atom)
+                                   for name in SPACES for leaf in built[name].leaves())
+                tx = _Transaction(self, None, owned_binding, tag, cursor, operations, built, self._groups(built["memberships"]))
+                self._transaction = tx
+                try:
+                    self._links(tx)
+                    patch = self.profile.admit_baseline(PublicStageContext(self, tx))
+                    return self._finish(tx, patch, reservation)
+                finally:
+                    tx.budget.close()
+                    self._transaction = None
 
     @_decoding
     def stage_delta(self, base, result, cursor, operations, *, reservation=None):
@@ -711,6 +818,12 @@ class ReconstructionStore:
             check(type(result) is NativeTag and result.binding == base.binding and
                   result.generation > base.generation, "sync_result_tag")
             check(cursor == (before.cursor[0], result.generation, result.root), "sync_cursor")
+            if self.candidate is not None and self.previous is not None:
+                # A chain's old candidate is the immutable input to its next
+                # stage. Retire the older predecessor before allocating that
+                # stage, keeping at most current + predecessor + one stage.
+                self.ledger.release(self.previous)
+                self.previous = None
             tx = _Transaction(self, before, before.binding, result, cursor, tuple(operations),
                               dict(before.tables), dict(before.groups))
             seen = set()

@@ -1,6 +1,7 @@
 """Explicit incremental state interfaces, separate from SDK/Delivery 1."""
 
 from ._constants import COMMITMENT, SYNC_INTERFACE_VERSION, SYNC_PROTOCOL
+from .aggregate import AggregateCommit, UnavailableHost
 from .cache import (
     CandidateRef,
     ChangeSet,
@@ -33,4 +34,5 @@ __all__ = [
     "DerivedMembershipOperation", "RuleWrite", "HeadRules", "OriginalReceipt",
     "OwnedSyncCache", "SyncBudgets", "CandidateRef", "ViewRef", "PublicCommitContext",
     "ChangeSet", "ResyncRequired", "MovedHead", "source_binding",
+    "AggregateCommit", "UnavailableHost",
 ]

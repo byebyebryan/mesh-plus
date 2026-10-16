@@ -44,6 +44,7 @@ def entries(value, maximum, code):
 def owner_clock(value, binding):
     closed(value, "bootId clockDomain boottimeMs ownerEpoch uid hostScope", "sync_owner_clock")
     check(type(value["boottimeMs"]) is int and value["boottimeMs"] >= 0, "sync_owner_clock")
+    check(type(value["uid"]) is int and value["uid"] >= 0, "sync_owner_clock")
     check(type(value["clockDomain"]) is str and re.fullmatch(r"time:\[[0-9]+\]", value["clockDomain"]),
           "sync_owner_clock")
     for name in ("bootId", "clockDomain", "ownerEpoch", "uid", "hostScope"):

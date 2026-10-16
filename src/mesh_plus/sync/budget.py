@@ -1,11 +1,12 @@
 """Incremental unique-allocation accounting for retained immutable sync graphs."""
 
 import sys
+from contextlib import contextmanager
 from dataclasses import dataclass
 
 from ..protocol import check
-from ._allocation import TrackedAllocation
-from .canonical import Atom, FrozenObject, PackedAtom
+from ._allocation import ACTIVE_LEDGER, TrackedAllocation
+from .canonical import Atom, FrozenObject, InputKey, PackedAtom
 from .commitment import Branch, Leaf, MerkleMap, Work
 
 
@@ -29,7 +30,7 @@ def children(value):
         return (value.left, value.right)
     if kind is Leaf:
         return (value.atom,)
-    if kind in (Atom, PackedAtom):
+    if kind in (Atom, PackedAtom, InputKey):
         return ()
     if kind is FrozenObject:
         return (value._items,)
@@ -54,11 +55,17 @@ def _payload_size(value):
         size = sys.getsizeof(item)
         if type(item) is FrozenObject:
             size += visit(item._items)
-        elif type(item) is tuple:
+        elif type(item) in (tuple, list):
             size += sum(visit(child) for child in item)
+        elif type(item) is dict:
+            size += sum(visit(key) + visit(child) for key, child in item.items())
         return size
 
-    return visit(value)
+    try:
+        return visit(value)
+    finally:
+        visit = None
+        seen.clear()
 
 
 def allocation_size(value):
@@ -77,6 +84,10 @@ def allocation_size(value):
         buffers = (value.key, value.example, value.value_hash, value.root)
         size += sum(sys.getsizeof(buffer) for buffer in buffers)
         encoded = sum(len(buffer) for buffer in buffers)
+    elif kind is InputKey:
+        size += sys.getsizeof(value.copy_budget) if value.copy_budget > 256 else 0
+        # Canonical buffer is already charged to the baseline leaf. InputKey
+        # is stage-only and never owns a separate encoded-byte reservation.
     elif kind in (Atom, PackedAtom):
         size += sys.getsizeof(value.encoded)
         if kind is Atom:
@@ -122,15 +133,55 @@ class AllocationLedger:
         self._roots = {}
         self.units = 0
         self.used = self.encoded = self.reserved = self.peak = 0
+        self.pending_encoded = self.encoded_reserved = self.pending_units = 0
         self.visited = self.reclaimed = 0
         self._since_compaction = 0
 
-    def reserve(self, amount):
+    def reserve(self, amount, *, encoded=0):
         check(type(amount) is int and amount >= 0, "sync_reservation")
+        check(type(encoded) is int and encoded >= 0, "sync_reservation")
         check(self.used + self.reserved + amount <= self.maximum, "sync_decoded_capacity")
+        check(self.encoded + self.pending_encoded + self.encoded_reserved + encoded <= self.encoded_maximum,
+              "sync_encoded_capacity")
         self.reserved += amount
+        self.encoded_reserved += encoded
         self.peak = max(self.peak, self.used + self.reserved)
-        return Reservation(self, amount)
+        return Reservation(self, amount, encoded)
+
+    @contextmanager
+    def allocations(self):
+        current = ACTIVE_LEDGER.get()
+        check(current is None or current is self, "sync_allocation_owner")
+        working = None if current is self else self.reserve(min(65536, self.maximum // 32))
+        token = ACTIVE_LEDGER.set(self)
+        try:
+            yield
+        finally:
+            ACTIVE_LEDGER.reset(token)
+            if working is not None:
+                working.close()
+
+    def adopt_pending(self, value, reservation):
+        check(isinstance(value, TrackedAllocation) and self._state(value) is None and
+              reservation.ledger is self and not reservation.closed, "sync_allocation_state")
+        intrinsic, encoded = allocation_size(value)
+        cost = intrinsic + 96
+        check(cost <= reservation.amount and encoded <= reservation.encoded_amount, "sync_allocation_estimate")
+        reservation.close()
+        self.reserved += cost
+        self.pending_encoded += encoded
+        self.pending_units += 1
+        self.visited += 1
+        for name, item in (("owner", self), ("refs", 0), ("cost", cost), ("encoded", encoded), ("pending", True)):
+            object.__setattr__(value, "_allocation_" + name, item)
+
+    def discard_pending(self, value):
+        self.reserved -= value._allocation_cost
+        self.pending_encoded -= value._allocation_encoded
+        self.pending_units -= 1
+        self.reclaimed += 1
+        object.__setattr__(value, "_allocation_owner", None)
+        object.__setattr__(value, "_allocation_pending", False)
 
     def _state(self, value):
         if isinstance(value, TrackedAllocation):
@@ -152,6 +203,7 @@ class AllocationLedger:
         if isinstance(value, TrackedAllocation):
             for name, item in (("owner", self), ("refs", 1), ("cost", cost), ("encoded", encoded)):
                 object.__setattr__(value, "_allocation_" + name, item)
+            object.__setattr__(value, "_allocation_pending", False)
         else:
             self.entries[id(value)] = _Tracked(value, 1, cost, encoded)
         self.units += 1
@@ -162,6 +214,7 @@ class AllocationLedger:
         if isinstance(value, TrackedAllocation):
             cost, encoded = state._allocation_cost, state._allocation_encoded
             object.__setattr__(state, "_allocation_owner", None)
+            object.__setattr__(state, "_allocation_pending", False)
             for name in ("refs", "cost", "encoded"):
                 object.__setattr__(state, "_allocation_" + name, 0)
         else:
@@ -172,16 +225,27 @@ class AllocationLedger:
         self.used -= cost
         self.encoded -= encoded
 
-    def retain(self, root, *, reservation=None):
+    def _convert_pending(self, value, *, commit):
+        sign = 1 if commit else -1
+        self.used += sign * value._allocation_cost
+        self.reserved -= sign * value._allocation_cost
+        self.encoded += sign * value._allocation_encoded
+        self.pending_encoded -= sign * value._allocation_encoded
+        self.units += sign
+        self.pending_units -= sign
+        object.__setattr__(value, "_allocation_pending", not commit)
+
+    def retain(self, root, *, reservation=None, finalize=True):
         # A small rollback log replaces a second per-node planning graph. Every
         # increment is undone on failure, including aliases to existing roots.
-        touched, active = [], set()
+        touched, actions, active = [], bytearray(), set()
         # The log is a flat list of borrowed object pointers, not one Python
         # bookkeeping object per node. A fixed DFS allowance covers the bounded
         # Patricia depth; the list's capacity is bounded before each append.
         scratch_base = min(65536, self.maximum // 32)
         scratch = scratch_base
         credit = 0 if reservation is None else reservation.amount
+        encoded_credit = 0 if reservation is None else reservation.encoded_amount
         if reservation is not None:
             check(reservation.ledger is self and not reservation.closed, "sync_reservation")
         root_cost = 224 if id(root) not in self._roots else 0
@@ -193,20 +257,28 @@ class AllocationLedger:
             nonlocal scratch
             check(id(value) not in active, "sync_owned_graph_cycle")
             state = self._state(value)
+            is_pending = state is not None and isinstance(value, TrackedAllocation) and value._allocation_pending
             intrinsic, encoded = (0, 0) if state is not None else allocation_size(value)
             # Slots include their four pointer slots. 96 further bytes cover
             # their mutable size/ref integers. Root registrations are separate.
             cost = 0 if state is not None else intrinsic + (96 if isinstance(value, TrackedAllocation) else 256)
             check(self.used + self.reserved - credit + cost + 16 <= self.maximum, "sync_decoded_capacity")
-            check(self.encoded + encoded <= self.encoded_maximum, "sync_encoded_capacity")
+            check(self.encoded + self.pending_encoded + self.encoded_reserved - encoded_credit + encoded <= self.encoded_maximum,
+                  "sync_encoded_capacity")
             self.reserved += 16  # flat rollback log capacity, before append
             scratch += 16
             touched.append(value)
+            actions.append(3 if is_pending and finalize else 4 if is_pending else 1 if state is not None else 2)
             if state is not None:
                 self._set_refs(value, state, self._refs(value, state) + 1)
+                if is_pending and finalize:
+                    self._convert_pending(value, commit=True)
+                elif is_pending:
+                    check(not children(value), "sync_provisional_graph")
             else:
                 self._create(value, cost, encoded)
                 self.visited += 1
+            if state is None or is_pending and finalize:
                 active.add(id(value))
                 for child in children(value):
                     visit(child)
@@ -223,16 +295,23 @@ class AllocationLedger:
                 reservation.close()
             return root
         except BaseException:
-            for value in reversed(touched):
+            for value, action in zip(reversed(touched), reversed(actions)):
                 state = self._state(value)
                 refs = self._refs(value, state) - 1
-                if refs:
+                if action == 3:
+                    self._set_refs(value, state, refs)
+                    self._convert_pending(value, commit=False)
+                elif action in (1, 4):
                     self._set_refs(value, state, refs)
                 else:
                     self._forget(value, state)
             raise
         finally:
             self.reserved -= scratch + root_cost
+            visit = None
+            touched.clear()
+            actions.clear()
+            active.clear()
 
     def release(self, root):
         registration = self._roots.get(id(root))
@@ -252,6 +331,11 @@ class AllocationLedger:
             refs = self._refs(value, state) - 1
             self._set_refs(value, state, refs)
             if refs == 0:
+                if isinstance(value, TrackedAllocation) and value._allocation_pending:
+                    # A provisional decoder borrow ended; a pending parent may
+                    # still hold this atom. Its destructor releases the charge
+                    # once the actual uncommitted allocation is unreachable.
+                    continue
                 self._forget(value, state)
                 self.reclaimed += 1
                 pending.extend(children(value))
@@ -267,17 +351,28 @@ class AllocationLedger:
     def inspect(self):
         return {"decodedBytes": self.used, "encodedBytes": self.encoded, "reservedBytes": self.reserved,
                 "peakBytes": self.peak, "uniqueAllocations": self.units,
+                "pendingAllocations": self.pending_units, "pendingEncodedBytes": self.pending_encoded,
+                "reservedEncodedBytes": self.encoded_reserved,
                 "newAllocationVisits": self.visited, "reclaimedAllocations": self.reclaimed}
 
 
 class Reservation:
-    def __init__(self, ledger, amount):
-        self.ledger, self.amount, self.closed = ledger, amount, False
+    def __init__(self, ledger, amount, encoded=0):
+        self.ledger, self.amount, self.encoded_amount, self.closed = ledger, amount, encoded, False
 
     def close(self):
         if not self.closed:
             self.closed = True
             self.ledger.reserved -= self.amount
+            self.ledger.encoded_reserved -= self.encoded_amount
+
+    def grow(self, amount, *, encoded=0):
+        """Prepay additional scratch capacity before growing its container."""
+        check(not self.closed, "sync_reservation")
+        extra = self.ledger.reserve(amount, encoded=encoded)
+        self.amount += extra.amount
+        self.encoded_amount += extra.encoded_amount
+        extra.closed = True  # its charge now belongs to this reservation
 
     def __enter__(self):
         return self

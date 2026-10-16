@@ -6,7 +6,7 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 
 from ..protocol import ProtocolError, check
-from ._allocation import TrackedAllocation
+from ._allocation import TrackedAllocation, finish, prepay, prepay_json
 
 PACKED_DECODER = ContextVar("mesh_sync_private_decoder", default=None)
 
@@ -35,19 +35,23 @@ class FrozenObject(Mapping):
         raise KeyError(key)
 
 
-def _validate(value, depth=0):
+def _validate(value, depth=0, budget=None):
     check(depth <= 64, "sync_tree_depth")
     kind = type(value)
     if kind is str:
         check(value.isascii() or not any(0xD800 <= ord(c) <= 0xDFFF for c in value), "sync_unicode")
     elif kind is dict:
+        if budget is not None:
+            budget[0] += 248 + 72 * len(value)
         for key, child in value.items():
             check(type(key) is str, "sync_object_key")
             _validate(key, depth + 1)
-            _validate(child, depth + 1)
+            _validate(child, depth + 1, budget)
     elif kind is list:
+        if budget is not None:
+            budget[0] += 96 + 16 * len(value)
         for child in value:
-            _validate(child, depth + 1)
+            _validate(child, depth + 1, budget)
     else:
         check(kind in (int, bool, type(None)), "sync_json_type")
 
@@ -128,16 +132,20 @@ class Atom(TrackedAllocation):
 
     @classmethod
     def own(cls, value):
+        reservation = prepay_json(value)
         try:
             budget = [0]
             frozen = _freeze(value, budget=budget)
             encoded = json.dumps(thaw(frozen), sort_keys=True, ensure_ascii=False,
                                  separators=(",", ":"), allow_nan=False).encode("utf-8")
-            return cls(encoded, frozen, budget[0])
+            return finish(cls(encoded, frozen, budget[0]), reservation)
         except ProtocolError:
             raise
         except (ValueError, TypeError, UnicodeError, RecursionError, RuntimeError) as error:
             raise ProtocolError("sync_json") from error
+        finally:
+            if reservation is not None:
+                reservation.close()
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,7 +167,49 @@ class PackedAtom(TrackedAllocation):
     @classmethod
     def from_owned(cls, atom):
         check(type(atom) is Atom, "sync_owned_atom")
-        return cls(atom.encoded, atom.copy_budget)
+        reservation = prepay(len(atom.encoded) + 1024, len(atom.encoded))
+        try:
+            return finish(cls(atom.encoded, atom.copy_budget), reservation)
+        finally:
+            if reservation is not None:
+                reservation.close()
+
+    @classmethod
+    def _from_private_json(cls, value):
+        """Only for receiver-owned decoder output, never mutable user input.
+
+        No external reference sees the decoded table entry. Retain its strict
+        canonical bytes without first building another complete frozen tree.
+        """
+        reservation = prepay_json(value)
+        try:
+            budget = [0]
+            _validate(value, budget=budget)
+            encoded = json.dumps(value, sort_keys=True, ensure_ascii=False,
+                                 separators=(",", ":"), allow_nan=False).encode("utf-8")
+            return finish(cls(encoded, budget[0]), reservation)
+        finally:
+            if reservation is not None:
+                reservation.close()
+
+
+@dataclass(frozen=True, slots=True)
+class InputKey(PackedAtom):
+    """Baseline-only key bytes borrowed from its staged table leaf.
+
+    Never retained in a material root or returned as a public capability. The
+    enclosing baseline owns the leaf throughout the operation callback.
+    """
+
+    @classmethod
+    def borrow(cls, encoded):
+        reservation = prepay(1024, 0)
+        try:
+            budget = 0 if encoded[:1] not in (b"[", b"{") else 128 + 96 * len(encoded)
+            return finish(cls(encoded, budget), reservation)
+        finally:
+            if reservation is not None:
+                reservation.close()
 
 
 def packed(atom):
@@ -173,12 +223,15 @@ def packed(atom):
     return atom
 
 
-def decode_reservation(raw, maximum=8_404_992):
+def decode_reservation(raw, maximum=8_404_992, *, _start=0, _end=None):
     """Conservative lexical preflight; scans received bytes, not old roots."""
-    check(type(raw) is bytes and len(raw) <= maximum, "sync_message_capacity")
+    check(type(raw) is bytes, "sync_message_capacity")
+    end = len(raw) if _end is None else _end
+    check(type(_start) is int and type(end) is int and 0 <= _start <= end <= len(raw) and
+          end - _start <= maximum, "sync_message_capacity")
     strings = containers = scalars = 0
     quoted = escaped = False
-    for byte in raw:
+    for byte in memoryview(raw)[_start:end]:
         if quoted:
             if escaped:
                 escaped = False
@@ -193,4 +246,4 @@ def decode_reservation(raw, maximum=8_404_992):
             containers += 1
         elif byte in (44, 58):
             scalars += 1
-    return 4096 + len(raw) * 4 + strings * 96 + containers * 256 + scalars * 32
+    return 4096 + (end - _start) * 4 + strings * 96 + containers * 256 + scalars * 32

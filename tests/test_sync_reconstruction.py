@@ -2,6 +2,7 @@ import unittest
 from dataclasses import replace
 
 from mesh_plus.protocol import ProtocolError
+from mesh_plus.sync.budget import AllocationLedger
 from mesh_plus.sync.canonical import Atom, canonical, thaw
 from mesh_plus.sync.commitment import MerkleMap, binding_digest, body_digest, field_digest, native_root
 from mesh_plus.sync.model import (
@@ -95,6 +96,15 @@ def operations(before, after):
 
 
 class ReconstructionTests(unittest.TestCase):
+    def test_failed_schema_setup_releases_already_prepared_index_schemas(self):
+        profile = Profile()
+        large = IndexSpec("large", canonical({"type": "string", "description": "x" * 8192}), b"{}")
+        profile.descriptor = replace(profile.descriptor, indexes=(*profile.descriptor.indexes, large))
+        ledger = AllocationLedger(24 * 1024)
+        with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+            ReconstructionStore(profile, host="fixture", ledger=ledger)
+        self.assertEqual((ledger.used, ledger.reserved, ledger.encoded, ledger.pending_units), (0, 0, 0, 0))
+
     def test_atomic_baseline_delta_detachment_and_retired_callback_refs(self):
         profile = Profile()
         store = ReconstructionStore(profile, host="fixture")
@@ -141,6 +151,29 @@ class ReconstructionTests(unittest.TestCase):
         finally:
             store.close()
         self.assertEqual(store.ledger.used, 0)
+
+    def test_chained_stage_retires_predecessor_before_next_callback(self):
+        profile = Profile()
+        store = ReconstructionStore(profile, host="fixture")
+        try:
+            tables, maps, tag, cursor = fixture(profile)
+            store.stage_baseline(BINDING, tag, cursor, tables)
+            store.advance_material()
+            for generation in (2, 3):
+                _, after, next_tag, next_cursor = fixture(profile, generation, generation)
+                store.stage_delta(tag, next_tag, next_cursor, operations(maps, after))
+                if generation == 2:
+                    store.advance_material()
+                maps, tag = after, next_tag
+            self.assertIsNotNone(store.previous)
+            profile.callback = lambda ctx: self.assertIsNone(store.previous)
+            _, after, next_tag, next_cursor = fixture(profile, 4, 4)
+            store.stage_delta(tag, next_tag, next_cursor, operations(maps, after))
+            self.assertEqual(store.current.tag.generation, 2)
+            self.assertEqual(store.candidate.tag.generation, 4)
+        finally:
+            store.close()
+        self.assertEqual((store.ledger.used, store.ledger.reserved), (0, 0))
 
     def test_duplicate_wrong_base_and_wrong_old_value_are_atomic(self):
         profile = Profile()
@@ -202,6 +235,7 @@ class ReconstructionTests(unittest.TestCase):
             # empty without materializing a table/roster.
             self.assertEqual(list(iterator), [])
             retained.append(ctx.after)
+            retained.append(ctx.budget)
 
         profile.callback = enumerate_once
         store = ReconstructionStore(profile, host="fixture")
@@ -209,7 +243,12 @@ class ReconstructionTests(unittest.TestCase):
             tables, _, tag, cursor = fixture(profile)
             store.stage_baseline(BINDING, tag, cursor, tables)
             with self.assertRaisesRegex(ProtocolError, "sync_reference_retired"):
-                retained[-1].lookup("records", IDENTITY)
+                retained[-2].lookup("records", IDENTITY)
+            with self.assertRaisesRegex(ProtocolError, "sync_reference_retired"):
+                retained[-1].charge(1)
+            with self.assertRaisesRegex(ProtocolError, "sync_reference_retired"):
+                with retained[-1].reserve(1):
+                    self.fail("retired callback budget was usable")
         finally:
             store.close()
 
@@ -223,6 +262,23 @@ class ReconstructionTests(unittest.TestCase):
         try:
             with self.assertRaisesRegex(ProtocolError, "sync_observation_record_birth"):
                 store.stage_baseline(BINDING, tag, (OWNER, 1, tag.root), tables)
+            self.assertIsNone(store.candidate)
+        finally:
+            store.close()
+
+    def test_boolean_birth_cannot_alias_integer_generation_in_derived_indexes(self):
+        class InvalidBirth(Profile):
+            def _admit(self, ctx):
+                result = super()._admit(ctx)
+                return replace(result, field_tokens=tuple(replace(token, record_ref=[IDENTITY, [OWNER, True]])
+                                                         for token in result.field_tokens))
+
+        profile = InvalidBirth()
+        tables, _, tag, cursor = fixture(profile)
+        store = ReconstructionStore(profile, host="fixture")
+        try:
+            with self.assertRaisesRegex(ProtocolError, "sync_record_ref"):
+                store.stage_baseline(BINDING, tag, cursor, tables)
             self.assertIsNone(store.candidate)
         finally:
             store.close()

@@ -1,6 +1,8 @@
 import unittest
+from unittest.mock import patch
 
 from mesh_plus.protocol import ProtocolError
+from mesh_plus.sync._schema import OwnedSchema
 from mesh_plus.sync.budget import AllocationLedger
 from mesh_plus.sync.canonical import Atom, canonical, packed, thaw
 from mesh_plus.sync.commitment import MerkleMap
@@ -8,6 +10,54 @@ from mesh_plus.sync.decoder import DecoderArena
 
 
 class PackedValueTests(unittest.TestCase):
+    def test_index_schema_owns_its_tree_and_prepays_validation_before_compilation(self):
+        ledger = AllocationLedger(4 * 1024 * 1024)
+        schema = OwnedSchema.retain(canonical({"$defs": {"value": {"type": "integer"}},
+                                               "$ref": "#/$defs/value"}), ledger)
+        try:
+            schema.validate(Atom.own(1), ledger)
+            with self.assertRaisesRegex(Exception, "not of type"):
+                schema.validate(Atom.own("wrong"), ledger)
+            self.assertEqual(ledger.reserved, 0)
+            with ledger.reserve(ledger.maximum - ledger.used - 4096):
+                with patch("mesh_plus.sync._schema.Draft202012Validator", side_effect=AssertionError("unfunded compiler")):
+                    with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                        schema.validate(Atom.own(1), ledger)
+        finally:
+            ledger.release(schema)
+        self.assertEqual((ledger.used, ledger.reserved), (0, 0))
+
+    def test_unfunded_staging_is_rejected_before_copy_or_encoding(self):
+        ledger = AllocationLedger(4096)
+        from mesh_plus.sync.canonical import PackedAtom
+        with ledger.allocations():
+            with patch("mesh_plus.sync.canonical._freeze", side_effect=AssertionError("unfunded copy")):
+                with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                    Atom.own({"body": "x" * 16384})
+            with patch("mesh_plus.sync.canonical.json.dumps", side_effect=AssertionError("unfunded encoding")):
+                with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                    PackedAtom._from_private_json({"body": "x" * 16384})
+        self.assertEqual((ledger.used, ledger.reserved, ledger.pending_units), (0, 0, 0))
+
+    def test_provisional_decoder_borrow_does_not_uncharge_a_live_staged_atom(self):
+        ledger = AllocationLedger()
+        arena = DecoderArena(ledger)
+        try:
+            with ledger.allocations():
+                value = packed(Atom.own({"body": "x" * 2048}))
+                amount = ledger.reserved
+                self.assertEqual(ledger.pending_units, 1)
+                with arena.active():
+                    self.assertEqual(value.value["body"], "x" * 2048)
+                arena.clear()
+                self.assertEqual(ledger.reserved, amount)
+                self.assertEqual(ledger.pending_units, 1)
+                value = None
+                self.assertEqual(ledger.pending_units, 0)
+        finally:
+            arena.close()
+        self.assertEqual((ledger.used, ledger.reserved), (0, 0))
+
     def test_packing_preserves_every_commitment_and_detaches_input(self):
         values = [["id", {"value": [1, 2, {"text": "snow 雪"}], "health": "current"}],
                   ["other", "ab" * 32]]

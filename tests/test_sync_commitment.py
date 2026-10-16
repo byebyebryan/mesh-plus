@@ -1,3 +1,4 @@
+import gc
 import itertools
 import json
 import random
@@ -156,6 +157,29 @@ class CommitmentTests(unittest.TestCase):
 
 
 class AllocationTests(unittest.TestCase):
+    def test_staged_allocation_and_retirement_do_not_wait_for_cyclic_gc(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        ledger = AllocationLedger()
+        try:
+            with ledger.allocations():
+                current = MerkleMap.baseline("records", [(str(i), {"value": i}) for i in range(128)])
+                self.assertGreater(ledger.pending_units, 0)
+                self.assertEqual(ledger.used, 0)
+                ledger.retain(current)
+                self.assertEqual(ledger.pending_units, 0)
+                for i in range(100):
+                    changed = current.put(str(i), {"changed": i})
+                    ledger.retain(changed)
+                    ledger.release(current)
+                    current = changed
+                ledger.release(current)
+                current = changed = None
+            self.assertEqual((ledger.used, ledger.reserved, ledger.pending_units, ledger.pending_encoded), (0, 0, 0, 0))
+        finally:
+            if enabled:
+                gc.enable()
+
     def test_mid_graph_failure_rolls_back_alias_counts_on_existing_root(self):
         ledger = AllocationLedger()
         original = MerkleMap.baseline("records", [(str(i), {"value": i}) for i in range(500)])

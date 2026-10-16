@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 
 from ..protocol import check
-from ._allocation import TrackedAllocation
+from ._allocation import TrackedAllocation, finish, prepay
 from .canonical import Atom, PackedAtom, canonical, decode
 
 ABSENT = object()
@@ -17,6 +17,13 @@ def framed(value):
 
 def digest(value):
     return sha256(value).digest()
+
+
+def digest_parts(*parts):
+    state = sha256()
+    for part in parts:
+        state.update(part)
+    return state.digest()
 
 
 @dataclass(slots=True)
@@ -77,9 +84,15 @@ class MerkleMap(TrackedAllocation):
 
     def __init__(self, space, node=None, *, work=None):
         check(type(space) is str and 0 < len(space.encode()) <= 128, "sync_space")
-        self.space, self.node, self.work = space, node, work if work is not None else Work()
-        self._framed_space = framed(space.encode())
-        self._empty = digest(b"mesh-sync-empty\0" + self._framed_space)
+        reservation = prepay(2048, 256)
+        try:
+            self.space, self.node, self.work = space, node, work if work is not None else Work()
+            self._framed_space = framed(space.encode())
+            self._empty = digest(b"mesh-sync-empty\0" + self._framed_space)
+            finish(self, reservation)
+        finally:
+            if reservation is not None:
+                reservation.close()
 
     @property
     def root(self):
@@ -94,23 +107,34 @@ class MerkleMap(TrackedAllocation):
         return encoded, digest(b"mesh-sync-key\0" + self._framed_space + framed(encoded))
 
     def _leaf(self, key, key_hash, atom):
-        self.work.value_hashes += 1
-        value_hash = digest(b"mesh-sync-value\0" + self._framed_space + framed(atom.encoded))
-        root = digest(b"mesh-sync-leaf\0" + self._framed_space + key_hash +
-                      framed(key) + value_hash)
-        self.work.node_writes += 1
-        return Leaf(key, key_hash, atom, value_hash, root)
+        reservation = prepay(len(key) + 2048, len(key) + 256)
+        try:
+            self.work.value_hashes += 1
+            value_hash = digest_parts(b"mesh-sync-value\0", self._framed_space,
+                                      len(atom.encoded).to_bytes(8, "big"), atom.encoded)
+            root = digest_parts(b"mesh-sync-leaf\0", self._framed_space, key_hash,
+                                len(key).to_bytes(8, "big"), key, value_hash)
+            self.work.node_writes += 1
+            return finish(Leaf(key, key_hash, atom, value_hash, root), reservation)
+        finally:
+            if reservation is not None:
+                reservation.close()
 
     def _branch(self, split, left, right):
-        prefix = bytearray(left.example[:(split + 7) // 8])
-        if split % 8:
-            prefix[-1] &= (255 << (8 - split % 8)) & 255
-        prefix = bytes(prefix)
-        root = digest(b"mesh-sync-branch\0" + self._framed_space + split.to_bytes(2, "big") +
-                      framed(prefix) + left.root + right.root)
-        self.work.branch_hashes += 1
-        self.work.node_writes += 1
-        return Branch(split, prefix, left, right, left.example, root, left.count + right.count)
+        reservation = prepay(2048, 128)
+        try:
+            prefix = bytearray(left.example[:(split + 7) // 8])
+            if split % 8:
+                prefix[-1] &= (255 << (8 - split % 8)) & 255
+            prefix = bytes(prefix)
+            root = digest_parts(b"mesh-sync-branch\0", self._framed_space, split.to_bytes(2, "big"),
+                                len(prefix).to_bytes(8, "big"), prefix, left.root, right.root)
+            self.work.branch_hashes += 1
+            self.work.node_writes += 1
+            return finish(Branch(split, prefix, left, right, left.example, root, left.count + right.count), reservation)
+        finally:
+            if reservation is not None:
+                reservation.close()
 
     def _copy(self, node):
         return MerkleMap(self.space, node, work=self.work)
@@ -173,7 +197,10 @@ class MerkleMap(TrackedAllocation):
             left = insert(node.left)
             return node if left is node.left else self._branch(node.split, left, node.right)
 
-        return self._copy(insert(self.node))
+        try:
+            return self._copy(insert(self.node))
+        finally:
+            insert = None  # break the recursive closure's cycle immediately
 
     def remove(self, key, *, expected=ANY):
         encoded, hashed = self._key(key)
@@ -193,7 +220,10 @@ class MerkleMap(TrackedAllocation):
             left = delete(node.left)
             return node.right if left is None else self._branch(node.split, left, node.right)
 
-        return self._copy(delete(self.node))
+        try:
+            return self._copy(delete(self.node))
+        finally:
+            delete = None
 
     def items(self):
         stack = [] if self.node is None else [self.node]
@@ -242,10 +272,23 @@ class MerkleMap(TrackedAllocation):
         """Bulk-build from already privately owned atoms, sharing those atoms."""
         result = cls(space, work=work)
         leaves = []
-        for key, atom in entries:
-            check(type(atom) in (Atom, PackedAtom), "sync_atom")
-            encoded, hashed = result._key(key)
-            leaves.append(result._leaf(encoded, hashed, atom))
+        scratch = prepay(1024)
+        try:
+            for key, atom in entries:
+                check(type(atom) in (Atom, PackedAtom), "sync_atom")
+                encoded, hashed = result._key(key)
+                if scratch is not None and len(leaves) % 64 == 0:
+                    scratch.grow(24 * 64)  # list growth and sort's pointer array
+                leaves.append(result._leaf(encoded, hashed, atom))
+            return result._baseline_leaves(leaves)
+        finally:
+            leaves.clear()
+            if scratch is not None:
+                scratch.close()
+
+    def _baseline_leaves(self, leaves):
+        """Internal bulk finish; the caller owns and prepays the leaf list."""
+        result = self
         leaves.sort(key=lambda leaf: leaf.example)
         for before, after in zip(leaves, leaves[1:]):
             check(before.example != after.example, "sync_duplicate_or_colliding_key")
@@ -265,7 +308,11 @@ class MerkleMap(TrackedAllocation):
                     low = mid + 1
             return result._branch(split, build(lo, low), build(low, hi))
 
-        return result._copy(build(0, len(leaves)))
+        try:
+            return result._copy(build(0, len(leaves)))
+        finally:
+            build = None
+            leaves.clear()
 
 
 def native_root(binding, generation, tables):
