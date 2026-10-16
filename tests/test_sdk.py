@@ -41,6 +41,83 @@ ORIGINAL_IMPORT = builtins.__import__
 
 
 class SDKTests(unittest.IsolatedAsyncioTestCase):
+    async def test_combined_bridge_admission_keeps_mesh_checks_and_strict_fallback(self):
+        from mesh_plus.state import validate_bridge
+
+        publisher = Publisher("agent", "local")
+        profile = publisher.state_profile
+        codec = profile.bind("local", "default")
+        payload = publisher.wrap("a" * 32)
+        original = codec.inspect_native
+        with patch.object(codec, "validate_bridge", wraps=codec.validate_bridge) as validate, \
+                patch.object(codec, "inspect_native", wraps=original) as inspect_native:
+            validate_bridge(profile, codec, payload)
+            self.assertEqual((validate.call_count, inspect_native.call_count), (1, 1))
+        calls = []
+
+        def admit(payload):
+            calls.append(payload)
+            return original(payload["ownerFrame"])
+
+        codec.admit_bridge = admit
+        with patch.object(codec, "validate_bridge", side_effect=AssertionError("duplicate validate")), \
+                patch.object(codec, "inspect_native", side_effect=AssertionError("duplicate inspect")):
+            state = validate_bridge(profile, codec, payload)
+        self.assertEqual(state, original(payload["ownerFrame"]))
+        self.assertEqual(len(calls), 1)
+        for kind in ("digest", "clock", "receipts", "scope", "native", "state"):
+            bad = copy.deepcopy(payload)
+            codec.admit_bridge = admit
+            if kind == "digest":
+                bad["ownerDigest"] = "sha256:" + "0" * 64
+            elif kind == "clock":
+                bad["clock"]["bootId"] = "00000000-0000-0000-0000-000000000000"
+            elif kind == "receipts":
+                bad["remaining"][0]["remainingMs"] += 1
+            elif kind == "scope":
+                bad["hostId"] = "foreign"
+            elif kind == "native":
+                codec.admit_bridge = lambda payload: replace(original(payload["ownerFrame"]), records=[])
+            else:
+                codec.admit_bridge = lambda payload: None
+            with self.subTest(kind=kind), self.assertRaises(Exception):
+                validate_bridge(profile, codec, bad)
+
+    async def test_owned_watch_and_execute_share_request_checks_and_cleanup(self):
+        from prepared_fixture import StaticPreparation
+
+        from mesh_plus.api import AdmittedResponse, PreparedReadGuard
+
+        publisher = Publisher("agent", "local")
+        profile = publisher.state_profile
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "mesh.sock"
+            server = await IPCServer(path, Bridge(publisher).serve).start()
+            reader = await configured_reader("agent", source="default", socket=path, scope="local",
+                                             local_host="local", profile=profile)
+            request = {"meshProtocol": 1, "requestId": "a" * 32, "profile": profile.descriptor.profile_id,
+                       "operation": "watch", "access": "cached", "selection": {"mode": "local", "hostIds": []},
+                       "extensions": {}}
+            stream = reader.execute_admitted(request)
+            guard = PreparedReadGuard("agent", "a" * 32, profile=profile, preparation=StaticPreparation(profile))
+            try:
+                for _ in range(10):
+                    frame = await asyncio.wait_for(anext(stream), 2)
+                    self.assertIs(type(frame), AdmittedResponse)
+                    guard.accept(frame)
+                    context = guard.context()
+                    if guard.current(boottime_ms(), context["mesh"]["reader"]["clock"]):
+                        break
+                self.assertEqual(guard.snapshot()["sessions"], publisher.frame["snapshot"]["sessions"])
+            finally:
+                guard.disconnect()
+                await stream.aclose()
+                await server.close()
+            self.assertEqual(reader.inspect()["activeConnections"], 0)
+            self.assertEqual(publisher.watchers, 0)
+            request["selection"] = {"mode": "hosts", "hostIds": ["foreign"]}
+            self.assertEqual([f async for f in reader.execute_admitted(request)][0]["error"]["code"], "unknown_host")
+
     def test_runtime_version_matches_installed_distribution_metadata(self):
         from importlib.metadata import version
 
@@ -216,7 +293,8 @@ class SDKTests(unittest.IsolatedAsyncioTestCase):
         baseline = json.loads((ROOT / "tests/fixtures/sdk-interface-v1.json").read_text())
         self.assertEqual(sorted(set(api.__all__) - {"CachedSource", "CachedPublication", "CachedPublisher",
                          "PREPARATION_INTERFACE_VERSION", "PreparationDescriptor", "PreparationState",
-                         "PreparedReadGuard", "PreparedRule", "StatePreparation"}),
+                     "PreparedReadGuard", "PreparedRule", "StatePreparation", "ADMISSION_INTERFACE_VERSION",
+                     "AdmittedResponse", "SELECTION_INTERFACE_VERSION", "SelectionRule", "PreparedSelection"}),
                          baseline["exports"])
         self.assertEqual({name: str(inspect.signature(getattr(api, name))) for name in baseline["signatures"]},
                          baseline["signatures"])

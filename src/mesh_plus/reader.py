@@ -7,12 +7,13 @@ import secrets
 import uuid
 from dataclasses import dataclass
 
+from .admission import AdmittedResponse
 from .client import DeliveryError
 from .evidence import clock_domain, digest
 from .protocol import check
 from .state import check_binding, legacy_codec, resolve_profile, validate_bridge
 from .transport import _wait_until, boottime_ms, finish_owned, within_deadline
-from .view import remote_expiry, validate_response
+from .view import _validated_response, remote_expiry
 
 
 def outcome_code(error):
@@ -132,6 +133,23 @@ class Reader:
             self._counts["connectionsClosed"] += 1
 
     async def execute(self, request):
+        iterator = self._execute(request, admitted=False)
+        try:
+            async for frame in iterator:
+                yield frame
+        finally:
+            await iterator.aclose()
+
+    async def execute_admitted(self, request):
+        """Opt-in watch handoff; snapshots retain the strict ordinary JSON API."""
+        iterator = self._execute(request, admitted=True)
+        try:
+            async for frame in iterator:
+                yield frame
+        finally:
+            await iterator.aclose()
+
+    async def _execute(self, request, *, admitted):
         """Validated Read 1 request -> one snapshot or replacement watch stream."""
         from .protocol import validate_read_request
         request_id = None
@@ -147,7 +165,8 @@ class Reader:
             if request["operation"] == "snapshot":
                 yield await self.snapshot(mode=selection["mode"], hosts=selection["hostIds"], request_id=request_id)
             else:
-                iterator = self.watch(mode=selection["mode"], hosts=selection["hostIds"], request_id=request_id)
+                watch = self.watch_admitted if admitted else self.watch
+                iterator = watch(mode=selection["mode"], hosts=selection["hostIds"], request_id=request_id)
                 try:
                     async for frame in iterator:
                         yield frame
@@ -227,6 +246,13 @@ class Reader:
         return result, list(state.records)
 
     def compose(self, selected, outcomes, request_id, operation="snapshot", *, state=None, kind="view"):
+        return self._compose(selected, outcomes, request_id, operation, state=state, kind=kind, admitted=False)
+
+    def compose_admitted(self, selected, outcomes, request_id, operation="watch", *, state=None, kind="view"):
+        """Compose and fully admit once into a process-local owned handoff."""
+        return self._compose(selected, outcomes, request_id, operation, state=state, kind=kind, admitted=True)
+
+    def _compose(self, selected, outcomes, request_id, operation, *, state, kind, admitted):
         now = boottime_ms()
         state = PublicationState() if state is None else state
         hosts, sessions = [], []
@@ -253,9 +279,10 @@ class Reader:
                              "reader": {"id": self.id, "clock": clock_domain(), "encodedAtMs": now,
                                         "sequence": sequence, "revision": revision},
                              "kind": kind, "status": status, "hosts": hosts, "extensions": {}}, "sessions": sessions}
-        validate_response(response, profile=self.profile)
+        _, native = _validated_response(response, self.profile)
+        result = AdmittedResponse._owned(response, native, self.profile) if admitted else response
         state.sequence, state.revision, state.fingerprint = sequence, revision, fingerprint
-        return response
+        return result
 
     async def snapshot(self, *, mode="fleet", hosts=(), timeout_ms=15000, request_id=None):
         selected = self.selection(mode, hosts)
@@ -298,6 +325,26 @@ class Reader:
         return self.compose(selected, {e.host: value for e, value in zip(selected, values)}, request_id)
 
     async def watch(self, *, mode="fleet", hosts=(), proof_interval=None, request_id=None, catalog_interval=5):
+        iterator = self._watch(mode=mode, hosts=hosts, proof_interval=proof_interval,
+                               request_id=request_id, catalog_interval=catalog_interval, admitted=False)
+        try:
+            async for frame in iterator:
+                yield frame
+        finally:
+            await iterator.aclose()
+
+    async def watch_admitted(self, *, mode="fleet", hosts=(), proof_interval=None, request_id=None, catalog_interval=5):
+        """Owned full views; controls and terminal errors remain ordinary JSON."""
+        iterator = self._watch(mode=mode, hosts=hosts, proof_interval=proof_interval,
+                               request_id=request_id, catalog_interval=catalog_interval, admitted=True)
+        try:
+            async for frame in iterator:
+                yield frame
+        finally:
+            await iterator.aclose()
+
+    async def _watch(self, *, mode, hosts, proof_interval, request_id, catalog_interval, admitted):
+        compose = self.compose_admitted if admitted else self.compose
         selected = self.selection(mode, hosts)
         request_id = secrets.token_hex(16) if request_id is None else request_id
         check(isinstance(request_id, str) and len(request_id) in range(32, 65) and
@@ -415,7 +462,7 @@ class Reader:
             tasks.append(asyncio.create_task(monitor_catalog()))
         try:
             state = PublicationState()
-            yield self.compose(selected, outcomes, request_id, "watch", state=state)
+            yield compose(selected, outcomes, request_id, "watch", state=state)
             while True:
                 expires = [r["expiresAtMs"] for host, _rows in outcomes.values() for r in host["receipts"]
                            if r["expiresAtMs"] is not None and r["expiresAtMs"] > boottime_ms()]
@@ -437,7 +484,7 @@ class Reader:
                         for receipt in host["receipts"]:
                             if receipt["expiresAtMs"] is not None and receipt["expiresAtMs"] <= boottime_ms():
                                 receipt.update(health="stale", remainingMs=0, expiresAtMs=None)
-                response = self.compose(selected, outcomes, request_id, "watch", state=state,
+                response = compose(selected, outcomes, request_id, "watch", state=state,
                                         kind="resync" if resync else "view")
                 resync = False
                 for barrier in rotation_barriers.values():

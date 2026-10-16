@@ -112,6 +112,10 @@ def inspect_state(profile, codec, frame):
     check(len(encode(frame)) + 1 <= profile.descriptor.frame_bytes, "native_capacity")
     check_binding(codec, codec.host, codec.source, profile.descriptor.profile_id)
     state = codec.inspect_native(frame)
+    return _checked_state(profile, codec, frame, state)
+
+
+def _checked_state(profile, codec, frame, state):
     check(isinstance(state, NativeState), "native_state")
     check(state.owner["protocol"] == profile.descriptor.native_protocol and
           state.owner["version"] == profile.descriptor.native_version, "owner_version")
@@ -141,8 +145,19 @@ def validate_bridge(profile, codec, payload):
     check(payload["hostId"] == codec.host and payload["sourceId"] == codec.source, "bridge_source_binding")
     check(payload["kind"] in {"candidate", "proof"} and payload["error"] is None and
           payload["ownerFrame"] is not None, "bridge_success_shape")
-    codec.validate_bridge(payload)
-    state = inspect_state(profile, codec, payload["ownerFrame"])
+    check_binding(codec, codec.host, codec.source, profile.descriptor.profile_id)
+    admit = getattr(codec, "admit_bridge", None)
+    if admit is None:
+        codec.validate_bridge(payload)
+        state = inspect_state(profile, codec, payload["ownerFrame"])
+    else:
+        # Explicit optional combined admission. The owner still performs full
+        # native validation; Mesh independently checks the returned projection
+        # and every envelope/proof/receipt rule. No retained mutable cache.
+        check(callable(admit), "codec_admission_interface")
+        frame = payload["ownerFrame"]
+        check(len(encode(frame)) + 1 <= profile.descriptor.frame_bytes, "native_capacity")
+        state = _checked_state(profile, codec, frame, admit(payload))
     check(payload["ownerDigest"] == digest(payload["ownerFrame"]), "owner_digest")
     check(state.clock == payload["clock"] and state.emitted_ms <= payload["encodedAtMs"], "bridge_clock")
     if payload["kind"] == "candidate":

@@ -1,5 +1,11 @@
 # Mesh Plus
 
+The **a22 source/private candidate** adds [owned admission, row-free context and
+whole-roster selection summaries](docs/cpu-admission-api.md) for explicitly opted-in
+prepared watch consumers. It retains accepted a20 receipt/deadline fixes, SDK 1,
+preparation 1, lock 4, schema bytes, acquisition and live pins. Candidate acceptance
+and later Observer/RLCD adoption remain separate.
+
 The **a20 source/private candidate** fixes cached publisher acquisition-history
 ordering and refines shared BOOTTIME expiry checks, including short-deadline rearming. Its
 [idle simplification evidence](docs/evidence/2026-10-14-idle-simplification/README.md)

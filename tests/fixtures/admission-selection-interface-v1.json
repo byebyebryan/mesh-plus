@@ -1,0 +1,15 @@
+{
+  "admissionInterface": 1,
+  "selectionInterface": 1,
+  "signatures": {
+    "Reader.watch_admitted": "(self, *, mode='fleet', hosts=(), proof_interval=None, request_id=None, catalog_interval=5)",
+    "Reader.execute_admitted": "(self, request)",
+    "Reader.compose_admitted": "(self, selected, outcomes, request_id, operation='watch', *, state=None, kind='view')",
+    "AdmittedResponse.snapshot": "(self)",
+    "AdmittedResponse.context": "(self)",
+    "PreparedReadGuard.context": "(self)",
+    "PreparedReadGuard.select": "(self, classify)",
+    "SelectionRule": "(selected: bool, summary: dict | None) -> None",
+    "PreparedSelection.current": "(self, now_ms, clock)"
+  }
+}

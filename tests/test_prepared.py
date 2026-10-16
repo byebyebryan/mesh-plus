@@ -12,16 +12,176 @@ from unittest.mock import patch
 from prepared_fixture import StaticPreparation
 from test_simplification import fleet
 
-from mesh_plus.api import PreparationDescriptor, PreparedReadGuard, ReadGuard, current_sessions
+from mesh_plus.api import (
+    AdmittedResponse,
+    PreparationDescriptor,
+    PreparedReadGuard,
+    ReadGuard,
+    SelectionRule,
+    current_sessions,
+)
 from mesh_plus.protocol import ProtocolError
 from mesh_plus.transport import boottime_ms
 
 
 class PreparedTests(unittest.IsolatedAsyncioTestCase):
+    async def test_selection_complete_roster_summary_independent_expiry_and_mutation(self):
+        profile, _, response = await fleet(hosts=2, rows=50)
+        guard = self.guard(profile)
+        calls = []
+
+        def classify(row):
+            calls.append(row["sessionId"])
+            with self.assertRaises(TypeError):
+                row["name"] = "changed"
+            selected = int(row["sessionId"][1:]) < 103
+            return SelectionRule(selected, None if selected else {"host": row["hostId"], "id": row["sessionId"]})
+
+        selection = guard.select(classify)
+        clock = response["mesh"]["reader"]["clock"]
+        self.assertEqual(selection.current(boottime_ms(), clock), ([], []))
+        guard.accept(response)
+        now = response["mesh"]["reader"]["encodedAtMs"]
+        rows, summaries = selection.current(now, clock)
+        self.assertEqual(len(calls), 100)
+        self.assertEqual((len(rows), len(summaries)), (6, 94))
+        rows.clear()
+        summaries[0]["id"] = "caller mutation"
+        rows, summaries = selection.current(now, clock)
+        self.assertEqual(len(calls), 100)
+        self.assertNotIn("caller mutation", [r["id"] for r in summaries])
+        times = sorted({r["expiresAtMs"] for h in response["mesh"]["hosts"] for r in h["receipts"]})
+        for at in times:
+            rows, summaries = selection.current(at, clock)
+            expected = {(r["hostId"], r["sessionId"]) for r in guard.current(at, clock)}
+            actual = {(r["hostId"], r["sessionId"]) for r in rows} | {(s["host"], s["id"]) for s in summaries}
+            self.assertEqual(actual, expected)
+        self.assertEqual(len(calls), 100)
+        guard.disconnect()
+        self.assertEqual(selection.current(now, clock), ([], []))
+
+    async def test_selection_recompiles_after_replacement_and_revokes_on_gap(self):
+        profile, _, response = await fleet(hosts=1, rows=40)
+        guard = self.guard(profile)
+        calls = []
+
+        def classify(row):
+            calls.append(row["sessionId"])
+            return SelectionRule(row["name"] == "selected", {"id": row["sessionId"]})
+
+        selection = guard.select(classify)
+        guard.accept(response)
+        clock = response["mesh"]["reader"]["clock"]
+        now = response["mesh"]["reader"]["encodedAtMs"]
+        self.assertEqual(selection.current(now, clock)[0], [])
+        changed = copy.deepcopy(response)
+        changed["sessions"][-1]["name"] = "selected"
+        changed["mesh"]["reader"].update(sequence=2, revision=2)
+        guard.accept(changed)
+        self.assertEqual(selection.current(now, clock)[0], [changed["sessions"][-1]])
+        self.assertEqual(len(calls), 80)
+        control = {"protocol": response["protocol"], "schemaVersion": 1,
+                   "mesh": {k: changed["mesh"][k] for k in ("meshProtocol", "requestId", "operation", "access")}}
+        control["mesh"].update(reader={**changed["mesh"]["reader"], "sequence": 3}, kind="gap")
+        guard.accept(control)
+        self.assertEqual(selection.current(now, clock), ([], []))
+
+    async def test_selection_bad_rules_and_reentrancy_fail_closed(self):
+        profile, _, response = await fleet(hosts=1, rows=1)
+        clock = response["mesh"]["reader"]["clock"]
+        for kind in ("bool", "json", "key", "exception", "disconnect", "reentrant"):
+            guard = self.guard(profile)
+            guard.accept(response)
+
+            def classify(row):
+                if kind == "bool":
+                    return SelectionRule(1, None)
+                if kind == "json":
+                    return SelectionRule(True, {"nested": object()})
+                if kind == "key":
+                    return SelectionRule(True, {1: "coerced"})
+                if kind == "exception":
+                    raise ValueError("consumer failure")
+                if kind == "disconnect":
+                    guard.disconnect()
+                else:
+                    with self.assertRaisesRegex(ProtocolError, "selection_reentrant"):
+                        selection.current(boottime_ms(), clock)
+                return SelectionRule(True, None)
+
+            selection = guard.select(classify)
+            with self.subTest(kind=kind), self.assertRaises(Exception):
+                selection.current(boottime_ms(), clock)
+            self.assertIsNone(guard.snapshot())
+
+    async def test_selection_capacity_rejects_and_retires(self):
+        profile, _, response = await fleet(hosts=1, rows=1)
+        guard = self.guard(profile)
+        guard.accept(response)
+        selection = guard.select(lambda row: SelectionRule(False, {"summary": "x" * 2048}))
+        with patch("mesh_plus.prepared._CAPACITY", 1024):
+            with self.assertRaisesRegex(ProtocolError, "selection_capacity"):
+                selection.current(boottime_ms(), response["mesh"]["reader"]["clock"])
+        self.assertIsNone(guard.snapshot())
+
+    async def admitted(self, profile, reader, response, **kwargs):
+        outcomes = {h["hostId"]: (h, [r for r in response["sessions"] if profile.record_host(r) == h["hostId"]])
+                    for h in response["mesh"]["hosts"]}
+        return reader.compose_admitted(reader.endpoints, outcomes, "a" * 32, **kwargs)
+
+    async def test_owned_reader_handoff_one_full_admission_and_detached_exports(self):
+        for domain, system in (("tmux", False), ("agent", False), ("agent", True)):
+            profile, reader, response = await fleet(domain, system=system)
+            with patch.object(profile, "validate_response", wraps=profile.validate_response) as validate:
+                token = await self.admitted(profile, reader, response)
+                guard = self.guard(profile)
+                guard.accept(token)
+                self.assertEqual(validate.call_count, 1)
+            raw = token.snapshot()
+            response["sessions"].clear()
+            token.snapshot()["sessions"].clear()
+            self.assertEqual(guard.snapshot(), raw)
+            self.assertEqual(token.context(), {**raw, "sessions": []})
+            clock = raw["mesh"]["reader"]["clock"]
+            self.assertEqual(guard.current(raw["mesh"]["reader"]["encodedAtMs"], clock), raw["sessions"])
+            with self.assertRaisesRegex(TypeError, "produced by Reader"):
+                AdmittedResponse()
+
+    async def test_handoff_profile_binding_order_and_scope_remain_strict(self):
+        profile, reader, response = await fleet()
+        token = await self.admitted(profile, reader, response)
+        guard = self.guard(profile)
+        guard.accept(token)
+        with self.assertRaisesRegex(ProtocolError, "read_order"):
+            guard.accept(token)
+        self.assertIsNone(guard.snapshot())
+        other = type(profile)(profile.domain)
+        for target, hosts in ((other, None), (profile, ["foreign"])):
+            guard = self.guard(target, host_ids=hosts)
+            with self.assertRaisesRegex(ProtocolError, "admission_binding|read_scope_binding"):
+                guard.accept(token)
+            self.assertIsNone(guard.snapshot())
+        guard = self.guard(profile)
+        profile.validate_response = lambda response: None
+        with self.assertRaisesRegex(ProtocolError, "admission_binding"):
+            guard.accept(token)
+        self.assertIsNone(guard._generation)
+
     def test_additive_interface_signature_baseline(self):
         from mesh_plus import api
         baseline = json.loads((Path(__file__).parent / "fixtures/prepared-interface-v1.json").read_text())
         self.assertEqual(api.PREPARATION_INTERFACE_VERSION, baseline["interfaceVersion"])
+        for name, signature in baseline["signatures"].items():
+            actual = api
+            for part in name.split("."):
+                actual = getattr(actual, part)
+            self.assertEqual(str(inspect.signature(actual)), signature)
+
+    def test_admission_selection_additive_signatures(self):
+        from mesh_plus import api
+        baseline = json.loads((Path(__file__).parent / "fixtures/admission-selection-interface-v1.json").read_text())
+        self.assertEqual(api.ADMISSION_INTERFACE_VERSION, baseline["admissionInterface"])
+        self.assertEqual(api.SELECTION_INTERFACE_VERSION, baseline["selectionInterface"])
         for name, signature in baseline["signatures"].items():
             actual = api
             for part in name.split("."):
@@ -74,6 +234,21 @@ class PreparedTests(unittest.IsolatedAsyncioTestCase):
         guard.current(boottime_ms(), expected["mesh"]["reader"]["clock"])[0]["name"] = "changed"
         self.assertEqual(guard.snapshot(), expected)
         self.assertEqual(guard.current(boottime_ms(), expected["mesh"]["reader"]["clock"]), expected["sessions"])
+
+    async def test_context_detached_row_free_and_revoked_with_generation(self):
+        profile, _, response = await fleet()
+        guard = self.guard(profile)
+        self.assertIsNone(guard.context())
+        guard.accept(response)
+        with patch("mesh_plus.prepared.decode_json", wraps=__import__(
+                "mesh_plus.prepared", fromlist=["decode_json"]).decode_json) as decode:
+            context = guard.context()
+            self.assertEqual(decode.call_count, 1)
+        self.assertEqual(context, {**response, "sessions": []})
+        context["mesh"]["hosts"].clear()
+        self.assertEqual(guard.context(), {**response, "sessions": []})
+        guard.disconnect()
+        self.assertIsNone(guard.context())
 
     async def test_preparation_input_is_deeply_immutable(self):
         profile, _, response = await fleet()

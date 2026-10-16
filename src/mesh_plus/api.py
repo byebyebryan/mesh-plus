@@ -1,14 +1,18 @@
 """Mesh SDK interface v1. Wire/profile versions remain separately frozen."""
 
+from .admission import ADMISSION_INTERFACE_VERSION, AdmittedResponse
 from .bridge import Bridge, Publication
 from .client import Client, DeliveryError, Subscription
 from .configured_read import configured_reader
 from .prepared import (
     PREPARATION_INTERFACE_VERSION,
+    SELECTION_INTERFACE_VERSION,
     PreparationDescriptor,
     PreparationState,
     PreparedReadGuard,
     PreparedRule,
+    PreparedSelection,
+    SelectionRule,
     StatePreparation,
 )
 from .publisher import CachedPublication, CachedPublisher, CachedSource
@@ -32,4 +36,6 @@ __all__ = [
     "Client", "Subscription", "DeliveryError", "CachedSource", "CachedPublication", "CachedPublisher",
     "PREPARATION_INTERFACE_VERSION", "PreparationDescriptor", "PreparationState", "PreparedRule",
     "StatePreparation", "PreparedReadGuard",
+    "ADMISSION_INTERFACE_VERSION", "AdmittedResponse",
+    "SELECTION_INTERFACE_VERSION", "SelectionRule", "PreparedSelection",
 ]

@@ -2,6 +2,14 @@
 
 ## Current disposition
 
+The a22 CPU candidate adds [owned admission and selected prepared reads](cpu-admission-api.md).
+Reader's optional admitted stream avoids a second full prepared admission; row-free
+context and whole-roster summaries avoid decoding every full body on each query.
+The optional combined owner codec still receives independent Mesh proof checks.
+SDK/preparation 1, lock 4, packaged schemas, source acquisition and live selections
+remain unchanged. The [owning evidence](evidence/2026-10-15-cpu-admission/README.md)
+separates exact baseline, changed source/wheel, bounded performance and owner readiness.
+
 The [idle simplification execution](evidence/2026-10-14-idle-simplification/README.md)
 fixes the publisher receipt-history race and qualifies corrected private Mesh a20 / Tmux a10
 packages. Shared BOOTTIME expiry checks pass corrected a20 installed-wheel CPU screens

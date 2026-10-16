@@ -9,11 +9,13 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Mapping, Protocol
 
+from .admission import AdmittedResponse
 from .protocol import check, decode_json, encode
 from .state import ProfileDescriptor, ReceiptKey, resolve_profile
-from .view import ReadGuard
+from .view import ReadGuard, plain_json
 
 PREPARATION_INTERFACE_VERSION = 1
+SELECTION_INTERFACE_VERSION = 1
 _CAPACITY = 16 * 1024 * 1024
 
 
@@ -41,6 +43,14 @@ class PreparedRule:
     identity: tuple[str | int, ...]
     required: frozenset[ReceiptKey] | None
     eligible: bool
+
+
+@dataclass(frozen=True)
+class SelectionRule:
+    """Generation-static projection decision; summary is optional consumer JSON."""
+
+    selected: bool
+    summary: dict | None
 
 
 class StatePreparation(Protocol):
@@ -81,9 +91,10 @@ class _OwnedAdmission(ReadGuard):
     """Shares full admission/order checks, never retains an exposed raw view."""
 
     admitted = None
+    pending = None
 
     def _admit(self, frame):
-        self.admitted = super()._admit(frame)
+        self.admitted = self.pending if self.pending is not None else super()._admit(frame)
         return self.admitted
 
     def _retain(self, frame):
@@ -171,7 +182,10 @@ class PreparedReadGuard:
         try:
             self._accepting = True
             self._binding()
-            owned = copy.deepcopy(frame)
+            if type(frame) is AdmittedResponse:
+                owned, self._guard.pending = frame._open(self._profile)
+            else:
+                owned = copy.deepcopy(frame)
             self._guard.accept(owned)
             if self._guard.closed or self._guard.needs_resync:
                 self._generation = None
@@ -185,22 +199,35 @@ class PreparedReadGuard:
             raise
         finally:
             self._guard.admitted = None
+            self._guard.pending = None
             self._accepting = False
         return frame
 
     def current(self, now_ms, clock):
+        value = self._current_generation(now_ms, clock)
+        if value is None:
+            return []
+        return [decode_json(row.payload, _CAPACITY) for row in value.rows
+                if row.expiry is not None and row.expiry > now_ms]
+
+    def _current_generation(self, now_ms, clock):
         self._binding()
         value = self._generation
         if value is None:
-            return []
+            return None
         try:
             check(type(now_ms) is int and now_ms >= value.encoded_at and type(clock) is dict and
                   clock == dict(value.clock), "reader_clock_scope")
         except BaseException:
             self.disconnect()
             raise
-        return [decode_json(row.payload, _CAPACITY) for row in value.rows
-                if row.expiry is not None and row.expiry > now_ms]
+        return value
+
+    def select(self, classify):
+        """Register an explicit static-per-generation selector over every row."""
+        self._binding()
+        check(callable(classify), "selection_interface")
+        return PreparedSelection(self, classify)
 
     def snapshot(self):
         """A fresh raw export, or None before a baseline/after retirement."""
@@ -212,7 +239,72 @@ class PreparedReadGuard:
         result["sessions"] = [decode_json(row.payload, _CAPACITY) for row in value.rows]
         return result
 
+    def context(self):
+        """Detached aggregate header with sessions=[]; never decodes row bodies."""
+        self._binding()
+        value = self._generation
+        return None if value is None else decode_json(value.header, _CAPACITY)
+
     def disconnect(self):
         self._generation = None
         self._guard.admitted = None
+        self._guard.pending = None
         self._guard.disconnect()
+
+
+class PreparedSelection:
+    """Selected bodies and whole-roster summaries, with independent row expiry.
+
+    classify receives a deeply immutable record once per generation, including
+    historical/ineligible rows. It returns SelectionRule. current returns two
+    detached lists: selected native rows, and non-null summaries of current rows.
+    Policy, summary meaning and output limits belong to the installed consumer.
+    """
+
+    __slots__ = ("_guard", "_classify", "_generation", "_rows", "_selecting")
+
+    def __init__(self, guard, classify):
+        self._guard, self._classify = guard, classify
+        self._generation, self._rows, self._selecting = None, (), False
+
+    def _compile(self, generation):
+        rows, size = [], 0
+        for row in generation.rows:
+            rule = self._classify(_freeze(decode_json(row.payload, _CAPACITY)))
+            check(type(rule) is SelectionRule and type(rule.selected) is bool and
+                  (rule.summary is None or (type(rule.summary) is dict and plain_json(rule.summary))), "selection_rule")
+            summary = None if rule.summary is None else encode(rule.summary)
+            # Bound retained extra projection data independently of native bytes.
+            size += 0 if summary is None else len(summary) + 1
+            check(size <= _CAPACITY, "selection_capacity")
+            rows.append((row, rule.selected, summary))
+        check(self._guard._generation is generation, "selection_retired")
+        self._guard._binding()
+        self._generation, self._rows = generation, tuple(rows)
+
+    def current(self, now_ms, clock):
+        if self._selecting:
+            self._guard.disconnect()
+            check(False, "selection_reentrant")
+        try:
+            self._selecting = True
+            value = self._guard._current_generation(now_ms, clock)
+            if value is None:
+                self._generation, self._rows = None, ()
+                return [], []
+            if value is not self._generation:
+                self._compile(value)
+            rows, summaries = [], []
+            for row, selected, summary in self._rows:
+                if row.expiry is not None and row.expiry > now_ms:
+                    if selected:
+                        rows.append(decode_json(row.payload, _CAPACITY))
+                    if summary is not None:
+                        summaries.append(decode_json(summary, _CAPACITY))
+            return rows, summaries
+        except BaseException:
+            self._generation, self._rows = None, ()
+            self._guard.disconnect()
+            raise
+        finally:
+            self._selecting = False

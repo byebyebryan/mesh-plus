@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0a22 source/private candidate
+
+- Add an explicit owned Reader admission handoff for prepared watch consumers,
+  keeping strict raw entrypoints and every per-request lifetime check.
+- Add row-free context and generic selection with independently expiring summaries
+  across the complete roster; domain eligibility and display policy remain external.
+- Support optional combined owner `admit_bridge` validation/projection, retaining
+  independent Mesh proof/envelope checks and the legacy codec fallback.
+- Preserve SDK/preparation 1, lock 4, schemas, acquisition, defaults and live pins.
+
 ## 0.1.0a20 source/private candidate
 
 - Rearm newly registered short deadlines even while an expired waiter is awaiting
