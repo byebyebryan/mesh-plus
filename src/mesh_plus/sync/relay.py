@@ -726,7 +726,6 @@ class RelayAcquisition:
                     check(completion_header["kind"] == "control" and
                           completion_header["status"] == completion.status == "complete" and
                           completion_header["reason"] == completion.reason and
-                          completion_header["nativeBindingDigest"] == target.binding and
                           _native_tag(completion_header.get("baseTag")) == base and
                           _native_tag(completion_header.get("targetTag")) == target and
                           _native_tag(completion_header.get("tag")) == _native_tag(completion.tag) == target,

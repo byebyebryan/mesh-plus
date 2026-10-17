@@ -44,6 +44,23 @@ sibling isolation and final five-counter zero. The source and codec in these
 tests are bounded **fixtures**, not the actual Observer implementation. The
 existing single-line IPC fixture still uses that fixture source.
 
+The actual Agent structural codec is additionally exercised with fixture batches
+for full/active zero/one/four transaction cases. The existing native control has
+no separate `nativeBindingDigest` field: its exact typed tag carries the binding.
+An initial draft assumption requiring that extra field rejected valid controls;
+the corrected consumer preserves the existing schema and original bytes.
+This codec composition remains distinct from the actual owned-source result.
+
+A separate scoped diagnostic against Observer `3a75191` receives a real source
+head ref over its synthetic Unix endpoint, holds a disclosed private generic
+input pin, optionally calls public `session.inspect()`, then closes that session.
+Without inspection, pin exit rejects `sync_input_retired`. With inspection,
+the source registry prunes the consuming ref and pin exit succeeds after session
+close. The raw remains charged during the pin and all counters eventually reach
+zero. This exposes a revocation/tracking gap, not measured late relay output or
+a cap overrun. No `nbytes` semantics, new public scope API or sibling code is
+changed here; the owning source/generic retirement seam needs reconciliation.
+
 At this checkpoint the owning Observer worktree has the accepted method/result
 proposal and completion-correlation fix, but has not implemented
 `changes_with_completion`. Therefore actual source completion transfer,

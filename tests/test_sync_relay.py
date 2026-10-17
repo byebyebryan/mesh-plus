@@ -230,7 +230,7 @@ class Session:
         final = [NATIVE_BINDING["ownerEpoch"], target[1], target[2]] if not self.source.chain else decode(
             self.source.chain[-1])["resultCursor"]
         control = {"kind": "control", "descriptor": decode(self.source.profile.descriptor.native_descriptor),
-                   "nativeBindingDigest": target[0], "status": "complete", "reason": "complete",
+                   "status": "complete", "reason": "sync_complete",
                    "tag": target, "cursor": final, "baseTag": base, "targetTag": target,
                    "ownerClock": {**{key: NATIVE_BINDING[key] for key in
                        ("bootId", "clockDomain", "uid", "hostScope", "ownerEpoch")}, "boottimeMs": 2000}}
