@@ -1,0 +1,78 @@
+{
+  "afterCloseLedger": {
+    "decodedBytes": 0,
+    "encodedBytes": 0,
+    "newAllocationVisits": 556,
+    "peakBytes": 1325089,
+    "pendingAllocations": 0,
+    "pendingEncodedBytes": 0,
+    "reclaimedAllocations": 556,
+    "reservedBytes": 0,
+    "reservedEncodedBytes": 0,
+    "uniqueAllocations": 0
+  },
+  "afterOwnerClose": {
+    "acquire": {
+      "error": "sync_unconfirmed",
+      "ok": false
+    },
+    "candidate": {
+      "error": "sync_candidate_retired",
+      "ok": false
+    },
+    "encodedReserved": 1024,
+    "receiveCredit": [
+      8192,
+      1024
+    ],
+    "receiveResize": {
+      "error": "sync_input_retired",
+      "ok": false
+    },
+    "receiveSeal": {
+      "error": "sync_input_retired",
+      "ok": false
+    },
+    "sealedRef": {
+      "error": "sync_input_retired",
+      "ok": false
+    },
+    "siblingCurrent": true,
+    "value": {
+      "error": "sync_view_retired",
+      "ok": false
+    },
+    "view": {
+      "error": "sync_view_retired",
+      "ok": false
+    }
+  },
+  "afterReplacementAndStaleClose": {
+    "receiveCredit": [
+      8192,
+      1024
+    ],
+    "replacementCurrent": true,
+    "replacementIsDistinct": true,
+    "siblingCurrent": true
+  },
+  "reentrantHeadClose": {
+    "afterAcquire": {
+      "error": "sync_unconfirmed",
+      "ok": false
+    },
+    "confirmation": {
+      "error": "sync_reference_retired",
+      "ok": false
+    },
+    "duringCallback": {
+      "acquire": {
+        "error": "sync_unconfirmed",
+        "ok": false
+      },
+      "chargedHeapAfterClose": 165372,
+      "chargedHeapBeforeClose": 166926,
+      "materialReleasesInsideHead": []
+    }
+  }
+}

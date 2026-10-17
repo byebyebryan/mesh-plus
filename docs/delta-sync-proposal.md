@@ -1,5 +1,10 @@
 # Snapshot and delta synchronization: Mesh proposal
 
+Current execution record: G0 and A1 contracts are closed; G1 source work remains
+under qualification. The [owning coordination receipt](evidence/2026-10-16-delta-sync/HEAD-RETIREMENT.md)
+records the exact A1 tuple and separate input-lifetime correction. The original
+proposal status below describes its planning checkpoint.
+
 Status: G0 contract proposal, 2026-10-16 UTC. Execution has subsequently been
 authorized, but RLCD must close the concrete joint G0 before runtime/schema
 edits. This document allocates no protocol IDs, interface/package versions or
