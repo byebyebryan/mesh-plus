@@ -293,7 +293,7 @@ class RelayChannel:
                   0 < len(value[0]) <= 256 and type(value[1]) is int and 0 <= value[1] < 2**64,
                   "sync_cursor")
             hex_digest(value[2])
-            watch = self._watch = RelayWatch(self, tuple(value), credit, _mint=_MINT)
+            watch = self._watch = RelayWatch(self, tuple(value), deadline, credit, _mint=_MINT)
             watch._source = self._session.watch(value)
             await within_deadline(watch._source.__aenter__(), deadline)
             self._check()
@@ -723,11 +723,12 @@ class RelayAcquisition:
 
 
 class RelayWatch:
-    def __init__(self, channel, cursor, credit, *, _mint=None):
+    def __init__(self, channel, cursor, startup_deadline, credit, *, _mint=None):
         check(_mint is _MINT, "sync_relay_setup")
         self._channel, self._credit = channel, credit
         self._source = self._job = self._close_task = None
         self._cursor, self._data = cursor, None
+        self._startup_deadline = startup_deadline
         self._closed = False
 
     def _check(self):
@@ -738,7 +739,8 @@ class RelayWatch:
         packet = data = None
         try:
             while True:
-                packet = await within_deadline(anext(self._source), boottime_ms() + 5000)
+                limit = self._startup_deadline or boottime_ms() + 5000
+                packet = await within_deadline(anext(self._source), limit)
                 self._check()
                 data = packet if type(packet) is RelayInputRef else packet.data
                 self._data = data
@@ -760,8 +762,10 @@ class RelayWatch:
                               _plain(packet.cursor) == header.get("cursor"), "sync_relay_header")
                         if header["status"] in ("heartbeat", "complete"):
                             check(tuple(header["cursor"]) == self._cursor, "sync_relay_chain")
-                await self._channel._forward(data, boottime_ms() + 15000, self._check, expected=compare)
+                output_deadline = min(self._startup_deadline or boottime_ms() + 15000, boottime_ms() + 15000)
+                await self._channel._forward(data, output_deadline, self._check, expected=compare)
                 self._cursor, self._data = next_cursor, None
+                self._startup_deadline = None
                 if packet is not data:
                     packet.close()
                 packet = data = None
