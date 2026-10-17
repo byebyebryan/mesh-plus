@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 
 from ..protocol import check
-from ._allocation import TrackedAllocation, finish, prepay
+from ._allocation import ACTIVE_LEDGER, TrackedAllocation, finish, prepay
 from .canonical import Atom, PackedAtom, canonical, decode
 
 ABSENT = object()
@@ -76,6 +76,12 @@ class MerkleMap(TrackedAllocation):
     """
 
     __slots__ = ("space", "node", "work", "_framed_space", "_empty")
+
+    def __new__(cls, *args, **kwargs):
+        # Private G1 storage prototype. No published factory/profile selects it.
+        selected = getattr(ACTIVE_LEDGER.get(), "_packed_nodes", None)
+        arena = None if selected is None else selected()
+        return object.__new__(cls if cls is not MerkleMap or arena is None else arena.map_type)
 
     def __setattr__(self, name, value):
         if hasattr(self, name):
@@ -279,6 +285,10 @@ class MerkleMap(TrackedAllocation):
 
     @classmethod
     def _baseline_owned(cls, space, entries, *, work=None, encoded_keys=False):
+        selected = getattr(ACTIVE_LEDGER.get(), "_packed_nodes", None)
+        arena = None if selected is None else selected()
+        if cls is MerkleMap and arena is not None:
+            return arena.map_type._baseline_owned(space, entries, work=work, encoded_keys=encoded_keys)
         result = cls(space, work=work)
         leaves = []
         scratch = prepay(1024)

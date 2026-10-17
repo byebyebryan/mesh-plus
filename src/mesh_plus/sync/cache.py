@@ -15,7 +15,7 @@ from ._boundary import MovedHead, admission_boundary
 from ._constants import SYNC_PROTOCOL
 from .budget import AllocationLedger, OwnedUnit
 from .canonical import Atom, canonical, decode, thaw
-from .commitment import ABSENT, MerkleMap, binding_digest, source_root
+from .commitment import ABSENT, binding_digest, source_root
 from .context import reference
 from .inputs import OwnedInputRef, input_bytes, mint_input_owner
 from .model import HeadRules, NativeTag, OriginalReceipt, SourceTag
@@ -446,8 +446,8 @@ class OwnedSyncCache:
             return self._proof_context[2]
         maps = dict(root.tables if kind == "table" else root.indexes)
         table = maps.get(space)
-        leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
-                                              else table.find(decode(encoded)))
+        leaf = ABSENT if table is None else (table.find(decode(encoded)) if type(table) is OrderedMap
+                                            else table.find_encoded(encoded))
         return ABSENT if leaf is ABSENT else leaf.atom
 
     @contextlib.contextmanager

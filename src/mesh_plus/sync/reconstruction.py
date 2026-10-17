@@ -289,8 +289,63 @@ class _Transaction:
         self.budget = BudgetRef(store.ledger)
         self.budget.charge(1024 + len(operations) * (sys.getsizeof(object.__new__(PublicOperation)) + 16))
         self.retired_refs = {}
-        self.member_operations = [operation for operation in operations if operation.space == "memberships"]
+        self.member_operations = (operations.members() if isinstance(operations, _BaselineOperations) else
+                                  [operation for operation in operations if operation.space == "memberships"])
         self.affected_scopes, self.invalidations = (), ()
+
+
+class _BaselineOperations:
+    """Private paged baseline view; public context.operations remains a tuple.
+
+    Material tables already own each key/value. Recreate only the requested
+    private normalized operation instead of retaining another N key wrapper
+    graph. Baseline enumeration may be O(N); deltas never use this view.
+    """
+
+    def __init__(self, tables):
+        self.tables = tuple((name, tables[name]) for name in SPACES)
+        self.count = sum(len(table) for _, table in self.tables)
+        self.cached_index, self.cached = None, None
+
+    def __len__(self):
+        return self.count
+
+    def __getitem__(self, index):
+        check(type(index) is int and 0 <= index < self.count, "sync_operation_index")
+        if index != self.cached_index:
+            rank = index
+            for name, table in self.tables:
+                if rank < len(table):
+                    leaf = table.leaf_at(rank)
+                    self.cached = Operation(name, "put", leaf.input_key(), None, leaf.atom)
+                    self.cached_index = index
+                    break
+                rank -= len(table)
+        return self.cached
+
+    def __iter__(self):
+        for name, table in self.tables:
+            for leaf in table.leaves():
+                yield Operation(name, "put", leaf.input_key(), None, leaf.atom)
+
+    def members(self):
+        return _BaselineMembers(dict(self.tables)["memberships"])
+
+
+class _BaselineMembers:
+    def __init__(self, table):
+        self.table, self.extra = table, []
+
+    def __len__(self):
+        return len(self.table) + len(self.extra)
+
+    def append(self, operation):
+        self.extra.append(operation)
+
+    def __iter__(self):
+        for leaf in self.table.leaves():
+            yield Operation("memberships", "put", leaf.input_key(), None, leaf.atom)
+        yield from self.extra
 
 
 class ReconstructionStore:
@@ -377,8 +432,8 @@ class ReconstructionStore:
         else:
             maps = tx.tables if kind == "table" else tx.indexes
         table = maps.get(space)
-        leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
-                                              else table.find(decode(encoded)))
+        leaf = ABSENT if table is None else (table.find(decode(encoded)) if type(table) is OrderedMap
+                                            else table.find_encoded(encoded))
         return ABSENT if leaf is ABSENT else leaf.atom
 
     @contextlib.contextmanager
@@ -546,7 +601,8 @@ class ReconstructionStore:
         layout = ({name: (position, len(canonical(name))) for position, name in enumerate(self.descriptor.fields)}
                   if patch.field_tokens or tx.member_operations else {})
         fields = self._field_patch(tx, patch.field_tokens, layout)
-        member_keys = {operation.key.encoded for operation in tx.member_operations}
+        member_keys = ({operation.key.encoded: operation.key for operation in tx.member_operations}
+                       if patch.membership_expansion else {})
         for operation in patch.membership_expansion:
             # Normalization of compact groups is a native-adapter responsibility;
             # the engine still independently checks exact old tokens and roots.
@@ -555,7 +611,7 @@ class ReconstructionStore:
             value = None if operation.op == "remove" else Atom.own(hex_digest(operation.value))
             normalized = Operation("memberships", operation.op, Atom.own(operation.key), operation.expected, value)
             check(normalized.key.encoded not in member_keys, "sync_duplicate_operation")
-            member_keys.add(normalized.key.encoded)
+            member_keys[normalized.key.encoded] = normalized.key
             tx.member_operations.append(normalized)
             self._apply(tx, normalized)
         # Cross-check affected field/member links using at most 32 cohort heads,
@@ -883,10 +939,13 @@ class ReconstructionStore:
             for leaf in built["bodies"].leaves():
                 check(body_digest_encoded(self.native_descriptor_digest, leaf.atom.encoded).hex() == decode(leaf.key),
                       "sync_body_digest")
-            size = 1024 + sum(map(len, built.values())) * (sys.getsizeof(object.__new__(Operation)) + 16)
+            selected = getattr(self.ledger, "_packed_nodes", None)
+            lazy = selected is not None and selected() is not None
+            size = 4096 if lazy else 1024 + sum(map(len, built.values())) * (sys.getsizeof(object.__new__(Operation)) + 16)
             with self.ledger.reserve(size):
-                operations = tuple(Operation(name, "put", InputKey.borrow(leaf.key), None, leaf.atom)
-                                   for name in SPACES for leaf in built[name].leaves())
+                operations = (_BaselineOperations(built) if lazy else
+                              tuple(Operation(name, "put", InputKey.borrow(leaf.key), None, leaf.atom)
+                                    for name in SPACES for leaf in built[name].leaves()))
                 tx = _Transaction(self, None, owned_binding, tag, cursor, operations, built, self._groups(built["memberships"]))
                 self._transaction = tx
                 try:

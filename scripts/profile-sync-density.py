@@ -3,6 +3,7 @@
 
 import argparse
 import datetime
+import gc
 import hashlib
 import json
 import sys
@@ -15,12 +16,14 @@ sys.path.insert(0, str(ROOT / "src"))
 from mesh_plus.protocol import check  # noqa: E402
 from mesh_plus.sync._boundary import admission_boundary  # noqa: E402
 from mesh_plus.sync.budget import AllocationLedger  # noqa: E402
-from mesh_plus.sync.canonical import canonical  # noqa: E402
+from mesh_plus.sync.canonical import Atom, canonical  # noqa: E402
 from mesh_plus.sync.commitment import (  # noqa: E402
     MerkleMap,
     binding_digest,
     body_digest,
+    digest_parts,
     field_digest,
+    framed,
     native_root,
 )
 from mesh_plus.sync.model import (  # noqa: E402
@@ -30,7 +33,7 @@ from mesh_plus.sync.model import (  # noqa: E402
     NativeTag,
     SyncDescriptor,
 )
-from mesh_plus.sync.reconstruction import ReconstructionStore  # noqa: E402
+from mesh_plus.sync.reconstruction import Operation, ReconstructionStore  # noqa: E402
 
 EPOCH = "11111111-1111-4111-8111-111111111111"
 BIRTH = [EPOCH, 1]
@@ -70,26 +73,27 @@ class Profile:
         raise AssertionError("material stress must not export")
 
 
-def fixture(profile, count):
+def fixture(profile, count, generation=1):
     descriptor = bytes.fromhex(profile.descriptor.native_descriptor_digest)
     cohort = ["reference", "scope", "runtime"]
     tables, members = {name: [] for name in SPACES}, []
     for number in range(count):
         identity = ["fixture", "reference", "scope", "record", f"id-{number:08d}"]
-        body = {"identity": identity, "value": number}
+        value = number + (generation - 1) * 100000 if number == 0 else number
+        body = {"identity": identity, "value": value}
         digest = body_digest(descriptor, body).hex()
         tables["records"].append([identity, {"birth": BIRTH, "body": digest, "order": identity, "scope": "scope"}])
         tables["bodies"].append([digest, body])
-        tables["observations"].append([[identity, BIRTH], {"stamp": 1}])
+        tables["observations"].append([[identity, BIRTH], {"stamp": generation if number == 0 else 1}])
         for field in profile.descriptor.fields:
-            token = field_digest(descriptor, identity, BIRTH, field, {"value": number}).hex()
+            token = field_digest(descriptor, identity, BIRTH, field, {"value": value}).hex()
             tables["memberships"].append([[cohort, identity, BIRTH, field], token])
             members.append([[identity, BIRTH, field], token])
     member_root = MerkleMap.baseline("cohort-members", members)
-    tables["cohorts"].append([cohort, {"seal": [1, member_root.root.hex(), len(member_root)]}])
+    tables["cohorts"].append([cohort, {"seal": [generation, member_root.root.hex(), len(member_root)]}])
     binding = {"hostScope": "fixture", "ownerEpoch": EPOCH, "view": profile.descriptor.profile_id}
     maps = {name: MerkleMap.baseline(name, rows) for name, rows in tables.items()}
-    tag = NativeTag(binding_digest(binding, native=True).hex(), 1, native_root(binding, 1, maps).hex())
+    tag = NativeTag(binding_digest(binding, native=True).hex(), generation, native_root(binding, generation, maps).hex())
     return binding, tag, tables
 
 
@@ -102,6 +106,27 @@ class Loader:
         self.store.stage_baseline(binding, tag, (EPOCH, 1, tag.root), tables)
         self.store.advance_material()
 
+    @admission_boundary
+    def delta(self, base, target, operations):
+        self.store.stage_delta(base, target, (EPOCH, target.generation, target.root), operations)
+        self.store.advance_material()
+
+
+def differences(before, after):
+    result = []
+    for name in SPACES:
+        old = {canonical(key): (key, value) for key, value in before[name]}
+        new = {canonical(key): (key, value) for key, value in after[name]}
+        for encoded in old.keys() | new.keys():
+            if encoded in old and encoded in new and canonical(old[encoded][1]) == canonical(new[encoded][1]):
+                continue
+            expected = (None if encoded not in old else
+                        digest_parts(b"mesh-sync-value\0", framed(name.encode()), framed(canonical(old[encoded][1]))).hex())
+            key, value = (new if encoded in new else old)[encoded]
+            result.append(Operation(name, "put" if encoded in new else "remove", Atom.own(key), expected,
+                                    Atom.own(value) if encoded in new else None))
+    return tuple(result)
+
 
 def source_hashes():
     return {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -112,6 +137,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--counts", type=int, nargs="+", default=[100, 500, 2000])
     parser.add_argument("--views", type=int, choices=(1, 2), default=2)
+    parser.add_argument("--packed-nodes", action="store_true", help="private paged-node prototype; no public factory")
+    parser.add_argument("--generations", type=int, choices=(1, 3), default=1,
+                        help="three retains current/predecessor and stages one-row changes")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     output = args.output.resolve()
@@ -120,6 +148,10 @@ def main():
     before, results, unexpected = source_hashes(), [], False
     for count in args.counts:
         ledger, stores, cases = AllocationLedger(), [], []
+        arena = None
+        if args.packed_nodes:
+            from mesh_plus.sync._packed_nodes import PackedNodeArena
+            arena = PackedNodeArena(ledger)
         try:
             for view in ("first", "second")[:args.views]:
                 profile = Profile(view)
@@ -134,6 +166,17 @@ def main():
                     started = time.process_time_ns()
                     Loader(store).baseline(binding, tag, tables)
                     case.update(status="material-only", admissionCpuMs=(time.process_time_ns() - started) / 1e6)
+                    case["generations"] = [{"generation": 1, "root": tag.root, "accounted": ledger.inspect()}]
+                    for generation in range(2, args.generations + 1):
+                        _, target, updated = fixture(profile, count, generation)
+                        changes = differences(tables, updated)
+                        started = time.process_time_ns()
+                        Loader(store).delta(tag, target, changes)
+                        case["generations"].append({"generation": generation, "root": target.root,
+                                                    "changedKeys": len(changes),
+                                                    "admissionCpuMs": (time.process_time_ns() - started) / 1e6,
+                                                    "accounted": ledger.inspect()})
+                        tag, tables = target, updated
                 except Exception as error:
                     code = str(error)[:128]
                     capacity = code in {"sync_decoded_capacity", "sync_encoded_capacity"}
@@ -143,12 +186,19 @@ def main():
                     break
                 finally:
                     case["accounted"] = ledger.inspect()
+                    if arena is not None:
+                        case["packedNodes"] = arena.inspect()
                     tables = None
         finally:
             for store in stores:
                 store.close()
+            if arena is not None:
+                arena.close()
         results.append({"recordsPerView": count, "views": cases, "afterClose": ledger.inspect()})
     report = {"kind": "normalized private-material density diagnostic; not acceptance",
+              "privatePackedNodes": args.packed_nodes,
+              "generationsPerView": args.generations,
+              "cyclicGcEnabled": gc.isenabled(),
               "checkedAtUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "python": sys.version.split()[0], "sourceInputs": before,
               "sourceStableDuringRun": before == source_hashes(), "unexpectedFailure": unexpected, "results": results,

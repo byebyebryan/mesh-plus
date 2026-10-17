@@ -21,6 +21,9 @@ class OwnedUnit:
     def owned_intrinsic(self):
         return 0
 
+    def owned_encoded(self):
+        return 0
+
 
 def children(value):
     kind = type(value)
@@ -103,6 +106,7 @@ def allocation_size(value):
         encoded = len(value)
     if isinstance(value, OwnedUnit):
         size += value.owned_intrinsic()
+        encoded += value.owned_encoded()
     return size, encoded
 
 
@@ -182,6 +186,33 @@ class AllocationLedger:
         self.reclaimed += 1
         object.__setattr__(value, "_allocation_owner", None)
         object.__setattr__(value, "_allocation_pending", False)
+
+    def _retain_atom_edge(self, value):
+        """Private paged-node edge; atoms have no separately tracked children."""
+        check(type(value) in (Atom, PackedAtom), "sync_atom")
+        state = self._state(value)
+        if state is None:
+            intrinsic, encoded = allocation_size(value)
+            cost = intrinsic + 96
+            check(self.used + self.reserved + cost <= self.maximum, "sync_decoded_capacity")
+            check(self.encoded + self.pending_encoded + self.encoded_reserved + encoded <= self.encoded_maximum,
+                  "sync_encoded_capacity")
+            self._create(value, cost, encoded)
+            self.visited += 1
+        else:
+            self._set_refs(value, state, self._refs(value, state) + 1)
+            if value._allocation_pending:
+                self._convert_pending(value, commit=True)
+        self.peak = max(self.peak, self.used + self.reserved)
+
+    def _release_atom_edge(self, value):
+        state = self._state(value)
+        check(state is not None and self._refs(value, state) > 0, "sync_owned_release")
+        refs = self._refs(value, state) - 1
+        self._set_refs(value, state, refs)
+        if refs == 0:
+            self._forget(value, state)
+            self.reclaimed += 1
 
     def _state(self, value):
         if isinstance(value, TrackedAllocation):
