@@ -29,8 +29,9 @@ codec independently enforces its native-family limit (Agent: 16 KiB).
 Successful output drains each original transaction before the original terminal
 control, preserving its exact native fragment. All pins and separately owned
 metadata remain charged through physical output cleanup. Each write/drain
-rechecks batch and input-ref revocation; source-scope retirement cannot deliver
-a late completion even when the shared input owner and siblings remain live.
+rechecks batch and input-ref revocation. Once the source revokes its transferred
+refs, a late completion rejects even when the shared input owner and siblings
+remain live. The actual source tracking gap described below remains open.
 Failure/cancellation retains unretired physical pins and existing quarantine
 credit until cleanup. No proof timer, acquisition deadline, shared cap or Reader
 admission/authority rule is relaxed.
@@ -75,3 +76,9 @@ aggregate 32/64 MiB resources, RSS/plateau, populated IPC/fixed SSH and the exac
 immutable installed pair remain open. Actual source integration will be qualified
 against an owning committed implementation rather than an adapter that reads
 private producer state or fabricates the missing control.
+
+The [byte-pinned checkpoint evidence](evidence/2026-10-16-delta-sync/completion-g1-review.json)
+records the exact runtime and immutable Observer export, commands, full/focused
+results, native-codec composition and separate source-pin diagnostic. The saved
+diagnostic is an expected reproduction of the open gap, not a passing source
+lifecycle qualification.

@@ -31,6 +31,7 @@ async def run(args):
                 # Disclosed private Mesh pin scaffolding. Source lifecycle and
                 # counts use public inspect/aclose; no source state is patched.
                 with input_bytes(fixture.cache, ref) as (raw, _):
+                    assert len(raw) == result["rawBytes"]
                     if prune:
                         result["registeredDuringPin"] = fixture.session.inspect()["ownedRefs"]
                     await fixture.session.aclose()
