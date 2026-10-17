@@ -253,11 +253,43 @@ class InputKey(PackedAtom):
     def borrow(cls, encoded):
         reservation = prepay(1024, 0)
         try:
-            budget = 0 if encoded[:1] not in (b"[", b"{") else 128 + 96 * len(encoded)
+            budget = _key_copy_budget(encoded)
             return finish(cls(encoded, budget), reservation)
         finally:
             if reservation is not None:
                 reservation.close()
+
+
+def _key_copy_budget(encoded):
+    """Container-copy bound from an already owned canonical key, no decode.
+
+    Commas plus nonempty containers count all members. Colons then separate
+    dictionary entries from array elements. Quoted punctuation is ignored.
+    The result matches Atom's existing detached-container allowance exactly.
+    """
+    if encoded[:1] not in (b"[", b"{"):
+        return 0
+    arrays = objects = nonempty = commas = colons = 0
+    quoted = escaped = False
+    for index, byte in enumerate(encoded):
+        if quoted:
+            if escaped:
+                escaped = False
+            elif byte == 92:
+                escaped = True
+            elif byte == 34:
+                quoted = False
+        elif byte == 34:
+            quoted = True
+        elif byte in (91, 123):
+            arrays += int(byte == 91)
+            objects += int(byte == 123)
+            nonempty += int(encoded[index + 1] != (93 if byte == 91 else 125))
+        elif byte == 44:
+            commas += 1
+        elif byte == 58:
+            colons += 1
+    return 96 * arrays + 16 * (commas + nonempty - colons) + 248 * objects + 72 * colons
 
 
 def packed(atom):

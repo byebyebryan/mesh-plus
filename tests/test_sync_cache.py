@@ -1,4 +1,5 @@
 import copy
+import gc
 import os
 import unittest
 from hashlib import sha256
@@ -182,6 +183,26 @@ class CacheTests(unittest.TestCase):
         self.cache.disconnect()
         with self.assertRaisesRegex(ProtocolError, "sync_view_retired"):
             body.materialize()
+
+    def test_candidate_and_protocol_metadata_plateau_without_cyclic_gc(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            self.confirm()
+            start = self.cache.ledger.used
+            for number in range(1, 51):
+                old = self.candidate
+                self.candidate = self.cache._mint(self.cache.store.current)
+                with self.assertRaisesRegex(ProtocolError, "sync_candidate_retired"):
+                    old.tag
+                raw = proof(self.cache, self.candidate, native_time=2000 + number * 20)
+                self.now += 20
+                self.cache.confirm(self.candidate, raw, CLOCK)
+                self.assertEqual((self.cache.ledger.pending_units, self.cache.ledger.reserved), (0, 0))
+                self.assertLessEqual(self.cache.ledger.used, start + 1024)
+        finally:
+            if enabled:
+                gc.enable()
 
     def test_only_fresh_proof_publishes_and_old_receipt_is_not_renewed(self):
         with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):

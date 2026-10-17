@@ -4,12 +4,23 @@ from unittest.mock import patch
 from mesh_plus.protocol import ProtocolError
 from mesh_plus.sync._schema import OwnedSchema
 from mesh_plus.sync.budget import AllocationLedger
-from mesh_plus.sync.canonical import Atom, canonical, packed, thaw
+from mesh_plus.sync.canonical import Atom, InputKey, canonical, packed, thaw
 from mesh_plus.sync.commitment import MerkleMap
 from mesh_plus.sync.decoder import DecoderArena
 
 
 class PackedValueTests(unittest.TestCase):
+    def test_borrowed_key_copy_bound_matches_owned_container_bound_without_decode(self):
+        keys = [None, 0, "long scalar" * 100,
+                ["fixture", "reference", "scope", "record", "id"],
+                [["provider", "namespace", "runtime"], ["h", "p", "n", "k", "id"], ["epoch", 1], "runtime"],
+                {"quoted\\\"key,:": [[], {}, {"雪": [True, None, "[,{}]:\\\""]}]}]
+        for key in keys:
+            owned = Atom.own(key)
+            with patch("mesh_plus.sync.canonical.decode", side_effect=AssertionError("key decoded for its bound")):
+                borrowed = InputKey.borrow(owned.encoded)
+                self.assertEqual(borrowed.copy_budget, owned.copy_budget)
+
     def test_index_schema_owns_its_tree_and_prepays_validation_before_compilation(self):
         ledger = AllocationLedger(4 * 1024 * 1024)
         schema = OwnedSchema.retain(canonical({"$defs": {"value": {"type": "integer"}},

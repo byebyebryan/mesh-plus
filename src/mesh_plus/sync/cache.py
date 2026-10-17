@@ -5,7 +5,7 @@ import os
 import re
 import secrets
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from hashlib import sha256
 
 from ..evidence import clock_domain
@@ -61,7 +61,7 @@ def source_binding(host, source, descriptor):
             "nativeDescriptor": descriptor.native_descriptor_digest}
 
 
-class CandidateRef:
+class CandidateRef(OwnedUnit):
     """Cache-minted identity capability, never an owning pointer to a root."""
 
     __slots__ = ("_owner", "_permit", "_tag")
@@ -78,6 +78,10 @@ class CandidateRef:
     def tag(self):
         self._owner._candidate(self)
         return self._tag
+
+    def owned_children(self):
+        # The owner is a lookup capability, not an owned child graph.
+        return self._permit, self._tag
 
 
 class ViewRef:
@@ -146,9 +150,21 @@ class _Confirmation(OwnedUnit):
     receipts: tuple
     expiries: tuple
     received_ms: int
+    permit: str
 
     def owned_children(self):
-        return self.owner_clock, self.receipts, self.expiries, self.received_ms
+        return self.owner_clock, self.receipts, self.expiries, self.received_ms, self.permit
+
+
+@dataclass(frozen=True, slots=True)
+class _History(OwnedUnit):
+    known: NativeTag | None = None
+    retired: tuple = ()
+    clock: tuple | None = None
+    transactions: tuple = ()
+
+    def owned_children(self):
+        return self.known, self.retired, self.clock, self.transactions
 
 
 @dataclass(frozen=True, slots=True)
@@ -180,20 +196,33 @@ class OwnedSyncCache:
         self.local_owner = local_owner
         self.store = ReconstructionStore(profile, host=expected["host"], ledger=self.ledger)
         self._lock = self.store._lock
-        self._metadata = (self._binding, self._request, self._clock)
+        self._metadata = (self._binding, self._request, self._clock, self._binding_digest)
+        self._history = None
+        retained = False
         try:
             self.ledger.retain(self._metadata)
+            retained = True
+            self._replace_history()
         except BaseException:
+            if retained:
+                self.ledger.release(self._metadata)
             self.store.close()
             raise
         self._candidate_ref = self._view_permit = self._proof = self._proof_context = self._confirmation = None
         self.reason = "unconfirmed"
         self._closed = False
-        self._transaction_tokens = ()
-        self._known_head = None
-        self._retired_bindings = ()
-        self._last_head_clock = None
         self._acquisition = None
+
+    def _replace_history(self, **changes):
+        old = self._history
+        with self.ledger.reserve(8192) as reservation:
+            history = replace(_History() if old is None else old, **changes)
+            self.ledger.retain(history, reservation=reservation)
+        self._history = history
+        self._known_head, self._retired_bindings = history.known, history.retired
+        self._last_head_clock, self._transaction_tokens = history.clock, history.transactions
+        if old is not None:
+            self.ledger.release(old)
 
     def _check(self):
         check(not self._closed, "sync_cache_closed")
@@ -217,10 +246,17 @@ class OwnedSyncCache:
             return root
 
     def _mint(self, root):
-        self._candidate_ref = CandidateRef(self, secrets.token_hex(16), self._tag(root.tag))
+        with self.ledger.allocations(), self.ledger.reserve(8192) as reservation:
+            candidate = CandidateRef(self, secrets.token_hex(16), self._tag(root.tag))
+            self.ledger.retain(candidate, reservation=reservation)
+        if self._candidate_ref is not None:
+            self.ledger.release(self._candidate_ref)
+        self._candidate_ref = candidate
         return self._candidate_ref
 
     def _discard_candidate(self):
+        if self._candidate_ref is not None:
+            self.ledger.release(self._candidate_ref)
         self._candidate_ref = None
         if self.store.candidate is not None:
             self.ledger.release(self.store.candidate)
@@ -244,7 +280,7 @@ class OwnedSyncCache:
             self._check()
             self.revoke("baseline_pending")
             self._discard_candidate()
-            self._transaction_tokens = ()
+            self._replace_history(transactions=())
             # A replacement has no readable old root after revocation. Retire
             # it before cold/recovery admission instead of retaining two full
             # rosters during parsing. Deltas retain their immutable base.
@@ -302,7 +338,7 @@ class OwnedSyncCache:
         root = self.store.stage_delta(NativeTag.parse(document["baseTag"]),
                                       NativeTag.parse(document["resultTag"]), tuple(document["resultCursor"]),
                                       document["operations"])
-        self._transaction_tokens = (*self._transaction_tokens[-3:], token)
+        self._replace_history(transactions=(*self._transaction_tokens[-3:], token))
         return self._mint(root)
 
     @admission_boundary
@@ -349,10 +385,11 @@ class OwnedSyncCache:
         check(actual.binding not in self._retired_bindings, "sync_owner_retired")
         if known is not None and actual.binding == known.binding:
             check(actual.generation > known.generation or actual == known, "sync_head_regression")
-        elif known is not None:
+        retired = self._retired_bindings
+        if known is not None and actual.binding != known.binding:
             check(len(self._retired_bindings) < 4, "sync_owner_history_capacity")
-            self._retired_bindings = (*self._retired_bindings, known.binding)
-        self._known_head = actual
+            retired = (*retired, known.binding)
+        self._replace_history(known=actual, retired=retired)
 
     def _view_root(self, permit):
         self._check()
@@ -468,6 +505,7 @@ class OwnedSyncCache:
                     result = self._leases(root, head, document, rules, pending[2], clock)
                     self.ledger.retain(result)
                     retained = result
+                    self._replace_history(clock=(clock_scope, observed, document["bridgeClock"]["boottimeMs"]))
                 self._check()
                 check(self._now_ms() < pending[2] + 2000, "sync_proof_deadline")
                 check(pending[3] is None or self._now_ms() < pending[3], "sync_acquisition_deadline")
@@ -476,9 +514,8 @@ class OwnedSyncCache:
                 if self._confirmation is not None:
                     self.ledger.release(self._confirmation)
                 self._confirmation = result
-                self._last_head_clock = clock_scope, observed, document["bridgeClock"]["boottimeMs"]
                 retained = None
-                self._view_permit = secrets.token_hex(16)
+                self._view_permit = result.permit
                 self.reason = "confirmed"
                 return ViewRef(self, self._view_permit, candidate._tag)
             except BaseException:
@@ -576,7 +613,8 @@ class OwnedSyncCache:
             if receipt.health not in {"current", "partial"} or allowed is not None and key not in allowed:
                 expiry = received
             expiries.append((receipt.key, expiry))
-        return _Confirmation(Atom.own(native_clock), tuple(projected.values()), tuple(expiries), received)
+        return _Confirmation(Atom.own(native_clock), tuple(projected.values()), tuple(expiries), received,
+                             secrets.token_hex(16))
 
     def acquire(self):
         with self._lock:
@@ -614,6 +652,10 @@ class OwnedSyncCache:
                 return
             self.disconnect()
             self.store.close()
+            self.ledger.release(self._history)
+            self._history = None
+            self._known_head = self._last_head_clock = None
+            self._transaction_tokens = self._retired_bindings = ()
             self.ledger.release(self._metadata)
             self._metadata = ()
             self._closed = True
