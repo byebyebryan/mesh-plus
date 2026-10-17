@@ -13,6 +13,7 @@ from functools import wraps
 
 from ..protocol import ProtocolError, check
 from ._boundary import admission_boundary
+from ._patch_workspace import apply_indexes, apply_rules
 from ._schema import OwnedSchema
 from .budget import AllocationLedger, OwnedUnit
 from .canonical import (
@@ -33,10 +34,7 @@ from .model import (
     SPACES,
     DomainIndexPatch,
     FieldTokenWrite,
-    IndexRemove,
-    IndexWrite,
     NativeTag,
-    RuleWrite,
     SyncDescriptor,
     hex_digest,
 )
@@ -606,48 +604,18 @@ class ReconstructionStore:
         if tx.compact is not None:
             check(type(patch.membership_expansion) is tuple and patch.membership_expansion == (),
                   "sync_compact_membership_writer")
-        count = sum(len(getattr(patch, name)) for name in patch.__slots__)
-        tx.budget.charge(1024 + count * 256 + len(tx.member_operations) * 128)
-        seen = {}
-
-        def remember(index, key, code, *, keep_decoded=False):
-            marker = index, key.encoded
-            check(marker not in seen, code)
-            # The duplicate registry borrows canonical buffers from these
-            # charged packed atoms, rather than retaining uncharged bytes
-            # after each temporary decoded key has been released.
-            owned = key if keep_decoded else packed(key)
-            seen[marker] = owned
-            return owned
-
-        # Removes precede inserts so a legitimate key replacement at the
-        # declared entry cap does not need twice the final index capacity.
-        for remove in patch.removes:
-            check(type(remove) is IndexRemove and remove.index in self.index_specs, "sync_index_remove")
-            key = Atom.own(remove.key)
-            remember(remove.index, key, "sync_duplicate_index_operation")
-            tx.indexes[remove.index] = tx.indexes[remove.index].remove(thaw(key.value))
-        baseline_entries = {} if tx.before is None else None
-        for write in patch.writes:
-            check(type(write) is IndexWrite and write.index in self.index_specs, "sync_index_write")
-            key, value = Atom.own(write.key), Atom.own(write.value)
-            spec = self.index_specs[write.index]
-            owned_key = remember(write.index, key, "sync_duplicate_index_operation", keep_decoded=spec.ordered)
-            check(len(value.encoded) <= spec.max_value_bytes, "sync_index_value_capacity")
-            self.validators[write.index][0].validate(key, self.ledger)
-            self.validators[write.index][1].validate(value, self.ledger)
-            if baseline_entries is None:
-                tx.indexes[write.index] = tx.indexes[write.index].put_atom(thaw(key.value), packed(value))
-                size = len(tx.indexes[write.index])
-            else:
-                entries = baseline_entries.setdefault(write.index, [])
-                entries.append((owned_key if spec.ordered else owned_key.encoded, packed(value)))
-                size = len(entries)
-            check(size <= spec.max_entries, "sync_index_entry_capacity")
-        if baseline_entries is not None:
-            for name, entries in baseline_entries.items():
-                tx.indexes[name] = (OrderedMap.baseline_atoms(entries) if self.index_specs[name].ordered else
-                                    MerkleMap._from_encoded_atoms("index/" + name, entries))
+        if tx.compact is None:
+            count = sum(len(getattr(patch, name)) for name in patch.__slots__)
+            tx.budget.charge(1024 + count * 256 + len(tx.member_operations) * 128)
+        else:
+            columns = len(self.descriptor.fields) if patch.field_tokens or tx.member_operations else 0
+            # Bounded current layout/token-dictionary scratch. Per-record
+            # lists/offsets pay separately; immutable patch DTOs remain
+            # caller-prepaid, not copied into another generic DTO roster.
+            tx.budget.charge(4096 + columns * 256 + len(tx.member_operations) * 128 +
+                             (len(patch.membership_expansion) + len(patch.affected_scopes) +
+                              len(patch.invalidations)) * 256)
+        apply_indexes(self, tx, patch)
         layout = ({name: (position, len(canonical(name))) for position, name in enumerate(self.descriptor.fields)}
                   if patch.field_tokens or tx.member_operations else {})
         fields = self._field_patch(tx, patch.field_tokens, layout)
@@ -695,21 +663,7 @@ class ReconstructionStore:
                 current = fields[record.encoded] = [record, None, atom, 0, offsets]
             token = self._group_token(current, key[3], layout)
             check(token is not ABSENT and token == operation.value.encoded, "sync_member_content_token")
-        for item in patch.changed_rules:
-            check(type(item) is RuleWrite, "sync_rule_write")
-            key, value = Atom.own(item.key), Atom.own(item.value)
-            remember("$rules", key, "sync_duplicate_rule")
-            ref = thaw(key.value)
-            _record_ref(ref, tx)
-            slot = tx.tables["records"].get(ref[0])
-            check(slot is not ABSENT and thaw(slot["birth"]) == ref[1], "sync_rule_record_birth")
-            check(len(value.encoded) <= 16384, "sync_rule_capacity")
-            tx.indexes["$rules"] = tx.indexes["$rules"].put_atom(ref, packed(value))
-        for key in patch.removed_rules:
-            owned = Atom.own(key)
-            remember("$rules", owned, "sync_duplicate_rule")
-            if tx.indexes["$rules"].get(thaw(owned.value)) is not ABSENT:
-                tx.indexes["$rules"] = tx.indexes["$rules"].remove(thaw(owned.value))
+        apply_rules(self, tx, patch)
         # These remain immutable, bounded data. They describe affected output;
         # they never grant authority or bypass receipt/head checks.
         tx.affected_scopes = tuple(Atom.own(key) for key in patch.affected_scopes)
@@ -756,6 +710,13 @@ class ReconstructionStore:
                 group = groups[key.encoded] = [key, [], ABSENT, 0, None]
             else:
                 last_key = group[0]
+            # Bound the borrowed-reference list before growing it. The same
+            # exact record/field duplicate was previously rejected in the
+            # second pass, after an arbitrarily long list could accumulate.
+            if tx.compact is not None:
+                bit = 1 << layout[item.field][0]
+                check(not group[3] & bit, "sync_duplicate_field_token")
+                group[3] |= bit
             group[1].append(item)
         baseline_entries = [] if tx.before is None else None
         for key, changes, _, _, _ in groups.values():
