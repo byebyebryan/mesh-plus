@@ -101,6 +101,136 @@ class PatchWorkspaceTests(unittest.TestCase):
         self.assertEqual(produced, [True])
         self.assertIsNone(self.cache.store.candidate)
 
+    def test_field_groups_borrow_exact_after_alias_owners_on_both_backends(self):
+        from mesh_plus.sync._packed_nodes import PackedNodeArena
+
+        original, observed = ReconstructionStore._field_patch, []
+
+        def fields(store, tx, items, layout):
+            groups = original(store, tx, items, layout)
+            observed.append((len(groups), all(group[0] is tx.compact.alias_atom(7, "after") and
+                                             group[0].encoded == canonical([IDENTITY, BIRTH]) and
+                                             group[0]._allocation_owner is store.ledger
+                                             for group in groups.values())))
+            return groups
+        for backend in ("default", "packed"):
+            with self.subTest(backend=backend):
+                self.cache.close()
+                arena = PackedNodeArena(self.cache.ledger) if backend == "packed" else None
+                self.cache = self.make_cache(ledger=self.cache.ledger)
+                expanded = OwnedSyncCache(self.profile, source_binding("fixture", "source", self.profile.descriptor))
+                try:
+                    first = fixture(self.profile)
+                    with patch.object(ReconstructionStore, "_field_patch", fields):
+                        candidate = self.cache.admit_baseline(compact(first[0]))
+                    expanded.admit_baseline(canonical(first[0]))
+                    self.assertEqual(candidate.tag.native, first[2])
+                    def indexes(root):
+                        return [(name, tuple((table.leaf_at(i).key.encoded, table.leaf_at(i).atom.encoded)
+                                             for i in range(len(table))) if type(table) is OrderedMap else table.root)
+                                for name, table in root.indexes]
+                    self.assertEqual(indexes(self.cache.store.candidate), indexes(expanded.store.candidate))
+                    self.assertTrue(observed[-1][1])
+                finally:
+                    expanded.close()
+                    self.cache.close()
+                    if arena is not None:
+                        arena.close()
+        self.assertEqual([row[0] for row in observed], [1, 1])
+
+    def test_field_groups_keep_retired_and_reused_alias_birth_owners_distinct(self):
+        from copy import deepcopy
+
+        from test_sync_compact import COHORT, seal_document
+        from test_sync_reconstruction import OWNER
+
+        from mesh_plus.sync import FieldTokenWrite
+        from mesh_plus.sync.commitment import MerkleMap, body_digest, field_digest
+
+        first = fixture(self.profile)
+        self.cache.admit_baseline(compact(first[0]))
+        other, birth = [*IDENTITY[:-1], "replacement"], [OWNER, 2]
+        changed = deepcopy(fixture(self.profile, 2, 2, member=False)[0])
+        body = {"identity": other, "value": 2}
+        digest = body_digest(bytes.fromhex(self.profile.descriptor.native_descriptor_digest), body).hex()
+        changed["tables"]["records"] = [[other, {"alias": 7, "birth": birth, "body": digest,
+                                                 "order": other, "scope": "scope"}]]
+        changed["tables"]["bodies"] = [[digest, body]]
+        changed["tables"]["observations"] = [[[other, birth], {"stamp": 2}]]
+        token = field_digest(bytes.fromhex(self.profile.descriptor.native_descriptor_digest), other, birth,
+                             "runtime", {"value": 2}).hex()
+        changed["tables"]["memberships"] = [[[COHORT, other, birth, "runtime"], token]]
+        tree = MerkleMap.baseline("cohort-members", [([other, birth, "runtime"], token)])
+        changed["tables"]["cohorts"] = [[COHORT, {"receipt": COHORT, "seal": [2, tree.root.hex(), 1]}]]
+        second = seal_document(self.profile, changed)
+        admit, field = self.profile._admit, ReconstructionStore._field_patch
+        observed = []
+
+        def removed(ctx):
+            result = admit(ctx)
+            return replace(result, field_tokens=result.field_tokens +
+                           (FieldTokenWrite([IDENTITY, BIRTH], "runtime", None),))
+
+        def fields(store, tx, items, layout):
+            groups = field(store, tx, items, layout)
+            old, new = groups[canonical([IDENTITY, BIRTH])][0], groups[canonical([other, birth])][0]
+            observed.append((old is tx.retired_refs[canonical([IDENTITY, BIRTH])],
+                             new is tx.compact.alias_atom(7, "after"), old is not new,
+                             old.encoded != new.encoded))
+            return groups
+        self.profile._admit = removed
+        raw = transaction(self.profile, first, second,
+                          groups=[[COHORT, [IDENTITY, BIRTH], 1, None, 0],
+                                  [COHORT, None, None, [other, birth], 1]])
+        with patch.object(ReconstructionStore, "_field_patch", fields):
+            candidate = self.cache.stage(raw)
+        self.assertEqual(candidate.tag.native, second[2])
+        self.assertEqual(observed, [(True,) * 4])
+
+    def test_unmatched_field_births_and_foreign_refs_preserve_rollback(self):
+        from test_sync_reconstruction import OWNER
+
+        original = self.profile._admit
+        invalid = (([IDENTITY, [OWNER, 2]], "sync_field_record_birth"),
+                   ([IDENTITY, [OWNER, True]], "sync_record_ref"),
+                   ([["foreign", *IDENTITY[1:]], BIRTH], "sync_record_ref"))
+        for ref, code in invalid:
+            with self.subTest(ref=ref):
+                self.profile._admit = original
+                first, second = fixture(self.profile, member=False), fixture(self.profile, 2, 2, member=False)
+                candidate = self.cache.admit_baseline(compact(first[0]))
+                self.cache.confirm(candidate, proof(self.cache, candidate), CLOCK)
+                current = self.cache.store.current
+
+                def admit(ctx):
+                    result = original(ctx)
+                    return replace(result, field_tokens=tuple(replace(item, record_ref=ref)
+                                                             for item in result.field_tokens))
+                self.profile._admit = admit
+                self.reject(lambda: self.cache.stage(transaction(self.profile, first, second)), code)
+                self.assertIs(self.cache.store.current, current)
+                self.assertIsNone(self.cache.store.candidate)
+                self.reject(self.cache.acquire, "sync_unconfirmed")
+
+    def test_field_ref_encoded_prepayment_precedes_comparison_buffer(self):
+        from mesh_plus.sync import normalization
+
+        original, constructed = normalization.CompactState.field_ref, []
+
+        def at_limit(state, value):
+            ledger = state.store.ledger
+            maximum = ledger.encoded_maximum
+            ledger.encoded_maximum = ledger.encoded + ledger.pending_encoded + ledger.encoded_reserved
+            try:
+                with patch.object(normalization, "canonical", lambda *args: constructed.append(args)):
+                    return original(state, value)
+            finally:
+                ledger.encoded_maximum = maximum
+        with patch.object(normalization.CompactState, "field_ref", at_limit):
+            self.reject(lambda: self.cache.admit_baseline(compact(fixture(self.profile)[0])), "sync_encoded_capacity")
+        self.assertEqual(constructed, [])
+        self.assertIsNone(self.cache.store.candidate)
+
     def test_ordered_and_unordered_baseline_delta_match_expanded_route(self):
         original = self.profile._admit
 

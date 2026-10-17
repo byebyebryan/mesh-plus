@@ -8,7 +8,7 @@ import weakref
 from dataclasses import dataclass
 
 from ..protocol import ProtocolError, check
-from ._allocation import finish, prepay
+from ._allocation import finish, prepay, prepay_json
 from ._boundary import _retire_error, admission_boundary
 from .budget import OwnedUnit
 from .canonical import Atom, FrozenObject, PackedAtom, canonical, decode, packed, thaw
@@ -430,6 +430,37 @@ class CompactState:
         ref = self.alias_atom(_slot_path(slot, self.spec.alias_spec.alias_path), side)
         check(ref is not ABSENT and ref.encoded == canonical(value), "sync_alias_birth")
         return ref
+
+    def field_ref(self, value):
+        """Borrow an exact stage-owned field key, never another alias's birth.
+
+        Retired references already have an owner in _links. Live references
+        can share the AFTER definition owner. Unmatched references keep the
+        original independent ownership and ordinary field validation path.
+        """
+        from .reconstruction import _record_ref
+
+        self.check()
+        _record_ref(value, self.tx)
+        reservation = prepay_json(value)
+        encoded = slot = ref = None
+        try:
+            encoded = canonical(value)
+            ref = self.tx.retired_refs.get(encoded)
+            if ref is not None:
+                return ref
+            slot = self.tx.tables["records"].get(value[0])
+            if slot is not ABSENT and thaw(_slot_path(slot, self.spec.alias_spec.birth_path)) == value[1]:
+                ref = self.alias_atom(_slot_path(slot, self.spec.alias_spec.alias_path), "after")
+                if ref is not ABSENT and ref.encoded == encoded:
+                    return ref
+        finally:
+            # The outer prepayment keeps comparison bytes charged through
+            # their last reference, including held errors during unwinding.
+            encoded = slot = ref = None
+            if reservation is not None:
+                reservation.close()
+        return packed(Atom.own(value))
 
     def _cohort(self, value):
         atom = Atom.own(value)

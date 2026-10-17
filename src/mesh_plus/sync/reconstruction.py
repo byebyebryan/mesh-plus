@@ -702,7 +702,8 @@ class ReconstructionStore:
             if last_key is not None and item.record_ref is last_ref:
                 key = last_key
             else:
-                key = packed(Atom.own(item.record_ref))
+                key = (packed(Atom.own(item.record_ref)) if tx.compact is None else
+                       tx.compact.field_ref(item.record_ref))
                 last_ref, last_key = item.record_ref, key
             group = groups.get(key.encoded)
             if group is None:
