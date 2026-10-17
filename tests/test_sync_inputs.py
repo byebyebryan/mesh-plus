@@ -3,7 +3,7 @@ import gc
 import unittest
 from unittest.mock import patch
 
-from test_sync_cache import CLOCK, REQUEST, CacheProfile, baseline, proof, transaction
+from test_sync_cache import CLOCK, IDENTITY, REQUEST, CacheProfile, baseline, proof, transaction
 
 from mesh_plus.protocol import ProtocolError
 from mesh_plus.sync import InputOwner, OwnedInputRef, OwnedSyncCache, source_binding
@@ -119,6 +119,70 @@ class InputTests(unittest.TestCase):
         self.assertGreater(self.cache.ledger.reserved, 8192)
         receive.close()
         self.assertEqual(self.cache.ledger.reserved, 0)
+
+    def test_input_owner_close_revokes_views_and_preserves_sibling_and_receive_credit(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        other_profile = CacheProfile()
+        other = OwnedSyncCache(other_profile, source_binding("fixture", "sibling", other_profile.descriptor),
+                               ledger=self.cache.ledger, request_binding=REQUEST,
+                               _now_ms=lambda: 10000, _clock=CLOCK)
+        receive = None
+        try:
+            raw, _, _ = baseline(self.profile)
+            candidate = self.cache.admit_baseline(self.seal(raw))
+            view = self.cache.confirm(candidate, self.seal(proof(self.cache, candidate)), CLOCK)
+            retained = view.lookup("records", IDENTITY)
+            other_raw, _, _ = baseline(other_profile)
+            other_candidate = other.admit_baseline(other_raw)
+            sibling_view = other.confirm(other_candidate, proof(other, other_candidate), CLOCK)
+            receive = self.inputs.reserve(8192, encoded_bytes=1024)
+            ref = self.seal(b"sealed")
+            self.inputs.close()
+            with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
+                self.cache.acquire()
+            with self.assertRaises(ProtocolError):
+                _ = view.tag
+            with self.assertRaises(ProtocolError):
+                _ = candidate.tag
+            with self.assertRaises(ProtocolError):
+                retained.materialize()
+            with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
+                _ = ref.nbytes
+            for action in (lambda: receive.resize(1), lambda: receive.seal(b"late")):
+                with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
+                    action()
+            self.assertEqual(self.cache.ledger.encoded_reserved, 1024)
+            self.assertEqual(sibling_view.tag, other_candidate.tag)
+            self.assertEqual(other.acquire().tag, other_candidate.tag)
+            replacement = self.cache.input_owner()
+            self.assertIsNot(replacement, self.inputs)
+            candidate = self.cache.admit_baseline(self.seal(raw, replacement))
+            view = self.cache.confirm(candidate, self.seal(proof(self.cache, candidate), replacement), CLOCK)
+            self.inputs.close()
+            self.inputs.close()
+            self.assertEqual(view.tag, candidate.tag)
+            self.assertEqual(other.acquire().tag, other_candidate.tag)
+            self.assertEqual(self.cache.ledger.encoded_reserved, 1024)
+        finally:
+            if receive is not None:
+                receive.close()
+            other.close()
+            if enabled:
+                gc.enable()
+
+    def test_input_owner_close_during_head_callback_cannot_publish(self):
+        raw, _, _ = baseline(self.profile)
+        candidate = self.cache.admit_baseline(self.seal(raw))
+        head = self.seal(proof(self.cache, candidate))
+        inputs = self.inputs
+        self.profile.head_callback = lambda ctx: inputs.close()
+        with self.assertRaises(ProtocolError) as rejected:
+            self.cache.confirm(candidate, head, CLOCK)
+        self.assertIsNone(rejected.exception.__context__)
+        with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
+            self.cache.acquire()
+        self.assertEqual(self.cache.ledger.encoded_reserved, 0)
 
     def test_resize_is_atomic_when_capacity_is_exhausted(self):
         receive = self.inputs.reserve(100, encoded_bytes=20)

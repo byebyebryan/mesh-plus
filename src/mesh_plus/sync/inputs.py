@@ -56,6 +56,21 @@ class InputOwner:
             raise
 
     def close(self):
+        cache = self._cache()
+        if cache is not None:
+            with cache._lock:
+                self._close()
+                if cache._inputs is self:
+                    # Closing the current intake epoch has disconnect's
+                    # publication barrier too. A stale owner's repeated close
+                    # must never revoke its replacement or a sibling cache.
+                    cache._inputs = None
+                    cache.revoke("input_retired")
+                    cache._discard_candidate()
+        else:
+            self._close()
+
+    def _close(self):
         if not getattr(self, "_closed", True):
             self._closed = True
             for key in tuple(self._buffers):
