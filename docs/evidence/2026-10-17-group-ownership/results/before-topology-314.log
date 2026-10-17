@@ -1,0 +1,26 @@
+test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends (test_sync_compact.CompactTests.test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends) ... 
+  test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends (test_sync_compact.CompactTests.test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends) (backend='default') ... FAIL
+  test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends (test_sync_compact.CompactTests.test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends) (backend='packed') ... FAIL
+
+======================================================================
+FAIL: test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends (test_sync_compact.CompactTests.test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends) (backend='default')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/group-ownership-qualified-4301339/before/tests/test_sync_compact.py", line 714, in test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends
+    self.assertEqual(observed[0]["records"], 2)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4 != 2
+
+======================================================================
+FAIL: test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends (test_sync_compact.CompactTests.test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends) (backend='packed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/group-ownership-qualified-4301339/before/tests/test_sync_compact.py", line 714, in test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends
+    self.assertEqual(observed[0]["records"], 2)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4 != 2
+
+----------------------------------------------------------------------
+Ran 1 test in 0.028s
+
+FAILED (failures=2)
