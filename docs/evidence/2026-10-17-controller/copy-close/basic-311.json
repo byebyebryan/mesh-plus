@@ -1,0 +1,1411 @@
+{
+  "cases": [
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2635811,
+      "serialization": "expanded",
+      "transactions": 0,
+      "transport": "stdio",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 40948,
+              "frames": 4
+            },
+            "hello": {
+              "bytes": 3591,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3839,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 49615,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 49615,
+        "sentFrames": 12
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2635811,
+      "serialization": "expanded",
+      "transactions": 1,
+      "transport": "stdio",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 46980,
+              "frames": 5
+            },
+            "hello": {
+              "bytes": 3591,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3839,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 55647,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 55647,
+        "sentFrames": 13
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2872159,
+      "serialization": "expanded",
+      "transactions": 4,
+      "transport": "stdio",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 76468,
+              "frames": 8
+            },
+            "hello": {
+              "bytes": 3591,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3839,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 85135,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 85135,
+        "sentFrames": 16
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2637212,
+      "serialization": "expanded",
+      "transactions": 0,
+      "transport": "stdio",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 37816,
+              "frames": 4
+            },
+            "hello": {
+              "bytes": 3612,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3860,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 46525,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 46525,
+        "sentFrames": 12
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2637212,
+      "serialization": "expanded",
+      "transactions": 1,
+      "transport": "stdio",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 43947,
+              "frames": 5
+            },
+            "hello": {
+              "bytes": 3612,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3860,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 52656,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 52656,
+        "sentFrames": 13
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2880309,
+      "serialization": "expanded",
+      "transactions": 4,
+      "transport": "stdio",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 70072,
+              "frames": 8
+            },
+            "hello": {
+              "bytes": 3612,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3860,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 78781,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 78781,
+        "sentFrames": 16
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2635811,
+      "serialization": "compact",
+      "transactions": 0,
+      "transport": "stdio",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 31507,
+              "frames": 4
+            },
+            "hello": {
+              "bytes": 3590,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3838,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 40172,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 40172,
+        "sentFrames": 12
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2635811,
+      "serialization": "compact",
+      "transactions": 1,
+      "transport": "stdio",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 37952,
+              "frames": 5
+            },
+            "hello": {
+              "bytes": 3590,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3838,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 46617,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 46617,
+        "sentFrames": 13
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2939845,
+      "serialization": "compact",
+      "transactions": 4,
+      "transport": "stdio",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 66233,
+              "frames": 8
+            },
+            "hello": {
+              "bytes": 3590,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3838,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 74898,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 74898,
+        "sentFrames": 16
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2637212,
+      "serialization": "compact",
+      "transactions": 0,
+      "transport": "stdio",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 29604,
+              "frames": 4
+            },
+            "hello": {
+              "bytes": 3611,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3859,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 38311,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 38311,
+        "sentFrames": 12
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2637212,
+      "serialization": "compact",
+      "transactions": 1,
+      "transport": "stdio",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 36148,
+              "frames": 5
+            },
+            "hello": {
+              "bytes": 3611,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3859,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 44855,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 44855,
+        "sentFrames": 13
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2947995,
+      "serialization": "compact",
+      "transactions": 4,
+      "transport": "stdio",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 458,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 61066,
+              "frames": 8
+            },
+            "hello": {
+              "bytes": 3611,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3859,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2495,
+        "physicalSentBytes": 69773,
+        "receivedBytes": 2495,
+        "receivedFrames": 8,
+        "sentBytes": 69773,
+        "sentFrames": 16
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2635811,
+      "serialization": "expanded",
+      "transactions": 0,
+      "transport": "ipc",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 40936,
+              "frames": 4
+            },
+            "hello": {
+              "bytes": 3591,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3837,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 49601,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 49601,
+        "sentFrames": 12
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2635811,
+      "serialization": "expanded",
+      "transactions": 1,
+      "transport": "ipc",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 46966,
+              "frames": 5
+            },
+            "hello": {
+              "bytes": 3591,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3837,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 55631,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 55631,
+        "sentFrames": 13
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2872159,
+      "serialization": "expanded",
+      "transactions": 4,
+      "transport": "ipc",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 76448,
+              "frames": 8
+            },
+            "hello": {
+              "bytes": 3591,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3837,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 85113,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 85113,
+        "sentFrames": 16
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2637212,
+      "serialization": "expanded",
+      "transactions": 0,
+      "transport": "ipc",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 37804,
+              "frames": 4
+            },
+            "hello": {
+              "bytes": 3612,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3858,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 46511,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 46511,
+        "sentFrames": 12
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2637212,
+      "serialization": "expanded",
+      "transactions": 1,
+      "transport": "ipc",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 43933,
+              "frames": 5
+            },
+            "hello": {
+              "bytes": 3612,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3858,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 52640,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 52640,
+        "sentFrames": 13
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2880309,
+      "serialization": "expanded",
+      "transactions": 4,
+      "transport": "ipc",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 70052,
+              "frames": 8
+            },
+            "hello": {
+              "bytes": 3612,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3858,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 78759,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 78759,
+        "sentFrames": 16
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2635811,
+      "serialization": "compact",
+      "transactions": 0,
+      "transport": "ipc",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 31495,
+              "frames": 4
+            },
+            "hello": {
+              "bytes": 3590,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3836,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 40158,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 40158,
+        "sentFrames": 12
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2635811,
+      "serialization": "compact",
+      "transactions": 1,
+      "transport": "ipc",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 37938,
+              "frames": 5
+            },
+            "hello": {
+              "bytes": 3590,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3836,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 46601,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 46601,
+        "sentFrames": 13
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2939845,
+      "serialization": "compact",
+      "transactions": 4,
+      "transport": "ipc",
+      "view": "full",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 66213,
+              "frames": 8
+            },
+            "hello": {
+              "bytes": 3590,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3836,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 74876,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 74876,
+        "sentFrames": 16
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2637212,
+      "serialization": "compact",
+      "transactions": 0,
+      "transport": "ipc",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 29592,
+              "frames": 4
+            },
+            "hello": {
+              "bytes": 3611,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3857,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 38297,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 38297,
+        "sentFrames": 12
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2637212,
+      "serialization": "compact",
+      "transactions": 1,
+      "transport": "ipc",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 36134,
+              "frames": 5
+            },
+            "hello": {
+              "bytes": 3611,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3857,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 44839,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 44839,
+        "sentFrames": 13
+      }
+    },
+    {
+      "actualHeadProofs": 2,
+      "aggregateResourceAcceptance": false,
+      "controllerResultAndNativeCompleteAsProof": "rejected",
+      "nativeFragmentsEqual": true,
+      "relayAccountedHeapPeak": 2947995,
+      "serialization": "compact",
+      "transactions": 4,
+      "transport": "ipc",
+      "view": "active",
+      "wireBytes": {
+        "byKind": {
+          "received": {
+            "command": {
+              "bytes": 1914,
+              "frames": 6
+            },
+            "hello": {
+              "bytes": 123,
+              "frames": 1
+            },
+            "open": {
+              "bytes": 456,
+              "frames": 1
+            }
+          },
+          "sent": {
+            "command-result": {
+              "bytes": 1237,
+              "frames": 6
+            },
+            "delivery": {
+              "bytes": 61046,
+              "frames": 8
+            },
+            "hello": {
+              "bytes": 3611,
+              "frames": 1
+            },
+            "setup": {
+              "bytes": 3857,
+              "frames": 1
+            }
+          }
+        },
+        "byteScope": "completed-json-lines",
+        "closed": false,
+        "physicalReceivedBytes": 2493,
+        "physicalSentBytes": 69751,
+        "receivedBytes": 2493,
+        "receivedFrames": 8,
+        "sentBytes": 69751,
+        "sentFrames": 16
+      }
+    }
+  ],
+  "cyclicGC": "disabled; held failures; no explicit collection",
+  "errors": 0,
+  "exclusions": "Trusted caller binding, test-owned Reader nonce setup/capture/oracles and separate accounts; no populated native provider/fixedSSH/aggregate32-64/RSS/CPU/dense2k/recovery/installedpair/selection/rollout acceptance.",
+  "failures": 0,
+  "loadedInputs": {
+    "mesh/src/mesh_plus/__init__.py": "d4c9f162318ab9942f47c730884001fafaeffc5ddfab1967ce961acd89eb268f",
+    "mesh/src/mesh_plus/evidence.py": "224dae58b30c28f142ea1fa0e31038c76704f383082b79989cfef3908ceb388c",
+    "mesh/src/mesh_plus/protocol.py": "5a53fa9bec8ffa7c0fe4ba0911dec6c38a2f4739d281be52775d0c56349125c3",
+    "mesh/src/mesh_plus/state.py": "0f438cd968da7efe9da364e836042c82b4fbc84192170b5745c672bea0b70f6b",
+    "mesh/src/mesh_plus/sync/__init__.py": "b8acab88c6e03f09ee4a66e6fb2550adc093cb6b86184c297cd48421e489a07b",
+    "mesh/src/mesh_plus/sync/_allocation.py": "52599a585c1989876ed3db5db7340a744e985e8531dcc5590388437b8186acc5",
+    "mesh/src/mesh_plus/sync/_boundary.py": "2eab3127c5bb0327d6ec6e687ed4f5a8d6373ec840a62fb99588bc02fbc752f3",
+    "mesh/src/mesh_plus/sync/_constants.py": "6e53f90cba6999f0d9185f508d83273cd7b1e099b1cab86381324577fea0386b",
+    "mesh/src/mesh_plus/sync/_schema.py": "147390c537064a10114d3e5c6f3d76661987f7611158efba379749841bfda48a",
+    "mesh/src/mesh_plus/sync/aggregate.py": "6bb7973ea94cdbd1084caa210173420c466725bb14eaa71af411d55c1a8460e1",
+    "mesh/src/mesh_plus/sync/budget.py": "46dc0992c56deef30e99f271aa6b3bb129b6c8b150c095c1b62e6423f1f962c2",
+    "mesh/src/mesh_plus/sync/cache.py": "fcdf0aed4441ed5768e3d08b6322f2fc52400fdb50461647392c263f2d092c6a",
+    "mesh/src/mesh_plus/sync/canonical.py": "3d481c03157934c479dcf6a501ee3a91638a5c3b0cad3d61b91b4a0ca57a507f",
+    "mesh/src/mesh_plus/sync/codec.py": "2a1232385e5a87db46d74ead48c130f89c57ed0e7d565377c9803a1bfd7cef0f",
+    "mesh/src/mesh_plus/sync/commitment.py": "f4a89ec24cfeae5312b133ac23c8d5f3afd2d4b00f23cb26892de551280b5074",
+    "mesh/src/mesh_plus/sync/context.py": "fca3afa47c4a72c52dd30508ab1a8a053504e5c604f8dc6efcad7dec114032ea",
+    "mesh/src/mesh_plus/sync/control_carrier.py": "33ff2b0a0c3c3fca814b5987b07e49b9733dd44ac156d25cde4081139d424977",
+    "mesh/src/mesh_plus/sync/control_json.py": "14ea71a84262818e3855e430bd0c3817b4a34956c15fb800e42efaf395a758f4",
+    "mesh/src/mesh_plus/sync/controller.py": "fb29278a714ce4e1fdcafcae050fc9c36c3e6509622af7a8735313e6eacb04db",
+    "mesh/src/mesh_plus/sync/decoder.py": "64a53a45a58259119b026e01de9fdcb1b8ecca120e8510771ad37a8c61d1b378",
+    "mesh/src/mesh_plus/sync/inputs.py": "0a3aa6323fa65a239006fbc552009e929b8d67702efb7362aaae483ebe67933f",
+    "mesh/src/mesh_plus/sync/model.py": "f514866c6b625477a2d64d2e864996a9c24c7102a7a959cc09f7f63ed0d769cf",
+    "mesh/src/mesh_plus/sync/normalization.py": "66ec720f780fc9e3b6d9733f33ee8b9a50f8bdd91eea7046b1a0ed9dd4a6a033",
+    "mesh/src/mesh_plus/sync/ordered.py": "f8d7e9ab4fdd851d7832df342d399838c43ee151fc015fe61745924545e379b8",
+    "mesh/src/mesh_plus/sync/reconstruction.py": "7b639912d6f5697770a6f0352827a1372d4b1e2c003b2fd951b70b7229b16e69",
+    "mesh/src/mesh_plus/sync/relay.py": "b7b10f22e2419e4c02f7f63e96ff364819a46b13ba0a14588a9f1cbc9d5fbd2f",
+    "mesh/src/mesh_plus/sync/relay_inputs.py": "9073e0323354a37b45971fc089147fd2ca1e906d76962abba214d66ee238ab67",
+    "mesh/src/mesh_plus/sync/streaming.py": "00b26e32d8b676d1aba1e7ba3bd88a032acecabdd8e05fc35b73466e11145b68",
+    "mesh/src/mesh_plus/sync/transactions.py": "33c08e13f52ff2b6aa5407252d027cc39a4297c6d563983fd23d9d19e0cc59f4",
+    "mesh/src/mesh_plus/sync/wire.py": "ca9ec2a276f563a768ed304f6f20e4c9947fbab884c85d48558ce6bb5847b462",
+    "mesh/src/mesh_plus/transport.py": "4a12f03711baf4fa106b1d52d069063694ff12a66c61500815e9cea4967244ca",
+    "mesh/src/mesh_plus/view.py": "fab26477371397eba6b655eec5a157d5f69e69254df2b59971aa11ee674403e6",
+    "observer/agent_observer/__init__.py": "9df4617f6d49419caeebfd258545b9a95d7b08735d221ae3b792f1cb72a18a09",
+    "observer/agent_observer/_image_memo.py": "e51920f262521b25d00812458f52b67474039334581426108703cfeb5604c331",
+    "observer/agent_observer/active_contract.py": "c9e20d73523b4943328a3f66a6552d7a992d5ffc71a29faed473eb48184600bf",
+    "observer/agent_observer/active_feed.py": "93b154e4e187c9be67f6cc66ae3f783c1ec4ca4acccb4e90d0b3f908380a25de",
+    "observer/agent_observer/activity.py": "f8ad39a1992070347988b0b9c73710bc7acecd3336afb1cf47dcefcbd67bbff1",
+    "observer/agent_observer/bounded_json.py": "846a8538de41525359a2147a1f5b71f3958f0028490fd0d23c4041de07b6c0e6",
+    "observer/agent_observer/contract.py": "2d06bcbcf770aed7641588fc88b88ba3c89374ad68093923b416069aa29f934a",
+    "observer/agent_observer/contract_shape.py": "7af867d262ca767aab68ac02ce79483b3ce128ff127a40c391f53882cde700fc",
+    "observer/agent_observer/mesh_source.py": "bcbbba27b0296c2ff9792697b31c1b89410c407f15df71b522262313ba987fae",
+    "observer/agent_observer/mesh_sync_codec.py": "990f3f2c177b55531bf466b27f211a7d4e75b24d05ef37637aed3003cc9f4dac",
+    "observer/agent_observer/mesh_sync_profile.py": "b7aace01422380c7e88fc80ab322d3078105d814907a439ca63e86834aca92af",
+    "observer/agent_observer/native_artifacts.py": "743e30c5a67cf3f3d9b5cf7d1990859d9a0df8b725dcb4245fd73415fe54d773",
+    "observer/agent_observer/observation_engine.py": "46296dcc9ebbe13ef7cafd808080cdac19cc93092a784b6c6b7986d57f880d79",
+    "observer/agent_observer/observation_evidence.py": "2e1c004aca8f68d41ec2f613006a0f6e522fac12be1416e7a4bc67904caef24c",
+    "observer/agent_observer/observation_scheduler.py": "e3850f0c2791e21600e57daca3d8af8756d7e072065afa0b69febcb690896dd6",
+    "observer/agent_observer/observation_support.py": "7319a9b5e6c13f840905ae4e0835392dddc7ec81bb73edece0a5ffa5191fbc32",
+    "observer/agent_observer/provider.py": "98243e7de42af101951b3ffba9de017a66f78483ecc70b651e5f3d48fe61c7b8",
+    "observer/agent_observer/read_cache.py": "5cd1932a36badeede7729f72c0bc0d82cd1be64477d2618b026f2cc452e1a71d",
+    "observer/agent_observer/service_contract.py": "7cef03366f012d972b47ab0fddad611a9e2613e498214005c98e120ee57905d8",
+    "observer/agent_observer/service_public.py": "704cfe0065dfe2a8c86c27766f14f88916f55a827211762576efba05512ec41a",
+    "observer/agent_observer/service_runtime.py": "69ceaa0b34f7baca64a49605374a2cb431617f002197a2849433abf9cdb25bac",
+    "observer/agent_observer/service_state.py": "27d72ce2a4404c0d6a9252fd7e30a9852cecd63f4fb47e1ee940e4cadd590fd7",
+    "observer/agent_observer/sync_acquisition.py": "2a7b787356961c331f2feaf7566879a826eebae73a741325ef3d2a03c2576a7b",
+    "observer/agent_observer/sync_commitment.py": "544fba79d3a05ac898a925432d0923de9eca31658481ae15e1118cc8c0be1ff5",
+    "observer/agent_observer/sync_compact_acquisition.py": "8fb0200cf9de631445e16b85ed80e8ae9ad8bcc68e9fcf5f88cda500220da15f",
+    "observer/agent_observer/sync_compact_export.py": "7cddc532173e29ab966dfa21bc14597102d5537860ffaf971b8c869217f96c13",
+    "observer/agent_observer/sync_compact_plan.py": "98832b6faa130ad5969e8c8ed4932ae41608d15970534951554107d28e315ea9",
+    "observer/agent_observer/sync_compact_schema.py": "1d399edb2628ccb424a2f2b1436217c7c90aaaa2e125ff3413c80c2cb668a9a2",
+    "observer/agent_observer/sync_compact_source.py": "495d2800dd5a6d535434d966ff0128fd816bd1f9ebd910576ee847bf4eb6da5c",
+    "observer/agent_observer/sync_compact_validation.py": "f673eee53ba8216ff5acf5071aea49ef241282936de2017f463e96a33d9c9735",
+    "observer/agent_observer/sync_compact_values.py": "78e29fd3f82680b118a22d4d876f63e8d73cfc7fd59ff69054e06ffb41495a43",
+    "observer/agent_observer/sync_contract.py": "49e33c4216de6a951ddfb3c40731860fb510fa1a1cee9e94f43f5e1d99405236",
+    "observer/agent_observer/sync_encoded.py": "437b5b8cb3b1558543c905bff8f18723019899abe40b5d601a42722e1f2f7e97",
+    "observer/agent_observer/sync_encoded_budget.py": "1c3ff88224f602b1d8f19a36cae9a450e10eac17eac7754561302affba6fd3f7",
+    "observer/agent_observer/sync_encoded_state.py": "f6740cc1faa628fa789e434e362c0a4dd2478b7b937fa151285aecd105037fde",
+    "observer/agent_observer/sync_native.py": "09609ea9f6aeb8980f4b767c7768baa22a33287b47c3eeeb09dac39e3462d04d",
+    "observer/agent_observer/sync_owned_source.py": "3492c94d818eb29be8fd959288de17a8ec49701e90b7d64d118cff7a943f48d1",
+    "observer/agent_observer/sync_source.py": "a707b24ce577614ce005d15713e2f19d2b46b2b37998ffceedec56b8c27c235a",
+    "observer/agent_observer/sync_state.py": "5cf99bd3184121627919c1d2ad2791841079a4cb70d206b58e139e540841ed61",
+    "observer/agent_observer/sync_transport.py": "ba2db0caae13f48f21e456b6ea2f608f76f05c6a1d650e549f438774102fcaff",
+    "observer/agent_observer/timing.py": "8748c4285271f39eb50cf9bb1d58074bf76fe276ebf522a05f588ab83ece942d",
+    "observer/agent_observer/workspace.py": "4b8a63d362af880b6acd4326e767d32a800df3f5f6e1282e5c4d62d4263ac92e",
+    "observer/tests/test_service_contract.py": "78c340327e737b7cbe66457604a59b0212bb6dcde3cfaf1416fb97b9e9334d18",
+    "observer/tests/test_service_runtime.py": "35275647a577f7220bdc205bfe5e31b2017fd7caf5d8cfa64b139aa5dd4853a1",
+    "observer/tests/test_service_state.py": "e2538cbafa0718774a034b9e4d92980b32c617d3bca4b38da0f021f805b71742"
+  },
+  "python": "3.11.17",
+  "scope": "24 small actual synthetic Runtime/source/controller/IPC or real pipe stdio/independent Reader scenarios",
+  "skips": 0,
+  "testsRun": 2
+}

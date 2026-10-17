@@ -1,0 +1,172 @@
+{
+  "artifacts": {
+    "docs/evidence/2026-10-17-controller/copy-close.md": {
+      "bytes": 5718,
+      "sha256": "00f9db1cdc6829e998e6e58518c862e3ac1614293829133826cc6df3011e3c8a"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/basic-311.json": {
+      "bytes": 42540,
+      "sha256": "9877e3a64130d2692eedee247b0ad46983ac003a850bc9830597f3a2accf6782"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/basic-311.log": {
+      "bytes": 418,
+      "sha256": "109d9b040f2d7dddc7c17fa7b0c8a1163a052cface4433868049b90873cf621a"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/basic-314.json": {
+      "bytes": 42539,
+      "sha256": "288fd92e90f1d384116742e88df214f1eb050890bd7404ab3a7cfaa2895efd75"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/basic-314.log": {
+      "bytes": 418,
+      "sha256": "e24c51a746a8f4de14212d38772255b8296ae8a52f68f4c8510d885b74c1264f"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/basic-command-311.log": {
+      "bytes": 77,
+      "sha256": "11359bb55f02a7f55c28bfeb1a90230a71f9ba38f9088261b49f370cbdc52c4a"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/basic-command-314.log": {
+      "bytes": 76,
+      "sha256": "b91c47ccb10fef5dc40304a0e25aace6e6c25dd42da13f4d6aec6f4331b1a0dc"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/canonical-314.log": {
+      "bytes": 63637,
+      "sha256": "77fb92a0c665e80ad9835dfc86d7f51c53bff0871ead725ba0382c2dfd7e9a8f"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/lifecycle-311.json": {
+      "bytes": 22839,
+      "sha256": "bf0c7b7a85457827d2f3e47d0c7be4aa2f8f1d4465ff4019761b9833ed48b03e"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/lifecycle-311.log": {
+      "bytes": 422,
+      "sha256": "f4d8c62143c56aff3868f826c30954df55a0d4e109e2f31ffb69d7f124d2b659"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/lifecycle-314.json": {
+      "bytes": 22838,
+      "sha256": "6275affee8c35a58d11212df476e637029733a80bc067ce4ec4bfddf65576201"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/lifecycle-314.log": {
+      "bytes": 422,
+      "sha256": "baf3d5fe0bb6b389480889a9d821a038f3e749a3f1292cd886636cbc3412c791"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/lifecycle-command-311.log": {
+      "bytes": 77,
+      "sha256": "11359bb55f02a7f55c28bfeb1a90230a71f9ba38f9088261b49f370cbdc52c4a"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/lifecycle-command-314.log": {
+      "bytes": 76,
+      "sha256": "b91c47ccb10fef5dc40304a0e25aace6e6c25dd42da13f4d6aec6f4331b1a0dc"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/qualification.json": {
+      "bytes": 108661,
+      "sha256": "85f24e54e36e02070ce5346c72adaaf7f49bf9010d4ec89a6b2122142ec45a45"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/root-probe-after-311.json": {
+      "bytes": 4333,
+      "sha256": "ca3ad183f8b7ad1203c1807525abf418b0c4ad8166ee69c0e158df5ecfa7d3e1"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/root-probe-after-311.log": {
+      "bytes": 802,
+      "sha256": "e525eb3c5195f3d9e0a7d447794eede2eb950007a50a29df74dda6a517a27c7a"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/root-probe-after-314.json": {
+      "bytes": 4332,
+      "sha256": "8fefba56e2c054ccbfed8eeda944bd871c699afb24bf7dbd5d1217dde963938b"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/root-probe-after-314.log": {
+      "bytes": 801,
+      "sha256": "06ef55d4e5130050a1851e536aa4271b08ea711ad36575de02a74467ad255f37"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/root-probe-before-311.json": {
+      "bytes": 4294,
+      "sha256": "260938399ceb95ef27eeb3cfdfd80a1672739ce74b5e9ec060c4017ce644f1a9"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/root-probe-before-311.log": {
+      "bytes": 763,
+      "sha256": "99b69701321ef49393403e54a932fe88cc639456821f2a87a148d7e737d68cfd"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/root-probe-before-314.json": {
+      "bytes": 4293,
+      "sha256": "3618f1bf2d024160369d3dab550a694d318670f83060dd548b58da59e63583bf"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/root-probe-before-314.log": {
+      "bytes": 762,
+      "sha256": "d80e23499a2c648bab6156c3c749a8425e164ee112a706aace2bf485be74077a"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/test-cleanup-draft.log": {
+      "bytes": 12946,
+      "sha256": "d403dde2640323c1a0d355e82ef0a79b7710891c6725f8460fa82ea430a22d82"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/unit-after-311.json": {
+      "bytes": 78,
+      "sha256": "2420275c7f48e94f58e8f0dca857da4f3c89dd5d079c8a92005c25ff75416b1d"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/unit-after-311.log": {
+      "bytes": 11701,
+      "sha256": "b3594404410c3f7e17274ed5eb9ebe4625df3b833e6b00bf2856bbdf18265775"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/unit-after-314.json": {
+      "bytes": 77,
+      "sha256": "aff7539a7b45e347fa404e461747e88ab0ef2c91833618291b1d3ef973610358"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/unit-after-314.log": {
+      "bytes": 11701,
+      "sha256": "89d4a3c1046da63a94919b59ee80250254cfd50f21931acabfaddf1aa795b770"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/unit-before-311.json": {
+      "bytes": 77,
+      "sha256": "3e813627779b3d12599c84cdf9c4e99789ed5db8b747f0b8f99d265afd4a7fac"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/unit-before-311.log": {
+      "bytes": 6287,
+      "sha256": "dbd636df6eabb4ea7426d9ce243b722df77346c3967756272ae3058d4b27259d"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/unit-before-314.json": {
+      "bytes": 76,
+      "sha256": "7410ca49f0c20e06e75d924d7b8eaa5f53d1f36a39cdaeae0903305e806859dc"
+    },
+    "docs/evidence/2026-10-17-controller/copy-close/unit-before-314.log": {
+      "bytes": 4367,
+      "sha256": "652aea8170e61859f475e2688c374648daa9c1c3235012df2cb5c4a731bd965f"
+    },
+    "docs/evidence/2026-10-17-controller/probe_header_close_original.py.txt": {
+      "bytes": 5706,
+      "sha256": "b33788f836fd9585fad85fb50c439eb3d567e3f75682d76145bd2819fc933a0f"
+    },
+    "docs/evidence/2026-10-17-controller/qualify_copy_close.py": {
+      "bytes": 7563,
+      "sha256": "3510e09e2fda8868d907f5e0088b0bdc5191ac1f6f29850f8bab982bb2f65a37"
+    },
+    "docs/evidence/2026-10-17-controller/seal_copy_close.py": {
+      "bytes": 4232,
+      "sha256": "fb968d0fd0f1f29ce3deee16ff6163d3b8fa8c294e1ce5a76b78c2232133db6b"
+    }
+  },
+  "before": "a482abbd463d23ebf66f23c60e4e95a521c19cc6",
+  "checks": {
+    "basicScenariosPerPython": 24,
+    "canonical314": 386,
+    "focusedPerPython": 67,
+    "lifecycleScenariosPerPython": 20,
+    "namedBeforeFailuresPerPython": 3,
+    "rootProbe": "unchanged b33788f8, before both gaps; after both retired and fully charged, sibling and final counters correct"
+  },
+  "compatibility": "No public signature/wire/role/encoding/native or source API/schema/LOCK/version/cap/deadline change. One bounded active copy per frame; two slots include retired physical pins; local sync_control_copy_busy rejects before another copy.",
+  "diagnostic": "New test draft expected zero shared credit while sibling still open; fixture closes sibling explicitly. Not a production failure.",
+  "exclusions": "Original controlled deepcopy timings, synthetic Runtime/source data and trusted test caller, private nonce/native teardown/physical inventory hooks, separate ledgers/oracles. No measured cap/RSS overrun, aggregate32-64/CPU/dense2k/deliveredrecovery/populatednative/fixedSSH/installedpair/ordinaryauthenticatedroute/selection/rollout acceptance.",
+  "gitBlobFilesVerified": {
+    "afterMesh": 193,
+    "beforeMesh": 193,
+    "observer": 211,
+    "protected": 8
+  },
+  "observer": "e3441d017b94ee27f4dfccb5f1f3f30612435adf",
+  "priorEvidence": {
+    "artifactPinsUnchanged": 36,
+    "controller": "f667588acc9e41010ce30829bf7fb6b46e6f2b6b",
+    "lifecycle": "1e37541d868c439a48628d99830e314bd87af360"
+  },
+  "request": "RLCD m156",
+  "runtime": "14990c789f853441b51af81ea0919facf0aff320",
+  "sourceInputs": "copy-close/qualification.json",
+  "status": "copy-close correction implemented and bounded immutable replay passed; independent review pending"
+}
