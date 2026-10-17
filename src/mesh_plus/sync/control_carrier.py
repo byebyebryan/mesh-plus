@@ -5,6 +5,7 @@ import copy
 import fcntl
 import os
 import socket
+import threading
 import weakref
 
 from ..evidence import clock_domain
@@ -86,6 +87,7 @@ class _Writer:
 
     async def drain(self):
         owner = self._live()
+        owner._bind_loop()
         task = asyncio.current_task()
         owner._io_jobs.add(task)
         try:
@@ -128,7 +130,25 @@ class _Header:
     @admission_boundary
     def materialize(self):
         # Caller prepays/retains the advertised independent detached-copy lease.
-        return copy.deepcopy(self._live()._value)
+        frame = self._live()
+        owner, original = frame._pin_copy()
+        value = failure = None
+        try:
+            value = copy.deepcopy(original)
+            frame._check()  # retirement during copy cannot publish a late DTO
+        except BaseException as error:
+            failure = _retire_error(error)
+            value = None
+        finally:
+            original = None
+            owner._end_copy(frame)
+            owner = frame = None
+        if failure is not None:
+            code, signal, public = failure
+            if signal is not None:
+                raise signal
+            raise public if public is not None else ProtocolError(code)
+        return value
 
 
 class StampedControlFrame:
@@ -136,14 +156,27 @@ class StampedControlFrame:
         check(_mint is _MINT, "sync_control_provenance")
         self._owner, self._start, self._stop, self._floor = weakref.ref(owner), start, stop, floor
         self._value, self._credit = value, credit
+        self._retired = self._copying = self._retire_pending = False
         self._copy_bytes = (stop - start) * 24 + 65536
         self._header = _Header(self)
 
     def _check(self):
         owner = None if self._owner is None else self._owner()
-        check(owner is not None and not owner._closed and self._value is not None,
-              "sync_control_retired")
-        owner._check()
+        check(owner is not None, "sync_control_retired")
+        with owner._copy_lock:
+            check(not self._retired and not owner._closed and self._value is not None,
+                  "sync_control_retired")
+            owner._check()
+
+    def _pin_copy(self):
+        owner = None if self._owner is None else self._owner()
+        check(owner is not None, "sync_control_retired")
+        with owner._copy_lock:
+            self._check()
+            check(not self._copying, "sync_control_copy_busy")
+            self._copying = True
+            owner._copies += 1
+            return owner, self._value
 
     @property
     @admission_boundary
@@ -171,15 +204,13 @@ class StampedControlFrame:
 
     def close(self):
         owner = None if self._owner is None else self._owner()
-        self._owner = None
-        self._value = None
-        credit, self._credit = self._credit, None
         if owner is not None:
-            owner._frames.pop(id(self), None)
-            owner._retire_ranges()
-            owner._space.set()
-        if credit is not None:
-            credit.close()
+            with owner._copy_lock:
+                self._retired = True
+                if self._copying or self._retire_pending:
+                    return
+                self._retire_pending = True
+            owner._on_loop(owner._retire_frame, self)
 
 
 class SyncControlCarrier:
@@ -192,18 +223,65 @@ class SyncControlCarrier:
         self._frames, self._space = {}, asyncio.Event()
         self._waiters = set()
         self._io_jobs = set()
+        self._copy_lock, self._copies = threading.RLock(), 0
+        self._copy_idle, self._io_retired = asyncio.Event(), False
+        self._copy_idle.set()
+        try:
+            self._loop, self._thread = asyncio.get_running_loop(), threading.get_ident()
+        except RuntimeError:
+            self._loop = self._thread = None
         self._scope, self._last_floor = clock_domain(), -1
         self._output = LineChannel(_NoRead(), _Writer(self), "client")
         self._output._metrics.update(physicalReceivedBytes=0, physicalSentBytes=0)
 
     def _check(self):
-        check(not self._closed, "sync_control_retired")
-        now = boottime_ms()
-        if (type(now) is not int or now < 0 or now < self._last_floor or
-                clock_domain() != self._scope):
-            self._begin_close()
-            raise ProtocolError("sync_control_provenance")
-        self._last_floor = now
+        with self._copy_lock:
+            check(not self._closed, "sync_control_retired")
+            now = boottime_ms()
+            if (type(now) is not int or now < 0 or now < self._last_floor or
+                    clock_domain() != self._scope):
+                self._begin_close()
+                raise ProtocolError("sync_control_provenance")
+            self._last_floor = now
+
+    def _bind_loop(self):
+        loop = asyncio.get_running_loop()
+        if self._loop is None:
+            self._loop, self._thread = loop, threading.get_ident()
+        check(self._loop is loop, "sync_control_owner")
+
+    def _on_loop(self, callback, *args):
+        if self._loop is not None and threading.get_ident() != self._thread:
+            self._loop.call_soon_threadsafe(callback, *args)
+        else:
+            callback(*args)
+
+    def _end_copy(self, frame):
+        # One pending completion per frame; _copying remains true until this
+        # owner-loop callback, so worker loops cannot queue unbounded history.
+        self._on_loop(self._complete_copy, frame)
+
+    def _complete_copy(self, frame):
+        with self._copy_lock:
+            frame._copying = False
+            self._copies -= 1
+        if frame._retired:
+            self._retire_frame(frame)
+        if not self._copies:
+            self._copy_idle.set()
+        if self._closed:
+            self._drop_storage()
+
+    def _retire_frame(self, frame):
+        with self._copy_lock:
+            if not frame._retired or frame._copying or frame._credit is None:
+                return
+            frame._owner = frame._value = None
+            credit, frame._credit = frame._credit, None
+            self._frames.pop(id(frame), None)
+        self._retire_ranges()
+        self._space.set()
+        credit.close()
 
     @property
     @admission_boundary
@@ -250,11 +328,13 @@ class SyncControlCarrier:
             buffers = (view,)
             try:
                 # No suspension/parser/dispatcher between floor and first read.
-                floor = boottime_ms()
-                check(type(floor) is int and floor >= self._last_floor and floor >= 0 and floor < deadline,
-                      "sync_control_provenance")
-                self._last_floor = floor
-                count = os.readv(self._read_fd, buffers)
+                with self._copy_lock:
+                    self._check()
+                    floor = boottime_ms()
+                    check(type(floor) is int and floor >= self._last_floor and floor >= 0 and floor < deadline,
+                          "sync_control_provenance")
+                    self._last_floor = floor
+                    count = os.readv(self._read_fd, buffers)
             except BlockingIOError:
                 count = None
             finally:
@@ -272,12 +352,12 @@ class SyncControlCarrier:
             span[0], span[1], span[2] = self._end, self._end + count, floor
             self._count += 1
             self._end += count
-            self._last_floor = floor
             return
 
     @async_admission_boundary
     async def receive_control(self, *, maximum_bytes, deadline_ms):
         check(not self._closed, "sync_control_retired")
+        self._bind_loop()
         check(type(maximum_bytes) is int and 0 < maximum_bytes <= _CAPACITY and
               type(deadline_ms) is int and boottime_ms() < deadline_ms, "sync_control_limit")
         check(self._read_task is None, "sync_control_concurrent_read")
@@ -328,27 +408,37 @@ class SyncControlCarrier:
                 self._drop_storage()
 
     def _begin_close(self):
-        if self._closed:
+        with self._copy_lock:
+            if self._closed:
+                return
+            self._closed = self._output.closed = True
+        self._on_loop(self._close_io)
+
+    def _close_io(self):
+        if self._io_retired:
             return
-        self._closed = self._output.closed = True
         for frame in tuple(self._frames.values()):
             frame.close()
         self._space.set()
         self._output.writer._pending = None
-        loop = asyncio.get_running_loop()
+        loop = self._loop
         for waiter in tuple(self._waiters):
             if not waiter.done():
                 waiter.set_result(None)
         for fd in {self._read_fd, self._write_fd}:
-            loop.remove_reader(fd)
-            loop.remove_writer(fd)
+            if loop is not None:
+                loop.remove_reader(fd)
+                loop.remove_writer(fd)
             os.close(fd)
         self._read_fd = self._write_fd = -1
+        self._io_retired = True
         task = self._read_task
         if task is not None and task is not asyncio.current_task():
             task.cancel()
+        self._drop_storage()
 
     async def aclose(self):
+        self._bind_loop()
         self._begin_close()
         if self._close_task is None:
             self._close_task = asyncio.create_task(self._close())
@@ -359,10 +449,13 @@ class SyncControlCarrier:
             await asyncio.gather(self._read_task, return_exceptions=True)
         if self._io_jobs:
             await asyncio.gather(*tuple(self._io_jobs), return_exceptions=True)
+        while self._copies:
+            self._copy_idle.clear()
+            await self._copy_idle.wait()
         self._drop_storage()
 
     def _drop_storage(self):
-        if self._read_task is not None or self._io_jobs:
+        if not self._io_retired or self._read_task is not None or self._io_jobs or self._copies:
             return
         self._data = self._ranges = self._scope = None
         self._waiters.clear()

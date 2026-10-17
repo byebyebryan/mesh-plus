@@ -1,10 +1,12 @@
 """Minted control ingress: physical socket/pipe storage, strict JSON and expiry."""
 
 import asyncio
+import copy
 import gc
 import json
 import os
 import socket
+import threading
 import unittest
 import weakref
 from unittest.mock import patch
@@ -171,6 +173,140 @@ class CarrierTests(unittest.IsolatedAsyncioTestCase):
             await carrier.aclose()
             self.assertEqual(ledger.reserved, scratch.amount)
         finally:
+            scratch.close()
+
+    async def test_reentrant_frame_close_keeps_original_copy_credit_and_rejects_result(self):
+        carrier, peer, ledger = self.carrier()
+        await self.send(peer, b'{"payload":"copy pin"}\n')
+        frame = await self.frame(carrier)
+        header = frame.header
+        scratch = ledger.reserve(header.materialization_bytes)
+        before, actual = ledger.reserved, copy.deepcopy
+        def closing_copy(value):
+            frame.close()
+            self.assertEqual(ledger.reserved, before)
+            return actual(value)
+        try:
+            with patch("mesh_plus.sync.control_carrier.copy.deepcopy", side_effect=closing_copy):
+                try:
+                    header.materialize()
+                except ProtocolError as error:
+                    self.assertEqual(str(error), "sync_control_retired")
+                    self.errors.append(error)
+                else:
+                    self.fail("closed frame published a copied DTO")
+            await carrier.aclose()
+            self.assertEqual(ledger.reserved, scratch.amount)
+        finally:
+            scratch.close()
+
+    def copy_worker(self, header):
+        entered, release = threading.Event(), threading.Event()
+        outcome, actual = {}, copy.deepcopy
+        def held_copy(value, *args, **kwargs):
+            if not entered.is_set():
+                entered.set()
+                if not release.wait(3):
+                    raise AssertionError("test copy not released")
+            return actual(value, *args, **kwargs)
+        def run():
+            try:
+                outcome["value"] = header.materialize()
+            except BaseException as error:
+                outcome["error"] = error
+        return threading.Thread(target=run), entered, release, outcome, held_copy
+
+    async def test_concurrent_carrier_close_joins_copy_despite_repeated_cancel_and_keeps_sibling(self):
+        carrier, peer, ledger = self.carrier()
+        sibling, sibling_peer, _ = self.carrier(ledger)
+        await self.send(peer, b'{"payload":"copy pin"}\n')
+        frame = await self.frame(carrier)
+        header = frame.header
+        scratch = ledger.reserve(header.materialization_bytes)
+        before = ledger.reserved
+        worker, entered, release, outcome, held_copy = self.copy_worker(header)
+        closing = None
+        try:
+            with patch("mesh_plus.sync.control_carrier.copy.deepcopy", side_effect=held_copy):
+                worker.start()
+                try:
+                    self.assertTrue(await asyncio.to_thread(entered.wait, 2))
+                    closing = asyncio.create_task(carrier.aclose())
+                    async def retired():
+                        while True:
+                            try:
+                                _ = header.materialization_bytes
+                            except ProtocolError as error:
+                                self.assertEqual(str(error), "sync_control_retired")
+                                self.errors.append(error)
+                                return
+                            await asyncio.sleep(0)
+                    await asyncio.wait_for(retired(), 1)
+                    closing.cancel()
+                    closing.cancel()
+                    await asyncio.sleep(0)
+                    self.assertFalse(closing.done())
+                    self.assertEqual(ledger.reserved, before)
+                    await self.send(sibling_peer, b'{}\n')
+                    (await self.frame(sibling)).close()
+                    self.assertEqual(ledger.reserved, before)
+                finally:
+                    release.set()
+                    await asyncio.to_thread(worker.join, 2)
+            self.assertFalse(worker.is_alive())
+            self.assertNotIn("value", outcome)
+            self.assertEqual(str(outcome["error"]), "sync_control_retired")
+            self.errors.append(outcome["error"])
+            results = await asyncio.gather(closing, return_exceptions=True)
+            self.assertIsInstance(results[0], asyncio.CancelledError)
+            await carrier.aclose()
+            self.assertEqual(ledger.reserved, _BASE_HEAP + scratch.amount)
+        finally:
+            release.set()
+            if closing is not None:
+                await asyncio.gather(closing, return_exceptions=True)
+            await sibling.aclose()
+            scratch.close()
+
+    async def test_retired_inflight_copy_still_occupies_frame_slot_and_concurrent_copy_rejects(self):
+        carrier, peer, ledger = self.carrier()
+        await self.send(peer, b'{"payload":"copy pin"}\n{}\n{}\n')
+        first = await self.frame(carrier)
+        first_stop = first.stop
+        header = first.header
+        scratch = ledger.reserve(header.materialization_bytes)
+        worker, entered, release, outcome, held_copy = self.copy_worker(header)
+        third = None
+        try:
+            with patch("mesh_plus.sync.control_carrier.copy.deepcopy", side_effect=held_copy):
+                worker.start()
+                try:
+                    self.assertTrue(await asyncio.to_thread(entered.wait, 2))
+                    with self.assertRaisesRegex(ProtocolError, "sync_control_copy_busy"):
+                        header.materialize()
+                    first.close()
+                    second = await self.frame(carrier)
+                    third = asyncio.create_task(self.frame(carrier))
+                    await asyncio.sleep(0)
+                    self.assertFalse(third.done())
+                    self.assertEqual(len(carrier._frames), 2)  # disclosed bounded slot audit
+                finally:
+                    release.set()
+                    await asyncio.to_thread(worker.join, 2)
+            self.assertFalse(worker.is_alive())
+            self.assertNotIn("value", outcome)
+            self.assertEqual(str(outcome["error"]), "sync_control_retired")
+            self.errors.append(outcome["error"])
+            final = await asyncio.wait_for(third, 1)
+            self.assertEqual((second.start, final.start), (first_stop, first_stop + 3))
+            second.close()
+            final.close()
+        finally:
+            release.set()
+            if third is not None:
+                result = await asyncio.gather(third, return_exceptions=True)
+                if not isinstance(result[0], BaseException):
+                    result[0].close()
             scratch.close()
 
     async def test_exact_frame_capacity_and_refusal_before_decoder_allocation(self):
