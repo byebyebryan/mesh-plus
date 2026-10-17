@@ -1,0 +1,175 @@
+{
+  "artifacts": {
+    "docs/delta-sync-controller-g1.md": {
+      "bytes": 8755,
+      "sha256": "d288b894e523e1c392b08ac1f927b2c5df6c791ee9ae04680d1249fea8727cb0"
+    },
+    "docs/evidence/2026-10-17-controller/README.md": {
+      "bytes": 6343,
+      "sha256": "f4a48851708de15d6aab8c1c962978b8b7fba19d9f9863eadbabb98960eef13c"
+    },
+    "docs/evidence/2026-10-17-controller/diagnostics/controller-observer-draft-311.json": {
+      "bytes": 16378,
+      "sha256": "0e3c45b5d18086bb471b9216842a7484f37e1ea49040a93c575f90b9f5db7b84"
+    },
+    "docs/evidence/2026-10-17-controller/diagnostics/controller-observer-draft-311.log": {
+      "bytes": 48478,
+      "sha256": "f4527502a3d53440a319cff595d193d5be2af55283b52af902eff9e02915dff9"
+    },
+    "docs/evidence/2026-10-17-controller/diagnostics/controller-observer-draft-314.json": {
+      "bytes": 21548,
+      "sha256": "3608ba804d578fbf21fe142959bd212ec8bfa27f9eb13588bb3c061c80aaf724"
+    },
+    "docs/evidence/2026-10-17-controller/diagnostics/controller-observer-draft-314.log": {
+      "bytes": 52918,
+      "sha256": "103fada691d7bab7239c9ee342917caa56b5029005f31020e57f913795c8f554"
+    },
+    "docs/evidence/2026-10-17-controller/diagnostics/controller-observer-draft2-314.json": {
+      "bytes": 21548,
+      "sha256": "fc87f5bd9dbb074098a3d76dc1705453a5ba7413afbc8d1d5dfffb51b439ca42"
+    },
+    "docs/evidence/2026-10-17-controller/diagnostics/controller-observer-draft2-314.log": {
+      "bytes": 26806,
+      "sha256": "7f5b02eab40d1c3efbe635b1ed20b593a13caf60ea9ce38cac8ae947b32b4530"
+    },
+    "docs/evidence/2026-10-17-controller/diagnostics/controller-provenance-followup-314.log": {
+      "bytes": 13228,
+      "sha256": "720dbe6e2f830576ecbcc85f3447aba3e7a9bbddbd9290a41946482585c58405"
+    },
+    "docs/evidence/2026-10-17-controller/qualify.py": {
+      "bytes": 6942,
+      "sha256": "09752afc4ab07cda5046e708ab4d81e17f412e3137aab7bf61fa540dc2a9b67c"
+    },
+    "docs/evidence/2026-10-17-controller/results/before-provenance-311.json": {
+      "bytes": 92,
+      "sha256": "bf6258a5a70bc5230b9520125023ffa0cec3ec975897ad1b602bd3513a002c36"
+    },
+    "docs/evidence/2026-10-17-controller/results/before-provenance-311.log": {
+      "bytes": 6553,
+      "sha256": "7edcd77daaa57e621a9f826ef716a02e7b7cdbcbf455c2b6b3e701c531b76881"
+    },
+    "docs/evidence/2026-10-17-controller/results/before-provenance-314.json": {
+      "bytes": 91,
+      "sha256": "665f604732c3a17360655876090607d9ed93c15f958255b987696767f2d753c1"
+    },
+    "docs/evidence/2026-10-17-controller/results/before-provenance-314.log": {
+      "bytes": 6181,
+      "sha256": "1798ba1f7488b0562da167a00b0a858e4f6d7f550653871365a87f47bdd78097"
+    },
+    "docs/evidence/2026-10-17-controller/results/canonical-314.log": {
+      "bytes": 63043,
+      "sha256": "fe60ae892122b5c1e3b99ce0a13ac6645e65ae596c2d20625eeccb915a97af63"
+    },
+    "docs/evidence/2026-10-17-controller/results/composition-311.json": {
+      "bytes": 42540,
+      "sha256": "abef9fd12a862f5d11966c252ca1416a480bcb05c802871a79c40946a89758fd"
+    },
+    "docs/evidence/2026-10-17-controller/results/composition-311.log": {
+      "bytes": 418,
+      "sha256": "960baf4d048f1c68320e3cce8ba249da550fb8e67f4a783f70dfa97ff3a1abcf"
+    },
+    "docs/evidence/2026-10-17-controller/results/composition-314.json": {
+      "bytes": 42539,
+      "sha256": "2340ebb431aeba0963fcb5a49076a10885f18e7daa73f05025a0e2b8d1bf573a"
+    },
+    "docs/evidence/2026-10-17-controller/results/composition-314.log": {
+      "bytes": 418,
+      "sha256": "8d5f916e8c90294563fbb7a1c4d817c8b5ad79b2ee989142d42c9c084df4f814"
+    },
+    "docs/evidence/2026-10-17-controller/results/composition-command-311.log": {
+      "bytes": 77,
+      "sha256": "11359bb55f02a7f55c28bfeb1a90230a71f9ba38f9088261b49f370cbdc52c4a"
+    },
+    "docs/evidence/2026-10-17-controller/results/composition-command-314.log": {
+      "bytes": 76,
+      "sha256": "b91c47ccb10fef5dc40304a0e25aace6e6c25dd42da13f4d6aec6f4331b1a0dc"
+    },
+    "docs/evidence/2026-10-17-controller/results/focused-311.json": {
+      "bytes": 102,
+      "sha256": "06073423d29056103ab39f826a8808164bb2ce751b530b3f777932399be64799"
+    },
+    "docs/evidence/2026-10-17-controller/results/focused-311.log": {
+      "bytes": 11107,
+      "sha256": "cca9d4de730b83e7d2e906f528d49da341ccca4ccdb2662de3069631d1c8577b"
+    },
+    "docs/evidence/2026-10-17-controller/results/focused-314.json": {
+      "bytes": 101,
+      "sha256": "fa1d79129b3f6184ad71bbbc34c78f9e8ce2eaedd5b97c3b444b8b92cb2847be"
+    },
+    "docs/evidence/2026-10-17-controller/results/focused-314.log": {
+      "bytes": 11107,
+      "sha256": "5485588689464b45f540bd36612e15c5156504f43dc6ec83e04f6be529228be1"
+    },
+    "docs/evidence/2026-10-17-controller/results/qualification.json": {
+      "bytes": 102073,
+      "sha256": "79c056d07c4357aa51e6f423419feebb206d330723184d9504a671212b490f81"
+    },
+    "docs/evidence/2026-10-17-controller/seal_checkpoint.py": {
+      "bytes": 7412,
+      "sha256": "fb3679795e978601380b88fb25c61902d44eab1586f95daedc1555c41144218d"
+    },
+    "docs/evidence/2026-10-17-controller/verify_observer_controller.py": {
+      "bytes": 16759,
+      "sha256": "e2e9cc91cf9aeb4e3a0cdf560c40dce77059995ff581b3a9c4aa1d877f7ce78d"
+    },
+    "docs/handoff.md": {
+      "bytes": 25310,
+      "sha256": "7a821ed434b588ed46c68a369487ba51cabdd8c119b56b49eece24a633aafdbb"
+    }
+  },
+  "checks": {
+    "actualCompositionPerPython": "2 methods / 24 scenarios, exact native fragments, independent Reader full admission and 2 fresh proofs each",
+    "beforePerPython": "2 final overlay methods / 5 expected failures on initial 828cf0c, no errors/skips",
+    "canonical314": "383 pass; lock/design/delivery/Ruff pass; no native/source/wheel flags",
+    "focusedPerPython": "64 methods, GC disabled, 0 failures/errors/skips"
+  },
+  "clockCorrection": "6daba40a7fdbe6846fb17ccdafb8ddbeaba03b7c",
+  "coordinatorAgreement": {
+    "bytes": 43800,
+    "commit": "92b97d825cc2c1f8c3bbd1ad17b046e328e3eec9",
+    "path": "projects/agent-dashboard/docs/delta-sync-relay-addendum.md",
+    "sha256": "93e2c59a7900aa5b191d3ff662490762ca91255452a65c826a3c5c4705814a41"
+  },
+  "diagnosticProvenance": {
+    "controller-observer-draft-*": "Draft runner passed tuple tag to canonical JSON; harness sync_json_type, not a producer failure. Both 24-error runs retained.",
+    "controller-observer-draft2-*": "Draft runner tried .wire on Observer tuple; harness AttributeError. Retained, not production fail-before.",
+    "controller-provenance-followup-314.log": "Intermediate clock fix: early guard cleanup and fixture clock restored before metadata check needed correction. Not a final qualification run."
+  },
+  "exclusions": "No native providers, fixed SSH, authentication/selected Reader route, actual compact watch/cancel stress, aggregate shared32-64/RSS/CPU/dense2k/delivered-recovery/immutable-installed-pair/consumer adoption or rollout acceptance.",
+  "gitBlobFilesVerified": {
+    "initialMesh": 193,
+    "mesh": 193,
+    "observer": 211,
+    "protectedMesh": 8
+  },
+  "initialController": "828cf0c759d36cc8aa939c513ac6c156862e3526",
+  "meshAgreements": {
+    "docs/delta-sync-controller-completion-r3.md": {
+      "bytes": 5234,
+      "commit": "5d8cb484f8eba9fb6ca8dce9421410434cedf37d",
+      "sha256": "42375477c46c097ede85b3bbbe5cda5f03a89823fdd7358e1078064a0c34e1c2"
+    },
+    "docs/delta-sync-controller-proposal-r2.md": {
+      "bytes": 31399,
+      "commit": "33cb57c98ca3062f139ea1fd0c68b15bd5abd8d6",
+      "sha256": "89b24a9f3191bcded303d33c8b2ed973335b703811185abf1186848fbd562f48"
+    }
+  },
+  "observerAgreement": {
+    "commit": "d6364d1c3441b07436ca1e32789994aa2448be85",
+    "inputs": {
+      "docs/delta-sync-controller-agreement.md": {
+        "bytes": 4072,
+        "sha256": "29bfb22e1259165148ac09e0f1f82e5d6ee8ac808e688422e7e76785f57bbd32"
+      },
+      "docs/evidence/2026-10-16-delta-sync-source/controller-agreement.json": {
+        "bytes": 41451,
+        "sha256": "341584bc02f2d79ee3ef1395d9a98d10d16f08bba97a1bf0d374dfa603373564"
+      }
+    }
+  },
+  "observerFixture": "e3441d017b94ee27f4dfccb5f1f3f30612435adf",
+  "qualification": "results/qualification.json",
+  "runtime": "a482abbd463d23ebf66f23c60e4e95a521c19cc6",
+  "status": "bounded private controller source checkpoint; no G1/G2, route, producer or artifact acceptance"
+}

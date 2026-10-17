@@ -353,6 +353,11 @@ replace the deployed authority wheel until an explicit paired release/deploy.
   opt-in generic R2 normalization work. Actual Agent streaming integration,
   resource/performance and installed-pair acceptance remain open; it changes
   no accepted artifact or operational selection.
+- [Private controller/carrier G1 checkpoint](delta-sync-controller-g1.md) and
+  [dated source evidence](evidence/2026-10-17-controller/README.md): explicit
+  stamped ingress and the jointly reviewed R2+R3 control plane. Bounded synthetic
+  source/Reader IPC and pipe-stdio checks do not qualify an ordinary selected
+  route, aggregate resources, whole-pipeline performance or installed adoption.
 - [SSH integration](ssh-plus-integration.md): current authority selection and
   retained configuration/history ownership. Managed deployment evidence lives
   in [SSH Plus evidence](https://github.com/byebyebryan/rofi-ssh-plus/blob/main/docs/evidence/2026-10-09-ssh-mesh-default.json).
