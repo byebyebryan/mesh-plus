@@ -204,6 +204,37 @@ class CarrierTests(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(carrier._closed)
             self.assertEqual(ledger.reserved, 0)
 
+    async def test_buffered_tail_and_minted_header_reject_changed_clock_before_new_read(self):
+        for mode in ("scope-tail", "regress-tail", "scope-header", "regress-output"):
+            with self.subTest(mode=mode):
+                await self._changed_clock(mode)
+
+    async def _changed_clock(self, mode):
+        carrier, peer, ledger = self.carrier()
+        await self.send(peer, b'{}\n{}\n')
+        first = await self.frame(carrier)
+        header = first.header
+        if mode.endswith("tail"):
+            first.close()
+        if mode.startswith("scope"):
+            context = patch("mesh_plus.sync.control_carrier.clock_domain", return_value={"bootId": "new"})
+        else:
+            context = patch("mesh_plus.sync.control_carrier.boottime_ms", return_value=carrier._last_floor - 1)
+        line = carrier.output_channel
+        with context, patch("mesh_plus.sync.control_carrier.os.readv", side_effect=AssertionError("unexpected read")):
+            with self.assertRaisesRegex(ProtocolError, "sync_control_provenance") as failure:
+                if mode.endswith("tail"):
+                    await self.frame(carrier)
+                elif mode.endswith("header"):
+                    _ = header.materialization_bytes
+                else:
+                    line.writer.write(b'prohibited')
+            self.errors.append(failure.exception)
+        self.assertEqual(line.inspect()["physicalSentBytes"], 0)
+        self.assertTrue(carrier._closed)
+        await carrier.aclose()
+        self.assertEqual((ledger.reserved, ledger.encoded_reserved), (0, 0))
+
     async def test_preallocated_range_pressure_coalesces_without_later_floor(self):
         carrier, peer, ledger = self.carrier()
         raw = b'{"x":"' + b'x' * 270 + b'"}\n'
@@ -227,9 +258,9 @@ class CarrierTests(unittest.IsolatedAsyncioTestCase):
                 self.assertLessEqual(carrier._count, 256)
                 self.assertEqual(len(carrier._ranges), 256)
             frame = await task
-        self.assertEqual(frame.first_byte_ms, first)
-        self.assertEqual(self.value(frame, ledger), {"x": "x" * 270})
-        frame.close()
+            self.assertEqual(frame.first_byte_ms, first)
+            self.assertEqual(self.value(frame, ledger), {"x": "x" * 270})
+            frame.close()
 
     async def test_fixed_stdio_and_direct_linechannel_read_cannot_add_an_input_reader(self):
         read_fd, input_peer = os.pipe()

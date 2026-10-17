@@ -55,6 +55,7 @@ class _Writer:
     def _live(self):
         owner = self._owner()
         check(owner is not None and not owner._closed, "sync_control_retired")
+        owner._check()
         return owner
 
     def get_write_buffer_limits(self):
@@ -140,6 +141,7 @@ class StampedControlFrame:
         owner = None if self._owner is None else self._owner()
         check(owner is not None and not owner._closed and self._value is not None,
               "sync_control_retired")
+        owner._check()
 
     @property
     def start(self):
@@ -190,6 +192,12 @@ class SyncControlCarrier:
 
     def _check(self):
         check(not self._closed, "sync_control_retired")
+        now = boottime_ms()
+        if (type(now) is not int or now < 0 or now < self._last_floor or
+                clock_domain() != self._scope):
+            self._begin_close()
+            raise ProtocolError("sync_control_provenance")
+        self._last_floor = now
 
     @property
     def output_channel(self):
@@ -262,13 +270,14 @@ class SyncControlCarrier:
 
     @async_admission_boundary
     async def receive_control(self, *, maximum_bytes, deadline_ms):
-        self._check()
+        check(not self._closed, "sync_control_retired")
         check(type(maximum_bytes) is int and 0 < maximum_bytes <= _CAPACITY and
               type(deadline_ms) is int and boottime_ms() < deadline_ms, "sync_control_limit")
         check(self._read_task is None, "sync_control_concurrent_read")
         self._read_task = asyncio.current_task()
         credit = value = frame = None
         try:
+            self._check()
             while len(self._frames) == 2:
                 self._space.clear()
                 await within_deadline(self._space.wait(), deadline_ms)
