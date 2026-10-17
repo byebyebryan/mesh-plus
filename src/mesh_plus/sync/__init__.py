@@ -13,6 +13,13 @@ from .cache import (
     ViewRef,
     source_binding,
 )
+from .control_carrier import (
+    StampedControlFrame,
+    SyncControlCarrier,
+    control_carrier_from_ipc,
+    control_carrier_from_stdio,
+)
+from .controller import serve_sync_relay
 from .inputs import InputOwner, InputReservation, OwnedInputRef
 from .model import (
     DerivedMembershipOperation,
@@ -50,6 +57,8 @@ __all__ = [
     "ChangeSet", "ResyncRequired", "MovedHead", "source_binding",
     "AggregateCommit", "UnavailableHost",
     "InputOwner", "InputReservation", "OwnedInputRef",
+    "SyncControlCarrier", "StampedControlFrame", "control_carrier_from_ipc",
+    "control_carrier_from_stdio", "serve_sync_relay",
     "create_sync_relay", "SyncRelay", "RelayChannel", "RelayAcquisition", "RelayWatch",
     "RelayInputOwner", "RelayInputReservation", "RelayInputRef",
     "AliasSpec", "CodecSpec", "CanonicalValueRef", "NormalizationContext", "NormalizedEntry", "NormalizedOperation",

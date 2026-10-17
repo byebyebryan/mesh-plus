@@ -24,7 +24,7 @@ def main():
     if args.core_only:
         suite = unittest.TestSuite(loader.loadTestsFromName(name) for name in
                                   ("test_publisher", "test_protocol", "test_transport", "test_deadlines", "test_delivery", "test_diagnostics", "test_assessment", "test_configured_read", "test_sdk", "test_agent_timing_profile", "test_agent_system_profile", "test_simplification", "test_prepared", "test_conformance",
-                                   "test_agent_active_profile", "test_sync_commitment", "test_sync_reconstruction", "test_sync_ordered", "test_sync_cache", "test_sync_compact", "test_sync_decoder", "test_sync_packed_nodes", "test_sync_transport", "test_sync_streaming", "test_sync_aggregate", "test_sync_acquisition", "test_sync_inputs", "test_sync_relay", "test_authority", "test_library_authority", "test_remote.QuotingTests"))
+                                   "test_agent_active_profile", "test_sync_commitment", "test_sync_reconstruction", "test_sync_ordered", "test_sync_cache", "test_sync_compact", "test_sync_decoder", "test_sync_packed_nodes", "test_sync_transport", "test_sync_streaming", "test_sync_aggregate", "test_sync_acquisition", "test_sync_inputs", "test_sync_relay", "test_sync_control", "test_sync_controller", "test_authority", "test_library_authority", "test_remote.QuotingTests"))
     else:
         suite = loader.discover(str(ROOT / "tests"))
     result = unittest.TextTestRunner(verbosity=2).run(suite)

@@ -143,6 +143,7 @@ class SyncRelay:
         self._callbacks = (codec.header, codec.head, source.open_session, source.aclose)
         self._bridge_id = secrets.token_hex(16)
         self._channels, self._closed, self._close_task = set(), False, None
+        self._controllers, self._pending_controls = set(), set()
         self._limits = {**_LIMITS, "heapBytes": budgets.decoded_bytes, "encodedBytes": budgets.encoded_bytes}
 
     @property
@@ -177,7 +178,8 @@ class SyncRelay:
         self._check()
         deadline = _deadline(setup_deadline_ms)
         check(type(channel) is LineChannel and not channel.closed, "sync_relay_setup")
-        check(len(self._channels) < 16, "sync_relay_busy")
+        check(len(self._channels) + len(self._pending_controls) -
+              int(channel in self._pending_controls) < 16, "sync_relay_busy")
         # Prepay argument conversion and all bounded control state before copy.
         credit = self.ledger.reserve(262144, encoded=65536)
         owned = None
@@ -185,6 +187,7 @@ class SyncRelay:
             request = _request(request_binding, self)
             owned = RelayChannel(self, channel, request, credit, _mint=_MINT)
             self._channels.add(owned)
+            self._pending_controls.discard(channel)
         except BaseException:
             credit.close()  # argument failure has not transferred the channel
             raise
@@ -203,12 +206,15 @@ class SyncRelay:
     async def aclose(self):
         if self._close_task is None:
             self._closed = True
+            for controller in tuple(self._controllers):
+                controller._begin_close()
             for channel in tuple(self._channels):
                 channel._begin_close()
             self._close_task = asyncio.create_task(self._close())
         await finish_owned(self._close_task)
 
     async def _close(self):
+        await asyncio.gather(*(controller.aclose() for controller in tuple(self._controllers)))
         await asyncio.gather(*(channel.aclose() for channel in tuple(self._channels)))
         if self._owns_source:
             await self._callbacks[3]()
@@ -600,6 +606,7 @@ class RelayAcquisition:
         check(_mint is _MINT, "sync_relay_setup")
         self._channel, self._deadline, self._credit = channel, deadline, credit
         self._closed, self._job, self._close_task = False, None, None
+        self._last_ok = None
 
     def _check(self):
         check(not self._closed and boottime_ms() < self._deadline, "sync_acquisition_deadline")
@@ -616,6 +623,7 @@ class RelayAcquisition:
             operation.close()
             raise
         channel._busy = True
+        self._last_ok = None
         # Track the operation task itself, so synchronous retirement from its
         # own scanner does not cancel an outer timer task over its exception.
         job = self._job = asyncio.create_task(operation)
@@ -624,6 +632,7 @@ class RelayAcquisition:
             await within_deadline(asyncio.shield(job), deadline)
             self._check()
             check(boottime_ms() < deadline, "sync_acquisition_deadline")
+            self._last_ok = job.result() is True
         except BaseException:
             self._retire()
             raise
@@ -644,6 +653,7 @@ class RelayAcquisition:
 
     async def _baseline(self):
         packet = data = None
+        recovery = False
         try:
             packet = await self._channel._session.baseline()
             self._check()
@@ -651,12 +661,15 @@ class RelayAcquisition:
             data = packet.data
             check(type(data) is RelayInputRef, "sync_input_owner")
             def compare(header):
+                nonlocal recovery
                 check(header["kind"] in ("baseline", "control") and
                       _plain(packet.tag) == header.get("tag") and _plain(packet.cursor) == header.get("cursor"),
                       "sync_relay_header")
                 if header["kind"] == "control":
+                    recovery = True
                     check(packet.status == header["status"] and packet.reason == header["reason"], "sync_relay_header")
             await self._channel._forward(data, self._deadline, self._check, expected=compare)
+            return not recovery
         finally:
             if callable(getattr(packet, "close", None)):
                 packet.close()
@@ -693,7 +706,7 @@ class RelayAcquisition:
                           "sync_relay_header")
                 await self._channel._forward(data, self._deadline, self._check,
                                              expected=recovery)
-                return
+                return False
             check(type(transactions) is tuple and len(transactions) <= count and
                   all(type(item) is RelayInputRef for item in transactions), "sync_catchup_capacity")
             completion = batch.completion
@@ -763,6 +776,7 @@ class RelayAcquisition:
                     for raw, header in frames:
                         await self._channel._forward_pinned(raw, header, self._deadline, live_batch)
                     await self._channel._forward_pinned(completion_raw, completion_header, self._deadline, live_batch)
+                    return True
                 finally:
                     frames.clear()
                     raw = header = completion_raw = completion_header = live_batch = None
@@ -778,8 +792,12 @@ class RelayAcquisition:
                 credit.close()
 
     @async_admission_boundary
-    async def head_after_nonce(self, challenge):
+    async def head_after_nonce(self, challenge, *, not_after_ms=None):
         deadline = min(self._deadline, boottime_ms() + 2000)
+        check(not_after_ms is None or type(not_after_ms) is int, "sync_acquisition_deadline")
+        if not_after_ms is not None:
+            deadline = min(deadline, not_after_ms)
+        check(boottime_ms() < deadline, "sync_acquisition_deadline")
         credit = self._channel._relay.ledger.reserve(32768, encoded=4096)
         value = None
         try:
@@ -804,6 +822,7 @@ class RelayAcquisition:
             data = await self._channel._session.head_after_nonce(challenge)
             live()
             await self._channel._forward(data, deadline, live, challenge=challenge)
+            return True
         finally:
             if type(data) is RelayInputRef:
                 data.close()
