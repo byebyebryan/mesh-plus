@@ -121,9 +121,11 @@ class _Header:
         return frame
 
     @property
+    @admission_boundary
     def materialization_bytes(self):
         return self._live()._copy_bytes
 
+    @admission_boundary
     def materialize(self):
         # Caller prepays/retains the advertised independent detached-copy lease.
         return copy.deepcopy(self._live()._value)
@@ -144,21 +146,25 @@ class StampedControlFrame:
         owner._check()
 
     @property
+    @admission_boundary
     def start(self):
         self._check()
         return self._start
 
     @property
+    @admission_boundary
     def stop(self):
         self._check()
         return self._stop
 
     @property
+    @admission_boundary
     def first_byte_ms(self):
         self._check()
         return self._floor
 
     @property
+    @admission_boundary
     def header(self):
         self._check()
         return self._header
@@ -200,6 +206,7 @@ class SyncControlCarrier:
         self._last_floor = now
 
     @property
+    @admission_boundary
     def output_channel(self):
         self._check()
         return self._output

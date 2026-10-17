@@ -144,6 +144,35 @@ class CarrierTests(unittest.IsolatedAsyncioTestCase):
                 self.assertTrue(carrier._closed)
                 self.assertEqual(ledger.reserved, 0)
 
+    async def test_failed_detached_copy_clears_payload_and_hook_frames_before_credit_return(self):
+        carrier, peer, ledger = self.carrier()
+        await self.send(peer, b'{"payload":"held-copy-error"}\n')
+        frame = await self.frame(carrier)
+        header = frame.header
+        scratch, markers = ledger.reserve(header.materialization_bytes), []
+        class Marker:
+            pass
+        def fail_copy(value):
+            marker = Marker()
+            markers.append(weakref.ref(marker))
+            raise ProtocolError("copy_failure")
+        try:
+            with patch("mesh_plus.sync.control_carrier.copy.deepcopy", side_effect=fail_copy):
+                try:
+                    header.materialize()
+                except ProtocolError as error:
+                    self.assertEqual(str(error), "copy_failure")
+                    self.errors.append(error)  # retain the actual public error/trace
+                else:
+                    self.fail("copy failure was lost")
+            self.assertIsNone(markers[0]())
+            self.assertEqual(self.value(frame, ledger), {"payload": "held-copy-error"})
+            frame.close()
+            await carrier.aclose()
+            self.assertEqual(ledger.reserved, scratch.amount)
+        finally:
+            scratch.close()
+
     async def test_exact_frame_capacity_and_refusal_before_decoder_allocation(self):
         carrier, peer, _ = self.carrier()
         await self.send(peer, b'{}' + b' ' * 8189 + b'\n')
