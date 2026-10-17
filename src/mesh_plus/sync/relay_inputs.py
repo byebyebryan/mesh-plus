@@ -19,6 +19,8 @@ from .inputs import (
     InputReservation,
     OwnedInputRef,
     _Buffer,
+    _ref_query,
+    _ref_retired,
 )
 from .wire import MAX_NATIVE
 
@@ -37,6 +39,12 @@ class RelayInputOwner(InputOwner):
         check(not self._closed and channel is not None and channel._inputs is self,
               "sync_input_retired")
         channel._check()
+
+    @_ref_query
+    def ref_is_retired(self, ref):
+        """Logical retirement only; never admission or physical pin credit."""
+        check(type(self) is RelayInputOwner, "sync_input_owner")
+        return _ref_retired(self, ref, RelayInputRef, "_channel")
 
     @admission_boundary
     def reserve(self, heap_bytes, *, encoded_bytes=0):

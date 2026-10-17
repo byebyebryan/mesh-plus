@@ -1,13 +1,15 @@
 import asyncio
 import gc
 import unittest
+import weakref
 from unittest.mock import patch
 
 from test_sync_cache import CLOCK, IDENTITY, REQUEST, CacheProfile, baseline, proof, transaction
 
 from mesh_plus.protocol import ProtocolError
-from mesh_plus.sync import InputOwner, OwnedInputRef, OwnedSyncCache, source_binding
+from mesh_plus.sync import InputOwner, OwnedInputRef, OwnedSyncCache, RelayInputRef, source_binding
 from mesh_plus.sync.budget import AllocationLedger
+from mesh_plus.sync.inputs import input_bytes
 from mesh_plus.sync.reconstruction import MaterialRoot
 
 
@@ -27,6 +29,194 @@ class InputTests(unittest.TestCase):
         inputs = self.inputs if inputs is None else inputs
         with inputs.reserve(inputs.buffer_heap(len(raw)), encoded_bytes=len(raw)) as receive:
             return receive.seal(raw)
+
+    def test_ref_retirement_query_keeps_healthy_pin_and_revoked_physical_credit(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        owner, ledger = self.inputs, self.cache.ledger
+        receive = owner.reserve(4096, encoded_bytes=256)
+        ref = self.seal(b"x" * 1753)
+        try:
+            consumed = self.seal(b"successful consume")
+            with input_bytes(self.cache, consumed) as (raw, _):
+                self.assertIs(owner.ref_is_retired(consumed), False)
+                raw = None
+            self.assertIs(owner.ref_is_retired(consumed), True)
+            failed = self.seal(b"invalid native material")
+            with self.assertRaises(ProtocolError) as failed_admission:
+                self.cache.admit_baseline(failed)
+            self.assertIs(owner.ref_is_retired(failed), True)
+            self.assertIsNone(failed_admission.exception.__context__)
+            self.assertIs(owner.ref_is_retired(ref), False)
+            with self.assertRaisesRegex(ProtocolError, "sync_input_retired") as saved:
+                with input_bytes(self.cache, ref) as (raw, owned):
+                    self.assertTrue(owned)
+                    self.assertEqual(len(raw), 1753)
+                    with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
+                        _ = ref.nbytes
+                    before = ledger.inspect()
+                    for _ in range(100):
+                        self.assertIs(owner.ref_is_retired(ref), False)
+                    self.assertEqual(ledger.inspect(), before)
+                    ref.close()
+                    self.assertEqual(ledger.encoded_reserved, 1753 + 256)
+                    before = ledger.inspect()
+                    self.assertIs(owner.ref_is_retired(ref), True)
+                    self.assertEqual(ledger.inspect(), before)
+                    owner.close()
+                    owner.close()
+                    self.assertIs(owner.ref_is_retired(ref), True)
+                    self.assertEqual(ledger.encoded_reserved, 1753 + 256)
+                    raw = None  # Drop the test consumer's alias before pin unwind/refund.
+            self.assertIsNone(saved.exception.__context__)
+            self.assertEqual(ledger.encoded_reserved, 256)
+            self.assertIs(owner.ref_is_retired(ref), True)
+            replacement = self.cache.input_owner()
+            keep = self.seal(b"replacement", replacement)
+            before = ledger.inspect()
+            for query, value in ((replacement, ref), (owner, keep)):
+                with self.assertRaisesRegex(ProtocolError, "sync_input_owner"):
+                    query.ref_is_retired(value)
+            self.assertEqual(ledger.inspect(), before)
+            owner.close()
+            self.assertIs(replacement.ref_is_retired(keep), False)
+            keep.close()
+        finally:
+            receive.close()
+            if enabled:
+                gc.enable()
+
+    def test_ref_retirement_wrong_handles_do_not_mutate_shared_siblings(self):
+        other = OwnedSyncCache(self.profile, source_binding("fixture", "other", self.profile.descriptor),
+                               ledger=self.cache.ledger)
+        errors = []
+        malformed = OwnedInputRef.__new__(OwnedInputRef)
+        wrong_role = RelayInputRef.__new__(RelayInputRef)
+        try:
+            own = self.seal(b"own")
+            another = self.seal(b"another")
+            sibling_owner = other.input_owner()
+            sibling = self.seal(b"sibling", sibling_owner)
+            before = self.cache.ledger.inspect()
+            for value in (None, b"raw", object(), sibling, malformed, wrong_role):
+                with self.assertRaisesRegex(ProtocolError, "sync_input_owner") as rejected:
+                    self.inputs.ref_is_retired(value)
+                errors.append(rejected.exception)
+                self.assertEqual(self.cache.ledger.inspect(), before)
+                self.assertIs(self.inputs.ref_is_retired(own), False)
+                self.assertIs(sibling_owner.ref_is_retired(sibling), False)
+                self.assertEqual((own.nbytes, sibling.nbytes), (3, 7))
+            key = own._key
+            try:
+                own._key = another._key
+                with self.assertRaisesRegex(ProtocolError, "sync_input_owner") as rejected:
+                    self.inputs.ref_is_retired(own)
+                errors.append(rejected.exception)
+                own._key = []
+                with self.assertRaisesRegex(ProtocolError, "sync_input_owner") as rejected:
+                    self.inputs.ref_is_retired(own)
+                errors.append(rejected.exception)
+            finally:
+                own._key = key
+            self.assertEqual(self.cache.ledger.inspect(), before)
+            self.assertTrue(all(error.__context__ is None for error in errors))
+            class Payload:
+                pass
+
+            def caller_failure():
+                payload = Payload()
+                marker = weakref.ref(payload)
+                try:
+                    raise ValueError("caller error")
+                except ValueError as error:
+                    return error, marker
+
+            parent, marker = caller_failure()
+            parent.__cause__ = RuntimeError("caller cause")
+            try:
+                raise parent
+            except ValueError:
+                caller_trace, caller_cause = parent.__traceback__, parent.__cause__
+                with self.assertRaisesRegex(ProtocolError, "sync_input_owner") as rejected:
+                    self.inputs.ref_is_retired(None)
+                errors.append(rejected.exception)
+                self.assertIsNone(rejected.exception.__context__)
+                self.assertIs(parent.__traceback__, caller_trace)
+                self.assertIs(parent.__cause__, caller_cause)
+                self.assertIsNotNone(marker())
+            finally:
+                parent.__traceback__ = parent.__cause__ = None
+                caller_trace = None
+            own.close()
+            another.close()
+            sibling.close()
+        finally:
+            other.close()
+
+    def test_ref_retirement_query_runs_no_semantic_or_allocation_callbacks(self):
+        raw, _, _ = baseline(self.profile)
+        candidate = self.cache.admit_baseline(self.seal(raw))
+        view = self.cache.confirm(candidate, self.seal(proof(self.cache, candidate)), CLOCK)
+        context = view.context(10000, CLOCK)
+        ref = self.seal(b"opaque unvalidated bytes")
+        before, calls = self.cache.ledger.inspect(), self.profile.head_calls
+        with (patch.object(self.inputs, "_check", side_effect=AssertionError("owner check")),
+              patch.object(self.cache, "_check", side_effect=AssertionError("cache check")),
+              patch.object(self.profile, "check_head", side_effect=AssertionError("profile callback")),
+              patch.object(self.cache.ledger, "reserve", side_effect=AssertionError("reservation")),
+              patch.object(self.cache.ledger, "release", side_effect=AssertionError("material reclamation"))):
+            self.assertIs(self.inputs.ref_is_retired(ref), False)
+        self.assertEqual(self.cache.ledger.inspect(), before)
+        self.assertEqual(self.profile.head_calls, calls)
+        self.assertEqual(view.context(10000, CLOCK), context)
+        self.assertEqual(self.cache.acquire().tag, view.tag)
+        ref.close()
+        before = self.cache.ledger.inspect()
+        self.assertIs(self.inputs.ref_is_retired(ref), True)
+        self.assertEqual(self.cache.ledger.inspect(), before)
+
+    def test_ref_retirement_has_no_terminal_history_or_held_error_owner_cycle(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        retained = []
+        try:
+            for _ in range(70):
+                ref = self.seal(b"terminal")
+                ref.close()
+                retained.append(ref)
+                before = self.cache.ledger.inspect()
+                self.assertIs(self.inputs.ref_is_retired(ref), True)
+                self.assertEqual(self.cache.ledger.inspect(), before)
+                self.assertEqual(len(self.inputs._buffers), 0)
+            self.inputs.close()
+            self.assertTrue(all(self.inputs.ref_is_retired(ref) is True for ref in retained))
+
+            def held_failure():
+                profile = CacheProfile()
+                cache = OwnedSyncCache(profile, source_binding("fixture", "error", profile.descriptor))
+                owner = cache.input_owner()
+                ref = self.seal(b"retained", owner)
+                refs = (weakref.ref(owner), weakref.ref(cache), weakref.ref(cache.ledger))
+                saved = None
+                try:
+                    owner.ref_is_retired(None)
+                except ProtocolError as error:
+                    saved = error
+                owner.close()
+                cache.close()
+                owner = cache = None
+                return refs, saved, ref
+
+            refs, saved, ref = held_failure()
+            self.assertEqual(str(saved), "sync_input_owner")
+            self.assertIsNone(saved.__context__)
+            self.assertTrue(all(item() is None for item in refs))
+            with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
+                _ = ref.nbytes
+            self.assertFalse(gc.isenabled())
+        finally:
+            if enabled:
+                gc.enable()
 
     def test_seal_splits_credit_without_refunding_live_scratch_or_copy(self):
         raw = b"input"

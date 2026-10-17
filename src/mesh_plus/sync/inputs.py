@@ -7,6 +7,7 @@ Disconnect revokes their use but deliberately does not refund active I/O.
 import sys
 import weakref
 from contextlib import contextmanager
+from functools import wraps
 
 from ..protocol import ProtocolError, check
 from ._boundary import _retire_error, admission_boundary
@@ -16,6 +17,49 @@ from .wire import MAX_NATIVE
 _MINT = object()
 _BASE_HEAP, _LEASE_HEAP, _BUFFER_HEAP = 2048, 1024, 1536
 _MAX_ITEMS = 64
+
+
+def _ref_query(method):
+    """Retire query error frames without retaining the minting owner as self."""
+    @wraps(method)
+    def call(*args, **kwargs):
+        code = signal = public = None
+        try:
+            return method(*args, **kwargs)
+        except BaseException as error:
+            # This metadata-only query owns its own error frames, not an
+            # enclosing caller exception or its potentially large graph.
+            error.__context__ = error.__cause__ = None
+            code, signal, public = _retire_error(error)
+        args, kwargs = (), None
+        try:
+            if signal is not None:
+                raise signal
+            if public is not None:
+                raise public
+            raise ProtocolError(code)
+        except BaseException as error:
+            error.__context__ = error.__cause__ = None
+            raise
+    return call
+
+
+def _ref_retired(owner, supplied, ref_type, scope_name):
+    check(type(supplied) is ref_type and
+          type(getattr(supplied, "_owner", None)) is weakref.ReferenceType and
+          type(getattr(supplied, "_key", None)) is object and supplied._owner() is owner and
+          type(getattr(owner, "_buffers", None)) is dict and
+          type(getattr(owner, "_closed", None)) is bool, "sync_input_owner")
+    record = owner._buffers.get(supplied._key)
+    check(record is None or type(record) is _Buffer and
+          type(record.handle) is weakref.ReferenceType and record.handle() is supplied and
+          type(record.revoked) is bool, "sync_input_owner")
+    if owner._closed or record is None or record.revoked:
+        return True
+    scope = getattr(owner, scope_name, None)
+    check(type(scope) is weakref.ReferenceType, "sync_input_owner")
+    parent = scope()
+    return parent is None or parent._inputs is not owner
 
 
 class InputOwner:
@@ -39,6 +83,12 @@ class InputOwner:
         """Credit transferred by seal, including bytes and handle bookkeeping."""
         check(type(nbytes) is int and 0 <= nbytes <= MAX_NATIVE, "sync_input_capacity")
         return sys.getsizeof(b"") + nbytes + _BUFFER_HEAP
+
+    @_ref_query
+    def ref_is_retired(self, ref):
+        """Logical storage retirement, including during a charged consume pin."""
+        check(type(self) is InputOwner, "sync_input_owner")
+        return _ref_retired(self, ref, OwnedInputRef, "_cache")
 
     @admission_boundary
     def reserve(self, heap_bytes, *, encoded_bytes=0):

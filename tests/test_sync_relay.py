@@ -13,9 +13,10 @@ from unittest.mock import patch
 from test_sync_cache import NATIVE_BINDING, CacheProfile, baseline, transaction
 
 from mesh_plus.protocol import ProtocolError
-from mesh_plus.sync import OwnedSyncCache, SyncBudgets, create_sync_relay, source_binding
+from mesh_plus.sync import OwnedSyncCache, RelayInputRef, SyncBudgets, create_sync_relay, source_binding
 from mesh_plus.sync.budget import AllocationLedger
 from mesh_plus.sync.canonical import canonical, decode
+from mesh_plus.sync.relay_inputs import relay_bytes
 from mesh_plus.transport import LineChannel, boottime_ms
 
 
@@ -381,6 +382,128 @@ class RelayTests(unittest.IsolatedAsyncioTestCase):
         owner.close()
         self.assertEqual(self.ledger.reserved, held)
         lease.close()
+
+    async def test_ref_retirement_query_preserves_live_pin_then_reports_revocation(self):
+        channel, _ = await self.channel()
+        sibling, _ = await self.channel()
+        owner, other = channel.input_owner(), sibling.input_owner()
+        ref = self.source.sessions[0].seal(b"x" * 1753)
+        keep = self.source.sessions[1].seal(b"sibling")
+        receive = owner.reserve(4096, encoded_bytes=256)
+        try:
+            consumed = self.source.sessions[0].seal(b"successful consume")
+            with relay_bytes(channel, consumed) as raw:
+                self.assertIs(owner.ref_is_retired(consumed), False)
+                raw = None
+            self.assertIs(owner.ref_is_retired(consumed), True)
+            failed = self.source.sessions[0].seal(b"failed consume")
+            with self.assertRaisesRegex(ProtocolError, "fixture_failure") as failed_pin:
+                with relay_bytes(channel, failed):
+                    self.assertIs(owner.ref_is_retired(failed), False)
+                    raise ProtocolError("fixture_failure")
+            self.assertIs(owner.ref_is_retired(failed), True)
+            self.assertEqual(str(failed_pin.exception), "fixture_failure")
+            self.assertIs(owner.ref_is_retired(ref), False)
+            with self.assertRaisesRegex(ProtocolError, "sync_input_retired") as saved:
+                with relay_bytes(channel, ref) as raw:
+                    self.assertEqual(len(raw), 1753)
+                    with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
+                        _ = ref.nbytes
+                    before = self.ledger.inspect()
+                    with (patch.object(owner, "_check", side_effect=AssertionError("owner check")),
+                          patch.object(channel, "_check", side_effect=AssertionError("channel check")),
+                          patch.object(self.codec, "header", side_effect=AssertionError("codec")),
+                          patch.object(self.ledger, "reserve", side_effect=AssertionError("reservation")),
+                          patch.object(self.ledger, "release", side_effect=AssertionError("reclamation"))):
+                        for _ in range(100):
+                            self.assertIs(owner.ref_is_retired(ref), False)
+                    self.assertEqual(self.ledger.inspect(), before)
+                    owner.close()
+                    held = self.ledger.inspect()
+                    self.assertIs(owner.ref_is_retired(ref), True)
+                    self.assertEqual(self.ledger.inspect(), held)
+                    self.assertGreaterEqual(self.ledger.encoded_reserved, 1753 + 256 + len(b"sibling"))
+                    raw = None  # The private test consumer releases its alias before unwind.
+            self.assertIsNone(saved.exception.__context__)
+            await channel.aclose()
+            self.assertIs(owner.ref_is_retired(ref), True)
+            self.assertGreaterEqual(self.ledger.encoded_reserved, 256)
+            self.assertIs(other.ref_is_retired(keep), False)
+            self.assertEqual(keep.nbytes, len(b"sibling"))
+            owner.close()
+        finally:
+            receive.close()
+            keep.close()
+
+    async def test_ref_retirement_query_rejects_wrong_role_owner_and_handle_identity(self):
+        channel, _ = await self.channel()
+        sibling, _ = await self.channel()
+        owner = channel.input_owner()
+        ref = self.source.sessions[0].seal(b"own")
+        foreign = self.source.sessions[1].seal(b"foreign")
+        cache = OwnedSyncCache(self.profile, self.binding, ledger=self.ledger)
+        cache_owner = cache.input_owner()
+        lease = cache_owner.reserve(cache_owner.buffer_heap(3), encoded_bytes=3)
+        ordinary = lease.seal(b"raw")
+        lease.close()
+        errors = []
+        try:
+            before = self.ledger.inspect()
+            for value in (None, b"raw", ordinary, foreign, RelayInputRef.__new__(RelayInputRef)):
+                with self.assertRaisesRegex(ProtocolError, "sync_input_owner") as rejected:
+                    owner.ref_is_retired(value)
+                errors.append(rejected.exception)
+                self.assertEqual(self.ledger.inspect(), before)
+            with self.assertRaisesRegex(ProtocolError, "sync_input_owner") as rejected:
+                cache_owner.ref_is_retired(ref)
+            errors.append(rejected.exception)
+            key = ref._key
+            try:
+                # A different live same-owner record must match its own handle.
+                other = self.source.sessions[0].seal(b"other")
+                ref._key = other._key
+                before_other = self.ledger.inspect()
+                with self.assertRaisesRegex(ProtocolError, "sync_input_owner") as rejected:
+                    owner.ref_is_retired(ref)
+                errors.append(rejected.exception)
+                self.assertEqual(self.ledger.inspect(), before_other)
+            finally:
+                ref._key = key
+            self.assertIs(owner.ref_is_retired(ref), False)
+            self.assertIs(sibling.input_owner().ref_is_retired(foreign), False)
+            self.assertIs(cache_owner.ref_is_retired(ordinary), False)
+            self.assertTrue(all(error.__context__ is None for error in errors))
+            other.close()
+        finally:
+            ref.close()
+            foreign.close()
+            ordinary.close()
+            cache.close()
+
+    async def test_ref_retirement_query_closed_owner_has_bounded_terminal_records(self):
+        channel, _ = await self.channel()
+        owner = channel.input_owner()
+        retained = []
+        for _ in range(70):
+            ref = self.source.sessions[0].seal(b"terminal")
+            ref.close()
+            retained.append(ref)
+            before = self.ledger.inspect()
+            self.assertIs(owner.ref_is_retired(ref), True)
+            self.assertEqual(self.ledger.inspect(), before)
+            self.assertEqual(len(owner._buffers), 0)
+        await channel.aclose()
+        self.assertTrue(all(owner.ref_is_retired(ref) is True for ref in retained))
+        replacement, _ = await self.channel()
+        new_owner = replacement.input_owner()
+        keep = self.source.sessions[-1].seal(b"replacement")
+        before = self.ledger.inspect()
+        with self.assertRaisesRegex(ProtocolError, "sync_input_owner"):
+            new_owner.ref_is_retired(retained[-1])
+        self.assertEqual(self.ledger.inspect(), before)
+        owner.close()
+        self.assertIs(new_owner.ref_is_retired(keep), False)
+        keep.close()
 
     async def test_wrong_owner_ref_retires_only_supplied_handle(self):
         channel, _ = await self.channel()
