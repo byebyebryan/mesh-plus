@@ -141,6 +141,8 @@ class InputTests(unittest.TestCase):
             sibling_view = other.confirm(other_candidate, proof(other, other_candidate), CLOCK)
             receive = self.inputs.reserve(8192, encoded_bytes=1024)
             ref = self.seal(b"sealed")
+            late_proof = proof(self.cache, candidate)
+            late_owned_proof = self.seal(late_proof)
             self.inputs.close()
             with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
                 self.cache.acquire()
@@ -154,6 +156,10 @@ class InputTests(unittest.TestCase):
                 retained.materialize()
             with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
                 _ = ref.nbytes
+            with self.assertRaisesRegex(ProtocolError, "sync_candidate_retired"):
+                self.cache.confirm(candidate, late_proof, CLOCK)
+            with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
+                self.cache.confirm(candidate, late_owned_proof, CLOCK)
             for action in (lambda: receive.resize(1), lambda: receive.seal(b"late")):
                 with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
                     action()
