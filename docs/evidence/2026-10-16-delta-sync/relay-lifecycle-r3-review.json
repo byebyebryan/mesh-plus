@@ -1,0 +1,38 @@
+{
+  "checks": {
+    "lockedInputs": 33,
+    "offlineDesignChecks": 116,
+    "packagedSchemas": 25,
+    "python": "3.14.8",
+    "runtimeRerun": false,
+    "sourceChanges": false
+  },
+  "documents": {
+    "docs/delta-sync-relay-api-r2.md": {
+      "bytes": 27392,
+      "sha256": "8616bfba7c05dcf8982e431309bcd0bdf354c91bc023fdf0fcf85dcbe4c7abdd"
+    },
+    "docs/delta-sync-relay-lifecycle-r3.md": {
+      "bytes": 12316,
+      "sha256": "eb5c217c544bbe10766c7c0f32d574294412c6f6230c7ad6b95a2a57483c0c9f"
+    },
+    "docs/evidence/2026-10-16-delta-sync/RELAY-LIFECYCLE-R3.md": {
+      "bytes": 2746,
+      "sha256": "19fb93f5d55578799c1db0e6900f17b393a23fbdd2f16c925262e1503213a396"
+    }
+  },
+  "host": "starship",
+  "parentCommit": "e68b26417035b9dd78b1a50c1f228120926bac52",
+  "pending": [
+    "same-byte Observer r2+r3 review",
+    "root A1 agreement record",
+    "actual owned-source/controller integration",
+    "runtime lifecycle/error/resource/transport checks",
+    "dense and packed recovery gates",
+    "installed end-to-end qualification"
+  ],
+  "precedence": "r3 replaces only r2 channel acquisition deadline/operation signatures and adds bridge identity bootstrap",
+  "rootReview": "m94 acknowledged role/arithmetic; returned two lifecycle clarifications; not exact API/A1 acceptance",
+  "status": "r2-plus-r3-exact-review-candidate",
+  "worktree": "/home/bryan/code/mesh-plus"
+}
