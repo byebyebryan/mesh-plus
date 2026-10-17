@@ -58,7 +58,55 @@ def _validate(value, depth=0, budget=None):
 
 def canonical(value):
     """Encode a newly supplied plain JSON value; never accepts object subclasses."""
-    return Atom.own(value).encoded
+    reservation = prepay_json(value)
+    try:
+        output = bytearray()
+        _encode(value, output)
+        return bytes(output)
+    except ProtocolError:
+        raise
+    except (ValueError, TypeError, KeyError, UnicodeError, RecursionError, RuntimeError) as error:
+        raise ProtocolError("sync_json") from error
+    finally:
+        if reservation is not None:
+            reservation.close()
+
+
+def _encode(value, output, depth=0):
+    """Validate each captured node while emitting; no temporary frozen tree.
+
+    Retained values still use Atom.own. Canonical byte results have no decoded
+    graph and no alias to the supplied mutable containers.
+    """
+    check(depth <= 64, "sync_tree_depth")
+    kind = type(value)
+    if kind is str:
+        _validate(value, depth)
+        output.extend(json.encoder.encode_basestring(value).encode("utf-8"))
+    elif kind is bool:
+        output.extend(b"true" if value else b"false")
+    elif value is None:
+        output.extend(b"null")
+    elif kind is int:
+        output.extend(str(value).encode("ascii"))
+    elif kind is list:
+        output.extend(b"[")
+        for number, child in enumerate(value):
+            if number:
+                output.extend(b",")
+            _encode(child, output, depth + 1)
+        output.extend(b"]")
+    else:
+        check(kind is dict, "sync_json_type")
+        check(all(type(key) is str for key in value), "sync_object_key")
+        output.extend(b"{")
+        for number, key in enumerate(sorted(value)):
+            if number:
+                output.extend(b",")
+            _encode(key, output, depth + 1)
+            output.extend(b":")
+            _encode(value[key], output, depth + 1)
+        output.extend(b"}")
 
 
 def decode(raw, maximum=8 * 1024 * 1024 + 80 * 1024, *, _depth=0):

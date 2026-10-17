@@ -129,6 +129,46 @@ class CacheTests(unittest.TestCase):
                 self.confirm()
             self.assertEqual(self.cache.store.current.tag.generation, generation)
 
+    def test_context_generation_change_cannot_reset_owner_clock_monotonicity(self):
+        self.confirm()
+        raw, _, _ = baseline(self.profile, 2, 2)
+        document = decode(raw)
+        document["nativeBinding"]["sourceContexts"] = [{"provider": "reference", "namespace": "scope", "generation": 2}]
+        maps = {name: MerkleMap.baseline(name, rows) for name, rows in document["tables"].items()}
+        tag = NativeTag(binding_digest(document["nativeBinding"], native=True).hex(), 2,
+                        native_root(document["nativeBinding"], 2, maps).hex())
+        document["tag"], document["cursor"] = tag.wire(), [OWNER, 2, tag.root]
+        self.candidate = self.cache.admit_baseline(canonical(document))
+        raw = proof(self.cache, self.candidate, native_time=1500)
+        self.now += 20
+        with self.assertRaisesRegex(ProtocolError, "sync_head_clock_regression"):
+            self.cache.confirm(self.candidate, raw, CLOCK)
+        with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
+            self.cache.acquire()
+
+    def test_bridge_clock_cannot_regress_or_exceed_whole_proof_elapsed_budget(self):
+        self.confirm()
+        document = decode(proof(self.cache, self.candidate, native_time=2005))
+        document["bridgeClock"]["boottimeMs"] = 2006
+        self.now += 20
+        with self.assertRaisesRegex(ProtocolError, "sync_bridge_clock_regression"):
+            self.cache.confirm(self.candidate, canonical(document), CLOCK)
+        document = decode(proof(self.cache, self.candidate, native_time=2100))
+        document["bridgeClock"]["boottimeMs"] = 2300
+        self.now += 20
+        with self.assertRaisesRegex(ProtocolError, "sync_bridge_clock_elapsed"):
+            self.cache.confirm(self.candidate, canonical(document), CLOCK)
+
+    def test_moved_header_checks_clock_shape_and_configured_host_before_catchup(self):
+        target = NativeTag(self.tag.binding, 2, "ff" * 32)
+        for fields in ({"hostScope": "other"}, {"uid": True}, {"boottimeMs": -1}):
+            document = decode(proof(self.cache, self.candidate, tag=target))
+            document["head"]["ownerClock"].update(fields)
+            self.now += 20
+            with self.assertRaises(ProtocolError) as caught:
+                self.cache.confirm(self.candidate, canonical(document), CLOCK)
+            self.assertNotIsInstance(caught.exception, MovedHead)
+
     def test_only_fresh_proof_publishes_and_old_receipt_is_not_renewed(self):
         with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
             self.cache.acquire()

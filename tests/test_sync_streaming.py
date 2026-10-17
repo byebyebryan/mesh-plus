@@ -16,6 +16,24 @@ from mesh_plus.sync.streaming import array_spans, object_spans
 
 
 class StreamingTests(unittest.TestCase):
+    def test_boolean_cursor_is_not_an_integer_generation_alias(self):
+        profile = Profile()
+        raw, maps, tag = baseline(profile)
+        changed = decode(raw)
+        changed["cursor"][1] = True
+        cache = OwnedSyncCache(profile, source_binding("fixture", "source", profile.descriptor))
+        try:
+            with self.assertRaisesRegex(ProtocolError, "sync_cursor"):
+                cache.admit_baseline(canonical(changed))
+            cache.admit_baseline(raw)
+            tx, _, _ = transaction(profile, maps, tag, 2, 2)
+            changed = decode(tx)
+            changed["baseCursor"][1] = True
+            with self.assertRaisesRegex(ProtocolError, "sync_cursor"):
+                cache.stage(canonical(changed))
+        finally:
+            cache.close()
+
     def test_transaction_stream_matches_canonical_id_without_whole_frame_decode(self):
         profile = Profile()
         raw, maps, tag = baseline(profile)
@@ -185,6 +203,9 @@ class StreamingTests(unittest.TestCase):
         try:
             candidate = cache.admit_baseline(raw)
             self.assertEqual(candidate.tag.native, tag)
+            for name in ("facts", "$fields", "$body_refs"):
+                index = dict(cache.store.candidate.indexes)[name]
+                self.assertEqual(index.work.node_writes, 2 * 300 - 1, name)
             self.assertLess(cache.ledger.peak, maximum)
             self.assertEqual(cache.ledger.reserved, 0)
         finally:

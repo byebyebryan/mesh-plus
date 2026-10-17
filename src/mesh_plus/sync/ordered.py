@@ -186,6 +186,11 @@ class OrderedMap(OwnedUnit, TrackedAllocation):
 
     @classmethod
     def baseline(cls, entries):
+        return cls.baseline_atoms((Atom.own(key), Atom.own(value)) for key, value in entries)
+
+    @classmethod
+    def baseline_atoms(cls, entries):
+        """Internal privately owned keys/values; no second value tree copy."""
         scratch, values = prepay(1024), []
 
         def build(start, stop):
@@ -197,9 +202,10 @@ class OrderedMap(OwnedUnit, TrackedAllocation):
 
         try:
             for key, value in entries:
+                check(type(key) is Atom and type(value) in (Atom, PackedAtom), "sync_owned_atom")
                 if scratch is not None and len(values) % 64 == 0:
                     scratch.grow(192 * 64)
-                values.append((Atom.own(key), Atom.own(value)))
+                values.append((key, value))
             values.sort(key=cmp_to_key(lambda a, b: compare(a[0].value, b[0].value)))
             check(all(compare(values[i - 1][0].value, values[i][0].value) != 0
                       for i in range(1, len(values))), "sync_duplicate_key")

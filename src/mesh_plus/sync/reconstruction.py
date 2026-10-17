@@ -510,13 +510,15 @@ class ReconstructionStore:
         tx.budget.charge(1024 + count * 256 + len(tx.member_operations) * 128)
         seen = {}
 
-        def remember(index, key, code):
+        def remember(index, key, code, *, keep_decoded=False):
             marker = index, key.encoded
             check(marker not in seen, code)
             # The duplicate registry borrows canonical buffers from these
             # charged packed atoms, rather than retaining uncharged bytes
             # after each temporary decoded key has been released.
-            seen[marker] = packed(key)
+            owned = key if keep_decoded else packed(key)
+            seen[marker] = owned
+            return owned
 
         # Removes precede inserts so a legitimate key replacement at the
         # declared entry cap does not need twice the final index capacity.
@@ -525,16 +527,27 @@ class ReconstructionStore:
             key = Atom.own(remove.key)
             remember(remove.index, key, "sync_duplicate_index_operation")
             tx.indexes[remove.index] = tx.indexes[remove.index].remove(thaw(key.value))
+        baseline_entries = {} if tx.before is None else None
         for write in patch.writes:
             check(type(write) is IndexWrite and write.index in self.index_specs, "sync_index_write")
             key, value = Atom.own(write.key), Atom.own(write.value)
-            remember(write.index, key, "sync_duplicate_index_operation")
             spec = self.index_specs[write.index]
+            owned_key = remember(write.index, key, "sync_duplicate_index_operation", keep_decoded=spec.ordered)
             check(len(value.encoded) <= spec.max_value_bytes, "sync_index_value_capacity")
             self.validators[write.index][0].validate(key, self.ledger)
             self.validators[write.index][1].validate(value, self.ledger)
-            tx.indexes[write.index] = tx.indexes[write.index].put_atom(thaw(key.value), packed(value))
-            check(len(tx.indexes[write.index]) <= spec.max_entries, "sync_index_entry_capacity")
+            if baseline_entries is None:
+                tx.indexes[write.index] = tx.indexes[write.index].put_atom(thaw(key.value), packed(value))
+                size = len(tx.indexes[write.index])
+            else:
+                entries = baseline_entries.setdefault(write.index, [])
+                entries.append((owned_key if spec.ordered else owned_key.encoded, packed(value)))
+                size = len(entries)
+            check(size <= spec.max_entries, "sync_index_entry_capacity")
+        if baseline_entries is not None:
+            for name, entries in baseline_entries.items():
+                tx.indexes[name] = (OrderedMap.baseline_atoms(entries) if self.index_specs[name].ordered else
+                                    MerkleMap._from_encoded_atoms("index/" + name, entries))
         layout = ({name: (position, len(canonical(name))) for position, name in enumerate(self.descriptor.fields)}
                   if patch.field_tokens or tx.member_operations else {})
         fields = self._field_patch(tx, patch.field_tokens, layout)
@@ -640,6 +653,7 @@ class ReconstructionStore:
             else:
                 last_key = group[0]
             group[1].append(item)
+        baseline_entries = [] if tx.before is None else None
         for key, changes, _, _, _ in groups.values():
             ref = thaw(key.value)
             _record_ref(ref, tx)
@@ -665,13 +679,18 @@ class ReconstructionStore:
                     changed |= 1 << self.descriptor.fields.index(item.field)
             atom = packed(Atom.own(values)) if values else ABSENT
             if values:
-                tx.indexes["$fields"] = tx.indexes["$fields"].put_atom(ref, atom)
+                if baseline_entries is None:
+                    tx.indexes["$fields"] = tx.indexes["$fields"].put_atom(ref, atom)
+                else:
+                    baseline_entries.append((key.encoded, atom))
             elif old is not ABSENT:
                 tx.indexes["$fields"] = tx.indexes["$fields"].remove(ref)
             group = groups[key.encoded]
             group[1].clear()  # borrowed patch entries are no longer needed
             group[2], group[3] = atom, changed
             group[4] = None if atom is ABSENT else self._token_offsets(atom, values, layout)
+        if baseline_entries:
+            tx.indexes["$fields"] = MerkleMap._from_encoded_atoms("index/$fields", baseline_entries)
         return groups
 
     def _links(self, tx):
@@ -716,12 +735,27 @@ class ReconstructionStore:
                 links, update = self._record_links(tx, identity, old_records, links)
             if update:
                 updates.append(encoded)
-        for encoded in updates:
-            with self.ledger.reserve(decode_reservation(encoded)):
-                identity = decode(encoded)
-                slot = records.find_encoded(encoded).atom.value
-                check(links.find(slot["body"]) is ABSENT, "sync_shared_record_body")
-                links = links.put_atom(slot["body"], packed(Atom.own(identity)))
+        if tx.before is None:
+            def baseline_entries():
+                for encoded in updates:
+                    with self.ledger.reserve(decode_reservation(encoded)):
+                        identity = decode(encoded)
+                        slot = records.find_encoded(encoded).atom.value
+                        yield canonical(slot["body"]), packed(Atom.own(identity))
+
+            try:
+                links = MerkleMap._from_encoded_atoms("index/$body_refs", baseline_entries())
+            except ProtocolError as error:
+                if error.args == ("sync_duplicate_or_colliding_key",):
+                    raise ProtocolError("sync_shared_record_body") from None
+                raise
+        else:
+            for encoded in updates:
+                with self.ledger.reserve(decode_reservation(encoded)):
+                    identity = decode(encoded)
+                    slot = records.find_encoded(encoded).atom.value
+                    check(links.find(slot["body"]) is ABSENT, "sync_shared_record_body")
+                    links = links.put_atom(slot["body"], packed(Atom.own(identity)))
         tx.indexes["$body_refs"] = links
         check(len(links) == len(tx.tables["bodies"]) == len(tx.tables["records"]), "sync_orphan_body")
         check(len(tx.tables["observations"]) == len(tx.tables["records"]), "sync_orphan_observations")
@@ -843,7 +877,8 @@ class ReconstructionStore:
             private_binding = thaw(owned_binding.value)
             check(private_binding.get("hostScope") == self.host, "sync_host_binding")
             check(binding_digest(private_binding, native=True).hex() == tag.binding, "sync_binding_digest")
-            check(type(cursor) is tuple and cursor == (private_binding["ownerEpoch"], tag.generation, tag.root), "sync_cursor")
+            check(type(cursor) is tuple and len(cursor) == 3 and type(cursor[1]) is int and
+                  cursor == (private_binding["ownerEpoch"], tag.generation, tag.root), "sync_cursor")
             check(all(len(tables[name]) <= TABLE_LIMITS[name] for name in SPACES), "sync_table_capacity")
             built = {name: MerkleMap.baseline_atoms(name, ((key, value if type(value) is PackedAtom else
                                                           Atom.own(value) if name in {"receipts", "cohorts", "metadata"}
@@ -878,7 +913,8 @@ class ReconstructionStore:
             check(before is not None and before.tag == base, "sync_wrong_base")
             check(type(result) is NativeTag and result.binding == base.binding and
                   result.generation > base.generation, "sync_result_tag")
-            check(cursor == (before.cursor[0], result.generation, result.root), "sync_cursor")
+            check(type(cursor) is tuple and len(cursor) == 3 and type(cursor[1]) is int and
+                  cursor == (before.cursor[0], result.generation, result.root), "sync_cursor")
             if self.previous is not None:
                 # Reclamation can visit a whole older generation. Do it in
                 # material staging, outside the compact nonce/proof operation.

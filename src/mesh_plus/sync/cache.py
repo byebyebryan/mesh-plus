@@ -35,6 +35,12 @@ def _now():
     return time.clock_gettime_ns(time.CLOCK_BOOTTIME) // 1_000_000
 
 
+def _owner_clock_scope(value):
+    # Provider/namespace context generations are deliberately excluded. They
+    # can change a native binding without changing the owner's clock scope.
+    return tuple(value[name] for name in ("hostScope", "uid", "ownerEpoch", "bootId", "clockDomain"))
+
+
 @dataclass(frozen=True, slots=True)
 class SyncBudgets:
     decoded_bytes: int = 64 * 1024 * 1024
@@ -448,14 +454,17 @@ class OwnedSyncCache:
                     check(canonical(head["challenge"]) == pending[1].encoded, "sync_nonce")
                     actual = NativeTag.parse(head["tag"])
                     check(canonical(document["sourceTag"]) == canonical(self._tag(actual).wire()), "sync_proof_source_root")
+                    owner_clock(head["ownerClock"])
+                    check(head["ownerClock"]["hostScope"] == self._binding.value["host"], "sync_owner_clock_host")
                     self._observe_head(actual)
                     if actual != root.tag:
                         raise MovedHead(actual)
                     native_binding = thaw(root.binding.value)
                     owner_clock(head["ownerClock"], native_binding)
                     observed = head["ownerClock"]["boottimeMs"]
+                    clock_scope = _owner_clock_scope(head["ownerClock"])
                     previous_clock = self._last_head_clock
-                    check(previous_clock is None or previous_clock[0] != actual.binding or
+                    check(previous_clock is None or previous_clock[0] != clock_scope or
                           previous_clock[1] <= observed, "sync_head_clock_regression")
                     self._head_matches(root, head)
                     rules = self._head_rules(root, candidate._tag, head)
@@ -471,7 +480,7 @@ class OwnedSyncCache:
                 if self._confirmation is not None:
                     self.ledger.release(self._confirmation)
                 self._confirmation = result
-                self._last_head_clock = actual.binding, observed
+                self._last_head_clock = clock_scope, observed, document["bridgeClock"]["boottimeMs"]
                 retained = None
                 self._view_permit = secrets.token_hex(16)
                 self.reason = "confirmed"
@@ -551,6 +560,11 @@ class OwnedSyncCache:
         expiries = []
         received = self._now_ms()  # callback/validation time belongs to RTT
         check(type(received) is int and type(sent) is int and sent <= received <= sent + 2000, "sync_proof_deadline")
+        previous = self._last_head_clock
+        check(previous is None or previous[0] != _owner_clock_scope(native_clock) or
+              previous[2] <= bridge["boottimeMs"], "sync_bridge_clock_regression")
+        check(bridge["boottimeMs"] - native_clock["boottimeMs"] <= received - sent + 100,
+              "sync_bridge_clock_elapsed")
         check(not self.local_owner or bridge["boottimeMs"] <= received, "sync_local_owner_clock")
         for key, receipt in projected.items():
             native_remaining, bridge_remaining = attenuation[key][1], remaining[key][1]

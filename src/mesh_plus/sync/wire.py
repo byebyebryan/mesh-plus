@@ -26,6 +26,7 @@ def closed(value, names, code):
 
 def cursor(value, tag, owner=None):
     check(type(value) is list and len(value) == 3 and type(value[0]) is str and
+          type(value[1]) is int and
           (owner is None or value[0] == owner) and value[1:] == [tag.generation, tag.root], "sync_cursor")
     return tuple(value)
 
@@ -41,15 +42,18 @@ def entries(value, maximum, code):
     return result
 
 
-def owner_clock(value, binding):
+def owner_clock(value, binding=None):
     closed(value, "bootId clockDomain boottimeMs ownerEpoch uid hostScope", "sync_owner_clock")
     check(type(value["boottimeMs"]) is int and value["boottimeMs"] >= 0, "sync_owner_clock")
     check(type(value["uid"]) is int and value["uid"] >= 0, "sync_owner_clock")
+    check(all(type(value[name]) is str and value[name] for name in ("bootId", "ownerEpoch", "hostScope")),
+          "sync_owner_clock")
     check(type(value["clockDomain"]) is str and re.fullmatch(r"time:\[[0-9]+\]", value["clockDomain"]),
           "sync_owner_clock")
-    for name in ("bootId", "clockDomain", "ownerEpoch", "uid", "hostScope"):
-        check(name in binding and type(value[name]) is type(binding[name]) and value[name] == binding[name],
-              "sync_owner_clock_binding")
+    if binding is not None:
+        for name in ("bootId", "clockDomain", "ownerEpoch", "uid", "hostScope"):
+            check(name in binding and type(value[name]) is type(binding[name]) and value[name] == binding[name],
+                  "sync_owner_clock_binding")
 
 
 def read_native(raw, descriptor):

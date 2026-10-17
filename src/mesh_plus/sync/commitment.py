@@ -270,13 +270,29 @@ class MerkleMap(TrackedAllocation):
     @classmethod
     def baseline_atoms(cls, space, entries, *, work=None):
         """Bulk-build from already privately owned atoms, sharing those atoms."""
+        return cls._baseline_owned(space, entries, work=work)
+
+    @classmethod
+    def _from_encoded_atoms(cls, space, entries, *, work=None):
+        """Internal keys are canonical buffers from the owner, never wire bytes."""
+        return cls._baseline_owned(space, entries, work=work, encoded_keys=True)
+
+    @classmethod
+    def _baseline_owned(cls, space, entries, *, work=None, encoded_keys=False):
         result = cls(space, work=work)
         leaves = []
         scratch = prepay(1024)
         try:
             for key, atom in entries:
                 check(type(atom) in (Atom, PackedAtom), "sync_atom")
-                encoded, hashed = result._key(key)
+                if encoded_keys:
+                    check(type(key) is bytes, "sync_owned_key")
+                    encoded = key
+                    result.work.key_hashes += 1
+                    hashed = digest_parts(b"mesh-sync-key\0", result._framed_space,
+                                          len(encoded).to_bytes(8, "big"), encoded)
+                else:
+                    encoded, hashed = result._key(key)
                 if scratch is not None and len(leaves) % 64 == 0:
                     scratch.grow(24 * 64)  # list growth and sort's pointer array
                 leaves.append(result._leaf(encoded, hashed, atom))

@@ -46,6 +46,36 @@ def oracle(space, pairs):
 
 
 class CanonicalTests(unittest.TestCase):
+    def test_byte_encoder_matches_stdlib_and_owned_value_for_generated_trees(self):
+        rng = random.Random(23761)
+        strings = ["", "quote\"slash\\", "\x00\n\t", "é雪😀", "\u2028", "a/b"]
+
+        def value(depth):
+            if depth == 0:
+                return rng.choice([None, False, True, -2**80, 2**80, rng.randrange(-5000, 5000), *strings])
+            if rng.randrange(2):
+                return [value(depth - 1) for _ in range(rng.randrange(5))]
+            return {key: value(depth - 1) for key in rng.sample(strings, rng.randrange(5))}
+
+        for _ in range(1000):
+            data = value(3)
+            expected = json.dumps(data, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            self.assertEqual(canonical(data), expected)
+            self.assertEqual(canonical(data), Atom.own(data).encoded)
+            self.assertEqual(decode(expected), data)
+
+    def test_byte_encoding_revalidates_mutation_and_never_builds_a_frozen_tree(self):
+        from unittest.mock import patch
+        data = {"value": [1]}
+        with patch("mesh_plus.sync.canonical._freeze", side_effect=AssertionError("unneeded value graph")):
+            encoded = canonical(data)
+            data["value"][0] = 2
+            self.assertEqual(encoded, b'{"value":[1]}')
+            self.assertEqual(canonical(data), b'{"value":[2]}')
+            data["value"][0] = 2.0
+            with self.assertRaisesRegex(ProtocolError, "sync_json_type"):
+                canonical(data)
+
     def test_exact_unicode_and_optional_null_fixture(self):
         self.assertEqual(canonical({"z": None, "é": "é\n", "a": True}).hex(),
                          "7b2261223a747275652c227a223a6e756c6c2c22c3a9223a22c3a95c6e227d")
