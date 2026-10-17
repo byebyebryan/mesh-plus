@@ -1,0 +1,152 @@
+{
+  "artifacts": {
+    "docs/evidence/2026-10-17-normalization-phases/README.md": {
+      "bytes": 7463,
+      "sha256": "537cc6381f9ff23a4e7ba45dbe2d7370c88c3c7656c5f99302e6f0583dc7a9b1"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/qualify_phases.py": {
+      "bytes": 8357,
+      "sha256": "962640b59dc243fc217af05fb26e3f1771138903acd756a82d8dd51866f24dfc"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/2000-default-311.json": {
+      "bytes": 12509,
+      "sha256": "2c6aa8b84a84e849dfb410d0c8a3354488e13063dcdf9a21e601df9910c3c867"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/2000-default-311.log": {
+      "bytes": 223,
+      "sha256": "4004ac359c415983cb32859ff04a9dde26d73f3e14051e1f28e983304d5ab32f"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/2000-default-314.json": {
+      "bytes": 12456,
+      "sha256": "6dcac530c1b7d07c6a32f3d1fbf31794fd1b9548d5788036536134ceff4d210a"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/2000-default-314.log": {
+      "bytes": 222,
+      "sha256": "a74185ef888788c59242cf38b55cf44041436a22f96891c412422f199c2133ad"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/2000-packed-311.json": {
+      "bytes": 12516,
+      "sha256": "7f3deb95c325babfc1741214500a58e607ff46520b8b70791408910f69205564"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/2000-packed-311.log": {
+      "bytes": 222,
+      "sha256": "3c9c73485a6918add839b5987bbecc77815c254d93dcb8aed17386a6cc554000"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/2000-packed-314.json": {
+      "bytes": 12464,
+      "sha256": "1db277e3654901f4c9cf4b4de4b4a5cefd200175db2fd4aa23b03d5a216da80b"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/2000-packed-314.log": {
+      "bytes": 221,
+      "sha256": "c0f858316b3f5091ef13c672e8fc3e630bf843ef7ecf20a6c3c77a87b9d9c7fe"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/500-default-311.json": {
+      "bytes": 16872,
+      "sha256": "54b49064aa0c665c0d60d37f400677b6beaff3138efad843a4b144e2b975d395"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/500-default-311.log": {
+      "bytes": 223,
+      "sha256": "018b4915d2682c9765ac407ee9ce4b839ebcdeb8359596fa973a6823e94d0e1d"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/500-default-314.json": {
+      "bytes": 16871,
+      "sha256": "95a70a01bb5b1ad83c9951a74de2a1fd16a8bbeda2e866e5ddbee38433ad2a91"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/500-default-314.log": {
+      "bytes": 222,
+      "sha256": "a54dd138cfa4f8dba20a42b48a3fa610ee87b9b021e079f2b7bddcaa09cd752b"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/500-packed-311.json": {
+      "bytes": 16890,
+      "sha256": "af6819511b02586e06c7be919807207aa592c45e711115f4ecbcb01953518d30"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/500-packed-311.log": {
+      "bytes": 222,
+      "sha256": "c29757e47d3a16d07598738b391d502eab729247b05cf51ad285b8d54924f84c"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/500-packed-314.json": {
+      "bytes": 16889,
+      "sha256": "43fb54d03e5295b4f4fc9dd9c28a405ced7c06fca22caca8d053cab940c965c2"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/500-packed-314.log": {
+      "bytes": 221,
+      "sha256": "8b5de2b009d333697bbd4b4b2e6859921d0638a67282a9c32214e90f1fac2d46"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/before-311.log": {
+      "bytes": 1123,
+      "sha256": "2fcd1a02c6bf5e5c3d72ea6de6ce193cf1c7c2d1d2d381c61efb5e0fdb7c7ae0"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/before-314.log": {
+      "bytes": 1184,
+      "sha256": "c567d17dcd6285d75d251070cd95dee40d0b417cdedc9d7f655c5e2bcd2bb7ac"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/canonical-final.log": {
+      "bytes": 64439,
+      "sha256": "ccc503af43e0f54bef780619be5e77aedd262b0556582301876ff10746df0771"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/compact-311.log": {
+      "bytes": 4929,
+      "sha256": "ef8d7d5055066b709fad70ded23b64b11846736ebe6ac84c02288490ccc9481e"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/compact-314.log": {
+      "bytes": 4929,
+      "sha256": "bc3636de39aab59ab4f4e174ad79631a15c86eefd2ff163825d26132d877cd4c"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/profile-packed2000-314.json": {
+      "bytes": 19441,
+      "sha256": "0f4f4019ec79db9882c1007fe4a20b2512ab7da8ead61d946e63e277b004a430"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/profile-packed2000-314.log": {
+      "bytes": 1676,
+      "sha256": "e0161dd0b890eacc906fa400ea32eef3c768f5a7c6d97e1898a776e3410a1010"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/results/qualification.json": {
+      "bytes": 139740,
+      "sha256": "588cdf4d27a197925842a85716031911bcf7289b80187ee4e41c86b8de615042"
+    },
+    "docs/evidence/2026-10-17-normalization-phases/seal_phases.py": {
+      "bytes": 4021,
+      "sha256": "2074e20459b2aad71f3731b4ad04b33e44a0096a7aeb8b16045f39490284eb99"
+    }
+  },
+  "beforeCheckpoint": "f0924e457230c49d04d3e5983476766d4c58a4af",
+  "capacity": {
+    "cases": 8,
+    "cpuClaim": false,
+    "finalSixCountersZero": true,
+    "gcDisabled": true,
+    "largeRefused": 4,
+    "physicalHeapRssAcceptance": false,
+    "privateScalarAuditCount": 1,
+    "smallConfirmed": 4
+  },
+  "exclusions": "Private phase/topology test instrumentation; unchanged source intake probe and private scalar audit. Actual disposable compact source IPC and Reader share one ledger; native owner has separate account. Private packed arena test-owned. Synthetic full500/2000 fixture has3510/14010cells, not dense9. Test nonce/native pin/proof carrier extra prepaid scratch and synthetic clock; no ordinary relay/controller/authenticated selected route, inclusive physical heap/RSS/CPU, native/fixedSSH/installedpair/producer acceptance. See prior frozen capacity probe for exact exclusions.",
+  "gitVerified": {
+    "after": 260,
+    "before": 260,
+    "observer": 211,
+    "protected": 8
+  },
+  "inputs": "results/qualification.json",
+  "meshRuntime": "13876e6d723ad3ff5511c12e2900e7dc34f2c778",
+  "observerRuntime": "84d284dab04b68ae0e9070335d017e85564f2ba9",
+  "priorArtifactPinsUnchanged": 34,
+  "priorReceipt": {
+    "bytes": 8829,
+    "sha256": "34759770cf03bb0864bdf95e6fe7524cd781ad99db21050499245e5614a4c7b9"
+  },
+  "sourceGate": {
+    "beforeExpectedAssertionFailuresPerPython": 1,
+    "beforeOverlayMethods": 2,
+    "canonicalTests": 391,
+    "compactTestsPerPython": 29,
+    "nativeSourceWheelCpuGatesRun": false,
+    "newTests": 4,
+    "pythonVersions": [
+      "3.14.8",
+      "3.11.17"
+    ],
+    "skipped": 0
+  },
+  "status": "Private generic phase ownership source checkpoint; Reader2000 capacity still FAIL, no producer acceptance"
+}

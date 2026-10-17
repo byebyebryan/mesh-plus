@@ -1,0 +1,15 @@
+test_baseline_phase_credit_does_not_accumulate_at_profile_entry (test_sync_compact.CompactTests.test_baseline_phase_credit_does_not_accumulate_at_profile_entry) ... FAIL
+test_delta_operation_credit_survives_phase_cleanup_and_callback_failure (test_sync_compact.CompactTests.test_delta_operation_credit_survives_phase_cleanup_and_callback_failure) ... ok
+
+======================================================================
+FAIL: test_baseline_phase_credit_does_not_accumulate_at_profile_entry (test_sync_compact.CompactTests.test_baseline_phase_credit_does_not_accumulate_at_profile_entry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/normalization-phases-qualified-13876e6/before/tests/test_sync_compact.py", line 551, in test_baseline_phase_credit_does_not_accumulate_at_profile_entry
+    self.assertLessEqual(charged[1] - charged[0], 128 * 256)
+AssertionError: 99986 not less than or equal to 32768
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.029s
+
+FAILED (failures=1)
