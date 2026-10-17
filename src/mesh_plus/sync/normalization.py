@@ -281,6 +281,30 @@ def _slot_path(slot, path):
     return slot
 
 
+class _PhaseKeys:
+    """Own duplicate markers only until the foreign phase iterator closes.
+
+    The dictionary aliases each tracked Atom's encoded buffer, so the Atom
+    stays alive with its marker. The fixed allowance and 256 bytes per slot
+    cover the dictionary (including resize overlap), not a second key copy.
+    Baseline record Operation/list storage shares this phase lifetime; delta
+    Operations instead remain prepaid by the transaction through rollback.
+    """
+
+    def __init__(self, ledger):
+        self.credit = ledger.reserve(4096)
+        self.seen = {}
+
+    def add(self, key):
+        check(key.encoded not in self.seen, "sync_duplicate_operation")
+        self.credit.grow(256)
+        self.seen[key.encoded] = key
+
+    def close(self):
+        self.seen = None
+        self.credit.close()
+
+
 class CompactState:
     def __init__(self, store, tx, binding):
         self.store, self.tx, self.spec = store, tx, binding.spec
@@ -305,7 +329,7 @@ class CompactState:
         return result
 
     @admission_boundary
-    def adopt(self, item, space, seen, *, baseline):
+    def adopt(self, item, space, keys, *, baseline):
         from .reconstruction import Operation
         tx = self.tx
         if space == "memberships":
@@ -320,9 +344,11 @@ class CompactState:
         if expected is not None:
             hex_digest(expected)
         key = Atom.own(item.key)
-        check(key.encoded not in seen, "sync_duplicate_operation")
-        tx.budget.charge(512 + len(key.encoded))
-        seen.add(key.encoded)
+        keys.add(key)
+        if not baseline:
+            tx.budget.charge(512)
+        elif space == "records":
+            keys.credit.grow(512)
         value = None
         if op == "put":
             check(type(item.value) is CanonicalValueRef, "sync_canonical_value_owner")
@@ -516,7 +542,7 @@ def stage(store, header, scope, *, reservation=None):
     from .model import NativeTag
     from .reconstruction import TABLE_LIMITS, PublicStageContext, _BaselineOperations, _Transaction
     baseline = header["kind"] == "baseline"
-    tx = before = state = item = None
+    tx = before = state = item = keys = None
     failure = None
     pinned = False
     with store._lock:
@@ -553,7 +579,7 @@ def stage(store, header, scope, *, reservation=None):
             ctx = NormalizationContext(store, tx, scope.budget)
             for space in PHASES:
                 state.phase = space
-                count, seen = 0, set()
+                count, keys = 0, _PhaseKeys(store.ledger)
                 with scope.space(space, ctx, baseline=baseline):
                     try:
                         for item in scope:
@@ -561,7 +587,7 @@ def stage(store, header, scope, *, reservation=None):
                             check(count < TABLE_LIMITS[space] * (1 if baseline else 2), "sync_operation_capacity")
                             count += 1
                             tx.visits._limit += 128 if not baseline else 0
-                            state.adopt(item, space, seen, baseline=baseline)
+                            state.adopt(item, space, keys, baseline=baseline)
                             item = None
                     finally:
                         item = None
@@ -569,7 +595,8 @@ def stage(store, header, scope, *, reservation=None):
                     state.definitions()
                     if baseline:
                         tx.operations.clear()
-                seen.clear()
+                keys.close()
+                keys = None
             state.phase = None
             check(not state.packs, "sync_canonical_value_unconsumed")
             tx.operations = _BaselineOperations(tx.tables) if baseline else tuple(tx.operations)
@@ -583,9 +610,17 @@ def stage(store, header, scope, *, reservation=None):
         except BaseException as error:
             failure = _retire_error(error)
         finally:
-            item = ctx = context = patch = seen = tables = groups = binding = None
+            item = ctx = context = patch = tables = groups = binding = None
             if state is not None:
                 state.close()
+            if tx is not None:
+                # Clear actual Operation references before releasing a failed
+                # record phase's prepaid storage. Error frames were sanitized
+                # above; iterator cleanup has already returned.
+                tx.operations = ()
+            if keys is not None:
+                keys.close()
+                keys = None
             if tx is not None:
                 tx.compact = None
                 tx.budget.close()

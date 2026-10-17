@@ -1,7 +1,9 @@
 """Generic R2 behavior with a test-only full-DTO codec, not Agent wire evidence."""
 
 import gc
+import sys
 import unittest
+import weakref
 from copy import deepcopy
 from dataclasses import replace
 from hashlib import sha256
@@ -530,6 +532,122 @@ class CompactTests(unittest.TestCase):
                 patch.object(Header, "materialize", lambda _: copied.append(True)):
             self.reject(lambda: self.cache.admit_baseline(compact(fixture(self.profile)[0])), "sync_decoded_capacity")
         self.assertEqual(copied, [])
+
+    def test_baseline_phase_credit_does_not_accumulate_at_profile_entry(self):
+        charged = []
+
+        def record_budget(_ctx):
+            charged.append(self.cache.store._transaction.budget._charged.amount)
+        self.profile.callback = record_budget
+        for count in (0, 128):
+            doc, _, _ = fixture(self.profile)
+            doc["tables"]["metadata"] = [["long-key-" + str(i) + "x" * 128, {"value": i}]
+                                         for i in range(count)]
+            doc, _, tag = seal_document(self.profile, doc)
+            self.assertEqual(self.cache.admit_baseline(compact(doc)).tag.native, tag)
+        # Only the retained baseline operation view's bounded per-entry
+        # allowance should grow here. Duplicate markers/Operation DTOs have
+        # finished their phase and must not consume callback-entry capacity.
+        self.assertLessEqual(charged[1] - charged[0], 128 * 256)
+
+    def test_phase_keys_own_markers_until_iterator_cleanup_even_on_reentrant_close(self):
+        from unittest.mock import patch
+
+        from mesh_plus.sync.canonical import Atom
+        from mesh_plus.sync.normalization import CompactState
+        original, iterator_close = CompactState.adopt, Iterator.close
+        active, phases, cleaned = {}, [], []
+        owner = self.cache.input_owner()
+        receive = owner.reserve(4096, encoded_bytes=256)
+
+        def adopt(state, item, space, keys, *, baseline):
+            original(state, item, space, keys, baseline=baseline)
+            active[space] = weakref.ref(keys)
+            if space != "memberships":
+                self.assertTrue(keys.seen)
+                for marker, atom in keys.seen.items():
+                    self.assertIs(type(atom), Atom)
+                    self.assertIs(marker, atom.encoded)
+                    self.assertIs(atom._allocation_owner, self.cache.ledger)
+                self.assertGreaterEqual(keys.credit.amount, 2 * sys.getsizeof(keys.seen))
+
+        def close(iterator):
+            iterator_close(iterator)
+            space = self.codec.context._store._transaction.compact.phase
+            if space not in active:
+                return
+            keys = active[space]()
+            self.assertIsNotNone(keys)
+            self.assertFalse(keys.credit.closed)
+            self.assertGreaterEqual(self.cache.ledger.reserved, keys.credit.amount)
+            phases.append((space, len(keys.seen)))
+            if space == "metadata":
+                owner.close()
+                self.assertFalse(keys.credit.closed)
+                self.assertGreaterEqual(self.cache.ledger.reserved, keys.credit.amount)
+                self.assertEqual(receive.encoded_bytes, 256)
+                cleaned.append(True)
+                raise RuntimeError("held foreign iterator cleanup failure")
+
+        doc, _, _ = fixture(self.profile)
+        doc["tables"]["metadata"] = [[str(i), i] for i in range(128)]
+        doc, _, _ = seal_document(self.profile, doc)
+        try:
+            with patch.object(CompactState, "adopt", adopt), patch.object(Iterator, "close", close):
+                self.reject(lambda: self.cache.admit_baseline(compact(doc)), "sync_admission_rejected")
+            self.assertEqual(cleaned, [True])
+            self.assertIn(("metadata", 128), phases)
+            self.assertTrue(all(ref() is None for ref in active.values()))
+            self.assertIsNone(self.cache.store.candidate)
+        finally:
+            receive.close()
+
+    def test_delta_operation_credit_survives_phase_cleanup_and_callback_failure(self):
+        first, second = fixture(self.profile, member=False), fixture(self.profile, 2, 2, member=False)
+        candidate = self.cache.admit_baseline(compact(first[0]))
+        self.cache.confirm(candidate, proof(self.cache, candidate), CLOCK)
+        current = self.cache.store.current
+        seen = []
+
+        def fail(_ctx):
+            tx = self.cache.store._transaction
+            count = len(tx.operations)
+            self.assertGreater(count, 0)
+            self.assertGreaterEqual(tx.budget._charged.amount, count * 512)
+            self.assertTrue(all(operation.key._allocation_owner is self.cache.ledger for operation in tx.operations))
+            seen.append(count)
+            raise RuntimeError("retained callback failure")
+        self.profile.callback = fail
+        self.reject(lambda: self.cache.stage(transaction(self.profile, first, second)), "sync_admission_rejected")
+        self.assertEqual(len(seen), 1)
+        self.assertIs(self.cache.store.current, current)
+        self.assertIsNone(self.cache.store.candidate)
+
+    def test_phase_growth_refuses_before_marker_insertion(self):
+        from unittest.mock import patch
+
+        from mesh_plus.sync.normalization import _PhaseKeys
+        original = _PhaseKeys.add
+        observed = []
+
+        def at_limit(keys, key):
+            ledger = self.cache.ledger
+            maximum = ledger.maximum
+            count = len(keys.seen)
+            ledger.maximum = ledger.used + ledger.reserved
+            try:
+                with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                    original(keys, key)
+                self.assertEqual(len(keys.seen), count)
+                self.assertNotIn(key.encoded, keys.seen)
+                observed.append(True)
+                raise ProtocolError("sync_decoded_capacity")
+            finally:
+                ledger.maximum = maximum
+        with patch.object(_PhaseKeys, "add", at_limit):
+            self.reject(lambda: self.cache.admit_baseline(compact(fixture(self.profile)[0])), "sync_decoded_capacity")
+        self.assertEqual(observed, [True])
+        self.assertIsNone(self.cache.store.candidate)
 
     def test_iterator_failure_keeps_scratch_credit_until_owned_close_returns(self):
         closed = []
