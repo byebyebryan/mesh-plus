@@ -212,6 +212,32 @@ def transaction(profile, before, after, *, groups=()):
     return resign(doc)
 
 
+def grouped_fixture(profile):
+    """Two records in two cohorts; explicit and compact forms commit equally."""
+    from mesh_plus.sync.commitment import body_digest, field_digest
+
+    doc, _, _ = fixture(profile, member=False)
+    tables = doc["tables"]
+    other = [*IDENTITY[:-1], "other"]
+    body = {"identity": other, "value": 1}
+    digest = body_digest(bytes.fromhex(profile.descriptor.native_descriptor_digest), body).hex()
+    slot = {**tables["records"][0][1], "alias": 8, "body": digest, "order": other}
+    tables["records"].append([other, slot])
+    tables["bodies"].append([digest, body])
+    tables["observations"].append([[other, BIRTH], {"stamp": 1}])
+    cohorts = [COHORT, ["reference", "scope", "second"]]
+    rows = [([identity, BIRTH, "runtime"], field_digest(bytes.fromhex(profile.descriptor.native_descriptor_digest),
+              identity, BIRTH, "runtime", {"value": 1}).hex()) for identity in (IDENTITY, other)]
+    seal = [1, MerkleMap.baseline("cohort-members", rows).root.hex(), len(rows)]
+    tables["cohorts"] = [[cohort, {"receipt": cohort, "seal": seal}] for cohort in cohorts]
+    tables["memberships"] = [[[cohort, *key], token] for cohort in cohorts for key, token in rows]
+    doc, maps, tag = seal_document(profile, doc)
+    raw = deepcopy(doc)
+    raw["tables"]["memberships"] = [[cohort, [identity, BIRTH], 1]
+                                    for cohort in cohorts for identity in (IDENTITY, other)]
+    return doc, maps, tag, canonical(raw)
+
+
 def resign(document):
     document.pop("transactionId", None)
     document["transactionId"] = sha256(b"mesh-sync-transaction\0" + framed(canonical(document))).hexdigest()
@@ -648,6 +674,179 @@ class CompactTests(unittest.TestCase):
             self.reject(lambda: self.cache.admit_baseline(compact(fixture(self.profile)[0])), "sync_decoded_capacity")
         self.assertEqual(observed, [True])
         self.assertIsNone(self.cache.store.candidate)
+
+    def test_group_atoms_share_exact_alias_and_cohort_owners_on_both_backends(self):
+        from mesh_plus.sync._packed_nodes import PackedNodeArena
+        from mesh_plus.sync.canonical import PackedAtom
+
+        for backend in ("default", "packed"):
+            with self.subTest(backend=backend):
+                self.cache.close()
+                arena = PackedNodeArena(self.cache.ledger) if backend == "packed" else None
+                observed = []
+
+                def inspect(_ctx):
+                    state = self.cache.store._transaction.compact
+                    groups = tuple(state.groups.values())
+                    observed.append(dict(
+                        records=len({id(group[1]) for group in groups}),
+                        cohorts=len({id(group[0]) for group in groups}),
+                        aliasOwners=all(group[1] is state.alias_atom(7 if group[1].encoded ==
+                                       canonical([IDENTITY, BIRTH]) else 8, "after") for group in groups),
+                        markerOwners=all(type(group[-1]) is PackedAtom and
+                                         group[-1]._allocation_owner is self.cache.ledger and
+                                         group[-1]._allocation_encoded == len(group[-1].encoded)
+                                         for group in groups),
+                        orderedAliases=all(type(group[-1]) is PackedAtom and marker is group[-1].encoded for marker, group in
+                                           zip(state.order, groups))))
+                self.profile.callback = inspect
+                self.cache = OwnedSyncCache(self.profile, source_binding("fixture", "source", self.profile.descriptor),
+                                           native_codec=self.codec, ledger=self.cache.ledger)
+                expanded = ReconstructionStore(Profile(), host="fixture")
+                try:
+                    doc, _, tag, raw = grouped_fixture(self.profile)
+                    candidate = self.cache.admit_baseline(raw)
+                    root = expanded.stage_baseline(doc["nativeBinding"], tag, tuple(doc["cursor"]), doc["tables"])
+                    self.assertEqual(candidate.tag.native, tag)
+                    self.assertEqual([(name, table.root) for name, table in self.cache.store.candidate.indexes],
+                                     [(name, table.root) for name, table in root.indexes])
+                    self.assertEqual(len(observed), 1)
+                    self.assertEqual(observed[0]["records"], 2)
+                    self.assertEqual(observed[0]["cohorts"], 2)
+                    self.assertTrue(observed[0]["aliasOwners"])
+                    self.assertTrue(observed[0]["markerOwners"])
+                    self.assertTrue(observed[0]["orderedAliases"])
+                finally:
+                    expanded.close()
+                    self.cache.close()
+                    if arena is not None:
+                        arena.close()
+
+    def test_group_marker_preserves_canonical_bytes_and_owns_encoded_credit(self):
+        from mesh_plus.sync.budget import AllocationLedger
+        from mesh_plus.sync.canonical import Atom, packed
+        from mesh_plus.sync.normalization import _group_marker
+
+        ledger = AllocationLedger()
+        with ledger.allocations():
+            for value in (None, 0, "comma,quote\"雪", ["a", "]", {}], {"z": [1], "a": "雪"}):
+                cohort, record = Atom.own(value), packed(Atom.own([IDENTITY, BIRTH]))
+                marker = _group_marker(cohort, record)
+                self.assertEqual(marker.encoded, canonical([value, IDENTITY, BIRTH]))
+                self.assertEqual(marker._allocation_encoded, len(marker.encoded))
+                self.assertIs(marker._allocation_owner, ledger)
+                cohort = record = marker = None
+        self.assertEqual((ledger.used, ledger.reserved, ledger.encoded, ledger.encoded_reserved,
+                          ledger.pending_units, ledger.pending_encoded), (0, 0, 0, 0, 0, 0))
+
+    def test_group_alias_reuse_keeps_sided_identity_birth_and_owners_distinct(self):
+        from mesh_plus.sync.commitment import body_digest, field_digest
+
+        first = fixture(self.profile)
+        self.cache.admit_baseline(compact(first[0]))
+        other, birth = [*IDENTITY[:-1], "replacement"], [OWNER, 2]
+        changed = deepcopy(fixture(self.profile, 2, 2, member=False)[0])
+        body = {"identity": other, "value": 2}
+        digest = body_digest(bytes.fromhex(self.profile.descriptor.native_descriptor_digest), body).hex()
+        changed["tables"]["records"] = [[other, {"alias": 7, "birth": birth, "body": digest,
+                                                 "order": other, "scope": "scope"}]]
+        changed["tables"]["bodies"] = [[digest, body]]
+        changed["tables"]["observations"] = [[[other, birth], {"stamp": 2}]]
+        token = field_digest(bytes.fromhex(self.profile.descriptor.native_descriptor_digest), other, birth,
+                             "runtime", {"value": 2}).hex()
+        changed["tables"]["memberships"] = [[[COHORT, other, birth, "runtime"], token]]
+        tree = MerkleMap.baseline("cohort-members", [([other, birth, "runtime"], token)])
+        changed["tables"]["cohorts"] = [[COHORT, {"receipt": COHORT, "seal": [2, tree.root.hex(), 1]}]]
+        second = seal_document(self.profile, changed)
+        observed = []
+
+        def inspect(_ctx):
+            state = self.cache.store._transaction.compact
+            removed, added = tuple(state.groups.values())
+            observed.append((removed[1] is state.alias_atom(7, "before"),
+                             added[1] is state.alias_atom(7, "after"), removed[1] is not added[1],
+                             removed[1].encoded == canonical([IDENTITY, BIRTH]),
+                             added[1].encoded == canonical([other, birth])))
+        self.profile.callback = inspect
+        raw = transaction(self.profile, first, second,
+                          groups=[[COHORT, [IDENTITY, BIRTH], 1, None, 0],
+                                  [COHORT, None, None, [other, birth], 1]])
+        candidate = self.cache.stage(raw)
+        self.assertEqual(candidate.tag.native, second[2])
+        self.assertEqual(observed, [(True,) * 5])
+
+    def test_group_marker_refuses_encoded_growth_before_buffer_construction(self):
+        from unittest.mock import patch
+
+        from mesh_plus.sync import normalization
+        original, constructed = normalization._group_marker, []
+
+        def at_limit(cohort, record):
+            ledger = self.cache.ledger
+            maximum = ledger.encoded_maximum
+            ledger.encoded_maximum = ledger.encoded + ledger.pending_encoded + ledger.encoded_reserved
+            try:
+                with patch.object(normalization, "PackedAtom", lambda *args: constructed.append(args)):
+                    return original(cohort, record)
+            finally:
+                ledger.encoded_maximum = maximum
+        with patch.object(normalization, "_group_marker", at_limit):
+            self.reject(lambda: self.cache.admit_baseline(grouped_fixture(self.profile)[3]), "sync_encoded_capacity")
+        self.assertEqual(constructed, [])
+        self.assertIsNone(self.cache.store.candidate)
+
+    def test_reentrant_retirement_keeps_group_marker_credit_through_callback(self):
+        owner = self.cache.input_owner()
+        receive = owner.reserve(4096, encoded_bytes=1024)
+        observed = []
+
+        def close(_ctx):
+            state = self.cache.store._transaction.compact
+            encoded = sum(group[-1]._allocation_encoded for group in state.groups.values())
+            owner.close()
+            self.assertGreaterEqual(self.cache.ledger.pending_encoded, encoded)
+            self.assertTrue(all(group[-1]._allocation_owner is self.cache.ledger for group in state.groups.values()))
+            self.assertEqual(receive.encoded_bytes, 1024)
+            observed.append(encoded)
+        self.profile.callback = close
+        try:
+            self.reject(lambda: self.cache.admit_baseline(grouped_fixture(self.profile)[3]), "sync_input_retired")
+            self.assertEqual(len(observed), 1)
+            self.assertGreater(observed[0], 0)
+            self.assertIsNone(self.cache.store.candidate)
+        finally:
+            receive.close()
+
+    def test_group_cleanup_drops_order_aliases_before_marker_credit(self):
+        from unittest.mock import patch
+
+        from mesh_plus.sync.budget import AllocationLedger
+        from mesh_plus.sync.canonical import PackedAtom
+
+        markers, released, violations = set(), [], []
+        state_ref = None
+        original = AllocationLedger.discard_pending
+
+        def capture(_ctx):
+            nonlocal state_ref
+            state = self.cache.store._transaction.compact
+            state_ref = weakref.ref(state)
+            markers.update(id(group[-1].encoded) for group in state.groups.values())
+
+        def discard(ledger, atom):
+            if type(atom) is PackedAtom and id(atom.encoded) in markers:
+                state = state_ref()
+                if state is not None and any(encoded is atom.encoded for encoded in state.order):
+                    violations.append(True)
+                released.append(1)
+            return original(ledger, atom)
+        self.profile.callback = capture
+        with patch.object(AllocationLedger, "discard_pending", discard):
+            self.cache.admit_baseline(grouped_fixture(self.profile)[3])
+        self.assertEqual(len(markers), 4)
+        self.assertEqual(len(released), 4)
+        self.assertEqual(violations, [])
+        self.assertIsNone(state_ref())
 
     def test_iterator_failure_keeps_scratch_credit_until_owned_close_returns(self):
         closed = []

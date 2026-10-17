@@ -8,6 +8,7 @@ import weakref
 from dataclasses import dataclass
 
 from ..protocol import ProtocolError, check
+from ._allocation import finish, prepay
 from ._boundary import _retire_error, admission_boundary
 from .budget import OwnedUnit
 from .canonical import Atom, FrozenObject, PackedAtom, canonical, decode, packed, thaw
@@ -305,10 +306,27 @@ class _PhaseKeys:
         self.credit.close()
 
 
+def _group_marker(cohort, record):
+    """Join owned canonical values without another decoded identity graph.
+
+    The record is exactly [identity, birth]. The resulting private marker is
+    [cohort, identity, birth], with the same bytes as canonical JSON. Its Atom
+    stays with the group so dictionary/order aliases never outlive its charge.
+    """
+    size = len(cohort.encoded) + len(record.encoded) + 1
+    reservation = prepay(1024 + size * 4, size * 2)
+    try:
+        return finish(PackedAtom(b"[" + cohort.encoded + b"," + record.encoded[1:], 0), reservation)
+    finally:
+        if reservation is not None:
+            reservation.close()
+
+
 class CompactState:
     def __init__(self, store, tx, binding):
         self.store, self.tx, self.spec = store, tx, binding.spec
         self.aliases, self.groups, self.order, self.packs = {}, {}, [], {}
+        self.cohort_atoms = {}
         self.phase, self.complete = None, False
         tx.budget.charge(32768)  # bounded live value controls and iterator state
 
@@ -409,6 +427,20 @@ class CompactState:
         slot = ABSENT if table is None else table.get(value[0])
         check(slot is not ABSENT and thaw(_slot_path(slot, self.spec.alias_spec.birth_path)) == value[1],
               "sync_alias_birth")
+        ref = self.alias_atom(_slot_path(slot, self.spec.alias_spec.alias_path), side)
+        check(ref is not ABSENT and ref.encoded == canonical(value), "sync_alias_birth")
+        return ref
+
+    def _cohort(self, value):
+        atom = Atom.own(value)
+        previous = self.cohort_atoms.get(atom.encoded)
+        if previous is not None:
+            return previous
+        # A transaction can mention the bounded before/after cohort union.
+        check(len(self.cohort_atoms) < 64, "sync_cohort_capacity")
+        self.tx.budget.charge(256)
+        self.cohort_atoms[atom.encoded] = atom
+        return atom
 
     def mask(self, cohort, record, side):
         check(side in ("before", "after"), "sync_reference_side")
@@ -434,22 +466,21 @@ class CompactState:
             check((before is None) == (old is None) and (old is None or type(old) is int and 1 <= old <= 511) and
                   type(new) is int and 0 <= new <= 511 and (after is None) == (new == 0) and
                   not (before is None and after is None), "sync_membership_mask")
-        if before is not None:
-            self._ref(before, "before")
-        if after is not None:
-            self._ref(after, "after")
-        check(before is None or after is None or canonical(before) == canonical(after), "sync_membership_group_identity")
+        before_atom = None if before is None else self._ref(before, "before")
+        after_atom = None if after is None else self._ref(after, "after")
+        check(before_atom is None or after_atom is None or before_atom.encoded == after_atom.encoded,
+              "sync_membership_group_identity")
         record = after if after is not None else before
-        cohort = Atom.own(item.cohort)
-        ref = packed(Atom.own(record))
-        marker = canonical([item.cohort, *record])
-        check(marker not in self.groups, "sync_duplicate_membership_group")
+        cohort = self._cohort(item.cohort)
+        ref = after_atom if after_atom is not None else before_atom
+        marker = _group_marker(cohort, ref)
+        check(marker.encoded not in self.groups, "sync_duplicate_membership_group")
         check(len(self.groups) < (36864 if baseline else 73728), "sync_membership_group_capacity")
         actual = self.mask(item.cohort, record, "before")
         check(actual == (old or 0), "sync_membership_old_mask")
-        tx.budget.charge(1024 + len(marker))
-        self.groups[marker] = cohort, ref, actual, new
-        self.order.append(marker)
+        tx.budget.charge(1024)
+        self.groups[marker.encoded] = cohort, ref, actual, new, marker
+        self.order.append(marker.encoded)
 
     def group_at(self, index):
         self.check()
@@ -477,7 +508,7 @@ class CompactState:
 
     def expand(self, fields):
         tx = self.tx
-        for cohort, ref, _old, new in self.groups.values():
+        for cohort, ref, _old, new, _marker in self.groups.values():
             self._expand_group(thaw(cohort.value), thaw(ref.value), new)
         cohorts = {encoded: cohort for encoded, (cohort, _) in tx.groups.items()}
         for leaf in tx.tables["cohorts"].leaves():
@@ -526,8 +557,9 @@ class CompactState:
         for ref in tuple(self.packs.values()):
             ref.close()
         self.aliases.clear()
+        self.order.clear()  # drop encoded aliases before their marker owners
         self.groups.clear()
-        self.order.clear()
+        self.cohort_atoms.clear()
         self.packs.clear()
         self.tx = None
 
