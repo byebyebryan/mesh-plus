@@ -8,6 +8,7 @@ from test_sync_cache import CLOCK, IDENTITY, REQUEST, CacheProfile, baseline, pr
 from mesh_plus.protocol import ProtocolError
 from mesh_plus.sync import InputOwner, OwnedInputRef, OwnedSyncCache, source_binding
 from mesh_plus.sync.budget import AllocationLedger
+from mesh_plus.sync.reconstruction import MaterialRoot
 
 
 class InputTests(unittest.TestCase):
@@ -183,6 +184,78 @@ class InputTests(unittest.TestCase):
         with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
             self.cache.acquire()
         self.assertEqual(self.cache.ledger.encoded_reserved, 0)
+
+    def test_head_close_keeps_live_material_charged_until_material_cleanup(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            for owned in (False, True):
+                for close in ("owner", "disconnect"):
+                    with self.subTest(owned=owned, close=close):
+                        self.check_head_retirement(owned, close)
+        finally:
+            if enabled:
+                gc.enable()
+
+    def check_head_retirement(self, owned, close):
+        cache, ledger = self.cache, self.cache.ledger
+        inputs = cache.input_owner()
+        raw, _, _ = baseline(self.profile)
+        candidate = cache.admit_baseline(self.seal(raw, inputs))
+        material = cache.store.candidate
+        head = proof(cache, candidate)
+        supplied = self.seal(head, inputs) if owned else head
+        release = ledger.release
+        material_releases, callback_counts = [], []
+
+        def audit(value):
+            if isinstance(value, MaterialRoot):
+                material_releases.append(value)
+            return release(value)
+
+        def callback(ctx):
+            # At this point the physical root is on both confirmation frames.
+            used, encoded = ledger.used, ledger.encoded
+            (inputs.close if close == "owner" else cache.disconnect)()
+            callback_counts.append((used, encoded, ledger.used, ledger.encoded))
+            self.assertEqual(material_releases, [])
+            self.assertIs(cache.store.candidate, material)
+            self.assertIn(id(material), ledger._roots)
+            with self.assertRaises(ProtocolError):
+                _ = candidate.tag
+            with self.assertRaises(ProtocolError):
+                ctx.view.lookup("records", IDENTITY).materialize()
+            with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
+                cache.acquire()
+            # Revocation may release small capability controls, but the full
+            # material allocation cannot become reusable callback scratch.
+            material_cost = ledger.entries[id(material)].cost
+            free = ledger.maximum - ledger.used - ledger.reserved
+            blocker = ledger.reserve(free)
+            try:
+                with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                    ledger.reserve(material_cost)
+            finally:
+                blocker.close()
+            with self.assertRaisesRegex(ProtocolError, "sync_reentrant_admission"):
+                cache.stage(b"invalid")
+
+        self.profile.head_callback = callback
+        with patch.object(ledger, "release", side_effect=audit):
+            with self.assertRaises(ProtocolError) as rejected:
+                cache.confirm(candidate, supplied, CLOCK)
+            # Includes owned-input failure cleanup after check_head has unwound.
+            self.assertEqual(material_releases, [])
+        self.assertIsNone(rejected.exception.__context__)
+        self.assertEqual(len(callback_counts), 1)
+        self.assertIs(cache.store.candidate, material)
+        self.assertIn(id(material), ledger._roots)
+        self.assertEqual(ledger.encoded_reserved, 0)
+        self.profile.head_callback = None
+        # The next material replacement is an allowed reclamation boundary.
+        fresh = cache.admit_baseline(raw)
+        self.assertNotIn(id(material), ledger._roots)
+        cache.confirm(fresh, proof(cache, fresh), CLOCK)
 
     def test_resize_is_atomic_when_capacity_is_exhausted(self):
         receive = self.inputs.reserve(100, encoded_bytes=20)

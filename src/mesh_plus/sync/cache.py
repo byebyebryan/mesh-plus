@@ -214,6 +214,7 @@ class OwnedSyncCache:
         self._closed = False
         self._acquisition = None
         self._inputs = None
+        self._confirming = self._retired_candidate = False
 
     def _replace_history(self, **changes):
         old = self._history
@@ -256,6 +257,7 @@ class OwnedSyncCache:
             return root
 
     def _mint(self, root):
+        check(not self._retired_candidate or root is not self.store.candidate, "sync_candidate_retired")
         with self.ledger.allocations(), self.ledger.reserve(8192) as reservation:
             candidate = CandidateRef(self, secrets.token_hex(16), self._tag(root.tag))
             self.ledger.retain(candidate, reservation=reservation)
@@ -269,8 +271,33 @@ class OwnedSyncCache:
             self.ledger.release(self._candidate_ref)
         self._candidate_ref = None
         if self.store.candidate is not None:
-            self.ledger.release(self.store.candidate)
-            self.store.candidate = None
+            if self._confirming:
+                # Revocation invalidates capabilities immediately. The compact
+                # proof still borrows this graph on its synchronous frames:
+                # keep the existing stage slot and charge, without reclaiming
+                # a roster inside the nonce operation. The next material entry
+                # or explicit owning close retires it outside confirmation.
+                self._retired_candidate = True
+            else:
+                self.ledger.release(self.store.candidate)
+                self.store.candidate = None
+                self._retired_candidate = False
+
+    @contextlib.contextmanager
+    def _material_entry(self):
+        check(not self._confirming, "sync_reentrant_admission")
+        if self._retired_candidate:
+            self._discard_candidate()
+        yield
+
+    @contextlib.contextmanager
+    def _confirmation_entry(self):
+        check(not self._confirming, "sync_reentrant_admission")
+        self._confirming = True
+        try:
+            yield
+        finally:
+            self._confirming = False
 
     def revoke(self, reason):
         with self._lock:
@@ -286,7 +313,7 @@ class OwnedSyncCache:
 
     @admission_boundary
     def admit_baseline(self, raw):
-        with self._lock, input_bytes(self, raw) as (raw, prepaid):
+        with self._lock, self._material_entry(), input_bytes(self, raw) as (raw, prepaid):
             self._check()
             self.revoke("baseline_pending")
             self._discard_candidate()
@@ -320,7 +347,7 @@ class OwnedSyncCache:
 
     @admission_boundary
     def stage(self, raw):
-        with self._lock, input_bytes(self, raw) as (raw, prepaid):
+        with self._lock, self._material_entry(), input_bytes(self, raw) as (raw, prepaid):
             self._check()
             retained_input = False
             try:
@@ -359,7 +386,7 @@ class OwnedSyncCache:
 
     @admission_boundary
     def stage_batch(self, base, frames):
-        with self._lock:
+        with self._lock, self._material_entry():
             check(type(frames) is tuple and 0 < len(frames) <= 4 and
                   all(type(raw) in (bytes, OwnedInputRef) for raw in frames),
                   "sync_catchup_capacity")
@@ -495,7 +522,7 @@ class OwnedSyncCache:
 
     @admission_boundary
     def confirm(self, candidate, proof, clock):
-        with self._lock, input_bytes(self, proof) as (proof, _), self.ledger.allocations():
+        with self._lock, self._confirmation_entry(), input_bytes(self, proof) as (proof, _), self.ledger.allocations():
             retained = pending = None
             try:
                 root = self._candidate(candidate)

@@ -85,7 +85,7 @@ async def acquire(cache, endpoint, *, clock, deadline_ms=None, _now=boottime_ms,
         return candidate
 
     try:
-        with cache._lock:
+        with cache._lock, cache._material_entry():
             cache._check()
             root = cache.store.candidate if cache.store.candidate is not None else cache.store.current
             candidate = None if root is None else cache._mint(root)

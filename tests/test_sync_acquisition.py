@@ -1,7 +1,7 @@
 import asyncio
 import unittest
 
-from test_sync_cache import BRIDGE, CLOCK, NATIVE_BINDING, REQUEST, CacheProfile, baseline, transaction
+from test_sync_cache import BRIDGE, CLOCK, NATIVE_BINDING, REQUEST, CacheProfile, baseline, proof, transaction
 
 from mesh_plus.protocol import ProtocolError
 from mesh_plus.sync import OwnedSyncCache, source_binding
@@ -96,6 +96,21 @@ class AcquisitionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((second.baselines, second.proofs, second.transactions), (0, 1, 0))
         self.assertEqual(tag, second.view.tag)
         self.assertEqual(self.endpoint.calls, ["baseline", "proof", "proof"])
+
+    async def test_reentrant_owner_close_retires_stage_before_next_acquisition_proof(self):
+        raw, _, _ = baseline(self.profile)
+        candidate = self.cache.admit_baseline(raw)
+        material = self.cache.store.candidate
+        inputs = self.cache.input_owner()
+        self.profile.head_callback = lambda ctx: inputs.close()
+        with self.assertRaises(ProtocolError):
+            self.cache.confirm(candidate, proof(self.cache, candidate), CLOCK)
+        self.assertIs(self.cache.store.candidate, material)
+        self.profile.head_callback = None
+        result = await self.run_acquire()
+        self.assertEqual((result.baselines, result.proofs), (1, 1))
+        self.assertEqual(self.endpoint.calls, ["baseline", "proof"])
+        self.assertNotIn(id(material), self.cache.ledger._roots)
 
     async def test_moved_head_catches_up_unconfirmed_baseline_separately_once(self):
         self.endpoint.moves = 1
