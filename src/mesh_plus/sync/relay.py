@@ -286,15 +286,24 @@ class RelayChannel:
         deadline = _deadline(startup_deadline_ms)
         check(self._watch is None and not self._busy, "sync_relay_busy")
         credit = self._relay.ledger.reserve(16384)
-        watch = self._watch = RelayWatch(self, credit, _mint=_MINT)
+        watch = None
         try:
-            watch._source = self._session.watch(cursor)
+            value = _plain(cursor)
+            check(type(value) is list and len(value) == 3 and type(value[0]) is str and
+                  0 < len(value[0]) <= 256 and type(value[1]) is int and 0 <= value[1] < 2**64,
+                  "sync_cursor")
+            hex_digest(value[2])
+            watch = self._watch = RelayWatch(self, tuple(value), credit, _mint=_MINT)
+            watch._source = self._session.watch(value)
             await within_deadline(watch._source.__aenter__(), deadline)
             self._check()
             watch._job = asyncio.create_task(watch._run())
             return watch
         except BaseException:
-            await watch.aclose()
+            if watch is not None:
+                await watch.aclose()
+            else:
+                credit.close()
             raise
 
     async def _write(self, prefix, raw, suffix, deadline, live, *, kind):
@@ -714,10 +723,11 @@ class RelayAcquisition:
 
 
 class RelayWatch:
-    def __init__(self, channel, credit, *, _mint=None):
+    def __init__(self, channel, cursor, credit, *, _mint=None):
         check(_mint is _MINT, "sync_relay_setup")
         self._channel, self._credit = channel, credit
         self._source = self._job = self._close_task = None
+        self._cursor, self._data = cursor, None
         self._closed = False
 
     def _check(self):
@@ -731,7 +741,27 @@ class RelayWatch:
                 packet = await within_deadline(anext(self._source), boottime_ms() + 5000)
                 self._check()
                 data = packet if type(packet) is RelayInputRef else packet.data
-                await self._channel._forward(data, boottime_ms() + 15000, self._check)
+                self._data = data
+                next_cursor = self._cursor
+                def compare(header):
+                    nonlocal next_cursor
+                    if packet is data:
+                        check(header["kind"] == "transaction" and tuple(header["baseCursor"]) == self._cursor,
+                              "sync_relay_chain")
+                        before, after = _native_tag(header["baseTag"]), _native_tag(header["resultTag"])
+                        check(before.binding == after.binding and after.generation == before.generation + 1,
+                              "sync_relay_chain")
+                        cursor(header["baseCursor"], before)
+                        cursor(header["resultCursor"], after, self._cursor[0])
+                        next_cursor = tuple(header["resultCursor"])
+                    else:
+                        check(header["kind"] == "control" and packet.status == header["status"] and
+                              packet.reason == header["reason"] and _plain(packet.tag) == header.get("tag") and
+                              _plain(packet.cursor) == header.get("cursor"), "sync_relay_header")
+                        if header["status"] in ("heartbeat", "complete"):
+                            check(tuple(header["cursor"]) == self._cursor, "sync_relay_chain")
+                await self._channel._forward(data, boottime_ms() + 15000, self._check, expected=compare)
+                self._cursor, self._data = next_cursor, None
                 if packet is not data:
                     packet.close()
                 packet = data = None
@@ -747,10 +777,12 @@ class RelayWatch:
                 data.close()
             if packet is not None and packet is not data:
                 packet.close()
-            packet = data = None
+            packet = data = compare = self._data = None
 
     def _retire(self):
         self._closed = True
+        if self._data is not None:
+            self._data.close()
         if self._job is not None and self._job is not asyncio.current_task():
             self._job.cancel()
 

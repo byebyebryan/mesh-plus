@@ -413,12 +413,14 @@ class RelayTests(unittest.IsolatedAsyncioTestCase):
     async def test_watch_and_capsule_are_independent_and_sequence_serialized(self):
         channel, writer = await self.channel()
         stream = self.source.sessions[0].stream
-        watch = await channel.watch(["owner", 1, "f" * 64], startup_deadline_ms=boottime_ms() + 15000)
+        watch = await channel.watch([NATIVE_BINDING["ownerEpoch"], 1, self.source.tag.root],
+                                    startup_deadline_ms=boottime_ms() + 15000)
         capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
         with self.assertRaisesRegex(ProtocolError, "sync_relay_busy"):
             await capsule.baseline()
         await capsule.aclose()
-        ref = self.source.sessions[0].seal(self.source.raw)
+        update, _, _ = transaction(self.profile, self.source.maps, self.source.tag, 2, 2)
+        ref = self.source.sessions[0].seal(update + b"\n")
         await stream.queue.put(ref)
         async def delivered():
             while writer.line.inspect()["sentFrames"] < 2:
