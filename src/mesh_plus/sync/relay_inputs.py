@@ -94,6 +94,21 @@ def mint_relay_inputs(channel):
         raise
 
 
+@admission_boundary
+def check_relay_ref(channel, supplied, *, pinned=False):
+    """Internal scope/liveness check without consuming or exporting bytes."""
+    check(type(supplied) is RelayInputRef, "sync_input_owner")
+    if pinned:
+        owner = supplied._owner()
+        record = None if owner is None else owner._buffers.get(supplied._key)
+        check(record is not None and record.handle() is supplied and record.consuming and not record.revoked,
+              "sync_input_retired")
+    else:
+        owner, record = supplied._record()
+    owner._check()
+    check(owner._channel() is channel and channel._inputs is owner, "sync_input_owner")
+
+
 @contextmanager
 def relay_bytes(channel, supplied):
     """Private single-consume pin, held through scanner and output unwind."""

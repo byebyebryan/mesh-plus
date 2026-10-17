@@ -30,6 +30,7 @@ class Writer:
         self.close_release.set()
         self.block.set()
         self.limits = (16384, 65536)
+        self.write_hook = self.drain_hook = None
 
     def get_write_buffer_limits(self):
         return self.limits
@@ -45,8 +46,12 @@ class Writer:
             raise EOFError("channel_closed")
         self.pending = value
         self.reached.set()
+        if self.write_hook:
+            self.write_hook(value)
 
     async def drain(self):
+        if self.drain_hook:
+            await self.drain_hook(self.pending)
         await self.block.wait()
         if not self.closed:
             self.fragments.append(bytes(self.pending))
@@ -136,10 +141,43 @@ class Packet:
         self.document = decode(raw)
         self.tag = tuple(self.document["tag"]) if self.document.get("tag") is not None else None
         self.cursor = tuple(self.document["cursor"]) if self.document.get("cursor") is not None else None
+        self.status, self.reason = self.document.get("status"), self.document.get("reason")
 
     def close(self):
         self.data.close()
         self.document = None
+        self.lease.close()
+
+
+class CompletedChanges:
+    """Fixture-owned bounded metadata, not the Observer implementation."""
+
+    def __init__(self, inputs, transactions, completion):
+        self.lease = inputs.reserve(4096)
+        self._transactions, self._completion = transactions, completion
+        self.closed = False
+
+    @property
+    def transactions(self):
+        if self.closed:
+            raise ProtocolError("sync_change_batch_closed")
+        return self._transactions
+
+    @property
+    def completion(self):
+        if self.closed:
+            raise ProtocolError("sync_change_batch_closed")
+        return self._completion
+
+    def close(self):
+        if self.closed:
+            return
+        self.closed = True
+        transactions, completion = self._transactions, self._completion
+        self._transactions = self._completion = None
+        for item in transactions:
+            item.close()
+        completion.close()
         self.lease.close()
 
 
@@ -166,6 +204,7 @@ class Session:
     def __init__(self, source, inputs):
         self.source, self.inputs, self.closed = source, inputs, False
         self.refs, self.packets = [], []  # bounded fixture work only
+        self.batches = []
         self.stream = SourceWatch()
 
     def seal(self, raw):
@@ -180,7 +219,34 @@ class Session:
         return packet
 
     async def changes(self, base, *, target, max_transactions, max_bytes):
-        return tuple(self.seal(raw) for raw in self.source.chain)
+        raise AssertionError("legacy changes cannot supply native completion")
+
+    async def changes_with_completion(self, base, *, target, max_transactions, max_bytes):
+        if self.source.recovery is not None:
+            packet = Packet(self.inputs, self.source.recovery)
+            self.packets.append(packet)
+            return packet
+        refs = tuple(self.seal(raw) for raw in self.source.chain)
+        final = [NATIVE_BINDING["ownerEpoch"], target[1], target[2]] if not self.source.chain else decode(
+            self.source.chain[-1])["resultCursor"]
+        control = {"kind": "control", "descriptor": decode(self.source.profile.descriptor.native_descriptor),
+                   "nativeBindingDigest": target[0], "status": "complete", "reason": "complete",
+                   "tag": target, "cursor": final, "baseTag": base, "targetTag": target,
+                   "ownerClock": {**{key: NATIVE_BINDING[key] for key in
+                       ("bootId", "clockDomain", "uid", "hostScope", "ownerEpoch")}, "boottimeMs": 2000}}
+        raw = canonical(control) + b"\n"
+        if self.source.control_transform:
+            raw = self.source.control_transform(control)
+        self.source.last_complete = raw
+        packet = Packet(self.inputs, raw)
+        self.packets.append(packet)
+        batch = CompletedChanges(self.inputs, refs, packet)
+        self.batches.append(batch)
+        if self.source.batch_hook:
+            replacement = self.source.batch_hook(batch)
+            if replacement is not None:
+                return replacement
+        return batch
 
     async def head_after_nonce(self, challenge):
         document = {"kind": "head", "descriptor": decode(self.source.profile.descriptor.native_descriptor),
@@ -201,6 +267,9 @@ class Session:
         await self.stream.aclose()
         for item in self.refs + self.packets:
             item.close()
+        for batch in self.batches:
+            batch.close()
+        self.batches.clear()
         self.refs.clear()
         self.packets.clear()
 
@@ -210,6 +279,7 @@ class Source:
         self.profile = profile
         raw, self.maps, self.tag = baseline(profile)
         self.raw, self.chain, self.moved = raw + b"\n", [], None
+        self.control_transform = self.batch_hook = self.recovery = self.last_complete = None
         self.sessions, self.closed = [], False
 
     def open_session(self, inputs):
@@ -241,6 +311,7 @@ class RelayTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.ledger.reserved, 0)
         self.assertEqual(self.ledger.encoded, 0)
         self.assertEqual(self.ledger.encoded_reserved, 0)
+        self.assertEqual(self.ledger.pending_units, 0)
         if self.saved_gc:
             gc.enable()
 
@@ -361,7 +432,9 @@ class RelayTests(unittest.IsolatedAsyncioTestCase):
             self.source.chain.append(raw + b"\n")
         capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
         await capsule.changes(self.source.tag, target=tag)
-        self.assertEqual([frame["sequence"] for frame in writer.frames()[1:]], [1, 2, 3, 4])
+        self.assertEqual([frame["sequence"] for frame in writer.frames()[1:]], [1, 2, 3, 4, 5])
+        self.assertEqual(writer.frames()[-1]["payload"]["kind"], "control")
+        self.assertIn(self.source.last_complete[:-1], b"".join(writer.fragments))
         await capsule.aclose()
         other, writer2 = await self.channel()
         self.source.chain[-1] = self.source.chain[0]
@@ -370,6 +443,268 @@ class RelayTests(unittest.IsolatedAsyncioTestCase):
             await capsule.changes(self.source.tag, target=tag)
         self.assertEqual(len(writer2.frames()), 1)
         self.assertTrue(all(self.retired(ref) for ref in self.source.sessions[-1].refs))
+        await capsule.aclose()
+
+    def chain(self, count):
+        self.source.chain.clear()
+        maps, tag = self.source.maps, self.source.tag
+        for generation in range(2, count + 2):
+            raw, maps, tag = transaction(self.profile, maps, tag, generation, generation)
+            self.source.chain.append(raw + b"\n")
+        return tag
+
+    async def test_zero_one_and_four_deliver_exact_terminal_after_material(self):
+        for count in (0, 1, 4):
+            with self.subTest(count=count):
+                target = self.chain(count)
+                self.source.control_transform = lambda value: canonical(value) + b"  \n"
+                channel, writer = await self.channel()
+                capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+                await capsule.changes(self.source.tag, target=target)
+                deliveries = writer.frames()[1:]
+                self.assertEqual([item["sequence"] for item in deliveries], list(range(1, count + 2)))
+                self.assertEqual([item["payload"]["kind"] for item in deliveries], ["material"] * count + ["control"])
+                self.assertIn(self.source.last_complete[:-1], b"".join(writer.fragments))
+                self.assertEqual(deliveries[-1]["payload"]["native"]["cursor"][1:], [target.generation, target.root])
+                batch = self.source.sessions[-1].batches[-1]
+                self.assertTrue(batch.closed)
+                with self.assertRaisesRegex(ProtocolError, "sync_change_batch_closed"):
+                    _ = batch.completion
+                batch.close()
+                await capsule.aclose()
+                await channel.aclose()
+
+    async def test_wrong_completion_or_cursor_epoch_never_emits_a_prefix(self):
+        target = self.chain(1)
+        errors = []
+        cases = {
+            "base": lambda value: value.update(baseTag=target.wire()),
+            "target": lambda value: value.update(targetTag=self.source.tag.wire()),
+            "tag": lambda value: value.update(tag=self.source.tag.wire()),
+            "epoch": lambda value: value["cursor"].__setitem__(0, "foreign-owner"),
+            "root": lambda value: value["cursor"].__setitem__(2, "f" * 64),
+            "status": lambda value: value.update(status="heartbeat"),
+        }
+        for name, change in cases.items():
+            with self.subTest(name=name):
+                def transform(value):
+                    change(value)
+                    return canonical(value) + b"\n"
+                self.source.control_transform = transform
+                channel, writer = await self.channel()
+                capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+                try:
+                    await capsule.changes(self.source.tag, target=target)
+                except ProtocolError as error:
+                    errors.append(error)
+                else:
+                    self.fail("invalid completion accepted")
+                self.assertEqual(len(writer.frames()), 1)
+                self.assertTrue(self.source.sessions[-1].batches[-1].closed)
+                await capsule.aclose()
+                await channel.aclose()
+        self.assertEqual(len(errors), len(cases))
+
+    async def test_chain_cursor_discontinuity_and_malformed_terminal_reject_before_output(self):
+        target = self.chain(2)
+        changed = decode(self.source.chain[1])
+        changed["baseCursor"][0] = changed["resultCursor"][0] = "different-owner"
+        self.source.chain[1] = canonical(changed) + b"\n"
+        channel, writer = await self.channel()
+        capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+        with self.assertRaisesRegex(ProtocolError, "sync_relay_chain"):
+            await capsule.changes(self.source.tag, target=target)
+        self.assertEqual(len(writer.frames()), 1)
+        await capsule.aclose()
+        await channel.aclose()
+        self.source.chain.clear()
+        for malformed in (b'{"kind":"control","kind":"control"}\n', b'{"kind":"control"\n'):
+            # Packet fixture parses metadata, so corruption must occur after
+            # packet construction to reach the independent relay scanner.
+            self.source.control_transform = None
+            def corrupt(batch):
+                old = batch.completion.data
+                batch.completion.data = self.source.sessions[-1].seal(malformed)
+                old.close()
+            self.source.batch_hook = corrupt
+            channel, writer = await self.channel()
+            capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+            with self.assertRaises(ProtocolError):
+                await capsule.changes(self.source.tag, target=self.source.tag)
+            self.assertEqual(len(writer.frames()), 1)
+            await capsule.aclose()
+            await channel.aclose()
+
+    async def test_missing_optional_method_fails_setup_without_legacy_fallback(self):
+        with patch.object(Session, "changes_with_completion", None):
+            line = LineChannel(None, Writer(), "client")
+            with self.assertRaisesRegex(ProtocolError, "sync_relay_setup"):
+                await self.relay.open_channel(line, self.request(), setup_deadline_ms=boottime_ms() + 15000)
+            self.assertTrue(line.closed)
+
+    async def test_outer_control_bound_and_material_quota_checked_before_prefix(self):
+        target = self.chain(1)
+        self.source.control_transform = lambda value: canonical(value) + b" " * (65499 - len(canonical(value))) + b"\n"
+        for maximum in (8388608, 1):
+            channel, writer = await self.channel()
+            capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+            expected = "sync_relay_output" if maximum == 8388608 else "sync_catchup_capacity"
+            with self.assertRaisesRegex(ProtocolError, expected):
+                await capsule.changes(self.source.tag, target=target, max_bytes=maximum)
+            self.assertEqual(len(writer.frames()), 1)
+            await capsule.aclose()
+            await channel.aclose()
+
+    async def test_material_drain_precedes_completion_and_retains_all_input_pins(self):
+        target = self.chain(1)
+        channel, writer = await self.channel()
+        reached, release = asyncio.Event(), asyncio.Event()
+        async def hold(value):
+            if bytes(value) == self.source.chain[0][:-1]:
+                reached.set()
+                await release.wait()
+        writer.drain_hook = hold
+        capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+        job = asyncio.create_task(capsule.changes(self.source.tag, target=target))
+        await asyncio.wait_for(reached.wait(), 1)
+        batch = self.source.sessions[-1].batches[-1]
+        self.assertGreater(batch.lease.heap_bytes, 0)
+        self.assertGreater(batch.completion.lease.heap_bytes, 0)
+        self.assertGreaterEqual(self.ledger.encoded_reserved, len(self.source.chain[0]) + len(self.source.last_complete))
+        self.assertNotIn(self.source.last_complete[:-1], b"".join(writer.fragments))
+        release.set()
+        await job
+        self.assertEqual(writer.frames()[-1]["payload"]["native"]["status"], "complete")
+        await capsule.aclose()
+
+    async def test_source_scope_close_during_drain_revokes_without_touching_sibling(self):
+        target = self.chain(1)
+        channel, writer = await self.channel()
+        sibling, _ = await self.channel()
+        writer.block.clear()
+        writer.close_release.clear()
+        writer.reached.clear()
+        capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+        job = asyncio.create_task(capsule.changes(self.source.tag, target=target))
+        await asyncio.wait_for(writer.reached.wait(), 1)
+        batch = self.source.sessions[0].batches[-1]
+        batch.close()
+        total = len(self.source.chain[0]) + len(self.source.last_complete)
+        self.assertGreaterEqual(self.ledger.encoded_reserved, total)
+        writer.block.set()
+        await asyncio.wait_for(writer.close_started.wait(), 1)
+        self.assertGreaterEqual(self.ledger.encoded_reserved, total)
+        job.cancel()
+        await asyncio.sleep(0)
+        job.cancel()
+        self.assertFalse(job.done())
+        writer.close_release.set()
+        errors = []
+        try:
+            await job
+        except (ProtocolError, asyncio.CancelledError) as error:
+            errors.append(error)
+        self.assertEqual(len(errors), 1)
+        await channel.aclose()
+        self.assertIsNotNone(sibling.input_owner())
+        self.assertFalse(any(self.source.last_complete[:-1] in part for part in writer.fragments))
+        await capsule.aclose()
+
+    async def test_foreign_or_duplicate_ref_is_not_transferred_or_overreleased(self):
+        from types import SimpleNamespace
+        target = self.chain(1)
+        sibling, _ = await self.channel()
+        foreign = self.source.sessions[0].seal(b"{}\n")
+        closed = []
+        for duplicate in (False, True):
+            def invalid(batch):
+                refs = (*batch.transactions, batch.completion.data) if duplicate else (foreign,)
+                return SimpleNamespace(transactions=refs, completion=batch.completion,
+                                       close=lambda: closed.append(True))
+            self.source.batch_hook = invalid
+            channel, writer = await self.channel()
+            capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+            with self.assertRaises(ProtocolError):
+                await capsule.changes(self.source.tag, target=target)
+            await channel.aclose()
+            self.assertEqual(foreign.nbytes, 3)
+            self.assertEqual(len(writer.frames()), 1)
+            await capsule.aclose()
+        self.assertEqual(closed, [])
+        self.assertIsNotNone(sibling.input_owner())
+        foreign.close()
+
+    async def test_failed_transaction_or_completion_write_preserves_pins_through_close(self):
+        target = self.chain(1)
+        errors = []
+        for control in (False, True):
+            channel, writer = await self.channel()
+            writer.close_release.clear()
+            def fail(value):
+                raw = bytes(value)
+                expected = self.source.last_complete[:-1] if control else self.source.chain[0][:-1]
+                if raw == expected:
+                    raise OSError("fixture write failure")
+            writer.write_hook = fail
+            capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+            job = asyncio.create_task(capsule.changes(self.source.tag, target=target))
+            await asyncio.wait_for(writer.close_started.wait(), 1)
+            self.assertGreaterEqual(self.ledger.encoded_reserved, len(self.source.chain[0]) + len(self.source.last_complete))
+            self.assertFalse(job.done())
+            batch = self.source.sessions[-1].batches[-1]
+            writer.close_release.set()
+            try:
+                await job
+            except ProtocolError as error:
+                errors.append(error)
+            await channel.aclose()
+            self.assertTrue(batch.closed)
+            await capsule.aclose()
+        self.assertEqual(len(errors), 2)
+
+    async def test_missing_or_mismatched_control_metadata_has_no_success_prefix(self):
+        from types import SimpleNamespace
+        target = self.chain(1)
+        for name in ("missing", "tag", "reason"):
+            def corrupt(batch):
+                if name == "missing":
+                    return SimpleNamespace(transactions=batch.transactions, completion=None, close=lambda: None)
+                setattr(batch.completion, name, self.source.tag.wire() if name == "tag" else "wrong")
+            self.source.batch_hook = corrupt
+            channel, writer = await self.channel()
+            capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+            with self.assertRaises(ProtocolError):
+                await capsule.changes(self.source.tag, target=target)
+            self.assertEqual(len(writer.frames()), 1)
+            await channel.aclose()
+            await capsule.aclose()
+
+    async def test_recovery_control_is_original_and_never_a_completed_batch(self):
+        channel, writer = await self.channel()
+        session = self.source.sessions[-1]
+        sample = await session.changes_with_completion(self.source.tag.wire(), target=self.source.tag.wire(),
+                                                       max_transactions=4, max_bytes=8388608)
+        document = decode(self.source.last_complete)
+        sample.close()
+        document.update(status="baseline_required", reason="fixture-recovery")
+        self.source.recovery = canonical(document) + b" \n"
+        capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+        await capsule.changes(self.source.tag, target=self.source.tag)
+        self.assertEqual(len(writer.frames()), 2)
+        self.assertEqual(writer.frames()[-1]["payload"]["native"]["status"], "baseline_required")
+        self.assertIn(self.source.recovery[:-1], b"".join(writer.fragments))
+        await capsule.aclose()
+
+    async def test_batch_preallocation_refuses_before_request_or_container_creation(self):
+        channel, writer = await self.channel()
+        capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+        remaining = self.ledger.maximum - self.ledger.used - self.ledger.reserved
+        with self.ledger.reserve(remaining - 1024):
+            with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                await capsule.changes(self.source.tag, target=self.source.tag)
+            session = self.source.sessions[-1]
+            self.assertEqual((session.refs, session.packets, session.batches), ([], [], []))
+            self.assertEqual(len(writer.frames()), 1)
         await capsule.aclose()
 
     @staticmethod

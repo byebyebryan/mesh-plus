@@ -24,7 +24,7 @@ from .cache import source_binding as configured_source_binding
 from .canonical import canonical, decode
 from .commitment import binding_digest, source_root
 from .model import NativeTag, SourceTag, SyncDescriptor, hex_digest
-from .relay_inputs import RelayInputRef, mint_relay_inputs, relay_bytes
+from .relay_inputs import RelayInputRef, check_relay_ref, mint_relay_inputs, relay_bytes
 from .wire import MAX_HEAD, MAX_MESSAGE, MAX_NATIVE, MAX_PROOF, closed, cursor, entries, owner_clock
 
 _MINT = object()
@@ -192,7 +192,7 @@ class SyncRelay:
             owned._inputs = mint_relay_inputs(owned)
             owned._session = self.source.open_session(owned._inputs)
             check(all(callable(getattr(owned._session, name, None)) for name in
-                      ("baseline", "changes", "head_after_nonce", "watch", "aclose")), "sync_relay_setup")
+                      ("baseline", "changes_with_completion", "head_after_nonce", "watch", "aclose")), "sync_relay_setup")
             owned._check()
             await owned._send_control(self._offer("setup", requestBinding=decode(request)), deadline)
             return owned
@@ -421,16 +421,56 @@ class RelayChannel:
 
     async def _forward(self, data, deadline, live, *, expected=None, challenge=None):
         raw = header = None
+        def pinned_live():
+            live()
+            check_relay_ref(self, data, pinned=True)
         try:
             with relay_bytes(self, data) as raw:
                 with self._header(raw, head=challenge is not None) as header:
                     try:
-                        return await self._forward_pinned(raw, header, deadline, live, expected=expected,
+                        return await self._forward_pinned(raw, header, deadline, pinned_live, expected=expected,
                                                           challenge=challenge)
                     finally:
                         raw = header = None
         finally:
-            raw = header = data = None
+            raw = header = data = pinned_live = None
+
+    def _preflight_delivery(self, raw, header, sequence):
+        """Bound every encoded envelope before a changes batch emits a prefix."""
+        payload = None
+        failure = None
+        with self._relay.ledger.reserve(524288, encoded=131072):
+            try:
+                binding = decode(self._relay._binding)
+                payload = {"descriptor": self._relay.descriptor.wire(), "sourceBinding": binding}
+                if header["kind"] == "transaction":
+                    tag = _native_tag(header["resultTag"])
+                    payload.update(kind="material", sourceTag=_source_tag(binding, tag))
+                    maximum, overhead = MAX_MESSAGE, 65536
+                else:
+                    check(header["kind"] == "control", "sync_relay_header")
+                    payload.update(kind="control")
+                    maximum = overhead = MAX_PROOF
+                self._delivery_parts(payload, b',"native":', sequence, raw, maximum, overhead)
+            except BaseException as error:
+                failure = _retire_error(error)
+            finally:
+                raw = header = payload = None
+        if failure is not None:
+            code, signal, public = failure
+            if signal is not None:
+                raise signal
+            raise public if public is not None else ProtocolError(code)
+
+    def _delivery_parts(self, payload, field, sequence, raw, maximum, overhead):
+        check(type(sequence) is int and 0 < sequence < 2**64, "sync_relay_output")
+        prefix = (b'{"protocol":"' + SYNC_PROTOCOL.encode() + b'","kind":"delivery","requestBinding":' +
+                  self._request + b',"sequence":' + str(sequence).encode() +
+                  b',"payload":' + canonical(payload)[:-1] + field)
+        suffix = b"}}\n"
+        check(len(prefix) + len(suffix) <= overhead and len(prefix) + len(raw) - 1 + len(suffix) <= maximum,
+              "sync_relay_output")
+        return prefix, suffix
 
     async def _forward_pinned(self, raw, header, deadline, live, *, expected=None, challenge=None):
         # Metadata, serialization scratch and provisional containers are paid
@@ -493,12 +533,7 @@ class RelayChannel:
         live()
         check(self._sequence < 2**64 - 1, "sync_relay_output")
         sequence = self._sequence + 1
-        prefix = (b'{"protocol":"' + SYNC_PROTOCOL.encode() + b'","kind":"delivery","requestBinding":' +
-                  self._request + b',"sequence":' + str(sequence).encode() +
-                  b',"payload":' + canonical(payload)[:-1] + field)
-        suffix = b"}}\n"
-        check(len(prefix) + len(suffix) <= overhead and len(prefix) + len(raw) - 1 + len(suffix) <= maximum,
-              "sync_relay_output")
+        prefix, suffix = self._delivery_parts(payload, field, sequence, raw, maximum, overhead)
         native = memoryview(raw)[:-1]
         await self._write(prefix, native, suffix, deadline, live, kind="delivery")
         self._sequence = sequence
@@ -616,61 +651,112 @@ class RelayAcquisition:
         await self._run(self._changes(_native_tag(base), _native_tag(target), max_transactions, max_bytes))
 
     async def _changes(self, base, target, count, maximum):
-        batch = data = header = raw = None
+        batch = data = header = raw = completion = transactions = refs = None
+        transferred = False
+        credit = self._channel._relay.ledger.reserve(32768)
         try:
-            batch = await self._channel._session.changes(base.wire(), target=target.wire(),
-                                                        max_transactions=count, max_bytes=maximum)
+            batch = await self._channel._session.changes_with_completion(
+                base.wire(), target=target.wire(), max_transactions=count, max_bytes=maximum)
             self._check()
-            if type(batch) is not tuple:
-                check(callable(getattr(batch, "close", None)), "sync_relay_header")
+            check(callable(getattr(batch, "close", None)), "sync_relay_header")
+            transactions = getattr(batch, "transactions", None)
+            if transactions is None:
                 data = batch.data
-                check(type(data) is RelayInputRef, "sync_input_owner")
+                check_relay_ref(self._channel, data)
+                check(data.nbytes <= MAX_PROOF, "sync_catchup_capacity")
+                transferred = True
+                def recovery(value):
+                    check(value["kind"] == "control" and value["status"] in
+                          ("baseline_required", "gap", "warming", "error") and
+                          value["status"] == batch.status and value["reason"] == batch.reason and
+                          _plain(batch.tag) == value.get("tag") and _plain(batch.cursor) == value.get("cursor"),
+                          "sync_relay_header")
                 await self._channel._forward(data, self._deadline, self._check,
-                                             expected=lambda value: check(value["kind"] == "control" and
-                                                 value["status"] == batch.status and value["reason"] == batch.reason,
-                                                 "sync_relay_header"))
+                                             expected=recovery)
                 return
-            check(len(batch) <= count and all(type(item) is RelayInputRef for item in batch), "sync_catchup_capacity")
-            check(sum(item.nbytes for item in batch) <= maximum, "sync_catchup_capacity")
+            check(type(transactions) is tuple and len(transactions) <= count and
+                  all(type(item) is RelayInputRef for item in transactions), "sync_catchup_capacity")
+            completion = batch.completion
+            check(callable(getattr(completion, "close", None)), "sync_relay_header")
+            data = completion.data
+            refs = (*transactions, data)
+            check(len({id(item) for item in refs}) == len(refs), "sync_relay_duplicate_ref")
+            for item in refs:
+                check_relay_ref(self._channel, item)
+            check(sum(item.nbytes for item in transactions) <= maximum and data.nbytes <= MAX_PROOF,
+                  "sync_catchup_capacity")
+            transferred = True
             # All claims are scanned before a prefix is emitted. Keep each pin
             # in an ExitStack through validation and forwarding of the batch.
             from contextlib import ExitStack
-            with self._channel._relay.ledger.reserve(32768), ExitStack() as stack:
+            with ExitStack() as stack:
                 frames = []
+                completion_raw = completion_header = None
+                def live_batch():
+                    self._check()
+                    current = batch.transactions
+                    check(type(current) is tuple and len(current) == len(transactions) and
+                          all(a is b for a, b in zip(current, transactions, strict=True)) and
+                          batch.completion is completion, "sync_relay_batch_retired")
+                    for item in refs:
+                        check_relay_ref(self._channel, item, pinned=True)
                 try:
-                    previous = base
-                    for data in batch:
+                    previous, previous_cursor = base, None
+                    sequence = self._channel._sequence
+                    for data in transactions:
                         raw = stack.enter_context(relay_bytes(self._channel, data))
                         header = stack.enter_context(self._channel._header(raw))
+                        self._check()
                         check(header["kind"] == "transaction" and _native_tag(header["baseTag"]) == previous,
                               "sync_relay_chain")
                         result = _native_tag(header["resultTag"])
-                        check(result.binding == previous.binding and result.generation == previous.generation + 1,
+                        check(header["nativeBindingDigest"] == result.binding == previous.binding and
+                              result.generation == previous.generation + 1,
                               "sync_relay_chain")
-                        cursor(header["baseCursor"], previous)
-                        cursor(header["resultCursor"], result, header["baseCursor"][0])
+                        before_cursor = cursor(header["baseCursor"], previous)
+                        check(previous_cursor is None or before_cursor == previous_cursor, "sync_relay_chain")
+                        previous_cursor = cursor(header["resultCursor"], result, before_cursor[0])
+                        self._channel._preflight_delivery(raw, header, sequence + len(frames) + 1)
                         frames.append((raw, header))
                         previous = result
                     check(previous == target, "sync_relay_chain")
+                    data = completion.data
+                    completion_raw = stack.enter_context(relay_bytes(self._channel, data))
+                    completion_header = stack.enter_context(self._channel._header(completion_raw))
+                    check(completion_header["kind"] == "control" and
+                          completion_header["status"] == completion.status == "complete" and
+                          completion_header["reason"] == completion.reason and
+                          completion_header["nativeBindingDigest"] == target.binding and
+                          _native_tag(completion_header.get("baseTag")) == base and
+                          _native_tag(completion_header.get("targetTag")) == target and
+                          _native_tag(completion_header.get("tag")) == _native_tag(completion.tag) == target,
+                          "sync_relay_completion")
+                    owner_clock(completion_header["ownerClock"])
+                    final_cursor = cursor(completion_header["cursor"], target,
+                                          completion_header["ownerClock"]["ownerEpoch"])
+                    check(cursor(_plain(completion.cursor), target, final_cursor[0]) == final_cursor,
+                          "sync_relay_completion")
+                    check(previous_cursor is None and base == target or final_cursor == previous_cursor,
+                          "sync_relay_completion")
+                    self._channel._preflight_delivery(completion_raw, completion_header, sequence + len(frames) + 1)
+                    live_batch()
                     # Forward using the already held pins; no second consume.
                     for raw, header in frames:
-                        await self._channel._forward_pinned(raw, header, self._deadline, self._check)
+                        await self._channel._forward_pinned(raw, header, self._deadline, live_batch)
+                    await self._channel._forward_pinned(completion_raw, completion_header, self._deadline, live_batch)
                 finally:
                     frames.clear()
-                    raw = header = None
-            # The source API has verified its native completion before return;
-            # a transport completion control is not fabricated as native JSON.
+                    raw = header = completion_raw = completion_header = live_batch = None
         finally:
-            raw = header = data = None
-            if type(batch) is tuple:
-                for item in batch:
-                    if type(item) is RelayInputRef:
-                        item.close()
-            elif callable(getattr(batch, "close", None)):
-                batch.close()
-            elif batch is not None:
-                self._channel._begin_close()
-            batch = None
+            raw = header = data = transactions = completion = refs = recovery = None
+            try:
+                if transferred:
+                    batch.close()
+                elif batch is not None:
+                    self._channel._begin_close()
+            finally:
+                batch = None
+                credit.close()
 
     @async_admission_boundary
     async def head_after_nonce(self, challenge):
