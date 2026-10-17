@@ -1,0 +1,1654 @@
+{
+  "before": {
+    "nativeRoot": "2b4ffe1e7b65264fae05867a66872b20451487764733355869e204e205a4c335",
+    "tables": [
+      [
+        "bodies",
+        "2cca346fb4f8e1bedd0385e1fd5c9d16dbddaed0582feed9f7586448fe2d2e4f",
+        2
+      ],
+      [
+        "cohorts",
+        "2a0cd5ecbf88ef220a069b2ee9c5136038e82d0f490f695d7ab8edaf760a9fe9",
+        2
+      ],
+      [
+        "memberships",
+        "8251c6df02d78621201590e51b395c2090e5f6fb138c2aff7e7cb87a69445cc8",
+        3
+      ],
+      [
+        "metadata",
+        "81b0d19b13a0a36ebe6f2bbfc6e3b1acecd801bfe52367667d091867522c3911",
+        1
+      ],
+      [
+        "observations",
+        "f74044adbb48acb5e86ee0eb1ca6b913be8e90c89fa8df33bef87b0bc5921102",
+        2
+      ],
+      [
+        "receipts",
+        "b6bcd55824eb7f07b02c31bc8b67fe06f9c0d5d8fb160e31273e32c630419b54",
+        2
+      ],
+      [
+        "records",
+        "92b32d86aaf510ce36032e305900df061cbb4e2c1be5c661b0580951a79dc442",
+        2
+      ],
+      [
+        "scopes",
+        "dd689ae9551c738b841d8197c37aaf5b0435b184f49ae95c391ae71ded408e63",
+        2
+      ]
+    ]
+  },
+  "expandedRoute": "Unchanged G0 DomainIndexPatch.membership_expansion semantics; this supplement neither models nor executes that runtime path",
+  "format": "mesh-compact-patch-review-supplement",
+  "modelSha256": "2363e95bd4e254858e8eb937cf5267f1506b338451f8c61c96df9b25edf95c3d",
+  "pendingRuntime": [
+    "compact callback guard before patch application",
+    "semantic field-token validation and admitted old masks",
+    "generic sparse cell/index/root expansion",
+    "atomic provisional rollback and GC-disabled held errors",
+    "unchanged expanded-route admission",
+    "actual Agent raw schema and joined restore vectors"
+  ],
+  "positiveCases": [
+    {
+      "after": {
+        "nativeRoot": "239310f2aab333683a921d5f1602a18d6d08ca0ed54a46976d3557fb135eb2ad",
+        "tables": [
+          [
+            "bodies",
+            "df5ace273ec6a1b708fc4509e962a98c6914716e490cd2d99830c271dbf0953f",
+            2
+          ],
+          [
+            "cohorts",
+            "434a1792e1fcfa1212402b0ae051fa33196dbc5a2c16df6d6779379e669d599e",
+            2
+          ],
+          [
+            "memberships",
+            "2a2114ac457db457862dda5822e82746a84a036e7b897741c9339ef9572db619",
+            3
+          ],
+          [
+            "metadata",
+            "a44e06ab980d8c08c2d2c24cc6ef0dd96f3f39924da4359536072a799ce572fa",
+            1
+          ],
+          [
+            "observations",
+            "f74044adbb48acb5e86ee0eb1ca6b913be8e90c89fa8df33bef87b0bc5921102",
+            2
+          ],
+          [
+            "receipts",
+            "bf8b41d76040d1b30b96e68dde48310bb0bec3d993b98d1dd5a70512fea314ac",
+            2
+          ],
+          [
+            "records",
+            "7931b95829f60e55243c50c7c1678ab555511d20612de855c10246795d7d3ad8",
+            2
+          ],
+          [
+            "scopes",
+            "dd689ae9551c738b841d8197c37aaf5b0435b184f49ae95c391ae71ded408e63",
+            2
+          ]
+        ]
+      },
+      "callbackExpansion": {
+        "items": [],
+        "type": "tuple"
+      },
+      "groupChanges": [],
+      "logicalTables": {
+        "bodies": [
+          [
+            "38d72bcc6d08bbd69cc7f47bfc675cadb2856f030946e82715c959c4d216ed77",
+            {
+              "fields": {
+                "activity": {
+                  "value": "changed"
+                },
+                "kind": {
+                  "value": "kind"
+                },
+                "lastUpdated": {
+                  "value": "lastUpdated"
+                },
+                "latestTurn": {
+                  "value": "latestTurn"
+                },
+                "outcome": {
+                  "value": "outcome"
+                },
+                "phase": {
+                  "value": "phase"
+                },
+                "runtime": {
+                  "value": "runtime"
+                },
+                "savedIdentity": {
+                  "value": "savedIdentity"
+                },
+                "workspace": {
+                  "value": "workspace"
+                }
+              },
+              "identity": [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              "title": "review"
+            }
+          ],
+          [
+            "d0b35b4ad7de481ba455367ab3723b965b98bb8d3ffc33df90f4174a9a1e0113",
+            {
+              "fields": {
+                "activity": {
+                  "value": "activity"
+                },
+                "kind": {
+                  "value": "kind"
+                },
+                "lastUpdated": {
+                  "value": "lastUpdated"
+                },
+                "latestTurn": {
+                  "value": "latestTurn"
+                },
+                "outcome": {
+                  "value": "outcome"
+                },
+                "phase": {
+                  "value": "phase"
+                },
+                "runtime": {
+                  "value": "runtime"
+                },
+                "savedIdentity": {
+                  "value": "savedIdentity"
+                },
+                "workspace": {
+                  "value": "workspace"
+                }
+              },
+              "identity": [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              "title": "review"
+            }
+          ]
+        ],
+        "cohorts": [
+          [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            {
+              "receipt": [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              "seal": [
+                2,
+                "dd080b2445de88d08b1f2dc5346fc76f7dd4ded9e95d0b838f850218571290d2",
+                3
+              ]
+            }
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "history"
+            ],
+            {
+              "receipt": [
+                "provider",
+                "namespace",
+                "history"
+              ],
+              "seal": [
+                1,
+                "cffdfe3f81f36f92b88256896da5eacee94a048edf25a03398b285f1ef6e2584",
+                0
+              ]
+            }
+          ]
+        ],
+        "memberships": [
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "activity"
+            ],
+            "e5121a3f51d5a17a15f5bce85097a48fd959294aab8d96c671cbe0d7a0b6de5a"
+          ],
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "runtime"
+            ],
+            "d1cf29756ed9e7ebbdfaa9a0455b95aeca116b5614262df96ccd730629ca921f"
+          ],
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "runtime"
+            ],
+            "3dcada762c4aa572c1f63f1ed2ae1c4c769c1ac6076dd5af5522290178c6fe07"
+          ]
+        ],
+        "metadata": [
+          [
+            "reviewGeneration",
+            2
+          ]
+        ],
+        "observations": [
+          [
+            [
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ]
+            ],
+            {
+              "reviewOnly": true
+            }
+          ],
+          [
+            [
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              [
+                "review-owner",
+                1
+              ]
+            ],
+            {
+              "reviewOnly": true
+            }
+          ]
+        ],
+        "receipts": [
+          [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            {
+              "reviewAccepted": 2
+            }
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "history"
+            ],
+            {
+              "reviewAccepted": 2
+            }
+          ]
+        ],
+        "records": [
+          [
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            {
+              "alias": 1,
+              "birth": [
+                "review-owner",
+                1
+              ],
+              "body": "38d72bcc6d08bbd69cc7f47bfc675cadb2856f030946e82715c959c4d216ed77",
+              "order": [
+                0,
+                [
+                  "review-host",
+                  "provider",
+                  "namespace",
+                  "native-id",
+                  "a"
+                ]
+              ],
+              "scope": [
+                "provider",
+                "namespace"
+              ]
+            }
+          ],
+          [
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "β"
+            ],
+            {
+              "alias": 2,
+              "birth": [
+                "review-owner",
+                1
+              ],
+              "body": "d0b35b4ad7de481ba455367ab3723b965b98bb8d3ffc33df90f4174a9a1e0113",
+              "order": [
+                0,
+                [
+                  "review-host",
+                  "provider",
+                  "namespace",
+                  "native-id",
+                  "β"
+                ]
+              ],
+              "scope": [
+                "provider",
+                "namespace"
+              ]
+            }
+          ]
+        ],
+        "scopes": [
+          [
+            [
+              "provider",
+              "namespace",
+              "member",
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ]
+            ],
+            [
+              "review-owner",
+              1
+            ]
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "member",
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ]
+            ],
+            [
+              "review-owner",
+              1
+            ]
+          ]
+        ]
+      },
+      "membershipKeysChanged": [
+        [
+          [
+            "provider",
+            "namespace",
+            "runtime"
+          ],
+          [
+            "review-host",
+            "provider",
+            "namespace",
+            "native-id",
+            "a"
+          ],
+          [
+            "review-owner",
+            1
+          ],
+          "activity"
+        ]
+      ],
+      "name": "retained-token-change-with-omitted-mask"
+    },
+    {
+      "after": {
+        "nativeRoot": "239310f2aab333683a921d5f1602a18d6d08ca0ed54a46976d3557fb135eb2ad",
+        "tables": [
+          [
+            "bodies",
+            "df5ace273ec6a1b708fc4509e962a98c6914716e490cd2d99830c271dbf0953f",
+            2
+          ],
+          [
+            "cohorts",
+            "434a1792e1fcfa1212402b0ae051fa33196dbc5a2c16df6d6779379e669d599e",
+            2
+          ],
+          [
+            "memberships",
+            "2a2114ac457db457862dda5822e82746a84a036e7b897741c9339ef9572db619",
+            3
+          ],
+          [
+            "metadata",
+            "a44e06ab980d8c08c2d2c24cc6ef0dd96f3f39924da4359536072a799ce572fa",
+            1
+          ],
+          [
+            "observations",
+            "f74044adbb48acb5e86ee0eb1ca6b913be8e90c89fa8df33bef87b0bc5921102",
+            2
+          ],
+          [
+            "receipts",
+            "bf8b41d76040d1b30b96e68dde48310bb0bec3d993b98d1dd5a70512fea314ac",
+            2
+          ],
+          [
+            "records",
+            "7931b95829f60e55243c50c7c1678ab555511d20612de855c10246795d7d3ad8",
+            2
+          ],
+          [
+            "scopes",
+            "dd689ae9551c738b841d8197c37aaf5b0435b184f49ae95c391ae71ded408e63",
+            2
+          ]
+        ]
+      },
+      "callbackExpansion": {
+        "items": [],
+        "type": "tuple"
+      },
+      "groupChanges": [
+        [
+          [
+            "provider",
+            "namespace",
+            "runtime"
+          ],
+          [
+            1,
+            [
+              "review-owner",
+              1
+            ]
+          ],
+          17,
+          [
+            1,
+            [
+              "review-owner",
+              1
+            ]
+          ],
+          17
+        ]
+      ],
+      "logicalTables": {
+        "bodies": [
+          [
+            "38d72bcc6d08bbd69cc7f47bfc675cadb2856f030946e82715c959c4d216ed77",
+            {
+              "fields": {
+                "activity": {
+                  "value": "changed"
+                },
+                "kind": {
+                  "value": "kind"
+                },
+                "lastUpdated": {
+                  "value": "lastUpdated"
+                },
+                "latestTurn": {
+                  "value": "latestTurn"
+                },
+                "outcome": {
+                  "value": "outcome"
+                },
+                "phase": {
+                  "value": "phase"
+                },
+                "runtime": {
+                  "value": "runtime"
+                },
+                "savedIdentity": {
+                  "value": "savedIdentity"
+                },
+                "workspace": {
+                  "value": "workspace"
+                }
+              },
+              "identity": [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              "title": "review"
+            }
+          ],
+          [
+            "d0b35b4ad7de481ba455367ab3723b965b98bb8d3ffc33df90f4174a9a1e0113",
+            {
+              "fields": {
+                "activity": {
+                  "value": "activity"
+                },
+                "kind": {
+                  "value": "kind"
+                },
+                "lastUpdated": {
+                  "value": "lastUpdated"
+                },
+                "latestTurn": {
+                  "value": "latestTurn"
+                },
+                "outcome": {
+                  "value": "outcome"
+                },
+                "phase": {
+                  "value": "phase"
+                },
+                "runtime": {
+                  "value": "runtime"
+                },
+                "savedIdentity": {
+                  "value": "savedIdentity"
+                },
+                "workspace": {
+                  "value": "workspace"
+                }
+              },
+              "identity": [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              "title": "review"
+            }
+          ]
+        ],
+        "cohorts": [
+          [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            {
+              "receipt": [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              "seal": [
+                2,
+                "dd080b2445de88d08b1f2dc5346fc76f7dd4ded9e95d0b838f850218571290d2",
+                3
+              ]
+            }
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "history"
+            ],
+            {
+              "receipt": [
+                "provider",
+                "namespace",
+                "history"
+              ],
+              "seal": [
+                1,
+                "cffdfe3f81f36f92b88256896da5eacee94a048edf25a03398b285f1ef6e2584",
+                0
+              ]
+            }
+          ]
+        ],
+        "memberships": [
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "activity"
+            ],
+            "e5121a3f51d5a17a15f5bce85097a48fd959294aab8d96c671cbe0d7a0b6de5a"
+          ],
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "runtime"
+            ],
+            "d1cf29756ed9e7ebbdfaa9a0455b95aeca116b5614262df96ccd730629ca921f"
+          ],
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "runtime"
+            ],
+            "3dcada762c4aa572c1f63f1ed2ae1c4c769c1ac6076dd5af5522290178c6fe07"
+          ]
+        ],
+        "metadata": [
+          [
+            "reviewGeneration",
+            2
+          ]
+        ],
+        "observations": [
+          [
+            [
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ]
+            ],
+            {
+              "reviewOnly": true
+            }
+          ],
+          [
+            [
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              [
+                "review-owner",
+                1
+              ]
+            ],
+            {
+              "reviewOnly": true
+            }
+          ]
+        ],
+        "receipts": [
+          [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            {
+              "reviewAccepted": 2
+            }
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "history"
+            ],
+            {
+              "reviewAccepted": 2
+            }
+          ]
+        ],
+        "records": [
+          [
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            {
+              "alias": 1,
+              "birth": [
+                "review-owner",
+                1
+              ],
+              "body": "38d72bcc6d08bbd69cc7f47bfc675cadb2856f030946e82715c959c4d216ed77",
+              "order": [
+                0,
+                [
+                  "review-host",
+                  "provider",
+                  "namespace",
+                  "native-id",
+                  "a"
+                ]
+              ],
+              "scope": [
+                "provider",
+                "namespace"
+              ]
+            }
+          ],
+          [
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "β"
+            ],
+            {
+              "alias": 2,
+              "birth": [
+                "review-owner",
+                1
+              ],
+              "body": "d0b35b4ad7de481ba455367ab3723b965b98bb8d3ffc33df90f4174a9a1e0113",
+              "order": [
+                0,
+                [
+                  "review-host",
+                  "provider",
+                  "namespace",
+                  "native-id",
+                  "β"
+                ]
+              ],
+              "scope": [
+                "provider",
+                "namespace"
+              ]
+            }
+          ]
+        ],
+        "scopes": [
+          [
+            [
+              "provider",
+              "namespace",
+              "member",
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ]
+            ],
+            [
+              "review-owner",
+              1
+            ]
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "member",
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ]
+            ],
+            [
+              "review-owner",
+              1
+            ]
+          ]
+        ]
+      },
+      "membershipKeysChanged": [
+        [
+          [
+            "provider",
+            "namespace",
+            "runtime"
+          ],
+          [
+            "review-host",
+            "provider",
+            "namespace",
+            "native-id",
+            "a"
+          ],
+          [
+            "review-owner",
+            1
+          ],
+          "activity"
+        ]
+      ],
+      "name": "retained-token-change-with-equal-mask-assertion"
+    },
+    {
+      "after": {
+        "nativeRoot": "1216731f58fe2f7654dd43835a8340ec79ef4eb96ea85f15e0f09953c4c3ac62",
+        "tables": [
+          [
+            "bodies",
+            "08f4344920a3af8643db8c300e63b1b72661f0f73a3df21d21fb1753f8cc16dd",
+            2
+          ],
+          [
+            "cohorts",
+            "2a0cd5ecbf88ef220a069b2ee9c5136038e82d0f490f695d7ab8edaf760a9fe9",
+            2
+          ],
+          [
+            "memberships",
+            "8251c6df02d78621201590e51b395c2090e5f6fb138c2aff7e7cb87a69445cc8",
+            3
+          ],
+          [
+            "metadata",
+            "a44e06ab980d8c08c2d2c24cc6ef0dd96f3f39924da4359536072a799ce572fa",
+            1
+          ],
+          [
+            "observations",
+            "f74044adbb48acb5e86ee0eb1ca6b913be8e90c89fa8df33bef87b0bc5921102",
+            2
+          ],
+          [
+            "receipts",
+            "bf8b41d76040d1b30b96e68dde48310bb0bec3d993b98d1dd5a70512fea314ac",
+            2
+          ],
+          [
+            "records",
+            "bb720183d0f9a8328d15261c40eee97bc4aa75658e6399c7e0ae1f7b801e2404",
+            2
+          ],
+          [
+            "scopes",
+            "dd689ae9551c738b841d8197c37aaf5b0435b184f49ae95c391ae71ded408e63",
+            2
+          ]
+        ]
+      },
+      "callbackExpansion": {
+        "items": [],
+        "type": "tuple"
+      },
+      "groupChanges": [],
+      "logicalTables": {
+        "bodies": [
+          [
+            "9800261594166fc496ae5e71d35dff76901f3f4755bb03c066cd687ee439cf1a",
+            {
+              "fields": {
+                "activity": {
+                  "value": "activity"
+                },
+                "kind": {
+                  "value": "kind"
+                },
+                "lastUpdated": {
+                  "value": "lastUpdated"
+                },
+                "latestTurn": {
+                  "value": "latestTurn"
+                },
+                "outcome": {
+                  "value": "outcome"
+                },
+                "phase": {
+                  "value": "phase"
+                },
+                "runtime": {
+                  "value": "runtime"
+                },
+                "savedIdentity": {
+                  "value": "savedIdentity"
+                },
+                "workspace": {
+                  "value": "workspace"
+                }
+              },
+              "identity": [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              "title": "changed title only"
+            }
+          ],
+          [
+            "d0b35b4ad7de481ba455367ab3723b965b98bb8d3ffc33df90f4174a9a1e0113",
+            {
+              "fields": {
+                "activity": {
+                  "value": "activity"
+                },
+                "kind": {
+                  "value": "kind"
+                },
+                "lastUpdated": {
+                  "value": "lastUpdated"
+                },
+                "latestTurn": {
+                  "value": "latestTurn"
+                },
+                "outcome": {
+                  "value": "outcome"
+                },
+                "phase": {
+                  "value": "phase"
+                },
+                "runtime": {
+                  "value": "runtime"
+                },
+                "savedIdentity": {
+                  "value": "savedIdentity"
+                },
+                "workspace": {
+                  "value": "workspace"
+                }
+              },
+              "identity": [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              "title": "review"
+            }
+          ]
+        ],
+        "cohorts": [
+          [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            {
+              "receipt": [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              "seal": [
+                1,
+                "c20edc113938af1390a5e6ef3dae24f46297c36348a70490125f3b24d4ed8927",
+                3
+              ]
+            }
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "history"
+            ],
+            {
+              "receipt": [
+                "provider",
+                "namespace",
+                "history"
+              ],
+              "seal": [
+                1,
+                "cffdfe3f81f36f92b88256896da5eacee94a048edf25a03398b285f1ef6e2584",
+                0
+              ]
+            }
+          ]
+        ],
+        "memberships": [
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "activity"
+            ],
+            "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d"
+          ],
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "runtime"
+            ],
+            "d1cf29756ed9e7ebbdfaa9a0455b95aeca116b5614262df96ccd730629ca921f"
+          ],
+          [
+            [
+              [
+                "provider",
+                "namespace",
+                "runtime"
+              ],
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              [
+                "review-owner",
+                1
+              ],
+              "runtime"
+            ],
+            "3dcada762c4aa572c1f63f1ed2ae1c4c769c1ac6076dd5af5522290178c6fe07"
+          ]
+        ],
+        "metadata": [
+          [
+            "reviewGeneration",
+            2
+          ]
+        ],
+        "observations": [
+          [
+            [
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ],
+              [
+                "review-owner",
+                1
+              ]
+            ],
+            {
+              "reviewOnly": true
+            }
+          ],
+          [
+            [
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ],
+              [
+                "review-owner",
+                1
+              ]
+            ],
+            {
+              "reviewOnly": true
+            }
+          ]
+        ],
+        "receipts": [
+          [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            {
+              "reviewAccepted": 2
+            }
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "history"
+            ],
+            {
+              "reviewAccepted": 2
+            }
+          ]
+        ],
+        "records": [
+          [
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            {
+              "alias": 1,
+              "birth": [
+                "review-owner",
+                1
+              ],
+              "body": "9800261594166fc496ae5e71d35dff76901f3f4755bb03c066cd687ee439cf1a",
+              "order": [
+                0,
+                [
+                  "review-host",
+                  "provider",
+                  "namespace",
+                  "native-id",
+                  "a"
+                ]
+              ],
+              "scope": [
+                "provider",
+                "namespace"
+              ]
+            }
+          ],
+          [
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "β"
+            ],
+            {
+              "alias": 2,
+              "birth": [
+                "review-owner",
+                1
+              ],
+              "body": "d0b35b4ad7de481ba455367ab3723b965b98bb8d3ffc33df90f4174a9a1e0113",
+              "order": [
+                0,
+                [
+                  "review-host",
+                  "provider",
+                  "namespace",
+                  "native-id",
+                  "β"
+                ]
+              ],
+              "scope": [
+                "provider",
+                "namespace"
+              ]
+            }
+          ]
+        ],
+        "scopes": [
+          [
+            [
+              "provider",
+              "namespace",
+              "member",
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "a"
+              ]
+            ],
+            [
+              "review-owner",
+              1
+            ]
+          ],
+          [
+            [
+              "provider",
+              "namespace",
+              "member",
+              [
+                "review-host",
+                "provider",
+                "namespace",
+                "native-id",
+                "β"
+              ]
+            ],
+            [
+              "review-owner",
+              1
+            ]
+          ]
+        ]
+      },
+      "membershipKeysChanged": [],
+      "name": "body-only-change-with-omitted-mask"
+    }
+  ],
+  "r1FixtureSha256": "5a2abd9ecf309acf9fd37de54bcaa05ef636bcfc07e8a96ab6e549e5dd409adb",
+  "rejectionCases": [
+    {
+      "callbackExpansion": [
+        {
+          "expected": "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d",
+          "key": [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            [
+              "review-owner",
+              1
+            ],
+            "activity"
+          ],
+          "op": "put",
+          "value": "e5121a3f51d5a17a15f5bce85097a48fd959294aab8d96c671cbe0d7a0b6de5a"
+        }
+      ],
+      "cellExpanderCalls": 0,
+      "expectedModelError": "compact_callback_expansion",
+      "inputType": "tuple",
+      "name": "nonempty-correct-callback-cell",
+      "oldToyTablesUnchanged": true
+    },
+    {
+      "callbackExpansion": [
+        {
+          "expected": "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d",
+          "key": [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            [
+              "review-owner",
+              1
+            ],
+            "activity"
+          ],
+          "op": "put",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "cellExpanderCalls": 0,
+      "expectedModelError": "compact_callback_expansion",
+      "inputType": "tuple",
+      "name": "nonempty-wrong-token",
+      "oldToyTablesUnchanged": true
+    },
+    {
+      "callbackExpansion": [
+        {
+          "expected": "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d",
+          "key": [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            [
+              "review-owner",
+              1
+            ],
+            "activity"
+          ],
+          "op": "put",
+          "value": "e5121a3f51d5a17a15f5bce85097a48fd959294aab8d96c671cbe0d7a0b6de5a"
+        },
+        {
+          "expected": "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d",
+          "key": [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            [
+              "review-owner",
+              1
+            ],
+            "activity"
+          ],
+          "op": "put",
+          "value": "e5121a3f51d5a17a15f5bce85097a48fd959294aab8d96c671cbe0d7a0b6de5a"
+        }
+      ],
+      "cellExpanderCalls": 0,
+      "expectedModelError": "compact_callback_expansion",
+      "inputType": "tuple",
+      "name": "nonempty-duplicate-callback-cell",
+      "oldToyTablesUnchanged": true
+    },
+    {
+      "callbackExpansion": [
+        {
+          "expected": "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d",
+          "key": [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            [
+              "review-owner",
+              1
+            ],
+            "activity"
+          ],
+          "op": "put",
+          "value": "e5121a3f51d5a17a15f5bce85097a48fd959294aab8d96c671cbe0d7a0b6de5a"
+        },
+        {
+          "expected": "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d",
+          "key": [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            [
+              "review-owner",
+              1
+            ],
+            "activity"
+          ],
+          "op": "put",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "cellExpanderCalls": 0,
+      "expectedModelError": "compact_callback_expansion",
+      "inputType": "tuple",
+      "name": "nonempty-conflicting-callback-cells",
+      "oldToyTablesUnchanged": true
+    },
+    {
+      "callbackExpansion": [
+        {
+          "expected": "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d",
+          "key": [
+            [
+              "provider",
+              "namespace",
+              "runtime"
+            ],
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            [
+              "review-owner",
+              1
+            ],
+            "activity"
+          ],
+          "op": "remove"
+        }
+      ],
+      "cellExpanderCalls": 0,
+      "expectedModelError": "compact_callback_expansion",
+      "inputType": "tuple",
+      "name": "nonempty-callback-removal",
+      "oldToyTablesUnchanged": true
+    },
+    {
+      "callbackExpansion": [
+        {
+          "expected": "2544180df27f4b728d17d9c833a640ff88486f2ab13d8b5f70858ab3cceb823d",
+          "key": [
+            [
+              "foreign",
+              "namespace",
+              "runtime"
+            ],
+            [
+              "review-host",
+              "provider",
+              "namespace",
+              "native-id",
+              "a"
+            ],
+            [
+              "review-owner",
+              1
+            ],
+            "activity"
+          ],
+          "op": "put",
+          "value": "e5121a3f51d5a17a15f5bce85097a48fd959294aab8d96c671cbe0d7a0b6de5a"
+        }
+      ],
+      "cellExpanderCalls": 0,
+      "expectedModelError": "compact_callback_expansion",
+      "inputType": "tuple",
+      "name": "nonempty-foreign-cohort-cell",
+      "oldToyTablesUnchanged": true
+    },
+    {
+      "callbackExpansion": [
+        null
+      ],
+      "cellExpanderCalls": 0,
+      "expectedModelError": "compact_callback_expansion",
+      "inputType": "tuple",
+      "name": "nonempty-malformed-member",
+      "oldToyTablesUnchanged": true
+    },
+    {
+      "callbackExpansion": [],
+      "cellExpanderCalls": 0,
+      "expectedModelError": "patch_tuple",
+      "inputType": "list",
+      "name": "empty-list-is-not-callback-tuple",
+      "oldToyTablesUnchanged": true
+    },
+    {
+      "callbackExpansion": null,
+      "cellExpanderCalls": 0,
+      "expectedModelError": "patch_tuple",
+      "inputType": "NoneType",
+      "name": "null-is-not-callback-tuple",
+      "oldToyTablesUnchanged": true
+    }
+  ],
+  "scope": "Same-model toy arithmetic and Python callback-shape guard only; no independent/native/runtime admission or rollback acceptance",
+  "tupleNotation": "Callback inputs are Python tuples; JSON arrays in this fixture describe their contents, not wire membership edits"
+}
