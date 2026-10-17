@@ -1,0 +1,35 @@
+{
+  "kind": "byte-bound public input source-contract agreement receipt; not runtime or API/schema freeze",
+  "mesh": {
+    "contract": "docs/delta-sync-owned-input-api.md",
+    "runtimeCheckpoint": "1d50db0ebb92394695647458fc54ce0196ddcbf0",
+    "sha256": "7f7751ecd9df93277a3e7110ca72ebfda343d38fa629cd0212ec40b3a8f1d124"
+  },
+  "observer": {
+    "acceptanceStatement": "Observer accepts that exact common public signature/state contract for its opt-in source implementation",
+    "bytes": 22972,
+    "checkout": "/home/bryan/code/agent-observer-active-feed",
+    "commit": "7a1d6661538a4e632c90c0c6334dbf125a1be969",
+    "currentDocumentMatchesCommit": true,
+    "document": "docs/delta-sync-interface.md",
+    "sha256": "a7bd065a76180c31a96adba7982c51039e0a40c8a316461f7c7e2947981a2669"
+  },
+  "recordedAtUtc": "2026-10-17T01:28:39.295850+00:00",
+  "remainingGates": [
+    "Observer opt-in source-session implementation and native intake qualification",
+    "Mesh acquisition-controller integration for owned sessions",
+    "complete pending/rest/header/DTO/batch/output/stage/pin accounting and inclusive CPU/resource totals",
+    "compact codec agreement, joined native vectors and implementation",
+    "working bounded packed baseline/recovery plus fresh proof within existing deadlines",
+    "dense/cold/recovery/performance/RSS/installed/native acceptance"
+  ],
+  "scope": [
+    "common cache-backed reserve/resize/seal/consume signature and ownership-state contract",
+    "source sessions own their refs/leases and never close a shared InputOwner/service",
+    "unsealed and consuming storage stays charged until actual cleanup"
+  ],
+  "separate": [
+    "A1 relay producer agreement; coordinator review already issued",
+    "no cap, deadline, role, authority, frozen lock/schema, package or deployment change"
+  ]
+}
