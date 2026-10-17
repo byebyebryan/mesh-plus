@@ -1,0 +1,329 @@
+{
+  "binding": {
+    "bridgeId": "cccccccccccccccccccccccccccccccc",
+    "catalogRevision": "toy",
+    "channelEpoch": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "encodingDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "hosts": [
+      "fixture"
+    ],
+    "readerEpoch": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "requestId": "toy-read",
+    "role": "transport-relay",
+    "route": "toy-only"
+  },
+  "checks": [
+    {
+      "name": "request-digest",
+      "outcome": "accept",
+      "value": "63753e6bed9bee916e42db78f01a267cefa513e53da2191ff2c38391de0f36b5"
+    },
+    {
+      "name": "begin-first-byte-anchored",
+      "outcome": "accept",
+      "value": {
+        "active": null,
+        "capsule": 1,
+        "deadline": 16000,
+        "next": 2,
+        "watch": null
+      }
+    },
+    {
+      "name": "variant-baseline",
+      "outcome": "accept",
+      "value": {
+        "active": 2,
+        "capsule": 1,
+        "deadline": 16000,
+        "next": 3,
+        "watch": null
+      }
+    },
+    {
+      "name": "variant-changes",
+      "outcome": "accept",
+      "value": {
+        "active": 2,
+        "capsule": 1,
+        "deadline": 16000,
+        "next": 3,
+        "watch": null
+      }
+    },
+    {
+      "name": "variant-head",
+      "outcome": "accept",
+      "value": {
+        "active": 2,
+        "capsule": 1,
+        "deadline": 16000,
+        "next": 3,
+        "watch": null
+      }
+    },
+    {
+      "name": "variant-watch",
+      "outcome": "accept",
+      "value": {
+        "active": null,
+        "capsule": 1,
+        "deadline": 16000,
+        "next": 3,
+        "watch": 2
+      }
+    },
+    {
+      "name": "variant-end",
+      "outcome": "accept",
+      "value": {
+        "active": null,
+        "capsule": null,
+        "deadline": null,
+        "next": 3,
+        "watch": null
+      }
+    },
+    {
+      "name": "head-beside-watch",
+      "outcome": "accept",
+      "value": {
+        "active": 3,
+        "capsule": 1,
+        "deadline": 16000,
+        "next": 4,
+        "watch": 2
+      }
+    },
+    {
+      "name": "cancel-keeps-watch",
+      "outcome": "accept",
+      "value": {
+        "active": null,
+        "capsule": null,
+        "deadline": null,
+        "next": 5,
+        "watch": 2
+      }
+    },
+    {
+      "name": "new-read-after-cancel",
+      "outcome": "accept",
+      "value": {
+        "active": null,
+        "capsule": 5,
+        "deadline": 45000,
+        "next": 6,
+        "watch": 2
+      }
+    },
+    {
+      "name": "stop-watch-in-new-read",
+      "outcome": "accept",
+      "value": {
+        "active": null,
+        "capsule": 5,
+        "deadline": 45000,
+        "next": 7,
+        "watch": null
+      }
+    },
+    {
+      "name": "proof-cap-less-than-two-seconds",
+      "outcome": "accept",
+      "value": 15500
+    },
+    {
+      "name": "synchronous-overrun-prewrite-rejects",
+      "outcome": "accept",
+      "value": {
+        "deadline": 3000,
+        "mayWrite": false,
+        "now": 3101
+      }
+    },
+    {
+      "name": "watch-outlives-ended-capsule",
+      "outcome": "accept",
+      "value": {
+        "atMs": 30000,
+        "capsule": null,
+        "watch": 2
+      }
+    },
+    {
+      "code": "duplicate",
+      "name": "duplicate",
+      "outcome": "reject"
+    },
+    {
+      "code": "number",
+      "name": "negative-zero",
+      "outcome": "reject"
+    },
+    {
+      "code": "number",
+      "name": "float",
+      "outcome": "reject"
+    },
+    {
+      "code": "number",
+      "name": "nonfinite",
+      "outcome": "reject"
+    },
+    {
+      "code": "framing",
+      "name": "bom",
+      "outcome": "reject"
+    },
+    {
+      "code": "framing",
+      "name": "cr",
+      "outcome": "reject"
+    },
+    {
+      "code": "framing",
+      "name": "no-lf",
+      "outcome": "reject"
+    },
+    {
+      "code": "framing",
+      "name": "two-lf",
+      "outcome": "reject"
+    },
+    {
+      "code": "capacity",
+      "name": "over-bound",
+      "outcome": "reject"
+    },
+    {
+      "code": "tree",
+      "name": "surrogate",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "bool-sequence",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "zero-sequence",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "overflow-sequence",
+      "outcome": "reject"
+    },
+    {
+      "code": "sequence",
+      "name": "gap-sequence",
+      "outcome": "reject"
+    },
+    {
+      "code": "request",
+      "name": "wrong-request",
+      "outcome": "reject"
+    },
+    {
+      "code": "variant",
+      "name": "unknown-field",
+      "outcome": "reject"
+    },
+    {
+      "code": "variant",
+      "name": "unknown-operation",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "null-duration",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "bool-duration",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "zero-duration",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "renew-duration",
+      "outcome": "reject"
+    },
+    {
+      "code": "deadline",
+      "name": "at-acquisition-deadline",
+      "outcome": "reject"
+    },
+    {
+      "code": "deadline",
+      "name": "past-acquisition-deadline",
+      "outcome": "reject"
+    },
+    {
+      "code": "capsule",
+      "name": "old-capsule",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "bool-capsule",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "head-extended",
+      "outcome": "reject"
+    },
+    {
+      "code": "challenge",
+      "name": "head-null-challenge",
+      "outcome": "reject"
+    },
+    {
+      "code": "request",
+      "name": "head-request-substitution",
+      "outcome": "reject"
+    },
+    {
+      "code": "deadline",
+      "name": "head-prewrite-2000",
+      "outcome": "reject"
+    },
+    {
+      "code": "deadline",
+      "name": "head-prewrite-2101",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "fifth-transaction",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "extra-material-byte",
+      "outcome": "reject"
+    },
+    {
+      "code": "sequence",
+      "name": "duplicate-command",
+      "outcome": "reject"
+    },
+    {
+      "code": "integer",
+      "name": "bool-native-generation",
+      "outcome": "reject"
+    }
+  ],
+  "classification": "toy shapes/state/deadlines only; no runtime/imports/I/O/resources/authority",
+  "positives": 14,
+  "rejects": 34,
+  "requestDigest": "63753e6bed9bee916e42db78f01a267cefa513e53da2191ff2c38391de0f36b5"
+}
