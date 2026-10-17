@@ -1,0 +1,193 @@
+test_active_ledger_exact_cap_tracks_receipt_digit_width_without_row_walk
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.057s
+
+OK
+test_active_members_require_matching_scope_and_complete_coverage_support
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.031s
+
+OK
+test_active_negative_becomes_uncertain_after_unrelated_partial_receipt
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.034s
+
+OK
+test_baseline_detaches_one_body_at_a_time_under_pre_copy_reservation
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.222s
+
+OK
+test_body_reservation_rejection_precedes_detached_copy
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.012s
+
+OK
+test_boolean_order_and_malformed_coverage_reason_are_not_equal_wire_values
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.028s
+
+OK
+test_compact_facet_rule_matches_independent_full_semantics
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.028s
+
+OK
+test_descriptor_construction_is_explicit
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.006s
+
+OK
+test_exact_owner_baseline_both_views_and_explicit_descriptor
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.061s
+
+OK
+test_expired_complete_census_is_context_and_does_not_block_material_update
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.049s
+
+OK
+test_forged_birth_or_alias_identity_and_orphan_observation_fail
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.033s
+
+OK
+test_forged_observation_only_facet_fails_without_body_fallback
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.017s
+
+OK
+test_native_n_row_timestamp_refresh_never_reads_or_validates_stable_bodies
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.773s
+
+OK
+test_observation_ref_cannot_abandon_an_unchanged_current_cell
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.018s
+
+OK
+test_orphan_stable_body_rejected_even_with_correct_body_and_native_roots
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.009s
+
+OK
+test_owned_active_confirmation_and_explicit_export_use_public_scope_index
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.031s
+
+OK
+test_owned_confirmation_uses_strict_bounded_head_and_detached_exact_full_export
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.034s
+
+OK
+test_owned_disconnect_revokes_public_context_lookup_iterator_and_export
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.021s
+
+OK
+test_owned_expired_head_confirms_context_without_current_receipts
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.019s
+
+OK
+test_owned_head_reconfirmation_does_not_renew_original_expiry
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.022s
+
+OK
+test_owned_head_schema_receipt_cohort_and_clock_corruption_fail_closed
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.083s
+
+OK
+test_partial_subset_retains_old_context_without_membership_renewal
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.065s
+
+OK
+test_profile_rejects_generation_jump_even_if_generic_engine_accepts_it
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.017s
+
+OK
+test_public_order_index_matches_native_order_through_runtime_transition
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.102s
+
+OK
+test_receipt_diagnostics_do_not_revisit_rows
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.287s
+
+OK
+test_record_removal_prunes_indexes_and_reinsertion_has_new_birth
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.077s
+
+OK
+test_retained_context_cannot_name_another_incarnation_or_future_accept
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.023s
+
+OK
+test_same_digest_body_put_reuses_admission_without_body_copy
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.017s
+
+OK
+test_sparse_body_and_observation_change_validates_one_joined_row
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.083s
+
+OK
+test_structural_relay_ticket_cannot_bypass_independent_domain_or_root_admission
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.056s
+
+OK
+test_warming_empty_baselines_are_material_only
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.009s
+
+OK
+test_wrong_field_token_missing_cell_and_unreferenced_cell_rejected
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.026s
+
+OK
+{"passed": true, "tests": 32, "skips": 0, "excluded": [], "sha256": "8bbcc04358c3719e51a4d8a5006254661bcb75ac2176cfebc4309bfe954f5909"}
