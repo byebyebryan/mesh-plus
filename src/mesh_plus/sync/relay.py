@@ -313,19 +313,25 @@ class RelayChannel:
         channel, credit = self._channel, None
         view = chunk = None
         code = signal = None
+        started = adjusted = False
         transport = channel.writer.transport
         limits = transport.get_write_buffer_limits()
         try:
+            check(boottime_ms() < deadline, "sync_acquisition_deadline")
             credit = self._relay.ledger.reserve(2 * 65536 + 8192, encoded=2 * 65536)
             async with channel.lock:
                 self._check()
                 live()
+                check(boottime_ms() < deadline, "sync_acquisition_deadline")
                 transport.set_write_buffer_limits(high=0, low=0)
+                adjusted = True
                 for part in (prefix, raw, suffix):
                     view = memoryview(part)
                     for start in range(0, len(view), 65536):
                         live()
                         chunk = view[start:start + 65536]
+                        check(boottime_ms() < deadline, "sync_acquisition_deadline")
+                        started = True  # write may partially accept bytes before raising
                         channel.writer.write(chunk)
                         await within_deadline(channel.writer.drain(), deadline)
                         check(boottime_ms() < deadline, "sync_acquisition_deadline")
@@ -341,15 +347,17 @@ class RelayChannel:
         except BaseException as error:
             code, signal, _ = _retire_error(error)
             view = chunk = raw = prefix = suffix = None
-            self._begin_close()
-            await finish_owned(asyncio.create_task(channel.close()))
+            if started:
+                self._begin_close()
+                await finish_owned(asyncio.create_task(channel.close()))
         finally:
             view = chunk = raw = prefix = suffix = None
             try:
-                transport.set_write_buffer_limits(high=limits[1], low=limits[0])
+                if adjusted:
+                    transport.set_write_buffer_limits(high=limits[1], low=limits[0])
             finally:
                 if credit is not None:
-                    if transport.get_write_buffer_size():
+                    if started and transport.get_write_buffer_size():
                         # Failed bounded shutdown is quarantined, not reported
                         # as free storage. The sole writer owns this one pin.
                         self._io_failed, self._output_pin = True, credit
@@ -382,11 +390,13 @@ class RelayChannel:
         return tag
 
     @contextmanager
-    def _header(self, raw, *, head=False):
+    def _header(self, raw, *, head=False, live=None):
         ticket = document = credit = budget = None
         code = signal = None
         try:
             self._check()
+            if live is not None:
+                live()
             check(type(raw) is bytes and raw.endswith(b"\n") and raw.count(b"\n") == 1 and
                   b"\r" not in raw and len(raw) <= (MAX_HEAD if head else MAX_NATIVE), "line_framing")
             callback = self._relay._callbacks[1 if head else 0]
@@ -394,12 +404,16 @@ class RelayChannel:
             ticket = callback(raw, budget)
             check(callable(getattr(ticket, "close", None)), "sync_relay_header")
             self._check()
+            if live is not None:
+                live()
             bound = ticket.header.materialization_bytes
             check(type(bound) is int and bound >= 0, "sync_relay_header")
             budget.finish()
             credit = self._relay.ledger.reserve(bound)
             document = ticket.header.materialize()
             self._check()
+            if live is not None:
+                live()
             check(type(document) is dict and canonical(document["descriptor"]) ==
                   self._relay.descriptor.native_descriptor, "sync_native_descriptor")
             yield document
@@ -413,7 +427,7 @@ class RelayChannel:
                 ticket.close()
             if budget is not None:
                 budget.finish(failed=True)
-            ticket = credit = budget = None
+            ticket = credit = budget = live = None
         if signal is not None:
             raise signal
         if code is not None:
@@ -426,7 +440,7 @@ class RelayChannel:
             check_relay_ref(self, data, pinned=True)
         try:
             with relay_bytes(self, data) as raw:
-                with self._header(raw, head=challenge is not None) as header:
+                with self._header(raw, head=challenge is not None, live=pinned_live) as header:
                     try:
                         return await self._forward_pinned(raw, header, deadline, pinned_live, expected=expected,
                                                           challenge=challenge)
@@ -591,16 +605,17 @@ class RelayAcquisition:
         check(not self._closed and boottime_ms() < self._deadline, "sync_acquisition_deadline")
         self._channel._check()
 
-    async def _run(self, operation, *, head=False):
+    async def _run(self, operation, *, head_deadline=None):
         channel = self._channel
+        deadline = self._deadline if head_deadline is None else head_deadline
         try:
             self._check()
-            check(not channel._busy and (head or channel._watch is None), "sync_relay_busy")
+            check(boottime_ms() < deadline, "sync_acquisition_deadline")
+            check(not channel._busy and (head_deadline is not None or channel._watch is None), "sync_relay_busy")
         except BaseException:
             operation.close()
             raise
         channel._busy = True
-        deadline = min(self._deadline, boottime_ms() + 2000) if head else self._deadline
         # Track the operation task itself, so synchronous retirement from its
         # own scanner does not cancel an outer timer task over its exception.
         job = self._job = asyncio.create_task(operation)
@@ -608,15 +623,20 @@ class RelayAcquisition:
         try:
             await within_deadline(asyncio.shield(job), deadline)
             self._check()
+            check(boottime_ms() < deadline, "sync_acquisition_deadline")
         except BaseException:
             self._retire()
             raise
         finally:
             if not job.done():
                 job.cancel()
-            await finish_owned(asyncio.gather(job, return_exceptions=True))
-            channel._jobs.discard(job)
-            self._job, channel._busy = None, False
+            try:
+                await finish_owned(asyncio.gather(job, return_exceptions=True))
+            finally:
+                channel._jobs.discard(job)
+                self._job, channel._busy = None, False
+                if channel._closed:
+                    await channel.aclose()
 
     @async_admission_boundary
     async def baseline(self):
@@ -751,7 +771,7 @@ class RelayAcquisition:
             try:
                 if transferred:
                     batch.close()
-                elif batch is not None:
+                else:
                     self._channel._begin_close()
             finally:
                 batch = None
@@ -759,6 +779,7 @@ class RelayAcquisition:
 
     @async_admission_boundary
     async def head_after_nonce(self, challenge):
+        deadline = min(self._deadline, boottime_ms() + 2000)
         credit = self._channel._relay.ledger.reserve(32768, encoded=4096)
         value = None
         try:
@@ -768,22 +789,25 @@ class RelayAcquisition:
                 hex_digest(value[name])
             check(value["request"] == sha256(self._channel._request).hexdigest() and
                   len(canonical(value)) <= 4096, "sync_challenge")
-            await self._run(self._head(value), head=True)
+            await self._run(self._head(value, deadline), head_deadline=deadline)
         finally:
             value = challenge = None
             credit.close()
 
-    async def _head(self, challenge):
+    async def _head(self, challenge, deadline):
         data = None
-        try:
-            data = await self._channel._session.head_after_nonce(challenge)
+        def live():
             self._check()
-            await self._channel._forward(data, min(self._deadline, boottime_ms() + 2000), self._check,
-                                         challenge=challenge)
+            check(boottime_ms() < deadline, "sync_acquisition_deadline")
+        try:
+            live()
+            data = await self._channel._session.head_after_nonce(challenge)
+            live()
+            await self._channel._forward(data, deadline, live, challenge=challenge)
         finally:
             if type(data) is RelayInputRef:
                 data.close()
-            data = challenge = None
+            data = challenge = live = None
 
     def _retire(self):
         self._closed = True

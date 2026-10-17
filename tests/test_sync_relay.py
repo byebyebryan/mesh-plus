@@ -715,6 +715,248 @@ class RelayTests(unittest.IsolatedAsyncioTestCase):
         except ProtocolError:
             return True
 
+    async def test_head_original_deadline_covers_source_and_synchronous_scanner(self):
+        errors = []
+        for phase in ("source", "scanner"):
+            for elapsed in (1999, 2000, 2101):
+                with self.subTest(phase=phase, elapsed=elapsed):
+                    channel, writer = await self.channel()
+                    session = self.source.sessions[-1]
+                    capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+                    start = boottime_ms()
+                    clock, writes = [start], []
+                    writer.write_hook = lambda value: writes.append(clock[0] - start)
+                    original = session.head_after_nonce
+                    async def receive(challenge):
+                        result = await original(challenge)
+                        if phase == "source":
+                            clock[0] = start + elapsed
+                        return result
+                    session.head_after_nonce = receive
+                    self.codec.calls.clear()
+                    self.codec.hook = lambda: clock.__setitem__(0, start + elapsed)
+                    challenge = {"nonce": "b" * 64, "target": "d" * 64,
+                                 "request": sha256(canonical(self.request())).hexdigest()}
+                    with (patch("mesh_plus.sync.relay.boottime_ms", side_effect=lambda: clock[0]),
+                          patch("mesh_plus.transport.boottime_ms", side_effect=lambda: clock[0]),
+                          patch("mesh_plus.sync.relay.clock_domain", return_value={
+                              "bootId": "owner-boot", "timeNamespace": "time:1"})):
+                        try:
+                            await capsule.head_after_nonce(challenge)
+                        except ProtocolError as error:
+                            errors.append(error)
+                            self.assertGreaterEqual(elapsed, 2000)
+                        else:
+                            self.assertLess(elapsed, 2000)
+                    if elapsed >= 2000:
+                        self.assertEqual(writes, [])
+                        self.assertEqual(len(writer.frames()), 1)
+                        if phase == "source":
+                            self.assertEqual(self.codec.calls, [])
+                    else:
+                        self.assertTrue(writes)
+                        self.assertTrue(all(value < 2000 for value in writes))
+                        self.assertEqual(writer.frames()[-1]["payload"]["kind"], "proof")
+                    self.codec.hook = None
+                    await capsule.aclose()
+                    await channel.aclose()
+        self.assertEqual(len(errors), 4)
+
+    async def test_head_expiry_queued_on_either_output_lock_preserves_pending_watch(self):
+        errors = []
+        for lock_name in ("_output_lock", "line"):
+            with self.subTest(lock=lock_name):
+                channel, writer = await self.channel()
+                session = self.source.sessions[-1]
+                watch = await channel.watch(["owner", 1, "f" * 64],
+                                            startup_deadline_ms=boottime_ms() + 15000)
+                capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+                lock = writer.line.lock if lock_name == "line" else channel._output_lock
+                await lock.acquire()
+                start = boottime_ms()
+                clock, writes, scanned = [start], [], asyncio.Event()
+                encoded_before = self.ledger.encoded_reserved
+                writer.write_hook = lambda value: writes.append(clock[0] - start)
+                self.codec.hook = scanned.set
+                challenge = {"nonce": "b" * 64, "target": "d" * 64,
+                             "request": sha256(canonical(self.request())).hexdigest()}
+                with (patch("mesh_plus.sync.relay.boottime_ms", side_effect=lambda: clock[0]),
+                      patch("mesh_plus.transport.boottime_ms", side_effect=lambda: clock[0]),
+                      patch("mesh_plus.sync.relay.clock_domain", return_value={
+                          "bootId": "owner-boot", "timeNamespace": "time:1"})):
+                    job = asyncio.create_task(capsule.head_after_nonce(challenge))
+                    try:
+                        await asyncio.wait_for(scanned.wait(), 1)
+                        self.assertTrue(session.refs)
+                        self.assertGreater(self.ledger.encoded_reserved, encoded_before)
+                        self.assertFalse(job.done())
+                        clock[0] = start + 2000
+                    finally:
+                        lock.release()
+                    try:
+                        await job
+                    except ProtocolError as error:
+                        errors.append(error)
+                    self.assertEqual(writes, [])
+                    self.assertFalse(watch._closed)
+                    self.assertIsNotNone(channel.input_owner())
+                self.codec.hook = None
+                await capsule.aclose()
+                await watch.aclose()
+                await channel.aclose()
+        self.assertEqual(len(errors), 2)
+
+    async def test_head_expiry_after_first_fragment_keeps_credit_through_cancelled_close(self):
+        channel, writer = await self.channel()
+        sibling, _ = await self.channel()
+        capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+        start = boottime_ms()
+        clock, writes, errors = [start], [], []
+        def expire(value):
+            writes.append(clock[0] - start)
+            clock[0] = start + 2000
+        writer.write_hook = expire
+        writer.close_release.clear()
+        challenge = {"nonce": "b" * 64, "target": "d" * 64,
+                     "request": sha256(canonical(self.request())).hexdigest()}
+        with (patch("mesh_plus.sync.relay.boottime_ms", side_effect=lambda: clock[0]),
+              patch("mesh_plus.transport.boottime_ms", side_effect=lambda: clock[0]),
+              patch("mesh_plus.sync.relay.clock_domain", return_value={
+                  "bootId": "owner-boot", "timeNamespace": "time:1"})):
+            job = asyncio.create_task(capsule.head_after_nonce(challenge))
+            await asyncio.wait_for(writer.close_started.wait(), 1)
+            self.assertGreater(self.ledger.encoded_reserved, 131072)
+            self.assertFalse(job.done())
+            for _ in range(2):
+                job.cancel()
+                await asyncio.sleep(0)
+            self.assertFalse(job.done())
+            writer.close_release.set()
+            try:
+                await job
+            except (ProtocolError, asyncio.CancelledError) as error:
+                errors.append(error)
+        self.assertEqual(writes, [0])
+        self.assertEqual(len(writer.frames()), 1)
+        self.assertIsNotNone(sibling.input_owner())
+        self.assertEqual(len(errors), 1)
+        await capsule.aclose()
+        await channel.aclose()
+
+    async def test_head_timeout_does_not_reclaim_blocked_watch_output_or_input(self):
+        channel, writer = await self.channel()
+        session = self.source.sessions[-1]
+        watch = await channel.watch([NATIVE_BINDING["ownerEpoch"], 1, self.source.tag.root],
+                                    startup_deadline_ms=boottime_ms() + 15000)
+        update, _, _ = transaction(self.profile, self.source.maps, self.source.tag, 2, 2)
+        writer.reached.clear()
+        writer.block.clear()
+        await session.stream.queue.put(session.seal(update + b"\n"))
+        await asyncio.wait_for(writer.reached.wait(), 1)
+        pending = writer.pending
+        self.assertIsNotNone(pending)
+        watch_credit = self.ledger.encoded_reserved
+        capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+        start = boottime_ms()
+        clock, scanned, errors = [start], asyncio.Event(), []
+        self.codec.hook = scanned.set
+        challenge = {"nonce": "b" * 64, "target": "d" * 64,
+                     "request": sha256(canonical(self.request())).hexdigest()}
+        with (patch("mesh_plus.sync.relay.boottime_ms", side_effect=lambda: clock[0]),
+              patch("mesh_plus.transport.boottime_ms", side_effect=lambda: clock[0])):
+            job = asyncio.create_task(capsule.head_after_nonce(challenge))
+            await asyncio.wait_for(scanned.wait(), 1)
+            self.assertGreater(self.ledger.encoded_reserved, watch_credit)
+            clock[0] = start + 2000
+            try:
+                await job
+            except ProtocolError as error:
+                errors.append(error)
+            self.assertFalse(watch._closed)
+            self.assertIs(writer.pending, pending)
+            self.assertEqual(writer.limits, (0, 0))
+            self.assertGreaterEqual(self.ledger.encoded_reserved, watch_credit)
+            self.assertIsNotNone(channel.input_owner())
+        self.codec.hook = None
+        writer.block.set()
+        async def delivered():
+            while writer.line.inspect()["sentFrames"] < 2:
+                await asyncio.sleep(0)
+        await asyncio.wait_for(delivered(), 1)
+        self.assertEqual(writer.frames()[-1]["payload"]["kind"], "material")
+        self.assertEqual(len(errors), 1)
+        pending = None
+        await capsule.aclose()
+        await watch.aclose()
+        await channel.aclose()
+
+    async def test_invalid_batch_count_and_mixed_types_close_only_source_owned_scope(self):
+        from types import SimpleNamespace
+
+        from mesh_plus.sync.relay_inputs import relay_bytes
+
+        sibling, _ = await self.channel()
+        foreign = self.source.sessions[-1].seal(b"{}\n")
+        errors, unexpected_transfer = [], []
+        # A sibling physical pin remains live through every malformed-result unwind.
+        with relay_bytes(sibling, foreign) as raw:
+            for kind in ("five", "requested-one", "mixed", "list"):
+                target = self.chain(5 if kind == "five" else 2)
+                own_refs = []
+                def invalid(batch):
+                    own_refs.extend((*batch.transactions, batch.completion.data))
+                    rows = batch.transactions
+                    if kind == "mixed":
+                        rows = (rows[0], object())
+                    elif kind == "list":
+                        rows = list(rows)
+                    return SimpleNamespace(transactions=rows, completion=batch.completion,
+                                           close=lambda: unexpected_transfer.append(True))
+                self.source.batch_hook = invalid
+                channel, writer = await self.channel()
+                session = self.source.sessions[-1]
+                capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+                try:
+                    await capsule.changes(self.source.tag, target=target,
+                                          max_transactions=1 if kind == "requested-one" else 4)
+                except ProtocolError as error:
+                    errors.append(error)
+                self.assertTrue(session.closed)
+                self.assertTrue(all(self.retired(ref) for ref in own_refs))
+                with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
+                    channel.input_owner()
+                self.assertEqual(len(writer.frames()), 1)
+                self.assertEqual(raw, b"{}\n")
+                self.assertGreaterEqual(self.ledger.encoded_reserved, len(raw))
+                self.assertIsNotNone(sibling.input_owner())
+                await capsule.aclose()
+                await channel.aclose()
+        self.assertEqual(unexpected_transfer, [])
+        self.assertEqual(len(errors), 4)
+
+    async def test_source_error_before_batch_delivery_closes_partial_owned_result(self):
+        channel, writer = await self.channel()
+        sibling, _ = await self.channel()
+        own_refs, errors = [], []
+        def fail(batch):
+            own_refs.extend((*batch.transactions, batch.completion.data))
+            raise ProtocolError("fixture_source_failed_before_delivery")
+        self.source.batch_hook = fail
+        self.chain(1)
+        session = self.source.sessions[0]
+        capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
+        try:
+            await capsule.changes(self.source.tag, target=self.source.tag)
+        except ProtocolError as error:
+            errors.append(error)
+        self.assertTrue(session.closed)
+        self.assertTrue(all(self.retired(ref) for ref in own_refs))
+        self.assertEqual(len(writer.frames()), 1)
+        self.assertIsNotNone(sibling.input_owner())
+        self.assertEqual(len(errors), 1)
+        await capsule.aclose()
+        await channel.aclose()
+
     async def test_fresh_head_attenuates_actual_moved_tag_without_body_scan(self):
         channel, writer = await self.channel()
         capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
