@@ -54,6 +54,13 @@ single consumption and sparse no-roster-scan behavior. Their codec deliberately
 uses a whole small fixture DTO. It supplies no production streaming, capacity,
 CPU, native-schema or transport acceptance evidence.
 
+A follow-up retirement regression also retains errors from blocked index-key
+and cohort-member iterators. Against `030da1f`, those added checks leave two
+pending allocations (509 bytes) after close with GC disabled. Sanitizing their
+individual iteration steps clears the private frames before ownership retires;
+the extended suite returns all five counters to zero. The original checkpoint
+logs remain bound to its earlier test bytes.
+
 Mesh compatibility review of Observer `c161090` accepts the exact raw/native
 convention for dependent integration: proposal SHA256
 `585d4172400d628737ad68064ab8ecdd768fe7ef29456197c2671722f817c5c2`,

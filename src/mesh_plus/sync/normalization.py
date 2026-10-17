@@ -255,9 +255,16 @@ class _IntentIterator:
         return self
 
     def __next__(self):
+        result = self._next_ref()
+        if result is None:
+            raise StopIteration
+        return result
+
+    @admission_boundary
+    def _next_ref(self):
         tx = self._store.check_permit(self._permit)
         if self._closed or tx.compact is None or self._index >= len(tx.compact.order):
-            raise StopIteration
+            return None
         tx.visits.charge(iteration=True)
         result = MembershipGroupIntent(self._store, self._permit, self._index, _mint=_MINT)
         self._index += 1

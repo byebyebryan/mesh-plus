@@ -398,6 +398,8 @@ class CompactTests(unittest.TestCase):
                 self.reject(lambda: ctx.after.lookup("memberships", [COHORT, IDENTITY, BIRTH, "runtime"]),
                             "sync_memberships_pending")
                 self.reject(lambda: ctx.field_token([IDENTITY, BIRTH], "runtime"), "sync_memberships_pending")
+                self.reject(lambda: list(ctx.after.index("$fields").iter_keys()), "sync_memberships_pending")
+                self.reject(lambda: list(ctx.cohort_members(COHORT)), "sync_memberships_pending")
                 self.assertEqual(ctx.membership_mask(COHORT, [IDENTITY, BIRTH], side="before"), 0)
                 self.assertEqual(ctx.membership_mask(COHORT, [IDENTITY, BIRTH], side="after"), 1)
         self.profile.callback = inspect

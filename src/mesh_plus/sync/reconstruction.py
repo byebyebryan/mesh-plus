@@ -496,6 +496,7 @@ class ReconstructionStore:
             atom = self._atom_at(tx, location)
             return 0 if atom is None or atom is ABSENT else atom.copy_budget
 
+    @admission_boundary
     def index_next(self, permit, side, name, rank, prefix):
         with self._lock:
             tx = self.check_permit(permit)
@@ -521,17 +522,23 @@ class ReconstructionStore:
     def group_members(self, permit, cohort):
         rank, encoded = 0, canonical(cohort)
         while True:
-            with self._lock:
-                tx = self.check_permit(permit)
-                check(tx.compact is None or tx.compact.complete, "sync_memberships_pending")
-                group = tx.groups.get(encoded)
-                if group is None or rank >= len(group[1]):
-                    return
-                leaf = group[1].leaf_at(rank)
-                rank += 1
-                tx.visits.charge(iteration=True)
-                key, value = decode(leaf.key), thaw(leaf.atom.value)
+            result = self._group_next(permit, encoded, rank)
+            if result is None:
+                return
+            rank, key, value = result
             yield key, value
+
+    @admission_boundary
+    def _group_next(self, permit, encoded, rank):
+        with self._lock:
+            tx = self.check_permit(permit)
+            check(tx.compact is None or tx.compact.complete, "sync_memberships_pending")
+            group = tx.groups.get(encoded)
+            if group is None or rank >= len(group[1]):
+                return None
+            leaf = group[1].leaf_at(rank)
+            tx.visits.charge(iteration=True)
+            return rank + 1, decode(leaf.key), thaw(leaf.atom.value)
 
     def _groups(self, table):
         grouped = {}
