@@ -1,0 +1,127 @@
+test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) ... 
+  test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) (phase='source', elapsed=2000) ... FAIL
+  test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) (phase='source', elapsed=2101) ... FAIL
+  test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) (phase='scanner', elapsed=2000) ... FAIL
+  test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) (phase='scanner', elapsed=2101) ... FAIL
+test_head_expiry_queued_on_either_output_lock_preserves_pending_watch (test_sync_relay.RelayTests.test_head_expiry_queued_on_either_output_lock_preserves_pending_watch) ... 
+  test_head_expiry_queued_on_either_output_lock_preserves_pending_watch (test_sync_relay.RelayTests.test_head_expiry_queued_on_either_output_lock_preserves_pending_watch) (lock='_output_lock') ... FAIL
+  test_head_expiry_queued_on_either_output_lock_preserves_pending_watch (test_sync_relay.RelayTests.test_head_expiry_queued_on_either_output_lock_preserves_pending_watch) (lock='line') ... FAIL
+test_head_expiry_after_first_fragment_keeps_credit_through_cancelled_close (test_sync_relay.RelayTests.test_head_expiry_after_first_fragment_keeps_credit_through_cancelled_close) ... ok
+test_head_timeout_does_not_reclaim_blocked_watch_output_or_input (test_sync_relay.RelayTests.test_head_timeout_does_not_reclaim_blocked_watch_output_or_input) ... ok
+test_invalid_batch_count_and_mixed_types_close_only_source_owned_scope (test_sync_relay.RelayTests.test_invalid_batch_count_and_mixed_types_close_only_source_owned_scope) ... ok
+test_source_error_before_batch_delivery_closes_partial_owned_result (test_sync_relay.RelayTests.test_source_error_before_batch_delivery_closes_partial_owned_result) ... FAIL
+
+======================================================================
+FAIL: test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) (phase='source', elapsed=2000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-before-171f21c/tests/test_sync_relay.py", line 752, in test_head_original_deadline_covers_source_and_synchronous_scanner
+    self.assertEqual(writes, [])
+AssertionError: Lists differ: [2000, 2000, 2000] != []
+
+First list contains 3 additional elements.
+First extra element 0:
+2000
+
+- [2000, 2000, 2000]
++ []
+
+======================================================================
+FAIL: test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) (phase='source', elapsed=2101)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-before-171f21c/tests/test_sync_relay.py", line 752, in test_head_original_deadline_covers_source_and_synchronous_scanner
+    self.assertEqual(writes, [])
+AssertionError: Lists differ: [2101, 2101, 2101] != []
+
+First list contains 3 additional elements.
+First extra element 0:
+2101
+
+- [2101, 2101, 2101]
++ []
+
+======================================================================
+FAIL: test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) (phase='scanner', elapsed=2000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-before-171f21c/tests/test_sync_relay.py", line 752, in test_head_original_deadline_covers_source_and_synchronous_scanner
+    self.assertEqual(writes, [])
+AssertionError: Lists differ: [2000] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+2000
+
+- [2000]
++ []
+
+======================================================================
+FAIL: test_head_original_deadline_covers_source_and_synchronous_scanner (test_sync_relay.RelayTests.test_head_original_deadline_covers_source_and_synchronous_scanner) (phase='scanner', elapsed=2101)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-before-171f21c/tests/test_sync_relay.py", line 752, in test_head_original_deadline_covers_source_and_synchronous_scanner
+    self.assertEqual(writes, [])
+AssertionError: Lists differ: [2101] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+2101
+
+- [2101]
++ []
+
+======================================================================
+FAIL: test_head_expiry_queued_on_either_output_lock_preserves_pending_watch (test_sync_relay.RelayTests.test_head_expiry_queued_on_either_output_lock_preserves_pending_watch) (lock='_output_lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-before-171f21c/tests/test_sync_relay.py", line 800, in test_head_expiry_queued_on_either_output_lock_preserves_pending_watch
+    self.assertEqual(writes, [])
+AssertionError: Lists differ: [2000] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+2000
+
+- [2000]
++ []
+
+======================================================================
+FAIL: test_head_expiry_queued_on_either_output_lock_preserves_pending_watch (test_sync_relay.RelayTests.test_head_expiry_queued_on_either_output_lock_preserves_pending_watch) (lock='line')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-before-171f21c/tests/test_sync_relay.py", line 800, in test_head_expiry_queued_on_either_output_lock_preserves_pending_watch
+    self.assertEqual(writes, [])
+AssertionError: Lists differ: [2000] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+2000
+
+- [2000]
++ []
+
+======================================================================
+FAIL: test_source_error_before_batch_delivery_closes_partial_owned_result (test_sync_relay.RelayTests.test_source_error_before_batch_delivery_closes_partial_owned_result)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/unittest/async_case.py", line 90, in _callTestMethod
+    if self._callMaybeAsync(method) is not None:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/unittest/async_case.py", line 112, in _callMaybeAsync
+    return self._asyncioRunner.run(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-before-171f21c/tests/test_sync_relay.py", line 952, in test_source_error_before_batch_delivery_closes_partial_owned_result
+    self.assertTrue(session.closed)
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.181s
+
+FAILED (failures=7)

@@ -1,0 +1,22 @@
+[check] scripts/check-contract-lock.py
+PASS: 33 locked inputs, 25 identical packaged schemas; state core only
+[check] scripts/check-design.py
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-f32218b/scripts/check-design.py", line 651, in <module>
+    main()
+    ~~~~^^
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-f32218b/scripts/check-design.py", line 636, in main
+    test("documentation links and whitespace",lambda: check_links(args.report.resolve() if args.report else None))
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-f32218b/scripts/check-design.py", line 97, in test
+    operation()
+    ~~~~~~~~~^^
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-f32218b/scripts/check-design.py", line 636, in <lambda>
+    test("documentation links and whitespace",lambda: check_links(args.report.resolve() if args.report else None))
+                                                      ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-f32218b/scripts/check-design.py", line 487, in check_links
+    require(linked.exists() or linked == pending_output, "missing_link:"+target)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/mesh-plus/.cache/relay-deadline-f32218b/scripts/check-design.py", line 30, in require
+    raise ValueError(code)
+ValueError: missing_link:evidence/2026-10-16-delta-sync/relay-deadline-review.json
