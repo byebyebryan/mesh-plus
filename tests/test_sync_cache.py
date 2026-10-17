@@ -2,6 +2,7 @@ import copy
 import gc
 import os
 import unittest
+import weakref
 from hashlib import sha256
 from unittest.mock import patch
 
@@ -113,6 +114,48 @@ class CacheTests(unittest.TestCase):
         raw = proof(self.cache, self.candidate)
         self.now += 20
         return self.cache.confirm(self.candidate, raw, CLOCK)
+
+    def test_closed_profile_and_owner_retire_without_cyclic_gc(self):
+        def closed(*, retain_refs):
+            profile = CacheProfile()
+            cache = OwnedSyncCache(profile, source_binding("fixture", "retirement", profile.descriptor),
+                                   request_binding=REQUEST, _now_ms=lambda: 10000, _clock=CLOCK)
+            try:
+                raw, _, _ = baseline(profile)
+                candidate = cache.admit_baseline(raw)
+                cache.confirm(candidate, proof(cache, candidate), CLOCK)
+                # The normal supported callback retains both store-backed body
+                # and cache-backed head refs. Neither should keep its profile
+                # cycle alive after explicit terminal close.
+                retained = (profile.saved, profile.retained_head) if retain_refs else ()
+                refs = {"profile": weakref.ref(profile), "cache": weakref.ref(cache),
+                        "store": weakref.ref(cache.store), "ledger": weakref.ref(cache.ledger)}
+            finally:
+                cache.close()
+            cache.close()
+            self.assertEqual((cache.ledger.used, cache.ledger.encoded, cache.ledger.reserved,
+                              cache.ledger.encoded_reserved, cache.ledger.pending_units), (0, 0, 0, 0, 0))
+            with self.assertRaisesRegex(ProtocolError, "sync_cache_closed"):
+                cache.input_owner()
+            return refs, retained
+
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            for keep in (False, True):
+                for _ in range(8):
+                    refs, retained = closed(retain_refs=keep)
+                    self.assertIsNone(refs["profile"]())
+                    if keep:
+                        for ref in retained:
+                            with self.assertRaisesRegex(ProtocolError, "sync_cache_closed"):
+                                ref.materialize()
+                        ref = None
+                    retained = None
+                    self.assertTrue(all(ref() is None for ref in refs.values()))
+        finally:
+            if enabled:
+                gc.enable()
 
     def test_confirmation_never_reclaims_an_older_material_generation(self):
         self.confirm()

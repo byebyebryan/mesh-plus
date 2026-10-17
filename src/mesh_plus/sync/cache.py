@@ -693,3 +693,6 @@ class OwnedSyncCache:
             self.ledger.release(self._metadata)
             self._metadata = ()
             self._closed = True
+            # Profile callbacks may retain a retired view/head reference back
+            # to this cache. Closing must retire that cycle without cyclic GC.
+            self.profile = self._now_ms = None

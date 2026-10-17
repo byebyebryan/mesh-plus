@@ -970,3 +970,7 @@ class ReconstructionStore:
             self._metadata = self._fingerprint = ()
             self.validators.clear()
             self.index_specs.clear()
+            # A supported callback can retain a retired public value/context.
+            # Break profile -> reference -> store -> profile on terminal close;
+            # invalid references still reject through the closed store first.
+            self.profile = None
