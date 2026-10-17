@@ -21,13 +21,13 @@ _MAX_ITEMS = 64
 class InputOwner:
     """Cache-minted, epoch-bound intake credit, separate from admission."""
 
-    def __init__(self, cache, *, _mint=None):
+    def __init__(self, cache, *, _credit=None, _mint=None):
         check(_mint is _MINT, "sync_input_mint")
+        self._base = _credit
         self._cache = weakref.ref(cache)
         self._ledger = cache.ledger
         self._leases, self._buffers = {}, {}
         self._closed = False
-        self._base = self._ledger.reserve(_BASE_HEAP)
 
     def _check(self):
         cache = self._cache()
@@ -79,7 +79,8 @@ class InputOwner:
 
     def __del__(self):
         if hasattr(self, "_base"):
-            self.close()
+            if hasattr(self, "_closed"):
+                self.close()
             self._base.close()
 
 
@@ -210,7 +211,14 @@ class OwnedInputRef:
 
 
 def mint_input_owner(cache):
-    return InputOwner(cache, _mint=_MINT)
+    # The owner object, weakref and registries are themselves prepaid before
+    # construction, including a first intake attempted at an exhausted cap.
+    credit = cache.ledger.reserve(_BASE_HEAP)
+    try:
+        return InputOwner(cache, _credit=credit, _mint=_MINT)
+    except BaseException:
+        credit.close()
+        raise
 
 
 @contextmanager

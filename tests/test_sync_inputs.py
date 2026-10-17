@@ -1,6 +1,7 @@
 import asyncio
 import gc
 import unittest
+from unittest.mock import patch
 
 from test_sync_cache import CLOCK, REQUEST, CacheProfile, baseline, proof, transaction
 
@@ -142,6 +143,19 @@ class InputTests(unittest.TestCase):
             self.assertEqual(received, [])
         finally:
             blocker.close()
+
+    def test_first_owner_rejection_precedes_owner_control_allocation(self):
+        other = OwnedSyncCache(self.profile, source_binding("fixture", "first", self.profile.descriptor))
+        ledger = other.ledger
+        blocker = ledger.reserve(ledger.maximum - ledger.used - ledger.reserved)
+        try:
+            with patch("mesh_plus.sync.inputs.InputOwner") as constructor:
+                with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                    other.input_owner()
+                constructor.assert_not_called()
+        finally:
+            blocker.close()
+            other.close()
 
     def test_failed_seal_preserves_original_credit_and_exact_bytes_rule(self):
         receive = self.inputs.reserve(10, encoded_bytes=10)
