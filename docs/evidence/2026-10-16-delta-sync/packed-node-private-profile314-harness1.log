@@ -1,0 +1,78 @@
+....F..........FFFFFF..........
+======================================================================
+FAIL: test_body_reservation_rejection_precedes_detached_copy (test_mesh_sync_profile.MeshSyncProfileTest.test_body_reservation_rejection_precedes_detached_copy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer-active-feed/tests/test_mesh_sync_profile.py", line 326, in test_body_reservation_rejection_precedes_detached_copy
+    self.assertEqual(store.ledger.reserved, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 272815 != 0
+
+======================================================================
+FAIL: test_owned_active_confirmation_and_explicit_export_use_public_scope_index (test_mesh_sync_profile.MeshSyncProfileTest.test_owned_active_confirmation_and_explicit_export_use_public_scope_index)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer-active-feed/tests/test_mesh_sync_profile.py", line 111, in tearDown
+    self.assertEqual(cache.ledger.reserved, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 275920 != 0
+
+======================================================================
+FAIL: test_owned_confirmation_uses_strict_bounded_head_and_detached_exact_full_export (test_mesh_sync_profile.MeshSyncProfileTest.test_owned_confirmation_uses_strict_bounded_head_and_detached_exact_full_export)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer-active-feed/tests/test_mesh_sync_profile.py", line 111, in tearDown
+    self.assertEqual(cache.ledger.reserved, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 275075 != 0
+
+======================================================================
+FAIL: test_owned_disconnect_revokes_public_context_lookup_iterator_and_export (test_mesh_sync_profile.MeshSyncProfileTest.test_owned_disconnect_revokes_public_context_lookup_iterator_and_export)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer-active-feed/tests/test_mesh_sync_profile.py", line 111, in tearDown
+    self.assertEqual(cache.ledger.reserved, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 275093 != 0
+
+======================================================================
+FAIL: test_owned_expired_head_confirms_context_without_current_receipts (test_mesh_sync_profile.MeshSyncProfileTest.test_owned_expired_head_confirms_context_without_current_receipts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer-active-feed/tests/test_mesh_sync_profile.py", line 111, in tearDown
+    self.assertEqual(cache.ledger.reserved, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 275075 != 0
+
+======================================================================
+FAIL: test_owned_head_reconfirmation_does_not_renew_original_expiry (test_mesh_sync_profile.MeshSyncProfileTest.test_owned_head_reconfirmation_does_not_renew_original_expiry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer-active-feed/tests/test_mesh_sync_profile.py", line 111, in tearDown
+    self.assertEqual(cache.ledger.reserved, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 275077 != 0
+
+======================================================================
+FAIL: test_owned_head_schema_receipt_cohort_and_clock_corruption_fail_closed (test_mesh_sync_profile.MeshSyncProfileTest.test_owned_head_schema_receipt_cohort_and_clock_corruption_fail_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer-active-feed/tests/test_mesh_sync_profile.py", line 111, in tearDown
+    self.assertEqual(cache.ledger.reserved, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 275093 != 0
+
+----------------------------------------------------------------------
+Ran 31 tests in 2.391s
+
+FAILED (failures=7)
+Traceback (most recent call last):
+  File "<string>", line 21, in <module>
+    arena.close()
+    ~~~~~~~~~~~^^
+  File "/home/bryan/code/mesh-plus/src/mesh_plus/sync/_packed_nodes.py", line 354, in close
+    check(self.live_nodes == self._maps == self._controls == 0, "sync_packed_in_use")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/mesh-plus/src/mesh_plus/protocol.py", line 28, in check
+    raise ProtocolError(code)
+mesh_plus.protocol.ProtocolError: sync_packed_in_use

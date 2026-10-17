@@ -1,0 +1,133 @@
+{
+  "artifacts": {
+    "docs/evidence/2026-10-16-delta-sync/PACKED-NODES.md": {
+      "bytes": 9772,
+      "sha256": "8e2b9c95d96236a06eab268d353a74837395a2705db4c8c9ebbd6f23656f81b9"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-default-compatibility311-harness1.log": {
+      "bytes": 98,
+      "sha256": "fb52cabe8a9eb41f5d1b4dcf9cc7a3a55b1c5ea9545c4bb373bde1b078f57009"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-default-compatibility311.log": {
+      "bytes": 98,
+      "sha256": "6e680261c61ea25cae77285948aef4adc12066c194fd3fb70803473628d40e40"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-default-compatibility314-harness1.log": {
+      "bytes": 98,
+      "sha256": "dd92c25b2bf6ed79522551bf71f42f70dd490062b65342fcabd34db287c3c0bc"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-default-compatibility314.log": {
+      "bytes": 98,
+      "sha256": "709b1baf84e012c3a70a70e13c072d9721375ba5759cc5a85285b63d84e0e08d"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-density-r1.json": {
+      "bytes": 14869,
+      "sha256": "9d975332d9b932b2b6ef6e13913bcfa01526c99106051fc08ec78f6d6e95f736"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-density-r2.json": {
+      "bytes": 12292,
+      "sha256": "bc6975f1f327415116690edc079a8dd40ab6d1c2f45a6b2f55ea76d8e0d3c872"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-density-r3.json": {
+      "bytes": 9689,
+      "sha256": "8f0ab59f8bfb5f761cb5b6b6d1d93726ccf8862ecd3e5901d30862c0f73a5e82"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-density-r4.json": {
+      "bytes": 27438,
+      "sha256": "719d7208374226dd7d8c5db9bc9f02fb8d9c3de33b3d618fa3f7d3d6a225147a"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-density-r5.json": {
+      "bytes": 27962,
+      "sha256": "ef1ff847308f2ce3bdf72453e03c810e054f6ee27f0c8efa7da5fac42d4fb0ff"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-private-profile311-harness1.log": {
+      "bytes": 4454,
+      "sha256": "7b7759923322ad5ff045ba8d02df6d96a30a1692eabae66f114c83c9de39962a"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-private-profile311.log": {
+      "bytes": 174,
+      "sha256": "4808d40573ae171fe1e006528b1dd106133748522e9ae9972697a061139a73cd"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-private-profile314-harness1.log": {
+      "bytes": 4905,
+      "sha256": "990556d8f87314d2d29b9383fdcba2e725973e4360b6636b4dd0f556cbdd6137"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-private-profile314.log": {
+      "bytes": 174,
+      "sha256": "6411387e0f34e184f6bbecdce29773baaca6763a60bb31bf5b5de7e6884a9f3b"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-source-checks-harness1.json": {
+      "bytes": 23196,
+      "sha256": "0bf0b5c29145af25e86998c4a89aa7722f5f9f26b6aa5a91a2ab9e5d0d9673c9"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-source-checks.json": {
+      "bytes": 24846,
+      "sha256": "2b14d97333e29a0200bd5e92779bc8ab0906440fd33dbb8c978ddf5ce6c71631"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-sparse-work-held-baseline.json": {
+      "bytes": 11319,
+      "sha256": "fd6f55dd3af3dc95cd69d05b69ed7d1cc57830ce39eabadf437ca1caa4039cf2"
+    },
+    "docs/evidence/2026-10-16-delta-sync/packed-node-sparse-work.json": {
+      "bytes": 11322,
+      "sha256": "ac5a784d47f60521bdfa49cf58cb343c3df78c2d6c7bac594b6f7fa37ff7504d"
+    },
+    "docs/evidence/2026-10-16-delta-sync/verify_packed_source-harness1.py": {
+      "bytes": 5509,
+      "sha256": "12eaad3bca879912797054505ab2e51d64f0192dbd55c81f8151c8c47b15c326"
+    },
+    "docs/evidence/2026-10-16-delta-sync/verify_packed_source.py": {
+      "bytes": 6401,
+      "sha256": "cb9ef6455acaf0d6d047e9d2c5e53acd749c01af0ae2df2663ee2741d7eddd6f"
+    },
+    "docs/evidence/2026-10-16-delta-sync/verify_packed_sparse.py": {
+      "bytes": 3875,
+      "sha256": "e7b3c5b57552e83d666afc60e5826e9b9502554f4818cbecfc36bbc727a0208e"
+    },
+    "docs/evidence/2026-10-16-delta-sync/verify_packed_sparse_held_baseline.py": {
+      "bytes": 3797,
+      "sha256": "eb435bc102485f5f2e315732473b8106efc95a1baec2fc69d6c7d135938cac2a"
+    }
+  },
+  "developmentOnly": [
+    "density r1/r2 predate final representation",
+    "density r3/r4 use removed callback-credit deduction",
+    "harness1 raw log paths map to same stem with -harness1 before suffix; final runner explicitly owns arenas",
+    "held-baseline sparse run retained instrumentation map references; final run holds meters only"
+  ],
+  "effects": {
+    "packageAllocation": false,
+    "productionSelection": false,
+    "rollout": false,
+    "serviceAction": false,
+    "siblingEdits": false
+  },
+  "finalCompatibility": "packed-node-source-checks.json",
+  "finalDensity": "packed-node-density-r5.json",
+  "finalSparse": "packed-node-sparse-work.json",
+  "kind": "private source structural checkpoint; no G1/artifact/producer acceptance",
+  "meshSourceAndTestInputsVerifiedAgainstCommit": 70,
+  "observerInputCount": 91,
+  "protectedInputs": {
+    "contracts/LOCK.json": "11736752d08b7e29688a5816327b86477a615b1c7af8c76bfb47278dcc1890a4",
+    "dist/private/0.1.0a23-1978805-73455186/mesh_plus-0.1.0a23-py3-none-any.whl": "73455186e187198c8e44b6ae6c381926809931a176f17614864141c62ff850c2",
+    "docs/delta-sync-codec-contract-r1.md": "a67f11aee6c4b9f50048fbda55bdd4f82c6766ec69cd07abf31b749c3ba5b0b8",
+    "docs/delta-sync-contract-appendix.md": "a376bc848a78027d4fd723e8a2959dbbc4e00114da132d3a5d2733a6ebce2eb6",
+    "docs/delta-sync-owned-input-api.md": "7f7751ecd9df93277a3e7110ca72ebfda343d38fa629cd0212ec40b3a8f1d124",
+    "docs/delta-sync-relay-api-r2.md": "8616bfba7c05dcf8982e431309bcd0bdf354c91bc023fdf0fcf85dcbe4c7abdd",
+    "docs/delta-sync-relay-lifecycle-r3.md": "eb5c217c544bbe10766c7c0f32d574294412c6f6230c7ad6b95a2a57483c0c9f"
+  },
+  "remaining": [
+    "actual Agent aggregate input/output/pins and native frame capacity",
+    "complete encoded peak and RSS/plateau",
+    "cold/dense/recovery and whole-pipeline CPU/bytes",
+    "compact and A1 relay same-byte interface closure",
+    "installed artifacts, native IPC/fixed SSH and paired acceptance"
+  ],
+  "rootStorageReview": {
+    "commit": "0aa5f5b0f967fc8dd9ce72f82d18a90dd982683d",
+    "sha256": "8dac4913e166eaa8ffed30bf604a4777bf6712ed1eaab0155a4190a0d16f7b18"
+  },
+  "runtimeCommit": "18e95c1791e66d20a211aa7d96b44d49b7fb78b7",
+  "runtimeInputsVerifiedAgainstCommit": 60
+}
