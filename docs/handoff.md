@@ -348,6 +348,11 @@ replace the deployed authority wheel until an explicit paired release/deploy.
   preserves the first inspection.
 - [Implementation checkpoints](implementation-progress.md): cumulative history
   with counts and pending gates as they stood at each checkpoint.
+- [Compact G1 source checkpoint](delta-sync-codec-g1.md) and its
+  [exact source/test evidence](evidence/2026-10-16-delta-sync/compact-g1-iterator-review.json):
+  opt-in generic R2 normalization work. Actual Agent streaming integration,
+  resource/performance and installed-pair acceptance remain open; it changes
+  no accepted artifact or operational selection.
 - [SSH integration](ssh-plus-integration.md): current authority selection and
   retained configuration/history ownership. Managed deployment evidence lives
   in [SSH Plus evidence](https://github.com/byebyebryan/rofi-ssh-plus/blob/main/docs/evidence/2026-10-09-ssh-mesh-default.json).

@@ -1,0 +1,45 @@
+test_alias_definition_conflict_and_in_place_rebirth_reject (test_sync_compact.CompactTests.test_alias_definition_conflict_and_in_place_rebirth_reject) ... ok
+test_alias_reuse_keeps_before_identity_and_new_birth_independent (test_sync_compact.CompactTests.test_alias_reuse_keeps_before_identity_and_new_birth_independent) ... ok
+test_baseline_matches_all_expanded_tables_indexes_and_seals (test_sync_compact.CompactTests.test_baseline_matches_all_expanded_tables_indexes_and_seals) ... ok
+test_before_and_after_alias_views_are_birth_guarded (test_sync_compact.CompactTests.test_before_and_after_alias_views_are_birth_guarded) ... FAIL
+test_callback_and_plan_close_failure_leave_no_candidate_or_late_refs (test_sync_compact.CompactTests.test_callback_and_plan_close_failure_leave_no_candidate_or_late_refs) ... ok
+test_duplicate_group_and_competing_callback_writer_reject (test_sync_compact.CompactTests.test_duplicate_group_and_competing_callback_writer_reject) ... ok
+test_exact_duplicate_transaction_preserves_candidate_and_history (test_sync_compact.CompactTests.test_exact_duplicate_transaction_preserves_candidate_and_history) ... ok
+test_explicit_add_and_remove_groups_match_expanded_roots (test_sync_compact.CompactTests.test_explicit_add_and_remove_groups_match_expanded_roots) ... ok
+test_failed_stage_preserves_prior_material_and_revokes_confirmed_claim (test_sync_compact.CompactTests.test_failed_stage_preserves_prior_material_and_revokes_confirmed_claim) ... ok
+test_head_uses_separate_codec_path_and_no_body_plan (test_sync_compact.CompactTests.test_head_uses_separate_codec_path_and_no_body_plan) ... ok
+test_header_copy_is_refused_before_allocation_at_shared_limit (test_sync_compact.CompactTests.test_header_copy_is_refused_before_allocation_at_shared_limit) ... ok
+test_iterator_failure_keeps_scratch_credit_until_owned_close_returns (test_sync_compact.CompactTests.test_iterator_failure_keeps_scratch_credit_until_owned_close_returns) ... ok
+test_late_malformed_value_and_strict_raw_reject_without_old_route_fallback (test_sync_compact.CompactTests.test_late_malformed_value_and_strict_raw_reject_without_old_route_fallback) ... ok
+test_missing_capability_and_changed_codec_configuration_reject (test_sync_compact.CompactTests.test_missing_capability_and_changed_codec_configuration_reject) ... ok
+test_missing_or_removed_semantic_token_cannot_survive_retained_bit (test_sync_compact.CompactTests.test_missing_or_removed_semantic_token_cannot_survive_retained_bit) ... ok
+test_old_mask_null_zero_bool_and_range_reject_atomically (test_sync_compact.CompactTests.test_old_mask_null_zero_bool_and_range_reject_atomically) ... ok
+test_raw_transaction_id_commits_original_reference_dictionaries (test_sync_compact.CompactTests.test_raw_transaction_id_commits_original_reference_dictionaries) ... ok
+test_reentrant_plan_close_pins_material_credit_until_callback_unwinds (test_sync_compact.CompactTests.test_reentrant_plan_close_pins_material_credit_until_callback_unwinds) ... ok
+test_retirement_inside_callback_revokes_late_publication_and_keeps_sibling (test_sync_compact.CompactTests.test_retirement_inside_callback_revokes_late_publication_and_keeps_sibling) ... ok
+test_reused_canonical_value_rejects_second_consumption (test_sync_compact.CompactTests.test_reused_canonical_value_rejects_second_consumption) ... ok
+test_root_failure_retires_provisional_refs_intents_and_plan (test_sync_compact.CompactTests.test_root_failure_retires_provisional_refs_intents_and_plan) ... ok
+test_same_generation_remove_put_and_missing_alias_patch_reject (test_sync_compact.CompactTests.test_same_generation_remove_put_and_missing_alias_patch_reject) ... ok
+test_single_consume_pack_and_unconsumed_pack_reject (test_sync_compact.CompactTests.test_single_consume_pack_and_unconsumed_pack_reject) ... ok
+test_sparse_stage_never_enumerates_unchanged_record_or_alias_rosters (test_sync_compact.CompactTests.test_sparse_stage_never_enumerates_unchanged_record_or_alias_rosters) ... ok
+test_token_change_with_omitted_or_equal_mask_expands_exact_cells (test_sync_compact.CompactTests.test_token_change_with_omitted_or_equal_mask_expands_exact_cells) ... ok
+
+======================================================================
+FAIL: test_before_and_after_alias_views_are_birth_guarded (test_sync_compact.CompactTests.test_before_and_after_alias_views_are_birth_guarded)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/compact-g1-iterator-before/tests/test_sync_compact.py", line 231, in tearDown
+    self.assertEqual((self.cache.ledger.used, self.cache.ledger.reserved, self.cache.ledger.encoded,
+AssertionError: Tuples differ: (0, 509, 0, 0, 2) != (0, 0, 0, 0, 0)
+
+First differing element 1:
+509
+0
+
+- (0, 509, 0, 0, 2)
++ (0, 0, 0, 0, 0)
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.171s
+
+FAILED (failures=1)
