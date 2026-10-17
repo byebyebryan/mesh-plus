@@ -133,6 +133,8 @@ class InputTests(unittest.TestCase):
             raw, _, _ = baseline(self.profile)
             candidate = self.cache.admit_baseline(self.seal(raw))
             view = self.cache.confirm(candidate, self.seal(proof(self.cache, candidate)), CLOCK)
+            self.assertTrue(view.context(10000, CLOCK)["receipts"][0]["current"])
+            self.assertTrue(self.cache.acquire().context(10000, CLOCK)["receipts"][0]["current"])
             retained = view.lookup("records", IDENTITY)
             other_raw, _, _ = baseline(other_profile)
             other_candidate = other.admit_baseline(other_raw)
@@ -144,6 +146,8 @@ class InputTests(unittest.TestCase):
                 self.cache.acquire()
             with self.assertRaises(ProtocolError):
                 _ = view.tag
+            with self.assertRaisesRegex(ProtocolError, "sync_view_retired"):
+                view.context(10000, CLOCK)
             with self.assertRaises(ProtocolError):
                 _ = candidate.tag
             with self.assertRaises(ProtocolError):
@@ -154,6 +158,7 @@ class InputTests(unittest.TestCase):
                 with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
                     action()
             self.assertEqual(self.cache.ledger.encoded_reserved, 1024)
+            self.assertEqual((receive.heap_bytes, receive.encoded_bytes), (8192, 1024))
             self.assertEqual(sibling_view.tag, other_candidate.tag)
             self.assertEqual(other.acquire().tag, other_candidate.tag)
             replacement = self.cache.input_owner()
@@ -164,6 +169,20 @@ class InputTests(unittest.TestCase):
             self.inputs.close()
             self.assertEqual(view.tag, candidate.tag)
             self.assertEqual(other.acquire().tag, other_candidate.tag)
+            self.assertEqual(self.cache.ledger.encoded_reserved, 1024)
+            self.cache.disconnect()
+            with self.assertRaisesRegex(ProtocolError, "sync_view_retired"):
+                view.context(10000, CLOCK)
+            with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
+                self.cache.acquire()
+            renewed = self.cache.input_owner()
+            self.assertIsNot(renewed, replacement)
+            candidate = self.cache.admit_baseline(self.seal(raw, renewed))
+            view = self.cache.confirm(candidate, self.seal(proof(self.cache, candidate), renewed), CLOCK)
+            replacement.close()
+            self.assertTrue(view.context(10000, CLOCK)["receipts"][0]["current"])
+            self.assertTrue(other.acquire().context(10000, CLOCK)["receipts"][0]["current"])
+            self.assertEqual((receive.heap_bytes, receive.encoded_bytes), (8192, 1024))
             self.assertEqual(self.cache.ledger.encoded_reserved, 1024)
         finally:
             if receive is not None:
@@ -221,6 +240,12 @@ class InputTests(unittest.TestCase):
             self.assertEqual(material_releases, [])
             self.assertIs(cache.store.candidate, material)
             self.assertIn(id(material), ledger._roots)
+            if owned:
+                # Revocation rejects public use while the consumer still owns
+                # the same raw proof on its active confirmation frames.
+                self.assertEqual(ledger.encoded_reserved, len(head))
+                with self.assertRaisesRegex(ProtocolError, "sync_input_retired"):
+                    _ = supplied.nbytes
             with self.assertRaises(ProtocolError):
                 _ = candidate.tag
             with self.assertRaises(ProtocolError):
