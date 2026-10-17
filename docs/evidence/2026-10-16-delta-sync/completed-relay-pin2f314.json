@@ -1,0 +1,39 @@
+{
+  "cases": [
+    {
+      "closedSession": true,
+      "finalCounters": {
+        "encoded": 0,
+        "encoded_reserved": 0,
+        "pending_units": 0,
+        "reserved": 0,
+        "used": 0
+      },
+      "heldEncodedDuringPin": 1753,
+      "pinExitError": "sync_input_retired",
+      "pruneDuringPin": false,
+      "rawBytes": 1753,
+      "registeredBefore": 1
+    },
+    {
+      "closedSession": true,
+      "finalCounters": {
+        "encoded": 0,
+        "encoded_reserved": 0,
+        "pending_units": 0,
+        "reserved": 0,
+        "used": 0
+      },
+      "heldEncodedDuringPin": 1753,
+      "pinExitError": null,
+      "pruneDuringPin": true,
+      "rawBytes": 1753,
+      "registeredBefore": 1,
+      "registeredDuringPin": 0
+    }
+  ],
+  "cyclicGC": "disabled",
+  "heldErrors": 1,
+  "result": "GAP_REPRODUCED",
+  "scope": "actual Observer source public inspect/aclose with synthetic native Unix fixture and fabricated roots; private Mesh input_bytes pin scaffolding; no material authority, actual relay output, route, aggregate resource/RSS or performance acceptance"
+}
