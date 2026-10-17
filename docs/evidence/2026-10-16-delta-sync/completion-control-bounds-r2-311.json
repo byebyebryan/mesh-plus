@@ -1,0 +1,104 @@
+{
+  "cases": [
+    {
+      "acceptedStructuralHeader": true,
+      "code": null,
+      "finalFixtureHeapCredit": 0,
+      "method": "header",
+      "rawBytes": 16384,
+      "view": "full"
+    },
+    {
+      "acceptedStructuralHeader": false,
+      "code": "sync_ticket_header_limit",
+      "finalFixtureHeapCredit": 0,
+      "method": "header",
+      "rawBytes": 16385,
+      "view": "full"
+    },
+    {
+      "acceptedStructuralHeader": false,
+      "code": "sync_ticket_header_limit",
+      "finalFixtureHeapCredit": 0,
+      "method": "header",
+      "rawBytes": 65536,
+      "view": "full"
+    },
+    {
+      "acceptedStructuralHeader": true,
+      "code": null,
+      "finalFixtureHeapCredit": 0,
+      "method": "head",
+      "rawBytes": 16384,
+      "view": "full"
+    },
+    {
+      "acceptedStructuralHeader": false,
+      "code": "sync_ticket_header_limit",
+      "finalFixtureHeapCredit": 0,
+      "method": "head",
+      "rawBytes": 16385,
+      "view": "full"
+    },
+    {
+      "acceptedStructuralHeader": false,
+      "code": "sync_ticket_header_limit",
+      "finalFixtureHeapCredit": 0,
+      "method": "head",
+      "rawBytes": 65536,
+      "view": "full"
+    },
+    {
+      "acceptedStructuralHeader": true,
+      "code": null,
+      "finalFixtureHeapCredit": 0,
+      "method": "header",
+      "rawBytes": 16384,
+      "view": "active"
+    },
+    {
+      "acceptedStructuralHeader": false,
+      "code": "sync_ticket_header_limit",
+      "finalFixtureHeapCredit": 0,
+      "method": "header",
+      "rawBytes": 16385,
+      "view": "active"
+    },
+    {
+      "acceptedStructuralHeader": false,
+      "code": "sync_ticket_header_limit",
+      "finalFixtureHeapCredit": 0,
+      "method": "header",
+      "rawBytes": 65536,
+      "view": "active"
+    },
+    {
+      "acceptedStructuralHeader": true,
+      "code": null,
+      "finalFixtureHeapCredit": 0,
+      "method": "head",
+      "rawBytes": 16384,
+      "view": "active"
+    },
+    {
+      "acceptedStructuralHeader": false,
+      "code": "sync_ticket_header_limit",
+      "finalFixtureHeapCredit": 0,
+      "method": "head",
+      "rawBytes": 16385,
+      "view": "active"
+    },
+    {
+      "acceptedStructuralHeader": false,
+      "code": "sync_ticket_header_limit",
+      "finalFixtureHeapCredit": 0,
+      "method": "head",
+      "rawBytes": 65536,
+      "view": "active"
+    }
+  ],
+  "nativeControlCap": 16384,
+  "outerMeshControlCapFromR4": 65536,
+  "result": "PASS",
+  "scope": "synthetic strict structural native byte boundary; raw input/test harness outside fixture credit, no Mesh relay/native provider/aggregate resource or material authority proof"
+}
