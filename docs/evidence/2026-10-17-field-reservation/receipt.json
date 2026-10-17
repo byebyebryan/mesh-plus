@@ -1,0 +1,482 @@
+{
+  "artifacts": {
+    "docs/evidence/2026-10-17-field-reservation/README.md": {
+      "bytes": 5814,
+      "sha256": "072789a990820ae7ddf6a97dc7b97f902fa4050982ff0b8d9645aa72be51e81f"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/final-311.json": {
+      "bytes": 19898,
+      "sha256": "20ba78e5fc2db773f6d8ef31a0669de4d4f20cae00d33543f347bcaa3fdddc3a"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/final-311.log": {
+      "bytes": 4112,
+      "sha256": "ed41e28830e2f4777d4a0addcdf3507649bad64fa7e0b927492bad543286cc3d"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/final-314.json": {
+      "bytes": 19250,
+      "sha256": "fdef0ab8a1e0c00e69431908583fe9c7523ff658d4a7411ccddcef6c3f200991"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/final-314.log": {
+      "bytes": 3525,
+      "sha256": "f946324ae5cdf8d00c8f4b384d720c2ebc1d9e886594657c901994dda5a4b6ba"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/identity-trace.py.txt": {
+      "bytes": 4653,
+      "sha256": "88b6bed1bae9ed5b61a04eddf0f9509b429951662eb3e41d3387657e32249eff"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/initial-trace.py.txt": {
+      "bytes": 3749,
+      "sha256": "7cf65d940f3185a503e7009d21fb3ab44b9c9481f98730d2c65a48d7c5d65edf"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/propagation-311.json": {
+      "bytes": 19714,
+      "sha256": "b7bcdab85d60d06d56216fdd8e69d06001e8ee9ab30a873a0bf4e828dd2ffdf0"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/propagation-311.log": {
+      "bytes": 4026,
+      "sha256": "34b953ad0fbe6d70703f1bfeb0b0ae98c40d9b1314481a3d0036ae662fb8597d"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/propagation-314.json": {
+      "bytes": 19203,
+      "sha256": "afb71005b3498c8c8937c852dff6b8fa7067eed5a76d5cd8bda101c59aebf8c5"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/propagation-314.log": {
+      "bytes": 3525,
+      "sha256": "50b29a69f6644d85688bcba00ca567548013937db732274ce5947f92a3c25f10"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/source-bindings.json": {
+      "bytes": 79513,
+      "sha256": "28ce3e2bdc57ab5ebd65a042e1939233d18313191fe6e3ff68f764e72cd2c7bd"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/trace-314.json": {
+      "bytes": 16580,
+      "sha256": "59c9b98b9c4d253fbb13981f8a5306d83c147588144d6a034c4be73c36c49f74"
+    },
+    "docs/evidence/2026-10-17-field-reservation/results/trace-314.log": {
+      "bytes": 1935,
+      "sha256": "dbc7cd029f427992fb63564f65c7987cde2e8fa42f98d3357283704ab7c5d549"
+    },
+    "docs/evidence/2026-10-17-field-reservation/seal_trace.py": {
+      "bytes": 4915,
+      "sha256": "0074360be5cbbe504270331f298ff232fb8878420734cf7b95e6c786866b05c3"
+    },
+    "docs/evidence/2026-10-17-field-reservation/trace_refusal.py": {
+      "bytes": 5910,
+      "sha256": "f289cbcad32802e4eb4fba1b83e0ce2490bb4c1b3f7853fd98b327b0d3091675"
+    }
+  },
+  "capacityOrCpuAcceptance": false,
+  "exclusions": "Two new bounded instrumented diagnostic replays only; earlier exploratory traces preserved. No unchanged functional/canonical/capacity suite rerun, allocation estimate/cap change, physical/RSS/timing/producer acceptance or sibling action.",
+  "final": {
+    "311": {
+      "failure": {
+        "amount": 1024,
+        "code": "sync_decoded_capacity",
+        "encoded": 0,
+        "escapedBoundaries": [
+          "apply_indexes:error_retired",
+          "apply_indexes:replacement_raised",
+          "_patch",
+          "_finish"
+        ],
+        "ledger": {
+          "decodedBytes": 9669914,
+          "encodedBytes": 6646937,
+          "newAllocationVisits": 117010,
+          "peakBytes": 67108813,
+          "pendingAllocations": 14858,
+          "pendingEncodedBytes": 2535182,
+          "reclaimedAllocations": 90021,
+          "reservedBytes": 57438091,
+          "reservedEncodedBytes": 4588829,
+          "uniqueAllocations": 12131
+        },
+        "number": 1,
+        "stack": [
+          {
+            "file": "docs/evidence/2026-10-17-reader-capacity/probe_reader_intake.py",
+            "function": "tracked_reserve",
+            "line": 55
+          },
+          {
+            "file": "src/mesh_plus/sync/_allocation.py",
+            "function": "prepay",
+            "line": 26
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "_node",
+            "line": 62
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "build",
+            "line": 201
+          },
+          {
+            "file": "src/mesh_plus/sync/ordered.py",
+            "function": "baseline_atoms",
+            "line": 212
+          },
+          {
+            "file": "src/mesh_plus/sync/_patch_workspace.py",
+            "function": "apply_indexes",
+            "line": 90
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_patch",
+            "line": 618
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_finish",
+            "line": 908
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/normalization.py",
+            "function": "stage",
+            "line": 672
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "stage_compact",
+            "line": 938
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "run",
+            "line": 59
+          },
+          {
+            "file": "src/mesh_plus/sync/cache.py",
+            "function": "_compact_material",
+            "line": 402
+          },
+          {
+            "file": "src/mesh_plus/sync/cache.py",
+            "function": "admit_baseline",
+            "line": 337
+          },
+          {
+            "file": "src/mesh_plus/sync/_boundary.py",
+            "function": "call",
+            "line": 42
+          },
+          {
+            "file": "docs/evidence/2026-10-17-reader-capacity/probe_reader_intake.py",
+            "function": "run",
+            "line": 120
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "function": "_run",
+            "line": 84
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "function": "_run_once",
+            "line": 1936
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "function": "run_forever",
+            "line": 608
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "function": "run_until_complete",
+            "line": 641
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "function": "run",
+            "line": 118
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "function": "run",
+            "line": 190
+          }
+        ]
+      },
+      "finalCounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "heapPeak": 67108813,
+      "loadedInputs": 79,
+      "python": "3.11.17"
+    },
+    "314": {
+      "failure": {
+        "amount": 256,
+        "code": "sync_decoded_capacity",
+        "encoded": 0,
+        "escapedBoundaries": [
+          "_field_patch",
+          "_patch",
+          "_finish"
+        ],
+        "ledger": {
+          "decodedBytes": 11574350,
+          "encodedBytes": 8056961,
+          "newAllocationVisits": 128205,
+          "peakBytes": 67108660,
+          "pendingAllocations": 12027,
+          "pendingEncodedBytes": 2156042,
+          "reclaimedAllocations": 102044,
+          "reservedBytes": 55534310,
+          "reservedEncodedBytes": 4741965,
+          "uniqueAllocations": 14134
+        },
+        "number": 1,
+        "stack": [
+          {
+            "file": "docs/evidence/2026-10-17-reader-capacity/probe_reader_intake.py",
+            "function": "tracked_reserve",
+            "line": 55
+          },
+          {
+            "file": "src/mesh_plus/sync/budget.py",
+            "function": "grow",
+            "line": 403
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_control",
+            "line": 300
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_slot",
+            "line": 310
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_branch",
+            "line": 649
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "_baseline_leaves",
+            "line": 338
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_baseline_owned",
+            "line": 672
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "_baseline_owned",
+            "line": 291
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "_from_encoded_atoms",
+            "line": 284
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_field_patch",
+            "line": 759
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_patch",
+            "line": 621
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_finish",
+            "line": 908
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/normalization.py",
+            "function": "stage",
+            "line": 672
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "stage_compact",
+            "line": 938
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "run",
+            "line": 59
+          },
+          {
+            "file": "src/mesh_plus/sync/cache.py",
+            "function": "_compact_material",
+            "line": 402
+          },
+          {
+            "file": "src/mesh_plus/sync/cache.py",
+            "function": "admit_baseline",
+            "line": 337
+          },
+          {
+            "file": "src/mesh_plus/sync/_boundary.py",
+            "function": "call",
+            "line": 42
+          }
+        ]
+      },
+      "finalCounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "heapPeak": 67108660,
+      "loadedInputs": 79,
+      "python": "3.14.8"
+    }
+  },
+  "meshRuntime": "13f27e25c46e1fd3da664975e964104a56fd6dbf",
+  "observerRuntime": "b6ce8428b7f9d451bc9e99ca6f8e2943c656c23f",
+  "previousReceipt": {
+    "bytes": 12982,
+    "sha256": "87e6168181ff0dcbc703331af732d39eb7b0320b9169fc85ad6f3a208df54381"
+  },
+  "priorArtifactsUnchanged": 52,
+  "productionDiff": false,
+  "verified": {
+    "mesh": 262,
+    "observer": 212,
+    "protected": 8
+  }
+}

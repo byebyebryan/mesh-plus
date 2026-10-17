@@ -1,0 +1,80 @@
+"""Bounded scalar call-site tracing; no timing or physical-resource claim."""
+
+import argparse
+import asyncio
+import fcntl
+import hashlib
+import importlib.util
+import json
+import sys
+from collections import deque
+from pathlib import Path
+from unittest.mock import patch
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--mesh", type=Path, required=True)
+    parser.add_argument("--observer", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    args.mesh, args.observer = args.mesh.resolve(), args.observer.resolve()
+    assert not args.output.exists(), "preserve previous diagnostic bytes"
+    script = Path(__file__).read_bytes()
+    sys.path[:0] = [str(args.mesh / "src")]
+    from mesh_plus.protocol import ProtocolError
+    from mesh_plus.sync.budget import AllocationLedger
+
+    original = AllocationLedger.reserve
+    failures, count = deque(maxlen=32), 0
+
+    def reserve(ledger, amount, *, encoded=0):
+        nonlocal count
+        try:
+            return original(ledger, amount, encoded=encoded)
+        except ProtocolError as error:
+            if str(error) not in {"sync_decoded_capacity", "sync_encoded_capacity"}:
+                raise
+            count += 1
+            # Retain only bounded strings/integers. Never keep frames, roots,
+            # exception objects or sampled locals after this observer returns.
+            frame, stack = sys._getframe(1), []
+            try:
+                for _ in range(16):
+                    if frame is None:
+                        break
+                    name = Path(frame.f_code.co_filename)
+                    if name.is_absolute() and name.is_relative_to(args.mesh):
+                        name = name.relative_to(args.mesh)
+                    stack.append(dict(file=str(name), function=frame.f_code.co_name, line=frame.f_lineno))
+                    frame = frame.f_back
+            finally:
+                frame = None
+            failures.append(dict(number=count, code=str(error), amount=amount, encoded=encoded,
+                                 ledger=ledger.inspect(), stack=stack))
+            raise
+
+    path = args.mesh / "docs/evidence/2026-10-17-reader-capacity/probe_reader_intake.py"
+    spec = importlib.util.spec_from_file_location("reader_intake_probe", path)
+    probe = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(probe)
+    args.rows, args.backend = 2000, "packed"
+    with Path("/home/bryan/.cache/agent-active-feed-cpu.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        with patch.object(AllocationLedger, "reserve", reserve):
+            asyncio.run(probe.run(args))
+    assert Path(__file__).read_bytes() == script
+    result = json.loads(args.output.read_text())
+    assert result["gcDisabled"] and result["finalCounters"] == [0] * 6
+    assert result["failure"]["code"] == "sync_decoded_capacity"
+    result["privateReservationTrace"] = dict(
+        script=dict(bytes=len(script), sha256=hashlib.sha256(script).hexdigest()),
+        reserveFailureCount=count, retainedFailureLimit=32, tail=list(failures),
+        exclusions="Private reserve wrapper records bounded scalar call-site strings after failure, outside resource measurement. Includes caught capacity attempts; final event is not assumed fatal without propagation evidence. No retained frames/roots/errors/locals, live-ledger mutation, cap/estimate change, CPU/timing/RSS or producer claim. Original probe source/lifecycle/held errors unchanged.")
+    args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+    for row in failures:
+        print(json.dumps(row))
+
+
+if __name__ == "__main__":
+    main()
