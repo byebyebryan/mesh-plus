@@ -2,6 +2,12 @@
 
 ## Current disposition
 
+Delta-sync development is stopped and retained as a **dark, gated feature**.
+The [owning status and Git handoff](delta-sync-dark-status.md) records the exact
+checkpoint, failed CPU/capacity gates, resume criteria and protected lineage.
+Earlier G1 continuation notes describe their dated checkpoints; they do not
+schedule further work after this wrap-up. Normal a7/a23 routes remain selected.
+
 The [a23 hosted prerelease](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23)
 publishes the accepted a23 wheel unchanged, with checksums and provenance.
 Its [installed producer gates](evidence/2026-10-16-active-feed/README.md) remain

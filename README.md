@@ -1,5 +1,12 @@
 # Mesh Plus
 
+Delta-sync is a **dark, gated development feature**. Work is stopped at its
+retained source/evidence checkpoint because CPU and 2,000-row capacity gates
+fail. It is unavailable through the normal configured routes and has no new
+release or adoption acceptance. See the [dark-feature status and safe Git
+handoff](docs/delta-sync-dark-status.md) before resuming work or cleaning this
+checkout.
+
 Latest hosted prerelease: [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23).
 The release publishes the exact independently qualified wheel, with SHA256 and
 provenance assets; see the [producer acceptance](docs/evidence/2026-10-16-active-feed/README.md).
