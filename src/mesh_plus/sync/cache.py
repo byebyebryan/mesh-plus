@@ -180,7 +180,7 @@ class PublicCommitContext:
 
 class OwnedSyncCache:
     def __init__(self, profile, source_binding, budgets=None, *, request_binding=None,
-                 ledger=None, local_owner=False, _now_ms=None, _clock=None):
+                 ledger=None, local_owner=False, native_codec=None, _now_ms=None, _clock=None):
         budgets = SyncBudgets() if budgets is None else budgets
         check(type(budgets) is SyncBudgets and type(source_binding) is dict, "sync_cache_configuration")
         expected = globals()["source_binding"](source_binding.get("host"), source_binding.get("source"), profile.descriptor)
@@ -195,9 +195,13 @@ class OwnedSyncCache:
         self._clock = Atom.own(clock_domain() if _clock is None else _clock)
         self._now_ms = _now if _now_ms is None else _now_ms
         self.local_owner = local_owner
-        self.store = ReconstructionStore(profile, host=expected["host"], ledger=self.ledger)
+        from .normalization import CodecBinding
+        self._codec_binding = None if native_codec is None else CodecBinding(native_codec, profile)
+        self.store = ReconstructionStore(profile, host=expected["host"], ledger=self.ledger,
+                                         codec_binding=self._codec_binding)
         self._lock = self.store._lock
-        self._metadata = (self._binding, self._request, self._clock, self._binding_digest)
+        self._metadata = (self._binding, self._request, self._clock, self._binding_digest,
+                          self._codec_binding)
         self._history = None
         retained = False
         try:
@@ -329,6 +333,8 @@ class OwnedSyncCache:
                 if not prepaid:
                     self.ledger.retain(raw)
                     retained_input = True
+                if self._codec_binding is not None:
+                    return self._compact_material(raw, baseline=True)
                 document, reservation = baseline_header(raw, self.descriptor, self.ledger)
                 with reservation:
                     root = self.store.stage_baseline(document["nativeBinding"], NativeTag.parse(document["tag"]),
@@ -355,6 +361,8 @@ class OwnedSyncCache:
                 if not prepaid:
                     self.ledger.retain(raw)
                     retained_input = True
+                if self._codec_binding is not None:
+                    return self._compact_material(raw, baseline=False)
                 from .transactions import transaction_input
                 with self.ledger.allocations():
                     document, reservation = transaction_input(raw, self.descriptor, self.ledger)
@@ -368,6 +376,73 @@ class OwnedSyncCache:
                 if retained_input:
                     self.ledger.release(raw)
                 document = reservation = raw = None
+
+    def _compact_material(self, raw, *, baseline):
+        from ..protocol import ProtocolError
+        from ._boundary import _retire_error
+        from .codec import PlanScope, validate_header
+        scope = root = pinned = None
+        intake = self._inputs
+        failure = None
+        duplicate = False
+        try:
+            with self.ledger.allocations():
+                scope = PlanScope(self.store, self._codec_binding, raw)
+                document = scope.header
+                validate_header(raw, document, self.descriptor, self.ledger, baseline=baseline)
+                if not baseline:
+                    before = self.store.candidate if self.store.candidate is not None else self.store.current
+                    token = document["transactionId"], tuple(document["resultTag"])
+                    if token in self._transaction_tokens and before is not None and before.tag.wire() == document["resultTag"]:
+                        root = before
+                        duplicate = True
+                    else:
+                        self.revoke("head_changed")
+                if root is None:
+                    root = self.store.stage_compact(document, scope)
+                # Plan.close is foreign code too. Keep the complete root
+                # charged if it retires this intake/cache reentrantly.
+                self.ledger.retain(root)
+                pinned = root
+                document = before = None
+                scope.close()
+                scope = None
+                self._check()
+                check(intake is None or self._inputs is intake and not intake._closed, "sync_input_retired")
+                check(root is self.store.candidate or root is self.store.current, "sync_candidate_retired")
+                if not baseline and not duplicate:
+                    self._replace_history(transactions=(*self._transaction_tokens[-3:], token))
+                if duplicate and self._candidate_ref is not None:
+                    return self._candidate_ref
+                return self._mint(root)
+        except BaseException as error:
+            failure = _retire_error(error)
+        finally:
+            document = before = root = raw = None
+            if scope is not None:
+                try:
+                    scope.close()
+                except BaseException as error:
+                    failure = _retire_error(error)
+            scope = None
+            if pinned is not None:
+                self.ledger.release(pinned)
+            pinned = None
+        code, signal, public = failure
+        if signal is not None:
+            raise signal
+        raise public if public is not None else ProtocolError(code)
+
+    def _compact_head(self, raw):
+        from .codec import PlanScope
+        scope = None
+        try:
+            with self.ledger.reserve(2 * len(raw) + 512, encoded=2 * len(raw) + 1):
+                scope = PlanScope(self.store, self._codec_binding, raw + b"\n", head=True)
+                check(canonical(scope.header) == raw, "sync_codec_header")
+        finally:
+            if scope is not None:
+                scope.close()
 
     def _stage_document(self, document):
         before = self.store.candidate if self.store.candidate is not None else self.store.current
@@ -541,6 +616,8 @@ class OwnedSyncCache:
                     check(len(proof) - len(head_raw) <= 16384, "sync_proof_envelope_capacity")
                     head = read_native(head_raw, self.descriptor)
                     check(head["kind"] == "head", "sync_expected_head")
+                    if self._codec_binding is not None:
+                        self._compact_head(head_raw)
                     check(canonical(head["challenge"]) == pending[1].encoded, "sync_nonce")
                     actual = NativeTag.parse(head["tag"])
                     check(canonical(document["sourceTag"]) == canonical(self._tag(actual).wire()), "sync_proof_source_root")
@@ -723,3 +800,6 @@ class OwnedSyncCache:
             # Profile callbacks may retain a retired view/head reference back
             # to this cache. Closing must retire that cycle without cyclic GC.
             self.profile = self._now_ms = None
+            if self._codec_binding is not None:
+                self._codec_binding.close()
+                self._codec_binding = None

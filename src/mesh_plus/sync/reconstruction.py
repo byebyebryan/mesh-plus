@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from functools import wraps
 
 from ..protocol import ProtocolError, check
+from ._boundary import admission_boundary
 from ._schema import OwnedSchema
 from .budget import AllocationLedger, OwnedUnit
 from .canonical import (
@@ -192,6 +193,7 @@ class PublicStateRef:
     def __init__(self, store, permit, side):
         self._store, self._permit, self._side = store, permit, side
 
+    @admission_boundary
     def lookup(self, space, key):
         encoded = canonical(key)
         location = (self._side, "table", space, encoded)
@@ -212,6 +214,7 @@ class PublicIndexRef:
     def __init__(self, store, permit, side, name):
         self._store, self._permit, self._side, self._name = store, permit, side, name
 
+    @admission_boundary
     def get(self, key):
         location = (self._side, "index", self._name, canonical(key))
         return reference(self._store, self._permit, location)
@@ -272,6 +275,28 @@ class PublicStageContext:
                 self.visits.charge(iteration=True)
                 yield value
 
+    @property
+    @admission_boundary
+    def compact_memberships(self):
+        return self._store.check_permit(self._permit).compact is not None
+
+    @admission_boundary
+    def membership_mask(self, cohort, record_ref, *, side):
+        tx = self._store.check_permit(self._permit)
+        tx.visits.charge()
+        check(side in ("before", "after"), "sync_reference_side")
+        if tx.compact is not None:
+            return tx.compact.mask(cohort, record_ref, side)
+        table = (None if tx.before is None else dict(tx.before.tables)["memberships"]) if side == "before" else tx.tables["memberships"]
+        return 0 if table is None else sum(1 << i for i, field in enumerate(self.descriptor.fields)
+                                          if table.find([cohort, *record_ref, field]) is not ABSENT)
+
+    @admission_boundary
+    def membership_changes(self):
+        from .normalization import _IntentIterator
+        self._store.check_permit(self._permit)
+        return _IntentIterator(self._store, self._permit)
+
 
 class _Transaction:
     def __init__(self, store, before, binding, tag, cursor, operations, tables, groups):
@@ -292,6 +317,7 @@ class _Transaction:
         self.member_operations = (operations.members() if isinstance(operations, _BaselineOperations) else
                                   [operation for operation in operations if operation.space == "memberships"])
         self.affected_scopes, self.invalidations = (), ()
+        self.compact = None
 
 
 class _BaselineOperations:
@@ -317,7 +343,8 @@ class _BaselineOperations:
             for name, table in self.tables:
                 if rank < len(table):
                     leaf = table.leaf_at(rank)
-                    self.cached = Operation(name, "put", leaf.input_key(), None, leaf.atom)
+                    key = leaf.input_key() if hasattr(leaf, "input_key") else InputKey.borrow(leaf.key)
+                    self.cached = Operation(name, "put", key, None, leaf.atom)
                     self.cached_index = index
                     break
                 rank -= len(table)
@@ -326,7 +353,8 @@ class _BaselineOperations:
     def __iter__(self):
         for name, table in self.tables:
             for leaf in table.leaves():
-                yield Operation(name, "put", leaf.input_key(), None, leaf.atom)
+                key = leaf.input_key() if hasattr(leaf, "input_key") else InputKey.borrow(leaf.key)
+                yield Operation(name, "put", key, None, leaf.atom)
 
     def members(self):
         return _BaselineMembers(dict(self.tables)["memberships"])
@@ -355,8 +383,9 @@ class ReconstructionStore:
     normalized entry/operation methods below are internal to the owned cache.
     """
 
-    def __init__(self, profile, *, host, ledger=None):
+    def __init__(self, profile, *, host, ledger=None, codec_binding=None):
         self.profile, self.descriptor, self.host = profile, profile.descriptor, host
+        self._codec_binding = codec_binding
         check(type(self.descriptor) is SyncDescriptor, "sync_descriptor")
         self.ledger = AllocationLedger() if ledger is None else ledger
         self.current = self.previous = self.candidate = None
@@ -399,6 +428,8 @@ class ReconstructionStore:
             callback = getattr(self.profile, name, None)
             check(callable(callback), "sync_profile_interface")
             objects.extend((getattr(callback, "__func__", callback), getattr(callback, "__self__", None)))
+        if self._codec_binding is not None:
+            objects.extend(self._codec_binding.fingerprint())
         return tuple(objects)
 
     def _check(self):
@@ -420,7 +451,13 @@ class ReconstructionStore:
 
     def _atom_at(self, tx, location):
         side, kind, space, encoded = location
-        check(side in {"before", "after", "operation"}, "sync_reference_side")
+        check(side in {"before", "after", "operation", "compact"}, "sync_reference_side")
+        if side == "compact":
+            check(tx.compact is not None, "sync_reference_retired")
+            return tx.compact.atom_at(kind, space)
+        if side == "after" and tx.compact is not None and not tx.compact.complete:
+            check(not (kind == "table" and space == "memberships" or kind == "index" and space == "$fields"),
+                  "sync_memberships_pending")
         if side == "operation":
             operation = tx.operations[int(space)]
             return operation.key if kind == "key" else operation.value
@@ -462,6 +499,8 @@ class ReconstructionStore:
     def index_next(self, permit, side, name, rank, prefix):
         with self._lock:
             tx = self.check_permit(permit)
+            check(not (side == "after" and name == "$fields" and tx.compact is not None and
+                       not tx.compact.complete), "sync_memberships_pending")
             indexes = tx.indexes if side == "after" else ({} if tx.before is None else dict(tx.before.indexes))
             table = indexes.get(name)
             if table is None:
@@ -484,6 +523,7 @@ class ReconstructionStore:
         while True:
             with self._lock:
                 tx = self.check_permit(permit)
+                check(tx.compact is None or tx.compact.complete, "sync_memberships_pending")
                 group = tx.groups.get(encoded)
                 if group is None or rank >= len(group[1]):
                     return
@@ -556,6 +596,9 @@ class ReconstructionStore:
 
     def _patch(self, tx, patch):
         check(type(patch) is DomainIndexPatch, "sync_domain_patch")
+        if tx.compact is not None:
+            check(type(patch.membership_expansion) is tuple and patch.membership_expansion == (),
+                  "sync_compact_membership_writer")
         count = sum(len(getattr(patch, name)) for name in patch.__slots__)
         tx.budget.charge(1024 + count * 256 + len(tx.member_operations) * 128)
         seen = {}
@@ -601,6 +644,9 @@ class ReconstructionStore:
         layout = ({name: (position, len(canonical(name))) for position, name in enumerate(self.descriptor.fields)}
                   if patch.field_tokens or tx.member_operations else {})
         fields = self._field_patch(tx, patch.field_tokens, layout)
+        if tx.compact is not None:
+            tx.compact.verify_alias_patch(patch)
+            tx.compact.expand(fields)
         member_keys = ({operation.key.encoded: operation.key for operation in tx.member_operations}
                        if patch.membership_expansion else {})
         for operation in patch.membership_expansion:
@@ -893,7 +939,11 @@ class ReconstructionStore:
         self._patch(tx, patch)
         self._member_links(tx)
         self._seals(tx)
-        tx.budget.close()
+        # Compact provisional overlays and the callback patch are still live
+        # on the owning stage frames. Their prepaid credit survives root
+        # assembly and is refunded by that stage only after those aliases drop.
+        if tx.compact is None:
+            tx.budget.close()
         computed = native_root_encoded(tx.binding.encoded, tx.tag.generation, tx.tables).hex()
         check(computed == tx.tag.root, "sync_result_root")
         continuing = tx.before is not None and tx.before is self.candidate
@@ -912,6 +962,11 @@ class ReconstructionStore:
         self.last_work = {"callbackLookups": tx.visits.lookups, "callbackIterations": tx.visits.iterations,
                           "changedKeys": len(tx.changes), **self.ledger.inspect()}
         return root
+
+    @_decoding
+    def stage_compact(self, header, scope, *, reservation=None):
+        from .normalization import stage
+        return stage(self, header, scope, reservation=reservation)
 
     @_decoding
     def stage_baseline(self, binding, tag, cursor, tables, *, reservation=None):
@@ -1033,3 +1088,4 @@ class ReconstructionStore:
             # Break profile -> reference -> store -> profile on terminal close;
             # invalid references still reject through the closed store first.
             self.profile = None
+            self._codec_binding = None

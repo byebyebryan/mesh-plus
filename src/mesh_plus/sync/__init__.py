@@ -28,6 +28,17 @@ from .model import (
     SourceTag,
     SyncDescriptor,
 )
+from .normalization import (
+    AliasSpec,
+    CanonicalValueRef,
+    CodecSpec,
+    MembershipGroup,
+    MembershipGroupChange,
+    MembershipGroupIntent,
+    NormalizationContext,
+    NormalizedEntry,
+    NormalizedOperation,
+)
 from .relay import RelayAcquisition, RelayChannel, RelayWatch, SyncRelay, create_sync_relay
 from .relay_inputs import RelayInputOwner, RelayInputRef, RelayInputReservation
 
@@ -41,4 +52,6 @@ __all__ = [
     "InputOwner", "InputReservation", "OwnedInputRef",
     "create_sync_relay", "SyncRelay", "RelayChannel", "RelayAcquisition", "RelayWatch",
     "RelayInputOwner", "RelayInputReservation", "RelayInputRef",
+    "AliasSpec", "CodecSpec", "CanonicalValueRef", "NormalizationContext", "NormalizedEntry", "NormalizedOperation",
+    "MembershipGroup", "MembershipGroupChange", "MembershipGroupIntent",
 ]
