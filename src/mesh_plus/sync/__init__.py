@@ -13,6 +13,7 @@ from .cache import (
     ViewRef,
     source_binding,
 )
+from .inputs import InputOwner, InputReservation, OwnedInputRef
 from .model import (
     DerivedMembershipOperation,
     DomainIndexPatch,
@@ -35,4 +36,5 @@ __all__ = [
     "OwnedSyncCache", "SyncBudgets", "CandidateRef", "ViewRef", "PublicCommitContext",
     "ChangeSet", "ResyncRequired", "MovedHead", "source_binding",
     "AggregateCommit", "UnavailableHost",
+    "InputOwner", "InputReservation", "OwnedInputRef",
 ]

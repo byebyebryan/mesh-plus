@@ -17,6 +17,7 @@ from .budget import AllocationLedger, OwnedUnit
 from .canonical import Atom, canonical, decode, thaw
 from .commitment import ABSENT, MerkleMap, binding_digest, source_root
 from .context import reference
+from .inputs import OwnedInputRef, input_bytes, mint_input_owner
 from .model import HeadRules, NativeTag, OriginalReceipt, SourceTag
 from .ordered import OrderedMap, index_key
 from .reconstruction import BudgetRef, PublicIndexRef, ReconstructionStore, VisitMeter
@@ -212,6 +213,7 @@ class OwnedSyncCache:
         self.reason = "unconfirmed"
         self._closed = False
         self._acquisition = None
+        self._inputs = None
 
     def _replace_history(self, **changes):
         old = self._history
@@ -231,6 +233,14 @@ class OwnedSyncCache:
         except Exception:
             self.close()
             raise
+
+    @admission_boundary
+    def input_owner(self):
+        with self._lock:
+            self._check()
+            if self._inputs is None or self._inputs._closed:
+                self._inputs = mint_input_owner(self)
+            return self._inputs
 
     def _tag(self, native):
         return SourceTag(native, self._binding_digest,
@@ -276,7 +286,7 @@ class OwnedSyncCache:
 
     @admission_boundary
     def admit_baseline(self, raw):
-        with self._lock:
+        with self._lock, input_bytes(self, raw) as (raw, prepaid):
             self._check()
             self.revoke("baseline_pending")
             self._discard_candidate()
@@ -289,8 +299,9 @@ class OwnedSyncCache:
             try:
                 from .streaming import baseline_header
                 check(type(raw) is bytes and len(raw) <= MAX_NATIVE, "sync_message_capacity")
-                self.ledger.retain(raw)
-                retained_input = True
+                if not prepaid:
+                    self.ledger.retain(raw)
+                    retained_input = True
                 document, reservation = baseline_header(raw, self.descriptor, self.ledger)
                 with reservation:
                     root = self.store.stage_baseline(document["nativeBinding"], NativeTag.parse(document["tag"]),
@@ -303,16 +314,20 @@ class OwnedSyncCache:
             finally:
                 if retained_input:
                     self.ledger.release(raw)
+                # Streaming table adapters borrow the complete input. Retire
+                # those aliases before the enclosing owned-input pin refunds.
+                document = reservation = root = raw = None
 
     @admission_boundary
     def stage(self, raw):
-        with self._lock:
+        with self._lock, input_bytes(self, raw) as (raw, prepaid):
             self._check()
             retained_input = False
             try:
                 check(type(raw) is bytes and len(raw) <= MAX_NATIVE, "sync_message_capacity")
-                self.ledger.retain(raw)
-                retained_input = True
+                if not prepaid:
+                    self.ledger.retain(raw)
+                    retained_input = True
                 from .transactions import transaction_input
                 with self.ledger.allocations():
                     document, reservation = transaction_input(raw, self.descriptor, self.ledger)
@@ -325,6 +340,7 @@ class OwnedSyncCache:
             finally:
                 if retained_input:
                     self.ledger.release(raw)
+                document = reservation = raw = None
 
     def _stage_document(self, document):
         before = self.store.candidate if self.store.candidate is not None else self.store.current
@@ -344,25 +360,39 @@ class OwnedSyncCache:
     @admission_boundary
     def stage_batch(self, base, frames):
         with self._lock:
-            self._check()
             check(type(frames) is tuple and 0 < len(frames) <= 4 and
-                  all(type(raw) is bytes for raw in frames) and sum(map(len, frames)) <= 8 * 1024 * 1024,
+                  all(type(raw) in (bytes, OwnedInputRef) for raw in frames),
                   "sync_catchup_capacity")
-            staged = self.store.candidate
-            before = staged if staged is not None and base == self._tag(staged.tag) else self.store.current
-            check(type(base) is SourceTag and before is not None and base == self._tag(before.tag), "sync_wrong_base")
-            if before is not staged:
-                self._discard_candidate()
-            self.ledger.retain(frames)
+            retained = False
+            bare = None
             try:
-                for raw in frames:
-                    candidate = self.stage(raw)
-                return candidate
+                self._check()
+                check(sum(len(raw) if type(raw) is bytes else raw.nbytes for raw in frames) <= 8 * 1024 * 1024,
+                      "sync_catchup_capacity")
+                staged = self.store.candidate
+                before = staged if staged is not None and base == self._tag(staged.tag) else self.store.current
+                check(type(base) is SourceTag and before is not None and base == self._tag(before.tag), "sync_wrong_base")
+                if before is not staged:
+                    self._discard_candidate()
+                # Own the bounded batch container and all legacy bare inputs.
+                # Sealed buffers keep their existing reservations throughout.
+                with self.ledger.reserve(1024):
+                    bare = tuple(raw for raw in frames if type(raw) is bytes)
+                    if bare:
+                        self.ledger.retain(bare)
+                        retained = True
+                    for raw in frames:
+                        candidate = self.stage(raw)
+                    return candidate
             except BaseException:
                 self._discard_candidate()
                 raise
             finally:
-                self.ledger.release(frames)
+                if retained:
+                    self.ledger.release(bare)
+                for raw in frames:
+                    if type(raw) is OwnedInputRef:
+                        raw.close()
 
     def _proof_request(self, candidate, *, deadline_ms=None):
         """Owned transport calls immediately before sending, never proof data."""
@@ -465,7 +495,7 @@ class OwnedSyncCache:
 
     @admission_boundary
     def confirm(self, candidate, proof, clock):
-        with self._lock, self.ledger.allocations():
+        with self._lock, input_bytes(self, proof) as (proof, _), self.ledger.allocations():
             retained = pending = None
             try:
                 root = self._candidate(candidate)
@@ -526,6 +556,7 @@ class OwnedSyncCache:
             finally:
                 if pending is not None:
                     self.ledger.release(pending[1])
+                proof = None
 
     def _head_matches(self, root, head):
         tables = dict(root.tables)
@@ -643,6 +674,9 @@ class OwnedSyncCache:
 
     def disconnect(self):
         with self._lock:
+            if self._inputs is not None:
+                self._inputs.close()
+                self._inputs = None
             self.revoke("disconnected")
             self._discard_candidate()
 
