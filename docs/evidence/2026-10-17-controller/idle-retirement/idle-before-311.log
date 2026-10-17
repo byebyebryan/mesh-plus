@@ -1,0 +1,1 @@
+{"python": "3.11.17", "heapBeforeWorkerClose": 526168, "finalCounters": [0, 132952, 0, 0, 0], "siblingUsable": true, "callbackErrors": [["TypeError", "'NoneType' object is not subscriptable"]], "loadedPins": 29}

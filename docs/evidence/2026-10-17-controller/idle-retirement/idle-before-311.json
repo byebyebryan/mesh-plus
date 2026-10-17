@@ -1,0 +1,52 @@
+{
+  "python": "3.11.17",
+  "gcDisabled": true,
+  "heapBeforeWorkerClose": 526168,
+  "finalCounters": [
+    0,
+    132952,
+    0,
+    0,
+    0
+  ],
+  "callbackErrors": [
+    {
+      "type": "TypeError",
+      "message": "'NoneType' object is not subscriptable",
+      "trace": "Traceback (most recent call last):\n  File \"/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/events.py\", line 84, in _run\n    self._context.run(self._callback, *self._args)\n  File \"/home/bryan/code/mesh-plus/.cache/controller-mesh-14990c7/src/mesh_plus/sync/control_carrier.py\", line 282, in _retire_frame\n    self._retire_ranges()\n  File \"/home/bryan/code/mesh-plus/.cache/controller-mesh-14990c7/src/mesh_plus/sync/control_carrier.py\", line 295, in _retire_ranges\n    while drop < self._count and self._ranges[drop][1] <= self._low:\n                                 ~~~~~~~~~~~~^^^^^^\nTypeError: 'NoneType' object is not subscriptable\n"
+    }
+  ],
+  "siblingUsable": true,
+  "loadedInputs": {
+    "src/mesh_plus/__init__.py": "d4c9f162318ab9942f47c730884001fafaeffc5ddfab1967ce961acd89eb268f",
+    "src/mesh_plus/sync/_constants.py": "6e53f90cba6999f0d9185f508d83273cd7b1e099b1cab86381324577fea0386b",
+    "src/mesh_plus/protocol.py": "5a53fa9bec8ffa7c0fe4ba0911dec6c38a2f4739d281be52775d0c56349125c3",
+    "src/mesh_plus/sync/_allocation.py": "52599a585c1989876ed3db5db7340a744e985e8531dcc5590388437b8186acc5",
+    "src/mesh_plus/sync/canonical.py": "3d481c03157934c479dcf6a501ee3a91638a5c3b0cad3d61b91b4a0ca57a507f",
+    "src/mesh_plus/sync/commitment.py": "f4a89ec24cfeae5312b133ac23c8d5f3afd2d4b00f23cb26892de551280b5074",
+    "src/mesh_plus/sync/budget.py": "46dc0992c56deef30e99f271aa6b3bb129b6c8b150c095c1b62e6423f1f962c2",
+    "src/mesh_plus/sync/aggregate.py": "6bb7973ea94cdbd1084caa210173420c466725bb14eaa71af411d55c1a8460e1",
+    "src/mesh_plus/evidence.py": "224dae58b30c28f142ea1fa0e31038c76704f383082b79989cfef3908ceb388c",
+    "src/mesh_plus/state.py": "0f438cd968da7efe9da364e836042c82b4fbc84192170b5745c672bea0b70f6b",
+    "src/mesh_plus/view.py": "fab26477371397eba6b655eec5a157d5f69e69254df2b59971aa11ee674403e6",
+    "src/mesh_plus/sync/model.py": "f514866c6b625477a2d64d2e864996a9c24c7102a7a959cc09f7f63ed0d769cf",
+    "src/mesh_plus/sync/_boundary.py": "2eab3127c5bb0327d6ec6e687ed4f5a8d6373ec840a62fb99588bc02fbc752f3",
+    "src/mesh_plus/sync/context.py": "fca3afa47c4a72c52dd30508ab1a8a053504e5c604f8dc6efcad7dec114032ea",
+    "src/mesh_plus/sync/_schema.py": "147390c537064a10114d3e5c6f3d76661987f7611158efba379749841bfda48a",
+    "src/mesh_plus/sync/decoder.py": "64a53a45a58259119b026e01de9fdcb1b8ecca120e8510771ad37a8c61d1b378",
+    "src/mesh_plus/sync/ordered.py": "f8d7e9ab4fdd851d7832df342d399838c43ee151fc015fe61745924545e379b8",
+    "src/mesh_plus/sync/reconstruction.py": "7b639912d6f5697770a6f0352827a1372d4b1e2c003b2fd951b70b7229b16e69",
+    "src/mesh_plus/sync/wire.py": "ca9ec2a276f563a768ed304f6f20e4c9947fbab884c85d48558ce6bb5847b462",
+    "src/mesh_plus/sync/inputs.py": "0a3aa6323fa65a239006fbc552009e929b8d67702efb7362aaae483ebe67933f",
+    "src/mesh_plus/sync/cache.py": "fcdf0aed4441ed5768e3d08b6322f2fc52400fdb50461647392c263f2d092c6a",
+    "src/mesh_plus/transport.py": "4a12f03711baf4fa106b1d52d069063694ff12a66c61500815e9cea4967244ca",
+    "src/mesh_plus/sync/control_json.py": "14ea71a84262818e3855e430bd0c3817b4a34956c15fb800e42efaf395a758f4",
+    "src/mesh_plus/sync/control_carrier.py": "33ff2b0a0c3c3fca814b5987b07e49b9733dd44ac156d25cde4081139d424977",
+    "src/mesh_plus/sync/relay_inputs.py": "9073e0323354a37b45971fc089147fd2ca1e906d76962abba214d66ee238ab67",
+    "src/mesh_plus/sync/relay.py": "b7b10f22e2419e4c02f7f63e96ff364819a46b13ba0a14588a9f1cbc9d5fbd2f",
+    "src/mesh_plus/sync/controller.py": "fb29278a714ce4e1fdcafcae050fc9c36c3e6509622af7a8735313e6eacb04db",
+    "src/mesh_plus/sync/normalization.py": "66ec720f780fc9e3b6d9733f33ee8b9a50f8bdd91eea7046b1a0ed9dd4a6a033",
+    "src/mesh_plus/sync/__init__.py": "b8acab88c6e03f09ee4a66e6fb2550adc093cb6b86184c297cd48421e489a07b"
+  },
+  "scope": "Public minted carrier/frame/close and ledger APIs; real worker thread and bounded join control ordering. No source hooks or private source mutations, no wire/authority/RSS/cap-overrun claim. Actual callback exceptions retained with GC disabled."
+}

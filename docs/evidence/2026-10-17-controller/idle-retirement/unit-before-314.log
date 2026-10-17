@@ -1,0 +1,54 @@
+test_worker_idle_frame_close_then_owner_close_drains_queued_retirement (test_sync_control.CarrierTests.test_worker_idle_frame_close_then_owner_close_drains_queued_retirement) ... FAIL
+test_worker_idle_frame_close_then_owner_close_drains_queued_retirement (test_sync_control.CarrierTests.test_worker_idle_frame_close_then_owner_close_drains_queued_retirement) ... FAIL
+
+======================================================================
+FAIL: test_worker_idle_frame_close_then_owner_close_drains_queued_retirement (test_sync_control.CarrierTests.test_worker_idle_frame_close_then_owner_close_drains_queued_retirement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/bryan/code/mesh-plus/.cache/controller-mesh-d013d2a/tests/test_sync_control.py", line 166, in test_worker_idle_frame_close_then_owner_close_drains_queued_retirement
+    self.assertEqual(callbacks, [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [TypeError("'NoneType' object is not subsc[59 chars]le")] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+TypeError("'NoneType' object is not subscriptable")
+
++ []
+- [TypeError("'NoneType' object is not subscriptable"),
+-  TypeError("'NoneType' object is not subscriptable")]
+
+======================================================================
+FAIL: test_worker_idle_frame_close_then_owner_close_drains_queued_retirement (test_sync_control.CarrierTests.test_worker_idle_frame_close_then_owner_close_drains_queued_retirement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/bryan/code/mesh-plus/.cache/controller-mesh-d013d2a/tests/test_sync_control.py", line 34, in asyncTearDown
+    self.assertEqual((ledger.used, ledger.reserved, ledger.encoded,
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      ledger.encoded_reserved, ledger.pending_units), (0,) * 5)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (0, 263104, 0, 0, 0) != (0, 0, 0, 0, 0)
+
+First differing element 1:
+263104
+0
+
+- (0, 263104, 0, 0, 0)
++ (0, 0, 0, 0, 0)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+FAILED (failures=2)
