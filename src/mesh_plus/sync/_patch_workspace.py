@@ -7,21 +7,61 @@ key/value Atoms and constructed index nodes retain their intrinsic charges.
 
 from ..protocol import ProtocolError, check
 from ._boundary import _retire_error
-from .canonical import Atom, packed, thaw
+from .canonical import Atom, PackedAtom, packed, thaw
 from .commitment import ABSENT, MerkleMap
 from .model import IndexRemove, IndexWrite, RuleWrite
 from .ordered import OrderedMap
 
 
+class _IndexRows:
+    """One baseline bucket owns its keys through construction and unwind."""
+
+    __slots__ = ("credit", "rows", "__weakref__")
+
+    def __init__(self, ledger):
+        self.credit = ledger.reserve(256)
+        self.rows = None
+        try:
+            self.rows = []
+        except BaseException:
+            self.close()
+            raise
+
+    def append(self, key, value):
+        check(type(key) in (Atom, PackedAtom) and type(value) in (Atom, PackedAtom) and
+              getattr(key, "_allocation_owner", None) is self.credit.ledger and
+              getattr(value, "_allocation_owner", None) is self.credit.ledger, "sync_index_row_owner")
+        self.credit.grow(128)  # tuple, pointer list and resize overlap
+        self.rows.append((key, value))
+        return len(self.rows)
+
+    def __len__(self):
+        return len(self.rows)
+
+    def close(self):
+        self.rows = None
+        if self.credit is not None:
+            self.credit.close()
+            self.credit = None
+
+
 class _IndexWorkspace:
-    __slots__ = ("credit", "seen", "entries", "__weakref__")
+    __slots__ = ("credit", "seen", "entries", "entries_credit", "__weakref__")
 
     def __init__(self, ledger, *, baseline=False, prepaid=False):
         # Expanded admission keeps its existing whole-patch prepayment. The
         # compact opt-in path owns these phases independently instead.
         self.credit = None if prepaid else ledger.reserve(4096)
-        self.seen = {}
-        self.entries = {} if baseline else None
+        self.seen = self.entries = self.entries_credit = None
+        try:
+            self.seen = {}
+            self.entries = {} if baseline else None
+            # At most 32 descriptor indexes. Registry resize overlap and bucket
+            # control objects stay charged after the duplicate registry drops.
+            self.entries_credit = ledger.reserve(8192) if baseline and not prepaid else None
+        except BaseException:
+            self.close()
+            raise
 
     def remember(self, index, key, code, *, decoded=False):
         check((index, key.encoded) not in self.seen, code)
@@ -32,6 +72,16 @@ class _IndexWorkspace:
         return owned
 
     def append(self, index, key, value):
+        if self.entries_credit is not None:
+            check(self.seen is not None, "sync_index_workspace_retired")
+            if index not in self.entries:
+                bucket = _IndexRows(self.entries_credit.ledger)
+                try:
+                    self.entries[index] = bucket
+                except BaseException:
+                    bucket.close()
+                    raise
+            return self.entries[index].append(key, value)
         if index not in self.entries:
             if self.credit is not None:
                 self.credit.grow(256)  # index bucket and empty list
@@ -41,13 +91,26 @@ class _IndexWorkspace:
         self.entries[index].append((key, value))
         return len(self.entries[index])
 
-    def close(self):
-        # Bulk rows alias key buffers. Drop them before their seen-key owners.
-        self.entries = None
+    def finish_seen(self):
         self.seen = None
         if self.credit is not None:
             self.credit.close()
             self.credit = None
+
+    def take(self):
+        # Preserve insertion/build order, with no roster-sized key snapshot.
+        name = next(iter(self.entries))
+        return name, self.entries.pop(name)
+
+    def close(self):
+        if getattr(self, "entries_credit", None) is not None:
+            for bucket in self.entries.values():
+                bucket.close()
+        self.entries = None
+        if getattr(self, "entries_credit", None) is not None:
+            self.entries_credit.close()
+            self.entries_credit = None
+        self.finish_seen()
 
 
 def _raise_failure(failure):
@@ -60,7 +123,7 @@ def _raise_failure(failure):
 def apply_indexes(store, tx, patch):
     if not patch.writes and not patch.removes:
         return
-    work = key = value = owned_key = entries = spec = remove = write = None
+    work = key = value = owned_key = entries = spec = remove = write = bucket = None
     failure = None
     try:
         work = _IndexWorkspace(store.ledger, baseline=tx.before is None, prepaid=tx.compact is None)
@@ -83,9 +146,23 @@ def apply_indexes(store, tx, patch):
                 tx.indexes[write.index] = tx.indexes[write.index].put_atom(thaw(key.value), packed(value))
                 size = len(tx.indexes[write.index])
             else:
-                size = work.append(write.index, owned_key if spec.ordered else owned_key.encoded, packed(value))
+                size = work.append(write.index, owned_key if spec.ordered or work.entries_credit is not None else
+                                   owned_key.encoded, packed(value))
             check(size <= spec.max_entries, "sync_index_entry_capacity")
-        if work.entries is not None:
+        if work.entries_credit is not None:
+            # All duplicates and schemas have been checked. Rows own the
+            # canonical key buffers before their duplicate markers retire.
+            work.finish_seen()
+            while work.entries:
+                name, bucket = work.take()
+                entries = bucket.rows
+                tx.indexes[name] = (OrderedMap.baseline_atoms(entries) if store.index_specs[name].ordered else
+                                    MerkleMap._from_encoded_atoms("index/" + name,
+                                        ((key.encoded, value) for key, value in entries)))
+                entries = None
+                bucket.close()
+                bucket = None
+        elif work.entries is not None:
             for name, entries in work.entries.items():
                 tx.indexes[name] = (OrderedMap.baseline_atoms(entries) if store.index_specs[name].ordered else
                                     MerkleMap._from_encoded_atoms("index/" + name, entries))
@@ -93,6 +170,9 @@ def apply_indexes(store, tx, patch):
         failure = _retire_error(error)
     finally:
         key = value = owned_key = entries = spec = remove = write = None
+        if bucket is not None:
+            bucket.close()
+            bucket = None
         if work is not None:
             work.close()
         work = None

@@ -300,11 +300,13 @@ class PatchWorkspaceTests(unittest.TestCase):
                 for i in range(128):
                     key, value = Atom.own([i]), packed(Atom.own({"value": i}))
                     owned = work.remember("facts", key, "sync_duplicate_index_operation")
-                    work.append("facts", owned.encoded, value)
+                    work.append("facts", owned, value)
                 actual = (2 * sys.getsizeof(work.seen) + sum(sys.getsizeof(marker) for marker in work.seen) +
-                          sys.getsizeof(work.entries) + sum(2 * sys.getsizeof(rows) +
-                          sum(sys.getsizeof(row) for row in rows) for rows in work.entries.values()))
-                self.assertGreaterEqual(work.credit.amount, actual)
+                          2 * sys.getsizeof(work.entries) + sum(sys.getsizeof(bucket) +
+                          sys.getsizeof(bucket.credit) + 2 * sys.getsizeof(bucket.rows) +
+                          sum(sys.getsizeof(row) for row in bucket.rows) for bucket in work.entries.values()))
+                self.assertGreaterEqual(work.credit.amount + work.entries_credit.amount +
+                                        sum(bucket.credit.amount for bucket in work.entries.values()), actual)
                 self.assertTrue(all(marker[1] is atom.encoded and atom._allocation_owner is ledger
                                     for marker, atom in work.seen.items()))
                 key = Atom.own([999])
@@ -315,7 +317,7 @@ class PatchWorkspaceTests(unittest.TestCase):
                         work.remember("facts", key, "sync_duplicate_index_operation")
                     self.assertEqual(len(work.seen), 128)
                     with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
-                        work.append("facts", key.encoded, value)
+                        work.append("facts", key, value)
                     self.assertEqual(len(work.entries["facts"]), 128)
                 finally:
                     ledger.maximum = maximum
@@ -324,6 +326,205 @@ class PatchWorkspaceTests(unittest.TestCase):
                 work.close()
         self.assertEqual((ledger.used, ledger.reserved, ledger.encoded, ledger.encoded_reserved,
                           ledger.pending_units, ledger.pending_encoded), (0, 0, 0, 0, 0, 0))
+
+    def test_baseline_seen_registry_retires_before_map_construction(self):
+        from mesh_plus.sync._packed_nodes import PackedNodeArena
+        from mesh_plus.sync._patch_workspace import _IndexWorkspace
+        from mesh_plus.sync.commitment import MerkleMap
+
+        init, merkle, ordered = _IndexWorkspace.__init__, MerkleMap._from_encoded_atoms, OrderedMap.baseline_atoms
+        refs, observed = [], []
+        admit = self.profile._admit
+
+        def extra(ctx):
+            ctx.budget.charge(256 * 1024)
+            result = admit(ctx)
+            return replace(result, writes=result.writes + tuple(IndexWrite(name, ["extra", i], {"value": i})
+                           for name in ("facts", "ranked") for i in range(128)))
+
+        def capture(work, ledger, **kwargs):
+            init(work, ledger, **kwargs)
+            if ledger is self.cache.ledger:
+                refs.append(weakref.ref(work))
+
+        def state(name):
+            work = None if not refs else refs[-1]()
+            if work is not None and work.entries is not None:
+                observed.append((name, work.seen is None, work.credit is None))
+
+        def tree(cls, name, entries, **kwargs):
+            state(name)
+            return merkle(name, entries, **kwargs)
+
+        def order(cls, entries, **kwargs):
+            state("ranked")
+            return ordered(entries, **kwargs)
+
+        self.profile._admit = extra
+        for backend in ("default", "packed"):
+            with self.subTest(backend=backend):
+                self.cache.close()
+                arena = PackedNodeArena(self.cache.ledger) if backend == "packed" else None
+                self.cache = self.make_cache(ledger=self.cache.ledger)
+                expanded = OwnedSyncCache(self.profile, source_binding("fixture", "source", self.profile.descriptor))
+                start = len(observed)
+                try:
+                    first = fixture(self.profile, member=False)
+                    with patch.object(_IndexWorkspace, "__init__", capture), \
+                         patch.object(MerkleMap, "_from_encoded_atoms", classmethod(tree)), \
+                         patch.object(OrderedMap, "baseline_atoms", classmethod(order)):
+                        candidate = self.cache.admit_baseline(compact(first[0]))
+                    expanded.admit_baseline(canonical(first[0]))
+                    self.assertEqual(candidate.tag.native, first[2])
+                    def indexes(root):
+                        return [(name, tuple((table.leaf_at(i).key.encoded, table.leaf_at(i).atom.encoded)
+                                             for i in range(len(table))) if type(table) is OrderedMap else table.root)
+                                for name, table in root.indexes]
+                    self.assertEqual(indexes(self.cache.store.candidate), indexes(expanded.store.candidate))
+                    self.assertEqual([row[0] for row in observed[start:]], ["index/facts", "index/aliases", "ranked"])
+                    self.assertTrue(all(row[1:] == (True, True) for row in observed[start:]))
+                finally:
+                    expanded.close()
+                    self.cache.close()
+                    if arena is not None:
+                        arena.close()
+
+    def test_bucket_storage_and_keys_survive_seen_retirement_without_refund_gap(self):
+        from mesh_plus.sync._patch_workspace import _IndexWorkspace
+        from mesh_plus.sync.budget import AllocationLedger
+        from mesh_plus.sync.canonical import Atom, packed
+
+        ledger = AllocationLedger()
+        with ledger.allocations():
+            work = _IndexWorkspace(ledger, baseline=True)
+            key = value = owned = bucket = None
+            try:
+                for number in range(4096):
+                    name = "index" + str(number % 32)
+                    key, value = Atom.own([number]), packed(Atom.own({"value": number}))
+                    owned = work.remember(name, key, "sync_duplicate_index_operation")
+                    work.append(name, owned, value)
+                actual = (2 * sys.getsizeof(work.entries) + sum(sys.getsizeof(bucket) +
+                          sys.getsizeof(bucket.credit) + 2 * sys.getsizeof(bucket.rows) +
+                          sum(sys.getsizeof(row) for row in bucket.rows) for bucket in work.entries.values()))
+                metadata = work.entries_credit.amount + sum(bucket.credit.amount for bucket in work.entries.values())
+                self.assertGreaterEqual(metadata, actual)
+                maximum = ledger.maximum
+                ledger.maximum = ledger.used + ledger.reserved
+                try:
+                    with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                        work.append("new-bucket", owned, value)
+                    self.assertEqual(len(work.entries), 32)
+                finally:
+                    ledger.maximum = maximum
+                old_encoded, old_total = ledger.pending_encoded + ledger.encoded_reserved, ledger.used + ledger.reserved
+                seen_credit = work.credit.amount
+                work.finish_seen()
+                self.assertIsNone(work.seen)
+                self.assertIsNone(work.credit)
+                self.assertEqual(ledger.pending_encoded + ledger.encoded_reserved, old_encoded)
+                self.assertEqual(ledger.used + ledger.reserved, old_total - seen_credit)
+                self.assertTrue(all(type(row[0].encoded) is bytes and row[0]._allocation_owner is ledger and
+                                    row[1]._allocation_owner is ledger for bucket in work.entries.values()
+                                    for row in bucket.rows))
+                with self.assertRaisesRegex(ProtocolError, "sync_index_workspace_retired"):
+                    work.append("late", owned, value)
+                bucket = next(iter(work.entries.values()))
+                maximum = ledger.maximum
+                ledger.maximum = ledger.used + ledger.reserved
+                try:
+                    with self.assertRaisesRegex(ProtocolError, "sync_decoded_capacity"):
+                        bucket.append(owned, value)
+                    self.assertEqual(len(bucket), 128)
+                finally:
+                    ledger.maximum = maximum
+            finally:
+                key = value = owned = bucket = None
+                work.close()
+        self.assertEqual((ledger.used, ledger.reserved, ledger.encoded, ledger.encoded_reserved,
+                          ledger.pending_units, ledger.pending_encoded), (0, 0, 0, 0, 0, 0))
+
+    def test_finished_buckets_drop_before_next_take_and_fields(self):
+        from mesh_plus.sync._patch_workspace import _IndexRows, _IndexWorkspace
+
+        take, init, field = _IndexWorkspace.take, _IndexRows.__init__, ReconstructionStore._field_patch
+        refs, clean, observed = [], [], []
+        admit = self.profile._admit
+
+        def extra(ctx):
+            ctx.budget.charge(128 * 1024)
+            result = admit(ctx)
+            return replace(result, writes=result.writes + (IndexWrite("ranked", [1], {"value": 1}),))
+
+        def capture(bucket, *args, **kwargs):
+            init(bucket, *args, **kwargs)
+            refs.append(weakref.ref(bucket))
+
+        def next_bucket(work):
+            clean.append(not observed or observed[-1]() is None)
+            name, bucket = take(work)
+            observed.append(weakref.ref(bucket))
+            return name, bucket
+
+        def fields(store, tx, items, layout):
+            clean.append(all(ref() is None for ref in refs))
+            self.assertGreaterEqual(tx.budget._charged.amount, 128 * 1024)
+            return field(store, tx, items, layout)
+        self.profile._admit = extra
+        with patch.object(_IndexRows, "__init__", capture), patch.object(_IndexWorkspace, "take", next_bucket), \
+             patch.object(ReconstructionStore, "_field_patch", fields):
+            self.cache.admit_baseline(compact(fixture(self.profile, member=False)[0]))
+        self.assertEqual(len(refs), 3)
+        self.assertEqual(clean, [True] * 4)
+        self.assertTrue(all(ref() is None for ref in refs))
+
+    def test_constructor_retirement_holds_bucket_keys_credit_receive_and_sibling(self):
+        from mesh_plus.sync._patch_workspace import _IndexWorkspace
+
+        owner = self.cache.input_owner()
+        receive = owner.reserve(4096, encoded_bytes=1024)
+        sibling = self.make_cache(ledger=self.cache.ledger)
+        take, ordered, admit = _IndexWorkspace.take, OrderedMap.baseline_atoms, self.profile._admit
+        active, buckets, observed = [], [], []
+
+        def extra(ctx):
+            ctx.budget.charge(128 * 1024)
+            result = admit(ctx)
+            return replace(result, writes=result.writes + (IndexWrite("ranked", [1], {"value": 1}),))
+
+        def capture(work):
+            name, bucket = take(work)
+            buckets.append(weakref.ref(bucket))
+            if name == "ranked":
+                active.append(weakref.ref(bucket))
+            return name, bucket
+
+        def close(cls, entries, **kwargs):
+            if active:
+                bucket = active[-1]()
+                credit = bucket.credit.amount
+                owner.close()
+                self.assertFalse(bucket.credit.closed)
+                self.assertGreaterEqual(self.cache.ledger.reserved, credit)
+                self.assertTrue(all(key._allocation_owner is self.cache.ledger for key, _ in entries))
+                self.assertEqual(receive.encoded_bytes, 1024)
+                other = sibling.input_owner().reserve(32, encoded_bytes=8)
+                other.close()
+                observed.append(True)
+                raise RuntimeError("held bucket constructor failure")
+            return ordered(entries, **kwargs)
+        self.profile._admit = extra
+        try:
+            with patch.object(_IndexWorkspace, "take", capture), \
+                 patch.object(OrderedMap, "baseline_atoms", classmethod(close)):
+                self.reject(lambda: self.cache.admit_baseline(compact(fixture(self.profile, member=False)[0])),
+                            "sync_admission_rejected")
+            self.assertEqual(observed, [True])
+            self.assertTrue(all(ref() is None for ref in buckets))
+            self.assertIsNone(self.cache.store.candidate)
+        finally:
+            receive.close()
+            sibling.close()
 
     def test_reentrant_validator_close_keeps_workspace_receive_and_sibling_credit(self):
         from mesh_plus.sync._patch_workspace import _IndexWorkspace
