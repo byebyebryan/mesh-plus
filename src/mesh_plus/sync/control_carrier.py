@@ -282,6 +282,8 @@ class SyncControlCarrier:
         self._retire_ranges()
         self._space.set()
         credit.close()
+        if self._closed:
+            self._drop_storage()
 
     @property
     @admission_boundary
@@ -419,6 +421,9 @@ class SyncControlCarrier:
             return
         for frame in tuple(self._frames.values()):
             frame.close()
+            # An idle worker close may already have queued retirement. Drain
+            # it now on the owner loop; the queued callback becomes a no-op.
+            self._retire_frame(frame)
         self._space.set()
         self._output.writer._pending = None
         loop = self._loop
@@ -455,7 +460,8 @@ class SyncControlCarrier:
         self._drop_storage()
 
     def _drop_storage(self):
-        if not self._io_retired or self._read_task is not None or self._io_jobs or self._copies:
+        if (not self._io_retired or self._read_task is not None or self._io_jobs or
+                self._copies or self._frames):
             return
         self._data = self._ranges = self._scope = None
         self._waiters.clear()

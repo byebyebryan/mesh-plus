@@ -127,6 +127,58 @@ class CarrierTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(owner())
         self.assertIsNone(writer())
 
+    async def test_worker_idle_frame_close_then_owner_close_drains_queued_retirement(self):
+        carrier, peer, ledger = self.carrier()
+        sibling, sibling_peer, _ = self.carrier(ledger)
+        await self.send(peer, b'{"payload":"retire"}\n{}\n')
+        first, second = await self.frame(carrier), await self.frame(carrier)
+        header = first.header
+        scratch = ledger.reserve(header.materialization_bytes)
+        detached = header.materialize()
+        before = ledger.reserved
+        loop, callbacks = asyncio.get_running_loop(), []
+        previous = loop.get_exception_handler()
+        loop.set_exception_handler(lambda _loop, context: callbacks.append(context.get("exception")))
+        def close_frames():
+            for _ in range(3):
+                first.close()
+                second.close()
+        worker = threading.Thread(target=close_frames)
+        try:
+            worker.start()
+            # Bound the short join so callbacks cannot run before public aclose.
+            worker.join(2)
+            self.assertFalse(worker.is_alive())
+            self.assertEqual(ledger.reserved, before)
+            for access in (lambda: first.header, lambda: second.header, header.materialize):
+                try:
+                    access()
+                except ProtocolError as error:
+                    self.assertEqual(str(error), "sync_control_retired")
+                    self.errors.append(error)
+                else:
+                    self.fail("queued retirement left a frame usable")
+            await carrier.aclose()
+            first.close()
+            second.close()
+            await carrier.aclose()
+            await asyncio.sleep(0)  # retain actual errors from stale callbacks
+            self.assertEqual(callbacks, [])
+            self.assertEqual(ledger.reserved, _BASE_HEAP + scratch.amount)
+            self.assertEqual(detached, {"payload": "retire"})
+            await self.send(sibling_peer, b'{}\n')
+            (await self.frame(sibling)).close()
+            await sibling.aclose()
+            self.assertEqual(ledger.reserved, scratch.amount)
+        finally:
+            await carrier.aclose()
+            await sibling.aclose()
+            detached = None
+            scratch.close()
+            await asyncio.sleep(0)
+            self.errors.extend(callbacks)
+            loop.set_exception_handler(previous)
+
     async def test_strict_syntax_unicode_duplicates_and_tree_reject_before_public_header(self):
         invalid = (b'{"x":1,"x":2}\n', b'{"x":1,"\\u0078":2}\n', b'{"x":-0}\n',
                    b'{"x":1.5}\n', b'{"x":NaN}\n', b'\xef\xbb\xbf{}\n', b'{}\r\n',
