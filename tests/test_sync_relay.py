@@ -26,6 +26,8 @@ class Writer:
         self.transport = self
         self.fragments, self.pending, self.closed = [], None, False
         self.block, self.reached = asyncio.Event(), asyncio.Event()
+        self.close_started, self.close_release = asyncio.Event(), asyncio.Event()
+        self.close_release.set()
         self.block.set()
         self.limits = (16384, 65536)
 
@@ -53,9 +55,10 @@ class Writer:
     def close(self):
         self.closed, self.pending = True, None
         self.block.set()
+        self.close_started.set()
 
     async def wait_closed(self):
-        pass
+        await self.close_release.wait()
 
     def frames(self):
         return [decode(raw) for raw in b"".join(self.fragments).splitlines()]
@@ -332,6 +335,7 @@ class RelayTests(unittest.IsolatedAsyncioTestCase):
     async def test_blocked_write_pins_input_until_cancellation_unwinds(self):
         channel, writer = await self.channel()
         writer.block.clear()
+        writer.close_release.clear()
         writer.reached.clear()
         capsule = channel.begin_acquisition(deadline_ms=boottime_ms() + 15000)
         job = asyncio.create_task(capsule.baseline())
@@ -339,7 +343,11 @@ class RelayTests(unittest.IsolatedAsyncioTestCase):
         before = self.ledger.encoded_reserved
         self.assertGreaterEqual(before, len(self.source.raw))
         job.cancel()
-        job.cancel()
+        await writer.close_started.wait()
+        self.assertGreaterEqual(self.ledger.encoded_reserved, len(self.source.raw))
+        job.cancel()  # repeated cancellation while owned physical cleanup waits
+        self.assertFalse(job.done())
+        writer.close_release.set()
         with self.assertRaises(asyncio.CancelledError):
             await job
         await channel.aclose()

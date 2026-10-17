@@ -38,6 +38,20 @@ _LIMITS = dict(zip(
 ))
 
 
+class _ScanLease:
+    """Only close escapes a scanner call; no grow/ledger capability."""
+
+    __slots__ = ("_credit",)
+
+    def __init__(self, credit):
+        self._credit = credit
+
+    def close(self):
+        credit, self._credit = self._credit, None
+        if credit is not None:
+            credit.close()
+
+
 class _ScanBudget:
     """Callback-scoped reserve capability; ticket leases survive separately."""
 
@@ -48,8 +62,13 @@ class _ScanBudget:
         check(self._ledger is not None, "sync_reference_retired")
         check(len(self._leases) < 64, "sync_input_slots")
         credit = self._ledger.reserve(amount, encoded=encoded)
-        self._leases.append(credit)
-        return credit
+        try:
+            lease = _ScanLease(credit)
+            self._leases.append(lease)
+            return lease
+        except BaseException:
+            credit.close()
+            raise
 
     def finish(self, *, failed=False):
         leases, self._leases = self._leases, []
