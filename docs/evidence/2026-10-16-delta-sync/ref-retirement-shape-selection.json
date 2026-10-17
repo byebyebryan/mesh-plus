@@ -1,0 +1,40 @@
+{
+  "basis": [
+    {
+      "bytes": 5315,
+      "commit": "90b4292bee4a441d00e6dd22fe566e75211b656f",
+      "path": "docs/delta-sync-source-pin-revocation.md",
+      "sha256": "c5307671c03099004dfa4e4e20b06471277b51af57326b4910d381a631322918"
+    },
+    {
+      "bytes": 27708,
+      "commit": "0738f941536111134aafb89014078b32412ba63f",
+      "path": "projects/agent-dashboard/docs/delta-sync-relay-addendum.md",
+      "sha256": "e32c7273833134b39e8fbb997b9af04f69dd9b97deb8e212b46512d787e9dd62"
+    }
+  ],
+  "choice": "One owner-bound callable, not a parallel ref.revoked property. Enables mandatory setup capability check before source state allocation/I/O and exact minting-owner/role errors.",
+  "coordination": "Root0738f941 clears exact owner-bound proposal; Observer90b4292 offers owner-bound alternative. This choice is Mesh agreement, not inferred Observer exact-byte signoff. Existing single m145 review remains; no duplicate assignment or general approval request.",
+  "errors": "Wrong type/role/minting owner/malformed ref =>sync_input_owner with no mutation; closed minting owner can query own refs; replacement/sibling owner cannot.",
+  "exactPublicSignatures": [
+    "InputOwner.ref_is_retired(ref: OwnedInputRef) -> bool",
+    "RelayInputOwner.ref_is_retired(ref: RelayInputRef) -> bool"
+  ],
+  "runtimeDiff": [],
+  "selectedProposal": {
+    "bytes": 6067,
+    "path": "docs/delta-sync-ref-retirement-proposal.md",
+    "sha256": "298efa4af40a23651702ac85862d817a045e9b7e781daf363bc43e1300aaf018"
+  },
+  "selectedProposalCommit": "d8d7a6233f625ba352c3451396770a61b28635c7",
+  "sourceAdoption": "Require callable before source state reserve/I/O; exact bool only; prune only True; retain False consuming revokers; no nbytes fallback; drop captured query after own child/I/O cleanup; do not close shared input owner.",
+  "states": {
+    "available": false,
+    "consumingUnrevoked": false,
+    "consumptionFinished": true,
+    "mintingOwnerRetired": true,
+    "revokedButPhysicallyPinned": true
+  },
+  "status": "MESH_SELECTED_EXACT_EXISTING_OWNER_BOUND_PROPOSAL; Observer same-byte agreement pending; no runtime change",
+  "unchanged": "d8 proposal/evidence bytes, strict nbytes/consume, raw ABI, all caps/deadlines, source/cache/relay authority checks, native schemas/encoding/LOCK/a7+a23; source and generic implementation gates remain."
+}
