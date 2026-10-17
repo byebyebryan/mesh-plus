@@ -28,6 +28,8 @@ from .model import (
     SourceTag,
     SyncDescriptor,
 )
+from .relay import RelayAcquisition, RelayChannel, RelayWatch, SyncRelay, create_sync_relay
+from .relay_inputs import RelayInputOwner, RelayInputRef, RelayInputReservation
 
 __all__ = [
     "SYNC_INTERFACE_VERSION", "SYNC_PROTOCOL", "COMMITMENT", "SyncDescriptor", "IndexSpec",
@@ -37,4 +39,6 @@ __all__ = [
     "ChangeSet", "ResyncRequired", "MovedHead", "source_binding",
     "AggregateCommit", "UnavailableHost",
     "InputOwner", "InputReservation", "OwnedInputRef",
+    "create_sync_relay", "SyncRelay", "RelayChannel", "RelayAcquisition", "RelayWatch",
+    "RelayInputOwner", "RelayInputReservation", "RelayInputRef",
 ]
