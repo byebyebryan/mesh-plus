@@ -363,29 +363,36 @@ class ReconstructionStore:
         check(tx is not None and tx.permit == permit, "sync_reference_retired")
         return tx
 
+    def _atom_at(self, tx, location):
+        side, kind, space, encoded = location
+        check(side in {"before", "after", "operation"}, "sync_reference_side")
+        if side == "operation":
+            operation = tx.operations[int(space)]
+            return operation.key if kind == "key" else operation.value
+        if kind == "binding":
+            return tx.binding
+        if side == "before":
+            root = tx.before
+            maps = {} if root is None else dict(root.tables if kind == "table" else root.indexes)
+        else:
+            maps = tx.tables if kind == "table" else tx.indexes
+        table = maps.get(space)
+        leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
+                                              else table.find(decode(encoded)))
+        return ABSENT if leaf is ABSENT else leaf.atom
+
     @contextlib.contextmanager
-    def borrow(self, permit, location, path):
-        with self._lock, self._arena.active():
+    def peek(self, permit, location):
+        with self._lock:
             tx = self.check_permit(permit)
             tx.visits.charge()
-            side, kind, space, encoded = location
-            check(side in {"before", "after", "operation"}, "sync_reference_side")
-            if side == "operation":
-                operation = tx.operations[int(space)]
-                atom = operation.key if kind == "key" else operation.value
-                value = None if atom is None else atom.value
-            elif kind == "binding":
-                value = tx.binding.value
-            else:
-                if side == "before":
-                    root = tx.before
-                    maps = {} if root is None else dict(root.tables if kind == "table" else root.indexes)
-                else:
-                    maps = tx.tables if kind == "table" else tx.indexes
-                table = maps.get(space)
-                leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
-                                                      else table.find(decode(encoded)))
-                value = ABSENT if leaf is ABSENT else leaf.atom.value
+            with self._arena.active():
+                yield self._atom_at(tx, location)
+
+    @contextlib.contextmanager
+    def borrow(self, permit, location, path):
+        with self.peek(permit, location) as atom:
+            value = atom if atom is ABSENT or atom is None else atom.value
             for part in path:
                 value = value[part]
             yield value
@@ -394,20 +401,8 @@ class ReconstructionStore:
         with self._lock:
             tx = self.check_permit(permit)
             tx.visits.charge()
-            side, kind, space, encoded = location
-            if side == "operation":
-                operation = tx.operations[int(space)]
-                atom = operation.key if kind == "key" else operation.value
-            elif kind == "binding":
-                atom = tx.binding
-            else:
-                maps = (tx.tables if kind == "table" else tx.indexes) if side == "after" else (
-                    {} if tx.before is None else dict(tx.before.tables if kind == "table" else tx.before.indexes))
-                table = maps.get(space)
-                leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
-                                                      else table.find(decode(encoded)))
-                atom = None if leaf is ABSENT else leaf.atom
-            return 0 if atom is None else atom.copy_budget
+            atom = self._atom_at(tx, location)
+            return 0 if atom is None or atom is ABSENT else atom.copy_budget
 
     def index_next(self, permit, side, name, rank, prefix):
         with self._lock:

@@ -2,18 +2,30 @@
 
 from collections.abc import Mapping, Sequence
 
-from .canonical import FrozenObject, thaw
+from .canonical import FrozenObject, InputKey, PackedAtom, decode_reservation, thaw
+from .commitment import ABSENT
 
 
 def _detach_scalar(value):
-    if type(value) is str:
-        return value.encode("utf-8").decode("utf-8")
-    if type(value) is int and not -5 <= value <= 256:
-        return int(str(value))
+    # Immutable scalar leaves have no backlink to a cache/root. Keeping the
+    # requested scalar cannot pin a generation, just as with materialize().
     return value
 
 
 def reference(owner, permit, location, path=()):
+    if not path:
+        with owner.peek(permit, location) as atom:
+            if atom is ABSENT or atom is None:
+                return atom
+            first = atom.encoded[0]
+            if first == 123:
+                return ObjectRef(owner, permit, location, path)
+            if first == 91:
+                return ArrayRef(owner, permit, location, path)
+            if type(atom) in (PackedAtom, InputKey):
+                with owner.ledger.reserve(decode_reservation(atom.encoded)):
+                    return _detach_scalar(atom.value)
+            return _detach_scalar(atom.value)
     with owner.borrow(permit, location, path) as value:
         if type(value) is FrozenObject:
             return ObjectRef(owner, permit, location, path)

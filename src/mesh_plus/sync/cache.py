@@ -369,24 +369,31 @@ class OwnedSyncCache:
             with self.store._arena.active():
                 yield root
 
+    def _atom_at(self, root, permit, location):
+        side, kind, space, encoded = location
+        check(side == "view", "sync_reference_side")
+        if kind == "binding":
+            return root.binding
+        if kind == "head":
+            check(self._proof_context is not None and permit == self._proof_context[0], "sync_reference_retired")
+            return self._proof_context[2]
+        maps = dict(root.tables if kind == "table" else root.indexes)
+        table = maps.get(space)
+        leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
+                                              else table.find(decode(encoded)))
+        return ABSENT if leaf is ABSENT else leaf.atom
+
     @contextlib.contextmanager
-    def borrow(self, permit, location, path):
+    def peek(self, permit, location):
         with self._active_root(permit) as root:
-            side, kind, space, encoded = location
-            check(side == "view", "sync_reference_side")
-            if kind == "binding":
-                value = root.binding.value
-            elif kind == "head":
-                check(self._proof_context is not None and permit == self._proof_context[0], "sync_reference_retired")
-                value = self._proof_context[2].value
-            else:
-                maps = dict(root.tables if kind == "table" else root.indexes)
-                table = maps.get(space)
-                leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
-                                                      else table.find(decode(encoded)))
-                value = ABSENT if leaf is ABSENT else leaf.atom.value
             if self._proof_context is not None and permit == self._proof_context[0]:
                 self._proof_context[3].charge()
+            yield self._atom_at(root, permit, location)
+
+    @contextlib.contextmanager
+    def borrow(self, permit, location, path):
+        with self.peek(permit, location) as atom:
+            value = atom if atom is ABSENT or atom is None else atom.value
             for part in path:
                 value = value[part]
             yield value
@@ -414,21 +421,10 @@ class OwnedSyncCache:
     def materialization_budget(self, permit, location):
         with self._lock:
             root = self._view_root(permit)
-            _, kind, space, encoded = location
-            if kind == "binding":
-                atom = root.binding
-            elif kind == "head":
-                check(self._proof_context is not None and permit == self._proof_context[0], "sync_reference_retired")
-                atom = self._proof_context[2]
-            else:
-                maps = dict(root.tables if kind == "table" else root.indexes)
-                table = maps.get(space)
-                leaf = ABSENT if table is None else (table.find_encoded(encoded) if type(table) is MerkleMap
-                                                      else table.find(decode(encoded)))
-                atom = None if leaf is ABSENT else leaf.atom
+            atom = self._atom_at(root, permit, location)
             if self._proof_context is not None and permit == self._proof_context[0]:
                 self._proof_context[3].charge()
-            return 0 if atom is None else atom.copy_budget
+            return 0 if atom is None or atom is ABSENT else atom.copy_budget
 
     @admission_boundary
     def confirm(self, candidate, proof, clock):

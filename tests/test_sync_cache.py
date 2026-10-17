@@ -169,6 +169,20 @@ class CacheTests(unittest.TestCase):
                 self.cache.confirm(self.candidate, canonical(document), CLOCK)
             self.assertNotIsInstance(caught.exception, MovedHead)
 
+    def test_opaque_body_lookup_and_copy_budget_decode_nothing_until_read(self):
+        view = self.confirm()
+        digest = view.lookup("records", IDENTITY)["body"]
+        self.cache.store._arena.clear()
+        before = self.cache.store._arena.decodes
+        body = view.lookup("bodies", digest)
+        self.assertGreater(body.materialization_bytes, 0)
+        self.assertEqual(self.cache.store._arena.decodes, before)
+        self.assertEqual(body.materialize()["value"], 1)
+        self.assertEqual(self.cache.store._arena.decodes, before + 1)
+        self.cache.disconnect()
+        with self.assertRaisesRegex(ProtocolError, "sync_view_retired"):
+            body.materialize()
+
     def test_only_fresh_proof_publishes_and_old_receipt_is_not_renewed(self):
         with self.assertRaisesRegex(ProtocolError, "sync_unconfirmed"):
             self.cache.acquire()
