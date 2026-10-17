@@ -1,0 +1,153 @@
+{
+  "artifacts": {
+    "docs/evidence/2026-10-17-index-workspace/README.md": {
+      "bytes": 8117,
+      "sha256": "de731f7d990095d30099b84650f64f44cf932ccf7f92542b5d90432835a20ad9"
+    },
+    "docs/evidence/2026-10-17-index-workspace/qualify_indexes.py": {
+      "bytes": 7729,
+      "sha256": "fb7006cad18b4f6738a6a4fa60e91c121d3b32999ce259986b6b03c5d79e9206"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/2000-default-311.json": {
+      "bytes": 12623,
+      "sha256": "bc5c6fbd29cadbee8b0cf990e1350b9a11fa966d1899e05536e86ed609d12d91"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/2000-default-311.log": {
+      "bytes": 223,
+      "sha256": "799323424d4430025ef52aeff258b874c7162cb065d95b79d20e2fdc8ac8cbf8"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/2000-default-314.json": {
+      "bytes": 12571,
+      "sha256": "1afe305c914b8c4ddeb5548395eb3b22a91aee2ef0e295c164cc5dd8b80818e7"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/2000-default-314.log": {
+      "bytes": 222,
+      "sha256": "db7ae005b350ffd397d545085cbe6c782aa95a727227ff651d7e14af3d2e3315"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/2000-packed-311.json": {
+      "bytes": 12630,
+      "sha256": "18e372ad9d177b61f024c4410b4cb590a452a719d477b1adc7b09b389e7fc1b7"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/2000-packed-311.log": {
+      "bytes": 222,
+      "sha256": "14ce261138a276e6795b89e7e86f11f670eeabd6b9906236ba43c288c961cac4"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/2000-packed-314.json": {
+      "bytes": 12578,
+      "sha256": "d26cdd980b214616bf5d26714845fea2cf28d9a527f306e60be875544466a8a5"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/2000-packed-314.log": {
+      "bytes": 221,
+      "sha256": "b8fe0b9fbca40d716e5b9427abfbafdd299ae9330329f02d517832b9ec83f2e3"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/500-default-311.json": {
+      "bytes": 16991,
+      "sha256": "82908f424131dea1a5a631324d09217e8e73a37917d4cd758c88f49646180bfb"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/500-default-311.log": {
+      "bytes": 223,
+      "sha256": "68c4ba5f734eaf30abc990f0cd6657b8419c62cbe13b6bffc7abc992ef3fbb97"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/500-default-314.json": {
+      "bytes": 16990,
+      "sha256": "5f9072bddbd292374b35a7b1d79923b8cc26e0ea97464e88609932988fe2836a"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/500-default-314.log": {
+      "bytes": 222,
+      "sha256": "b4016d7dc21d596e0f4c6ad582e806c3a06a0986b9e76fc75ec39e916a54c0a3"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/500-packed-311.json": {
+      "bytes": 17009,
+      "sha256": "28376db836809057c037242c673ecfdbfbdc69f6fdacf20255eba52e35f9b2a5"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/500-packed-311.log": {
+      "bytes": 222,
+      "sha256": "7f64d5a3da82148391651bbc6af48252632de46dc3fd61f0805dacb4d5e875a4"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/500-packed-314.json": {
+      "bytes": 17008,
+      "sha256": "e2ef8154788adf87fb2f9f3fceed60ef6dc35b88bf97f82e33d7a6c25464f2a5"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/500-packed-314.log": {
+      "bytes": 221,
+      "sha256": "35c89d11c86e7af753a68034c02d17c484eedd4420a69f21464a8ebe7cfccb67"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/before-rejection-311.log": {
+      "bytes": 2113,
+      "sha256": "3ffe300317b97f59d5fde7b51fccc4be7475b1635d6c5ece8a435d11b4472ba8"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/before-rejection-314.log": {
+      "bytes": 2359,
+      "sha256": "de201998eda62a052dee1a50cf6f7a0f2385b0f7c63a35bd2e564b032a807783"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/canonical-final.log": {
+      "bytes": 66619,
+      "sha256": "d33e80df2ee251abd3ecbd779b9697bb609b981ed90fc7be243c5b49cab41472"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/focused-311.log": {
+      "bytes": 11735,
+      "sha256": "8ed387356f52a862200ff43998e25a44ad0fb8d1d319c2fa681d6e6ce94a46fc"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/focused-314.log": {
+      "bytes": 11735,
+      "sha256": "af025da62ee8b453b7e0112cf4441b6b539ba3fe8e8ef4e893ef214dda1269a0"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/profile-packed2000-314.json": {
+      "bytes": 19728,
+      "sha256": "2f3acb7c53e2b43e41051154f700ce49e1961eafa411661086bc444b73efafb9"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/profile-packed2000-314.log": {
+      "bytes": 1723,
+      "sha256": "73520984592cd05023554883a51cf00ac9127fa1304f136e1909c0974382e4e7"
+    },
+    "docs/evidence/2026-10-17-index-workspace/results/qualification.json": {
+      "bytes": 140282,
+      "sha256": "9829125f759af07152f4f246219296667c14908d190d3b8d2cd949e242a9b9a2"
+    },
+    "docs/evidence/2026-10-17-index-workspace/seal_indexes.py": {
+      "bytes": 4135,
+      "sha256": "45e8799503e9ebec55a9acf223618d134b15468641aaa5da73ff5e47648f6430"
+    }
+  },
+  "beforeRuntime": "4301339515e84f2edb63c88a886380bcde56c621",
+  "capacity": {
+    "cases": 8,
+    "cpuClaim": false,
+    "finalSixCountersZero": true,
+    "gcDisabled": true,
+    "largeRefused": 4,
+    "newObserverPrototypePaired": false,
+    "physicalHeapRssAcceptance": false,
+    "privateScalarAuditCount": 1,
+    "smallConfirmed": 4
+  },
+  "exclusions": "Private scratch/topology tests. Same frozen original compact sourceIPC+Reader singleledger probe/audit. Observer84 only, excludes new uncommitted patch prototype. Nativeowner separateaccount; testowned packedarena, full500/2000 fixture3510/14010cells notdense9, private nonce/nativepin/proofcarrier prepaidfixturecredit/syntheticclock. No ordinary SyncReader/authroute/relay/controller, inclusivephysicalheap/RSS/CPU, absolute2s15s, delivered2krecovery/native/fixedSSH/installedpair/producer acceptance. Expanded path retains original wholepatch prepayment; new scoped scratch billing is compact-only.",
+  "gitVerified": {
+    "after": 262,
+    "before": 260,
+    "observer": 211,
+    "protected": 8
+  },
+  "inputs": "results/qualification.json",
+  "meshRuntime": "231a631337bb8c4d5feb7cd7d7c8193ef29b5ffc",
+  "observerRuntime": "84d284dab04b68ae0e9070335d017e85564f2ba9",
+  "priorArtifactPinsUnchanged": 27,
+  "priorReceipt": {
+    "bytes": 6794,
+    "sha256": "c6de2a8f62f2729325d9bd01fb5cf6664df562fae937f9936af9297153fac789"
+  },
+  "sourceGate": {
+    "beforeExpectedRejectionPhaseAssertionsPerPython": 1,
+    "beforeNegativeMethodCount": 1,
+    "canonicalTests": 403,
+    "focusedMethodsPerPython": 68,
+    "nativeSourceWheelCpuGatesRun": false,
+    "newMethods": 6,
+    "pythonVersions": [
+      "3.14.8",
+      "3.11.17"
+    ],
+    "skipped": 0
+  },
+  "status": "Private compact index-workspace source checkpoint; Observer84 still fails before new index phase at2000"
+}

@@ -1,0 +1,1 @@
+{"rows": 2000, "backend": "packed", "python": "3.11.17", "outcome": "refused-or-failed", "heapPeak": 67098008, "encodedPeakReservedBound": 11954777, "finalCounters": [0, 0, 0, 0, 0, 0], "failure": "sync_decoded_capacity"}
