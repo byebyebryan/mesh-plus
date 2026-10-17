@@ -1,0 +1,1 @@
+{"rows": 100, "backend": "default", "python": "3.11.17", "outcome": "baseline-and-two-generations-confirmed", "heapPeak": 14951363, "encodedPeakReservedBound": 3645184, "finalCounters": [0, 0, 0, 0, 0, 0], "failure": null}

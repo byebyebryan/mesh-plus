@@ -1,0 +1,784 @@
+{
+  "artifacts": {
+    "docs/evidence/2026-10-17-baseline-buckets/README.md": {
+      "bytes": 9844,
+      "sha256": "ef1a1852e51e8ba8ae17583d94555a6b39d7989e9754e29e8dfa1d466e0ac990"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/check_storage.py": {
+      "bytes": 5033,
+      "sha256": "35984662e5a6d61345d8049f98236d049657ce354ae51a6cf4bf0cc5f08a5e43"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/qualify_buckets.py": {
+      "bytes": 11511,
+      "sha256": "4dd9a4c463250de7308bc6cc3ce63a8f4b08b66de9a0d4430f6997bd9a38823e"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/100-default-311.json": {
+      "bytes": 17075,
+      "sha256": "5f96e82822dd25e05414fcd1c5445880eec06911a48a4a81c26d6cee6d4ffffc"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/100-default-311.log": {
+      "bytes": 223,
+      "sha256": "0584e4cbd5bb21c8c45a11f8a39fa5783765f61e83e8d9ad11609cfffda6da11"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/100-default-314.json": {
+      "bytes": 17075,
+      "sha256": "e21b514d53bb0b474a4b1ad1df76e21470302f5aaf9e181284e761d72712f8f8"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/100-default-314.log": {
+      "bytes": 222,
+      "sha256": "52926af66fe143358ce6c1543582661011e2db570a3a7f1cbfa0abdebed66246"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/100-packed-311.json": {
+      "bytes": 17104,
+      "sha256": "1c2069fad5248eb26c9891a1817230dfcc91b3631a56b404f564cd85e4d956c3"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/100-packed-311.log": {
+      "bytes": 222,
+      "sha256": "29919eb803c8e0e9afc1bc3cbb23607ae009b4a947d2348e9ae3591416ee7f1e"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/100-packed-314.json": {
+      "bytes": 17103,
+      "sha256": "259fd2eb7671ce76cc1c09c82403cabf67b7ae0f155027eaf270d76000f7b9c6"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/100-packed-314.log": {
+      "bytes": 221,
+      "sha256": "58bdcd531a85a026fa87c48672a99cd99a8a2a0b55d1a2ff582bf1ca1dc13ee3"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/2000-default-311.json": {
+      "bytes": 13310,
+      "sha256": "a1d7b135751ef64844e4a6e2d678f7dcc02c7628f659a33a4ae924828500cd86"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/2000-default-311.log": {
+      "bytes": 223,
+      "sha256": "205b17445af955ca13f796e91645159c17cdcef3c91f9961c546cfe1db48ca09"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/2000-default-314.json": {
+      "bytes": 13258,
+      "sha256": "2847b92e0f4bc27462194c7e159a9631ed47e3185b34a57153b570c8bc5162b3"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/2000-default-314.log": {
+      "bytes": 222,
+      "sha256": "c3c899be4b113261d3884c4616a74c8d07dca489170fd1ceeeffedfac5df4651"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/2000-packed-311.json": {
+      "bytes": 13319,
+      "sha256": "8ecda32f372ecd5eb66284447c9e7dbdaca67579e445fb308529619edd0343aa"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/2000-packed-311.log": {
+      "bytes": 222,
+      "sha256": "d6365a9778d3bbb86951c77b57310a0f998d8c27eaa1f410ca3fd88ab9619ef7"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/2000-packed-314.json": {
+      "bytes": 13268,
+      "sha256": "05e3878d05568ba22b241b8245311bd24db10cd204029e6b53def4301b37a6b4"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/2000-packed-314.log": {
+      "bytes": 221,
+      "sha256": "8229a498819745783b288fa67d21e456fb8d66cfef8625a12a50883850792ede"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/500-default-311.json": {
+      "bytes": 17135,
+      "sha256": "ef7d4a930a736d7731377aa2eb51c3fa1b274804e61e27f64c98bafe536f7408"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/500-default-311.log": {
+      "bytes": 223,
+      "sha256": "fac2016ad52e7bc71ec82b2f1aedccbbf949ef2e63c271cdcc43b45ad9f076cc"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/500-default-314.json": {
+      "bytes": 17134,
+      "sha256": "078d1d502077f14ab38e6f480780510f1841b23b6a6748d627f38d0a9d0f9575"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/500-default-314.log": {
+      "bytes": 222,
+      "sha256": "7cb512db401ff6141930c17e53ce79e95b0649c9ffefc60b1254120061aa6992"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/500-packed-311.json": {
+      "bytes": 17153,
+      "sha256": "c36dfda7ebf5553838933fb2941f88ee9748815cc052d9b3d1a6f51b4c1f82bb"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/500-packed-311.log": {
+      "bytes": 222,
+      "sha256": "5f5b2977edc0630cba7cf0525071b4b742c716a4a7a8b533c5ff3feead742e0e"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/500-packed-314.json": {
+      "bytes": 17151,
+      "sha256": "7f9df4746ac672f86129e640a9d33907f4e8d5faf46b2348fe5e3e983a4e6191"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/500-packed-314.log": {
+      "bytes": 221,
+      "sha256": "c926f6f5affdd27bd220e7d1ef6130afa3763f116e24428ddcbe40106000d212"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/before-311.json": {
+      "bytes": 4384,
+      "sha256": "eaefe13da1e959d134dc84d6d0e74506f3c9375575c2a9bbe6c25ff5d913bc5e"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/before-311.log": {
+      "bytes": 2053,
+      "sha256": "4eb8cf43e64a5ab60e152b1dde85e6c16cfc392212fecb1de3ab6f33ea650b36"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/before-311.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/before-314.json": {
+      "bytes": 4383,
+      "sha256": "0111796001a1c57c57df4f8e778c0c31999a4ba5469dd3c3b4275611edb99c8b"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/before-314.log": {
+      "bytes": 2209,
+      "sha256": "f624e23f8d6c06ae0a7932aa98c462a0480e3d6eebe244a861be3ef367a6ffb7"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/before-314.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/canonical.log": {
+      "bytes": 68101,
+      "sha256": "e2b7ec7cee925928c6081b8dace188a5ba21c31d6a4aa5036dc6739061bf113b"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/driver.log": {
+      "bytes": 4242,
+      "sha256": "d1647056bc4e9d6eb4f889b8bcfe0a515fc219a8025744d01d437b1485749dc3"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-mesh-311.json": {
+      "bytes": 4859,
+      "sha256": "fcccd97620e06fa9c936c749012becaf32cdc1ed0ba0cea7b329a68281f1f6bc"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-mesh-311.log": {
+      "bytes": 13217,
+      "sha256": "17ea65c3ffb871e53cc93ed5e3faaf4fade6ff880dfa4737010e29a3695bd1ab"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-mesh-311.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-mesh-314.json": {
+      "bytes": 4858,
+      "sha256": "835032eae4f9a067041a35dda25bf5b8625e139a00708bfd0e54a56149cec37d"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-mesh-314.log": {
+      "bytes": 13217,
+      "sha256": "a594ab8a4dbe580fd92ec30a5e02bf4f36e5101e885d53e2c336fe36308b968f"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-mesh-314.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-observer-311.json": {
+      "bytes": 8852,
+      "sha256": "659b1278fa8e4c99c7cc781240754b319b4d8002fa45704deaeab823c63f1cb6"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-observer-311.log": {
+      "bytes": 11766,
+      "sha256": "497d5e466f34d1b8b8f475fa69e54c2fecf2cddd4fd2fc1df0cce53c97062d60"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-observer-311.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-observer-314.json": {
+      "bytes": 8851,
+      "sha256": "65a000416439d96fbdda795c6de2c7e756730bca89194431f03a3fc9c208dd62"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-observer-314.log": {
+      "bytes": 11766,
+      "sha256": "7d38a998aafb752cd75692e1145fb156cd2986be6fa66fa54781439f5d357a5d"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/focused-observer-314.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/qualification.json": {
+      "bytes": 429452,
+      "sha256": "09b97402d97c5f137d5f7c013f6afca7c1f9599a7202d471957f0266a7273a62"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/storage-311.json": {
+      "bytes": 4904,
+      "sha256": "109d455b14720a32186c1af890b110c738ff8ede8e81df78bb3f3e35030dd927"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/storage-314.json": {
+      "bytes": 4903,
+      "sha256": "a7a6b0459aa5356459b3cecd46826708bafbb82d76cbc40e4f372f2ece985c15"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/trace-311.json": {
+      "bytes": 19668,
+      "sha256": "78784851c25c01d447c515052c8490f44aa339d8d03b440d1fb80cc48b9b428c"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/trace-311.log": {
+      "bytes": 4052,
+      "sha256": "3e11125209e02080c19635ea4ffc09e473de80fe57ec06ef41b430a399db752a"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/trace-314.json": {
+      "bytes": 19265,
+      "sha256": "38c63cb16303d5416430375221058cf7bfcdb7314832eda0af3df8ef7f10862e"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/results/trace-314.log": {
+      "bytes": 3525,
+      "sha256": "f946324ae5cdf8d00c8f4b384d720c2ebc1d9e886594657c901994dda5a4b6ba"
+    },
+    "docs/evidence/2026-10-17-baseline-buckets/seal_buckets.py": {
+      "bytes": 6376,
+      "sha256": "df6f4156a2b5811d5a2b5d3758c6777e514a459bc9b0ecd9365de245676b0169"
+    }
+  },
+  "beforeRuntime": "13f27e25c46e1fd3da664975e964104a56fd6dbf",
+  "exclusions": "Same unchanged actual compact sourceIPC+Reader probe, shared32/64ledger, nativeowner separate. Full100/500/2000 fixture710/3510/14010cells notdense9; testowned packedarena; private nonce/nativepin/proofcarrier extra prepaid scratch/syntheticclock. No ordinary SyncReader/authroute/controller/relay, physicalprocessheap/RSS/CPU/absolute2s15s/dense2krecovery/nativefleet/fixedSSH/installedpair/producer acceptance. No source edits or old evidence reattribution.",
+  "gates": {
+    "beforeExpectedStorageAssertions": 2,
+    "beforeMethods": 1,
+    "canonicalTests": 411,
+    "cpuOrPhysicalRssAcceptance": false,
+    "gcDisabled": true,
+    "intakeScreens": 12,
+    "largeRefusals": 4,
+    "meshFocusedPerPython": 76,
+    "metadataCheckpointsPerPython": 10,
+    "newMeshMethods": 4,
+    "observerFocusedPerPython": 64,
+    "reservationTraceReplays": 2,
+    "skipped": 0,
+    "smallSuccesses": 8
+  },
+  "gitVerified": {
+    "before": 262,
+    "mesh": 262,
+    "observer": 212,
+    "protected": 8
+  },
+  "inputs": "results/qualification.json",
+  "meshRuntime": "03a681f95a609b20eaa20134f7241d3d14d441a6",
+  "observerEvidence": "51b0f27559b2b1553ffb60d04992ba90e639d873",
+  "observerRuntime": "b6ce8428b7f9d451bc9e99ca6f8e2943c656c23f",
+  "priorArtifactCounts": {
+    "field": 52,
+    "trace": 16
+  },
+  "rawLogWhitespace": "Original unittest before-subtest log lines retain trailing spaces; source/scripts/Markdown/JSON checks exclude raw logs",
+  "status": "Private compact baseline seen/bucket ownership; all four 2k baselines still refuse",
+  "supplemental": {
+    "311": {
+      "reservationFailure": {
+        "amount": 256,
+        "code": "sync_decoded_capacity",
+        "encoded": 0,
+        "escapedBoundaries": [
+          "_field_patch",
+          "_patch",
+          "_finish"
+        ],
+        "ledger": {
+          "decodedBytes": 9974708,
+          "encodedBytes": 6867626,
+          "newAllocationVisits": 128205,
+          "peakBytes": 67108667,
+          "pendingAllocations": 13714,
+          "pendingEncodedBytes": 3345377,
+          "reclaimedAllocations": 102044,
+          "reservedBytes": 57133959,
+          "reservedEncodedBytes": 4625421,
+          "uniqueAllocations": 12447
+        },
+        "number": 1,
+        "stack": [
+          {
+            "file": "docs/evidence/2026-10-17-reader-capacity/probe_reader_intake.py",
+            "function": "tracked_reserve",
+            "line": 55
+          },
+          {
+            "file": "src/mesh_plus/sync/budget.py",
+            "function": "grow",
+            "line": 403
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_control",
+            "line": 300
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_slot",
+            "line": 310
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_leaf",
+            "line": 635
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_baseline_owned",
+            "line": 671
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "_baseline_owned",
+            "line": 291
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "_from_encoded_atoms",
+            "line": 284
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_field_patch",
+            "line": 759
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_patch",
+            "line": 621
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_finish",
+            "line": 908
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/normalization.py",
+            "function": "stage",
+            "line": 672
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "stage_compact",
+            "line": 938
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "run",
+            "line": 59
+          },
+          {
+            "file": "src/mesh_plus/sync/cache.py",
+            "function": "_compact_material",
+            "line": 402
+          },
+          {
+            "file": "src/mesh_plus/sync/cache.py",
+            "function": "admit_baseline",
+            "line": 337
+          },
+          {
+            "file": "src/mesh_plus/sync/_boundary.py",
+            "function": "call",
+            "line": 42
+          },
+          {
+            "file": "docs/evidence/2026-10-17-reader-capacity/probe_reader_intake.py",
+            "function": "run",
+            "line": 120
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "function": "_run",
+            "line": 84
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "function": "_run_once",
+            "line": 1936
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "function": "run_forever",
+            "line": 608
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "function": "run_until_complete",
+            "line": 641
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "function": "run",
+            "line": 118
+          },
+          {
+            "file": "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "function": "run",
+            "line": 190
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "main",
+            "line": 112
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "<module>",
+            "line": 127
+          }
+        ]
+      },
+      "storageCheckpoints": [
+        {
+          "metadataBound": 2240,
+          "metadataCredit": 12928,
+          "phase": "before-seen-retirement",
+          "rows": 1
+        },
+        {
+          "metadataBound": 2696,
+          "metadataCredit": 13568,
+          "phase": "before-seen-retirement",
+          "rows": 2
+        },
+        {
+          "metadataBound": 4120,
+          "metadataCredit": 15488,
+          "phase": "before-seen-retirement",
+          "rows": 5
+        },
+        {
+          "metadataBound": 6232,
+          "metadataCredit": 17408,
+          "phase": "before-seen-retirement",
+          "rows": 8
+        },
+        {
+          "metadataBound": 11656,
+          "metadataCredit": 22528,
+          "phase": "before-seen-retirement",
+          "rows": 16
+        },
+        {
+          "metadataBound": 22424,
+          "metadataCredit": 32768,
+          "phase": "before-seen-retirement",
+          "rows": 32
+        },
+        {
+          "metadataBound": 37080,
+          "metadataCredit": 58880,
+          "phase": "before-seen-retirement",
+          "rows": 100
+        },
+        {
+          "metadataBound": 115672,
+          "metadataCredit": 212480,
+          "phase": "before-seen-retirement",
+          "rows": 500
+        },
+        {
+          "metadataBound": 833832,
+          "metadataCredit": 1593344,
+          "phase": "before-seen-retirement",
+          "rows": 4096
+        },
+        {
+          "metadataBound": 309152,
+          "metadataCredit": 540672,
+          "phase": "after-seen-retirement",
+          "rows": 4096
+        }
+      ]
+    },
+    "314": {
+      "reservationFailure": {
+        "amount": 256,
+        "code": "sync_decoded_capacity",
+        "encoded": 0,
+        "escapedBoundaries": [
+          "_field_patch",
+          "_patch",
+          "_finish"
+        ],
+        "ledger": {
+          "decodedBytes": 11574350,
+          "encodedBytes": 8056961,
+          "newAllocationVisits": 128205,
+          "peakBytes": 67108660,
+          "pendingAllocations": 12027,
+          "pendingEncodedBytes": 2156042,
+          "reclaimedAllocations": 102044,
+          "reservedBytes": 55534310,
+          "reservedEncodedBytes": 4741965,
+          "uniqueAllocations": 14134
+        },
+        "number": 1,
+        "stack": [
+          {
+            "file": "docs/evidence/2026-10-17-reader-capacity/probe_reader_intake.py",
+            "function": "tracked_reserve",
+            "line": 55
+          },
+          {
+            "file": "src/mesh_plus/sync/budget.py",
+            "function": "grow",
+            "line": 403
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_control",
+            "line": 300
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_slot",
+            "line": 310
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_branch",
+            "line": 649
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "build",
+            "line": 335
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "_baseline_leaves",
+            "line": 338
+          },
+          {
+            "file": "src/mesh_plus/sync/_packed_nodes.py",
+            "function": "_baseline_owned",
+            "line": 672
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "_baseline_owned",
+            "line": 291
+          },
+          {
+            "file": "src/mesh_plus/sync/commitment.py",
+            "function": "_from_encoded_atoms",
+            "line": 284
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_field_patch",
+            "line": 759
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_patch",
+            "line": 621
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "_finish",
+            "line": 908
+          },
+          {
+            "file": "/home/bryan/code/mesh-plus/docs/evidence/2026-10-17-field-reservation/trace_refusal.py",
+            "function": "call",
+            "line": 67
+          },
+          {
+            "file": "src/mesh_plus/sync/normalization.py",
+            "function": "stage",
+            "line": 672
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "stage_compact",
+            "line": 938
+          },
+          {
+            "file": "src/mesh_plus/sync/reconstruction.py",
+            "function": "run",
+            "line": 59
+          },
+          {
+            "file": "src/mesh_plus/sync/cache.py",
+            "function": "_compact_material",
+            "line": 402
+          },
+          {
+            "file": "src/mesh_plus/sync/cache.py",
+            "function": "admit_baseline",
+            "line": 337
+          },
+          {
+            "file": "src/mesh_plus/sync/_boundary.py",
+            "function": "call",
+            "line": 42
+          }
+        ]
+      },
+      "storageCheckpoints": [
+        {
+          "metadataBound": 2248,
+          "metadataCredit": 12928,
+          "phase": "before-seen-retirement",
+          "rows": 1
+        },
+        {
+          "metadataBound": 2720,
+          "metadataCredit": 13568,
+          "phase": "before-seen-retirement",
+          "rows": 2
+        },
+        {
+          "metadataBound": 4192,
+          "metadataCredit": 15488,
+          "phase": "before-seen-retirement",
+          "rows": 5
+        },
+        {
+          "metadataBound": 6352,
+          "metadataCredit": 17408,
+          "phase": "before-seen-retirement",
+          "rows": 8
+        },
+        {
+          "metadataBound": 11904,
+          "metadataCredit": 22528,
+          "phase": "before-seen-retirement",
+          "rows": 16
+        },
+        {
+          "metadataBound": 22928,
+          "metadataCredit": 32768,
+          "phase": "before-seen-retirement",
+          "rows": 32
+        },
+        {
+          "metadataBound": 38672,
+          "metadataCredit": 58880,
+          "phase": "before-seen-retirement",
+          "rows": 100
+        },
+        {
+          "metadataBound": 123664,
+          "metadataCredit": 212480,
+          "phase": "before-seen-retirement",
+          "rows": 500
+        },
+        {
+          "metadataBound": 899360,
+          "metadataCredit": 1593344,
+          "phase": "before-seen-retirement",
+          "rows": 4096
+        },
+        {
+          "metadataBound": 341920,
+          "metadataCredit": 540672,
+          "phase": "after-seen-retirement",
+          "rows": 4096
+        }
+      ]
+    }
+  },
+  "traceScript": {
+    "bytes": 5910,
+    "sha256": "f289cbcad32802e4eb4fba1b83e0ce2490bb4c1b3f7853fd98b327b0d3091675"
+  },
+  "upstream": {
+    "mesh": {
+      "path": "docs/evidence/2026-10-17-field-ref-sharing/receipt.json",
+      "pin": {
+        "bytes": 12982,
+        "sha256": "87e6168181ff0dcbc703331af732d39eb7b0320b9169fc85ad6f3a208df54381"
+      }
+    },
+    "meshTrace": {
+      "path": "docs/evidence/2026-10-17-field-reservation/receipt.json",
+      "pin": {
+        "bytes": 15517,
+        "sha256": "0d27945ee3aa7169773c3e14d7b06f83570cfe65f2e12254bea8a2e8ef6df1f0"
+      }
+    },
+    "observer": {
+      "path": "docs/evidence/2026-10-17-profile-patch/receipt.json",
+      "pin": {
+        "bytes": 495350,
+        "sha256": "c09bf5d37e8e5a3292ad4e332379a32857a4d32aad3a84c7c5457cffe47f2040"
+      }
+    },
+    "observerGroupJoin": {
+      "path": "docs/evidence/2026-10-17-profile-group-join/receipt.json",
+      "pin": {
+        "bytes": 358034,
+        "sha256": "97a67e444ebc290ad0555542464b5177167f835119f773a63122261b30b00f88"
+      }
+    },
+    "observerIndexJoin": {
+      "path": "docs/evidence/2026-10-17-profile-index-join/receipt.json",
+      "pin": {
+        "bytes": 379297,
+        "sha256": "393be37a78c2f39672dca0cb4a8dc5b2b9bb2d0694c88553d2c40ca308e42957"
+      }
+    }
+  }
+}

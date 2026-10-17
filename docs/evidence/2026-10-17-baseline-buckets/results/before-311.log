@@ -1,0 +1,24 @@
+test_baseline_seen_registry_retires_before_map_construction (test_sync_patch_workspace.PatchWorkspaceTests.test_baseline_seen_registry_retires_before_map_construction) ... 
+  test_baseline_seen_registry_retires_before_map_construction (test_sync_patch_workspace.PatchWorkspaceTests.test_baseline_seen_registry_retires_before_map_construction) (backend='default') ... FAIL
+  test_baseline_seen_registry_retires_before_map_construction (test_sync_patch_workspace.PatchWorkspaceTests.test_baseline_seen_registry_retires_before_map_construction) (backend='packed') ... FAIL
+
+======================================================================
+FAIL: test_baseline_seen_registry_retires_before_map_construction (test_sync_patch_workspace.PatchWorkspaceTests.test_baseline_seen_registry_retires_before_map_construction) (backend='default')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/baseline-buckets-qualified-03a-b6/before-13f27e2/tests/test_sync_patch_workspace.py", line 385, in test_baseline_seen_registry_retires_before_map_construction
+    self.assertTrue(all(row[1:] == (True, True) for row in observed[start:]))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_baseline_seen_registry_retires_before_map_construction (test_sync_patch_workspace.PatchWorkspaceTests.test_baseline_seen_registry_retires_before_map_construction) (backend='packed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus/.cache/baseline-buckets-qualified-03a-b6/before-13f27e2/tests/test_sync_patch_workspace.py", line 385, in test_baseline_seen_registry_retires_before_map_construction
+    self.assertTrue(all(row[1:] == (True, True) for row in observed[start:]))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.067s
+
+FAILED (failures=2)
