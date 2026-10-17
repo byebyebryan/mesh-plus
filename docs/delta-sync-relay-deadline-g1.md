@@ -43,8 +43,8 @@ returning a completed batch; this is not attributed as a returned-tuple failure.
 The added explicit batch cases establish that boundary separately. Probe prose
 is unchanged; the saved numeric fields determine its before/after observation.
 
-The [exact evidence](evidence/2026-10-16-delta-sync/relay-deadline-review.json)
-pins runtime, overlaid tests, commands, raw outputs and protected contracts.
+The exact `docs/evidence/2026-10-16-delta-sync/relay-deadline-review.json`
+record pins runtime, overlaid tests, commands, raw outputs and protected contracts.
 These are synthetic source/scanner/transport ownership checks, not native
 producer, Reader authority, aggregate capacity, RSS or performance acceptance.
 Actual source completion and pin-tracking integration, controller request grammar,
