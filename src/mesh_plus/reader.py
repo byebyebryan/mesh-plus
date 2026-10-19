@@ -12,7 +12,7 @@ from .client import DeliveryError
 from .evidence import clock_domain, digest
 from .protocol import check
 from .state import check_binding, legacy_codec, resolve_profile, validate_bridge
-from .transport import _wait_until, boottime_ms, finish_owned, within_deadline
+from .transport import _finish_owned_tasks, _wait_until, boottime_ms, finish_owned, within_deadline
 from .view import _validated_response, remote_expiry
 
 
@@ -319,8 +319,7 @@ class Reader:
             for task in tasks:
                 if not task.done():
                     task.cancel()
-            retirement = asyncio.gather(*tasks, return_exceptions=True)
-            await finish_owned(retirement)
+            await _finish_owned_tasks(tasks)
             raise
         return self.compose(selected, {e.host: value for e, value in zip(selected, values)}, request_id)
 
@@ -445,7 +444,7 @@ class Reader:
                     try:
                         if next_frame:
                             next_frame.cancel()
-                            await asyncio.gather(next_frame, return_exceptions=True)
+                            await _finish_owned_tasks((next_frame,))
                     finally:
                         if client:
                             await self._close(client)
@@ -476,7 +475,7 @@ class Reader:
                 if fatal:
                     for task in tasks:
                         task.cancel()
-                    await asyncio.gather(*tasks, return_exceptions=True)
+                    await _finish_owned_tasks(tasks)
                     yield terminal(fatal)
                     return
                 if expired:
@@ -494,4 +493,4 @@ class Reader:
         finally:
             for task in tasks:
                 task.cancel()
-            await asyncio.gather(*tasks, return_exceptions=True)
+            await _finish_owned_tasks(tasks)

@@ -32,10 +32,42 @@ async def finish_owned(task):
             await asyncio.wait({task})
         except asyncio.CancelledError:
             cancelled = True
-    result = task.result()
+    try:
+        result = task.result()
+    finally:
+        # A raised task exception retains this frame in its traceback. Do not
+        # make the completed task a back-reference to that same exception.
+        task = None
     if cancelled:
+        # The cancellation wins, so do not retain a possibly large result
+        # graph in the traceback of the CancelledError propagated below.
+        del result
         raise asyncio.CancelledError
     return result
+
+
+def _observe_cancelled_task_errors(tasks):
+    """Release tracebacks from owned tasks after their cancellation is observed."""
+    for task in tasks:
+        if task.done() and task.cancelled():
+            with contextlib.suppress(asyncio.CancelledError):
+                task.exception()
+
+
+async def _finish_owned_tasks(tasks):
+    """Join an already-cancelled owned task group despite caller cancellation."""
+    tasks = tuple(tasks)
+    joined = asyncio.gather(*tasks, return_exceptions=True)
+    try:
+        return await finish_owned(joined)
+    except asyncio.CancelledError:
+        # The joined result is intentionally discarded when caller
+        # cancellation wins; clear it before the traceback captures this frame.
+        joined = None
+        raise
+    finally:
+        _observe_cancelled_task_errors(tasks)
+        tasks = ()
 
 
 class _ExpiryChecks:
@@ -101,9 +133,14 @@ async def within_deadline(awaitable, deadline_ms):
             raise TimeoutError("operation_deadline")
         return task.result()
     finally:
-        if not task.done():
-            task.cancel()
-        await finish_owned(asyncio.gather(task, return_exceptions=True))
+        try:
+            if not task.done():
+                task.cancel()
+            await _finish_owned_tasks((task,))
+        finally:
+            # The child task may retain the original exception whose traceback
+            # points back to this frame.
+            task = None
 
 
 class LineChannel:
@@ -155,15 +192,16 @@ class LineChannel:
 
     async def receive(self):
         check(self.read_job is None, "concurrent_read")
-        self.read_job = asyncio.create_task(self._receive())
+        read_job = self.read_job = asyncio.create_task(self._receive())
         try:
-            return await self.read_job
+            return await read_job
         except asyncio.CancelledError:
             if self.closed:
                 raise EOFError("channel_closed") from None
             raise
         finally:
             self.read_job = None
+            _observe_cancelled_task_errors((read_job,))
 
     async def _receive(self):
         try:
@@ -229,8 +267,9 @@ class LineChannel:
             return
         self.closed = True
         if self.read_job:
-            self.read_job.cancel()
-            await asyncio.gather(self.read_job, return_exceptions=True)
+            read_job = self.read_job
+            read_job.cancel()
+            await _finish_owned_tasks((read_job,))
         drain = None
         if self.process:
             async def discard_stdout():
@@ -250,12 +289,19 @@ class LineChannel:
                     self.process.kill()
                 await asyncio.wait_for(self.process.wait(), 1)
         if drain:
-            with contextlib.suppress(Exception):
-                await asyncio.wait_for(drain, 1)
+            try:
+                with contextlib.suppress(Exception):
+                    await asyncio.wait_for(drain, 1)
+            finally:
+                _observe_cancelled_task_errors((drain,))
         if self.stderr_task:
-            self.stderr_task.cancel()
-            with contextlib.suppress(asyncio.CancelledError):
-                await self.stderr_task
+            stderr_task = self.stderr_task
+            stderr_task.cancel()
+            try:
+                with contextlib.suppress(asyncio.CancelledError):
+                    await stderr_task
+            finally:
+                _observe_cancelled_task_errors((stderr_task,))
 
 
 def peer_uid(writer):
@@ -420,7 +466,7 @@ class IPCServer:
         tasks = list(self.tasks)
         for task in tasks:
             task.cancel()
-        await asyncio.gather(*tasks, return_exceptions=True)
+        await _finish_owned_tasks(tasks)
         if self.server:
             await self.server.wait_closed()
         with contextlib.suppress(FileNotFoundError):

@@ -3,19 +3,54 @@
 import asyncio
 import contextlib
 import secrets
+from dataclasses import dataclass
 
 from .protocol import MAX_CONTROL, MAX_HANDLES, MAX_MESSAGE, PROTOCOL, Lifecycle, ProtocolError, check
-from .transport import boottime_ms, within_deadline
+from .transport import _observe_cancelled_task_errors, boottime_ms, within_deadline
 
 # Retain the protocol's tombstones. Reserve room rather than weakening its
 # no-reuse rule; the connection owner replaces channels, never this Client.
 ROTATION_HANDLES = MAX_HANDLES - 16
+TERMINAL_CODE_MAX = 128
+TERMINAL_MESSAGE_MAX = 4096
 
 
 class DeliveryError(Exception):
     def __init__(self, code, message=""):
         self.code = code
         super().__init__(message or code)
+
+
+@dataclass(frozen=True, slots=True)
+class _TerminalFailure:
+    """Traceback-free diagnostic retained by Client after channel failure."""
+
+    kind: str
+    code: str
+    message: str
+
+    @classmethod
+    def capture(cls, error):
+        known = type(error) is DeliveryError or type(error) is ProtocolError
+        code = error.__dict__.get("code") if known else None
+        if type(error) is DeliveryError and type(code) is str and len(code) <= TERMINAL_CODE_MAX:
+            args = error.args
+            if (type(args) is tuple and len(args) == 1 and type(args[0]) is str and
+                    len(args[0]) <= TERMINAL_MESSAGE_MAX):
+                return cls("delivery", code, args[0])
+        if type(error) is ProtocolError and type(code) is str and len(code) <= TERMINAL_CODE_MAX:
+            args = error.args
+            if (type(args) is tuple and len(args) == 1 and type(args[0]) is str and
+                    len(args[0]) <= TERMINAL_MESSAGE_MAX and args[0] == code):
+                return cls("protocol", code, args[0])
+        return cls("delivery", "channel_failed", "channel_failed")
+
+    def new_error(self):
+        if self.kind == "delivery":
+            return DeliveryError(self.code, self.message)
+        if self.kind == "protocol":
+            return ProtocolError(self.code)
+        return DeliveryError("channel_failed")
 
 
 class Subscription:
@@ -36,7 +71,12 @@ class Subscription:
         item = await self.queue.get()
         if isinstance(item, BaseException):
             self.exhausted = True
-            raise item
+            try:
+                raise item
+            finally:
+                # The original error remains caller-visible, but this iterator
+                # frame must not own the error it is raising.
+                item = None
         if item is None:
             self.exhausted = True
             raise StopAsyncIteration
@@ -146,8 +186,8 @@ class Client:
 
     async def _send(self, kind, *, deadline_ms=None, **fields):
         async with self.send_lock:
-            if self.failure:
-                raise self.failure
+            if self.failure is not None:
+                raise self.failure.new_error()
             if kind in {"request", "subscribe"} and self.rotation_due():
                 self.metrics["rotationRejections"] += 1
                 raise DeliveryError("channel_rotation_required")
@@ -204,6 +244,7 @@ class Client:
                 future.cancel()
             elif not future.cancelled():
                 future.exception()
+            future = None
 
     async def subscribe(self):
         check(len(self.subscriptions) < self.guard.limits["maxSubscriptions"], "handle_capacity")
@@ -223,14 +264,19 @@ class Client:
             await within_deadline(admission(), boottime_ms() + int(self.close_timeout * 1000))
             return sub
         except BaseException:
-            if key in self.guard.handles:
-                with contextlib.suppress(Exception):
-                    await sub.close()
-            self.subscriptions.pop(key, None)
-            if sub.ready.done() and not sub.ready.cancelled():
-                sub.ready.exception()
-            else:
-                sub.ready.cancel()
+            try:
+                if key in self.guard.handles:
+                    with contextlib.suppress(Exception):
+                        await sub.close()
+                self.subscriptions.pop(key, None)
+                if sub.ready.done() and not sub.ready.cancelled():
+                    sub.ready.exception()
+                else:
+                    sub.ready.cancel()
+            finally:
+                # `admission` closes over this cell. Clear both the local and
+                # that completed coroutine's reference to the failed handle.
+                sub = None
             raise
 
     async def _read(self):
@@ -293,7 +339,12 @@ class Client:
             await self.channel.close()
 
     def _fail(self, error):
-        self.failure = error
+        if self.failure is not None:
+            return
+        # Current pending callers receive the exact original object below.
+        # The Client itself keeps only a finite traceback-free diagnostic so
+        # later operations cannot create a Client -> error -> traceback cycle.
+        self.failure = _TerminalFailure.capture(error)
         for future in self.requests.values():
             if not future.done():
                 future.set_exception(error)
@@ -308,13 +359,26 @@ class Client:
                     if item[0]["kind"] == "control":
                         self.buffered_control_bytes -= item[1]
             sub.queue.put_nowait(error)
+        # Caller-owned futures and subscriptions retain their terminal result.
+        # The channel owner must not keep those completed handles alive after
+        # publishing the result, and guard tombstones remain in Lifecycle.
+        self.requests.clear()
+        self.operations.clear()
+        self.subscriptions.clear()
 
     async def close(self):
-        if not self.channel.closed and not self.guard.closed:
+        # A failed channel cannot carry a close frame. The failure path already
+        # publishes its terminal result to pending requests and subscriptions.
+        if self.failure is None and not self.channel.closed and not self.guard.closed:
             with contextlib.suppress(Exception):
                 await self._send("close", reason="client_done")
-        self._fail(self.failure or DeliveryError("channel_closed"))
-        self.reader_task.cancel()
-        with contextlib.suppress(asyncio.CancelledError):
-            await self.reader_task
+        if self.failure is None:
+            self._fail(DeliveryError("channel_closed"))
+        reader_task = self.reader_task
+        reader_task.cancel()
+        try:
+            with contextlib.suppress(asyncio.CancelledError):
+                await reader_task
+        finally:
+            _observe_cancelled_task_errors((reader_task,))
         await self.channel.close()
