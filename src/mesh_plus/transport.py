@@ -287,17 +287,31 @@ class LineChannel:
                     pass
             drain = asyncio.create_task(discard_stdout())
         self.writer.close()
+        process_deadline = time.monotonic() + 1.0
         with contextlib.suppress(Exception):
             await asyncio.wait_for(self.writer.wait_closed(), 1)
-        if self.process and self.process.returncode is None:
-            with contextlib.suppress(ProcessLookupError):
-                self.process.terminate()
-            try:
-                await asyncio.wait_for(self.process.wait(), 1)
-            except TimeoutError:
+        process = self.process
+        if process and process.returncode is None:
+            natural_grace = min(.25, max(0.0, process_deadline - time.monotonic()))
+            if natural_grace:
+                with contextlib.suppress(TimeoutError):
+                    await asyncio.wait_for(process.wait(), natural_grace)
+            if process.returncode is None:
+                check(self.process is process and type(process.pid) is int and process.pid > 0,
+                      "process_ownership")
                 with contextlib.suppress(ProcessLookupError):
-                    self.process.kill()
-                await asyncio.wait_for(self.process.wait(), 1)
+                    process.terminate()
+                term_grace = max(0.0, process_deadline - time.monotonic())
+                if term_grace:
+                    with contextlib.suppress(TimeoutError):
+                        await asyncio.wait_for(process.wait(), term_grace)
+            if process.returncode is None:
+                check(self.process is process and type(process.pid) is int and process.pid > 0,
+                      "process_ownership")
+                with contextlib.suppress(ProcessLookupError):
+                    process.kill()
+                await asyncio.wait_for(process.wait(), 1)
+            process = None
         if drain:
             try:
                 with contextlib.suppress(Exception):

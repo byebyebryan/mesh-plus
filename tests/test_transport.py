@@ -1,15 +1,144 @@
 import asyncio
+import contextlib
+import json
 import os
+import signal
 import socket
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
 from test_protocol import example
 
+from mesh_plus.client import Client
 from mesh_plus.protocol import ProtocolError
 from mesh_plus.transport import IPCServer, LineChannel, connect_ipc, finish_owned, subprocess_channel
+
+SOURCE_ROOT = Path(__file__).resolve().parents[1] / "src"
+
+_BRIDGE_CHILD = r"""
+import asyncio
+import gc
+import sys
+sys.path.insert(0, sys.argv[1])
+gc.disable()
+from mesh_plus.bridge import Bridge
+from mesh_plus.protocol import MAX_MESSAGE, check
+from mesh_plus.transport import LineChannel
+
+class Source:
+    host = "fixture-host"
+    source = "synthetic"
+    profile = "mesh-plus.synthetic.state.v1"
+    capabilities = ("snapshot",)
+    def validate(self, value):
+        check(type(value) is dict and type(value.get("value")) is int, "fixture_payload")
+    async def snapshot(self, parameters):
+        return {"value": 7}
+
+async def pipe_channel():
+    loop = asyncio.get_running_loop()
+    reader = asyncio.StreamReader(limit=MAX_MESSAGE + 1)
+    await loop.connect_read_pipe(lambda: asyncio.StreamReaderProtocol(reader), sys.stdin.buffer)
+    protocol = asyncio.streams.FlowControlMixin(loop=loop)
+    transport, protocol = await loop.connect_write_pipe(lambda: protocol, sys.stdout.buffer)
+    writer = asyncio.StreamWriter(transport, protocol, reader, loop)
+    return LineChannel(reader, writer, "client")
+
+async def main():
+    await Bridge(Source()).serve(await pipe_channel())
+
+asyncio.run(main())
+"""
+
+_DELAYED_RELAY = r"""
+import gc
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import signal
+import sys
+import time
+
+gc.disable()
+source_root, receipt_path, bridge_code = sys.argv[1:]
+child = subprocess.Popen([sys.executable, "-I", "-B", "-c", bridge_code, source_root],
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                        bufsize=0, close_fds=True)
+close_observed = None
+
+def terminate_relay(signum, _frame):
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    raise SystemExit(128 + signum)
+
+signal.signal(signal.SIGTERM, terminate_relay)
+try:
+    for line in sys.stdin.buffer:
+        frame = json.loads(line)
+        if frame.get("kind") == "close":
+            close_observed = {"kind": frame["kind"], "reason": frame["reason"],
+                              "lineBytes": len(line), "lineSha256": hashlib.sha256(line).hexdigest()}
+            time.sleep(.05)
+        child.stdin.write(line)
+        child.stdin.flush()
+        if frame.get("kind") in {"hello", "request"}:
+            response = child.stdout.readline()
+            if not response:
+                break
+            sys.stdout.buffer.write(response)
+            sys.stdout.buffer.flush()
+finally:
+    try:
+        child.stdin.close()
+    except Exception:
+        pass
+    try:
+        bridge_returncode = child.wait(timeout=2)
+    except subprocess.TimeoutExpired:
+        child.kill()
+        bridge_returncode = child.wait(timeout=1)
+    report = {"closeForwarded": close_observed, "bridgeReturncode": bridge_returncode,
+              "bridgePid": child.pid, "bridgeReaped": child.returncode is not None}
+    target = Path(receipt_path)
+    temporary = target.with_name(target.name + ".tmp." + str(os.getpid()))
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(temporary, flags, 0o600)
+    with os.fdopen(fd, "w") as output:
+        json.dump(report, output, sort_keys=True)
+        output.write("\n")
+        output.flush()
+        os.fsync(output.fileno())
+    os.link(temporary, target)
+    temporary.unlink()
+"""
+
+
+async def _retire_test_channel(channel, client=None, close_task=None):
+    if channel is None:
+        return
+    if close_task is None:
+        operation = client.close() if client is not None else channel.close()
+        close_task = asyncio.create_task(operation)
+    try:
+        await asyncio.wait_for(asyncio.shield(close_task), 4)
+    except TimeoutError:
+        pass
+    finally:
+        process = channel.process
+        if process is not None and process.returncode is None:
+            with contextlib.suppress(ProcessLookupError):
+                process.terminate()
+            try:
+                await asyncio.wait_for(process.wait(), 3)
+            except TimeoutError:
+                with contextlib.suppress(ProcessLookupError):
+                    process.kill()
+                await asyncio.wait_for(process.wait(), 1)
+        await finish_owned(close_task)
 
 
 class TransportTests(unittest.IsolatedAsyncioTestCase):
@@ -151,6 +280,64 @@ class TransportTests(unittest.IsolatedAsyncioTestCase):
         await asyncio.sleep(.1)
         await asyncio.wait_for(channel.close(), 3)
         self.assertIsNotNone(channel.process.returncode)
+
+    async def test_client_close_reaches_bridge_after_delayed_forward_and_exits_normally(self):
+        with tempfile.TemporaryDirectory() as directory:
+            receipt = Path(directory) / "close-receipt.json"
+            channel = client = close_task = None
+            try:
+                channel = await subprocess_channel([
+                    sys.executable, "-I", "-B", "-c", _DELAYED_RELAY,
+                    str(SOURCE_ROOT), str(receipt), _BRIDGE_CHILD,
+                ])
+                client = await Client.connect(channel, host="fixture-host", source="synthetic",
+                                              profile="mesh-plus.synthetic.state.v1",
+                                              codec=lambda value: self.assertEqual(value, {"value": 7}),
+                                              required=("snapshot",))
+                self.assertEqual(await client.request(timeout_ms=2000), {"value": 7})
+                close_task = asyncio.create_task(client.close())
+                await asyncio.wait_for(asyncio.shield(close_task), 2)
+
+                report = json.loads(receipt.read_text())
+                self.assertEqual(channel.process.returncode, 0,
+                                 f"wrapperReturnCode={channel.process.returncode}, "
+                                 f"bridgeReturncode={report['bridgeReturncode']}, "
+                                 f"closeForwarded={report['closeForwarded'] is not None}, "
+                                 f"bridgeReaped={report['bridgeReaped']}")
+                self.assertEqual(report["closeForwarded"]["kind"], "close")
+                self.assertEqual(report["closeForwarded"]["reason"], "client_done")
+                self.assertGreater(report["closeForwarded"]["lineBytes"], 0)
+                self.assertEqual(report["bridgeReturncode"], 0)
+                self.assertIsInstance(report["bridgePid"], int)
+            finally:
+                await _retire_test_channel(channel, client, close_task)
+                if channel is not None:
+                    self.assertTrue(receipt.is_file())
+                    report = json.loads(receipt.read_text())
+                    self.assertIsInstance(report["bridgeReturncode"], int)
+                    self.assertIsInstance(report["bridgePid"], int)
+                    self.assertTrue(report["bridgeReaped"])
+
+    async def test_owned_child_ignoring_term_is_killed_and_reaped_within_close_bounds(self):
+        program = (
+            "import os,signal,time; signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+            "os.write(1,b'ready\\n'); "
+            "time.sleep(30)"
+        )
+        channel = close_task = None
+        try:
+            channel = await subprocess_channel([sys.executable, "-c", program])
+            self.assertEqual(await asyncio.wait_for(channel.reader.readline(), 1), b"ready\n")
+            started = time.monotonic()
+            close_task = asyncio.create_task(channel.close())
+            await asyncio.wait_for(asyncio.shield(close_task), 3)
+            elapsed = time.monotonic() - started
+            self.assertEqual(channel.process.returncode, -signal.SIGKILL)
+            self.assertLess(elapsed, 2.4)
+        finally:
+            await _retire_test_channel(channel, close_task=close_task)
+            if channel is not None:
+                self.assertIsNotNone(channel.process.returncode)
 
     async def test_channel_close_wakes_idle_reader(self):
         with tempfile.TemporaryDirectory() as directory:

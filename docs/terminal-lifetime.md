@@ -34,6 +34,14 @@ clear or rewrite traceback objects, inspect the current caller task, or consume
 exceptions from tasks that failed normally. Existing `finish_owned` waiting,
 IO deadlines and non-cancellation failures retain their prior behavior.
 
+Closing a `LineChannel` with an owned stdio subprocess first closes its input
+writer. The child may exit naturally for up to 250 ms within one monotonic
+one-second natural-exit-plus-TERM budget. If it remains alive, cleanup verifies
+that the captured child is still the channel's owned process, sends TERM, and
+waits only for the time left in that same budget. KILL and reap retain the
+existing one-second bound. This gives a bridge time to consume a delivered
+protocol close frame without extending the owned-process shutdown envelope.
+
 The Bridge applies the same ownership rule to request, subscription, send,
 iterator-close and channel-close work. It clears local child references only
 after the owned work has joined. Repeated cancellation is deferred until
