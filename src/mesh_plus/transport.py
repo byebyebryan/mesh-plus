@@ -385,6 +385,7 @@ class IPCServer:
         self.max_clients = max_clients
         self.codec = codec
         self.tasks = set()
+        self._accept_tasks = set()
         self.server = None
         self.inode = None
         self.closing = False
@@ -447,35 +448,74 @@ class IPCServer:
 
     async def _accept(self, reader, writer):
         task = asyncio.current_task()
-        channel = LineChannel(reader, writer, "client", codec=self.codec)
-        if self.closing or len(self.tasks) >= self.max_clients or peer_uid(writer) != os.getuid():
-            await channel.close()
-            return
-        self.tasks.add(task)
+        self._accept_tasks.add(task)
+        channel = None
         try:
-            await self.handler(channel)
-        except (EOFError, ConnectionError, ProtocolError, TimeoutError):
-            pass
+            channel = LineChannel(reader, writer, "client", codec=self.codec)
+            if self.closing or len(self.tasks) >= self.max_clients or peer_uid(writer) != os.getuid():
+                return
+            self.tasks.add(task)
+            try:
+                await self.handler(channel)
+            except (EOFError, ConnectionError, ProtocolError, TimeoutError):
+                pass
         finally:
-            await channel.close()
-            self.tasks.discard(task)
+            try:
+                if channel is not None:
+                    await channel.close()
+            finally:
+                self.tasks.discard(task)
+                self._accept_tasks.discard(task)
 
     async def close(self):
         if self.closed:
             return
         self.closed = True
         self.closing = True
-        if self.server:
-            self.server.close()
-        tasks = list(self.tasks)
+        server = self.server
+        handler = self.handler
+        if server is not None:
+            server.close()
+        tasks = tuple(self._accept_tasks)
         for task in tasks:
             task.cancel()
-        await _finish_owned_tasks(tasks)
-        if self.server:
-            await self.server.wait_closed()
+        cancelled = False
+        try:
+            await _finish_owned_tasks(tasks)
+        except asyncio.CancelledError:
+            cancelled = True
+        finally:
+            tasks = ()
+        if server is not None:
+            wait_task = asyncio.create_task(server.wait_closed())
+            try:
+                try:
+                    await _finish_owned_tasks((wait_task,))
+                except asyncio.CancelledError:
+                    cancelled = True
+                wait_task.result()
+            finally:
+                wait_task = None
+        while self._accept_tasks:
+            tasks = tuple(self._accept_tasks)
+            for task in tasks:
+                task.cancel()
+            try:
+                await _finish_owned_tasks(tasks)
+            except asyncio.CancelledError:
+                cancelled = True
+            finally:
+                tasks = ()
+        if self.server is server:
+            self.server = None
+        if self.handler is handler:
+            self.handler = None
         with contextlib.suppress(FileNotFoundError):
             if self.path.lstat().st_ino == self.inode:
                 self.path.unlink()
         if self.lease is not None:
             os.close(self.lease)
             self.lease = None
+        if cancelled:
+            server = handler = wait_task = tasks = task = None
+            raise asyncio.CancelledError

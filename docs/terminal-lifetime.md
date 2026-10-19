@@ -41,6 +41,27 @@ subscription iterator and channel cleanup have run; a genuine child failure
 keeps precedence over that cancellation. Pending connection failures still
 reach their existing caller, and their traceback objects are not modified.
 
+## IPC server terminal ownership
+
+`IPCServer` owns its handler and the private listener until terminal close has
+stopped the listener and joined every accepted callback. `asyncio` retains the
+server callback factory; the factory retains the bound `IPCServer._accept`
+method. Before close, that path keeps the listener owner alive by design.
+
+Close first marks the instance as closing so any late callback rejects its
+channel without invoking the handler. It then joins active accept callbacks,
+waits for the listener to finish closing, and joins any callback that entered
+during that interval. Only after those steps does it release its listener and
+handler references. This breaks the closed `asyncio.Server` callback cycle
+without weakening the late-accept guard or dropping an in-flight handler during
+cleanup. Caller-held handler references are unaffected.
+
+The change is local to IPC resource ownership. Request/response framing,
+wire schemas, endpoint paths, leases, client limits, and handler error behavior
+remain unchanged. GC-disabled terminal-lifetime tests exercise zero-client
+close, a successful direct Bridge request, a reset during a Bridge request,
+and a handler whose cancellation cleanup is deliberately held open.
+
 The focused coverage lives in `tests/test_terminal_lifetime.py`. It checks
 terminal request and iterator delivery, preserved queue accounting and handle
 tombstones, typed and fallback diagnostics, independent sibling clients,
@@ -48,3 +69,7 @@ caller-owned error/Subscription lifetime, GC-disabled retirement after failed
 request and subscribe operations, repeated caller cancellation during child
 cleanup, inner task failure identity, and Reader/Bridge/Client watch teardown
 through local IPC.
+
+The additional IPC listener tests exercise zero-client close, a successful
+direct Bridge request, a reset during a Bridge request, and a handler whose
+cancellation cleanup is deliberately held open.

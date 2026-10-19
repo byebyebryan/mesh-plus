@@ -1022,3 +1022,227 @@ class TransportReadTaskRetirementTests(unittest.IsolatedAsyncioTestCase):
         finally:
             if enabled:
                 gc.enable()
+
+
+class IPCServerTerminalRetirementTests(unittest.IsolatedAsyncioTestCase):
+    async def test_zero_client_close_releases_direct_bridge_handler_cycle(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        directory = tempfile.TemporaryDirectory()
+        path = Path(directory.name) / "mesh.sock"
+        source = _BridgeLifetimeSource()
+        bridge = Bridge(source)
+        bridge_ref = weakref.ref(bridge)
+        server = None
+        try:
+            server = await IPCServer(path, bridge.serve).start()
+            server_ref = weakref.ref(server)
+            listener_ref = weakref.ref(server.server)
+            await server.close()
+            self.assertIsNone(server.server)
+            self.assertIsNone(server.handler)
+            self.assertFalse(server.tasks)
+
+            del bridge, source
+            server = None
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            self.assertIsNone(bridge_ref())
+            self.assertIsNone(server_ref())
+            self.assertIsNone(listener_ref())
+        finally:
+            if server is not None and not server.closed:
+                await server.close()
+            directory.cleanup()
+            if enabled:
+                gc.enable()
+
+    async def test_successful_direct_bridge_request_releases_handler_and_listener(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        directory = tempfile.TemporaryDirectory()
+        path = Path(directory.name) / "mesh.sock"
+        source = _BridgeLifetimeSource()
+        bridge = Bridge(source)
+        bridge_ref = weakref.ref(bridge)
+        server = None
+        client = None
+        try:
+            server = await IPCServer(path, bridge.serve).start()
+            server_ref = weakref.ref(server)
+            listener_ref = weakref.ref(server.server)
+            client = await Client.connect(await connect_ipc(path), host=source.host,
+                                          source=source.source, profile=source.profile,
+                                          codec=source.validate)
+            self.assertEqual(await client.request(timeout_ms=2000), {"value": 1})
+            await client.close()
+            await server.close()
+            self.assertFalse(server.tasks)
+            self.assertIsNone(server.handler)
+            self.assertIsNone(server.server)
+
+            del bridge, source
+            client = server = None
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            self.assertIsNone(bridge_ref())
+            self.assertIsNone(server_ref())
+            self.assertIsNone(listener_ref())
+        finally:
+            if client is not None:
+                try:
+                    await client.close()
+                except Exception:
+                    pass
+            if server is not None and not server.closed:
+                await server.close()
+            directory.cleanup()
+            if enabled:
+                gc.enable()
+
+    async def test_reset_during_direct_bridge_request_releases_handler_and_listener(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        directory = tempfile.TemporaryDirectory()
+        path = Path(directory.name) / "mesh.sock"
+        source = _BridgeLifetimeSource(block_snapshot=True)
+        bridge = Bridge(source)
+        bridge_ref = weakref.ref(bridge)
+        server = None
+        client = None
+        request = None
+        try:
+            server = await IPCServer(path, bridge.serve).start()
+            server_ref = weakref.ref(server)
+            listener_ref = weakref.ref(server.server)
+            client = await Client.connect(await connect_ipc(path), host=source.host,
+                                          source=source.source, profile=source.profile,
+                                          codec=source.validate)
+            request = asyncio.create_task(client.request(timeout_ms=10000))
+            await asyncio.wait_for(source.snapshot_started.wait(), 2)
+            client.channel.writer.transport.abort()
+            try:
+                await asyncio.wait_for(request, 2)
+            except (EOFError, ConnectionError) as error:
+                self.assertIsInstance(error, (EOFError, ConnectionError))
+                del error
+            else:
+                self.fail("reset request unexpectedly returned a result")
+
+            await server.close()
+            await asyncio.wait_for(source.snapshot_finished.wait(), 2)
+            self.assertFalse(server.tasks)
+            self.assertFalse(server._accept_tasks)
+            self.assertIsNone(server.handler)
+            self.assertIsNone(server.server)
+            try:
+                await client.close()
+            except Exception:
+                pass
+
+            del bridge, source
+            request = client = server = None
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            self.assertIsNone(bridge_ref())
+            self.assertIsNone(server_ref())
+            self.assertIsNone(listener_ref())
+        finally:
+            if request is not None and not request.done():
+                request.cancel()
+                try:
+                    await request
+                except BaseException:
+                    pass
+            if client is not None:
+                try:
+                    await client.close()
+                except Exception:
+                    pass
+            if server is not None and not server.closed:
+                await server.close()
+            directory.cleanup()
+            if enabled:
+                gc.enable()
+
+    async def test_close_keeps_handler_until_accepted_cleanup_is_joined(self):
+        class HeldHandler:
+            def __init__(self):
+                self.started = asyncio.Event()
+                self.cleanup_started = asyncio.Event()
+                self.cleanup_release = asyncio.Event()
+
+            async def serve(self, channel):
+                self.started.set()
+                try:
+                    await channel.receive()
+                finally:
+                    self.cleanup_started.set()
+                    await self.cleanup_release.wait()
+
+        enabled = gc.isenabled()
+        gc.disable()
+        directory = tempfile.TemporaryDirectory()
+        path = Path(directory.name) / "mesh.sock"
+        owner = HeldHandler()
+        owner_ref = weakref.ref(owner)
+        server = None
+        reader = writer = None
+        closing = None
+        try:
+            server = await IPCServer(path, owner.serve).start()
+            server_ref = weakref.ref(server)
+            listener_ref = weakref.ref(server.server)
+            reader, writer = await asyncio.open_unix_connection(path)
+            await asyncio.wait_for(owner.started.wait(), 2)
+            closing = asyncio.create_task(server.close())
+            await asyncio.wait_for(owner.cleanup_started.wait(), 2)
+            self.assertFalse(closing.done())
+            self.assertIsNotNone(server.handler)
+            self.assertIsNotNone(server.server)
+
+            closing.cancel()
+            await asyncio.sleep(0)
+            self.assertFalse(closing.done())
+            closing.cancel()
+            await asyncio.sleep(0)
+            self.assertFalse(closing.done())
+            owner.cleanup_release.set()
+            try:
+                await asyncio.wait_for(closing, 2)
+            except asyncio.CancelledError:
+                pass
+            else:
+                self.fail("caller cancellation was not reported after listener cleanup")
+            self.assertFalse(server.tasks)
+            self.assertFalse(server._accept_tasks)
+            self.assertIsNone(server.handler)
+            self.assertIsNone(server.server)
+            writer.close()
+            await writer.wait_closed()
+
+            del reader, owner
+            writer = server = closing = None
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            self.assertIsNone(owner_ref())
+            self.assertIsNone(server_ref())
+            self.assertIsNone(listener_ref())
+        finally:
+            if closing is not None and not closing.done():
+                closing.cancel()
+                try:
+                    await closing
+                except BaseException:
+                    pass
+            if writer is not None:
+                writer.close()
+                try:
+                    await writer.wait_closed()
+                except Exception:
+                    pass
+            if server is not None and not server.closed:
+                await server.close()
+            directory.cleanup()
+            if enabled:
+                gc.enable()
