@@ -34,6 +34,13 @@ clear or rewrite traceback objects, inspect the current caller task, or consume
 exceptions from tasks that failed normally. Existing `finish_owned` waiting,
 IO deadlines and non-cancellation failures retain their prior behavior.
 
+The Bridge applies the same ownership rule to request, subscription, send,
+iterator-close and channel-close work. It clears local child references only
+after the owned work has joined. Repeated cancellation is deferred until
+subscription iterator and channel cleanup have run; a genuine child failure
+keeps precedence over that cancellation. Pending connection failures still
+reach their existing caller, and their traceback objects are not modified.
+
 The focused coverage lives in `tests/test_terminal_lifetime.py`. It checks
 terminal request and iterator delivery, preserved queue accounting and handle
 tombstones, typed and fallback diagnostics, independent sibling clients,

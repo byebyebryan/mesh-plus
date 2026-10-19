@@ -4,14 +4,16 @@ import tempfile
 import unittest
 import weakref
 from pathlib import Path
+from unittest.mock import patch
 
+from test_protocol import example
 from test_reader import CachedClient
 
-from mesh_plus.bridge import Bridge, Publication
+from mesh_plus.bridge import Bridge, Publication, _Connection
 from mesh_plus.client import Client, DeliveryError
 from mesh_plus.protocol import ProtocolError
 from mesh_plus.reader import Endpoint, Reader
-from mesh_plus.transport import IPCServer, _finish_owned_tasks, connect_ipc, finish_owned
+from mesh_plus.transport import IPCServer, LineChannel, _finish_owned_tasks, connect_ipc, finish_owned
 
 
 class _Source:
@@ -82,6 +84,115 @@ class _ObserverBridgeAdapter:
         payload = await self.snapshot({})
         yield Publication(payload, self.codec.epoch(self.cached.frame), {"viewRevision": 1})
         await self.release_watch.wait()
+
+
+class _BridgeLifetimeSource:
+    host = "fixture-host"
+    source = "synthetic"
+    profile = "mesh-plus.synthetic.state.v1"
+    capabilities = ("snapshot", "proof", "subscribe")
+
+    def __init__(self, *, block_snapshot=False):
+        self.block_snapshot = block_snapshot
+        self.snapshot_started = asyncio.Event()
+        self.snapshot_release = asyncio.Event()
+        self.snapshot_finished = asyncio.Event()
+        self.snapshot_tasks = []
+
+    def validate(self, payload):
+        if type(payload) is not dict or type(payload.get("value")) is not int:
+            raise ValueError("synthetic_payload")
+
+    async def snapshot(self, _parameters):
+        self.snapshot_tasks.append(weakref.ref(asyncio.current_task()))
+        self.snapshot_started.set()
+        try:
+            if self.block_snapshot:
+                await self.snapshot_release.wait()
+            return {"value": 1}
+        finally:
+            self.snapshot_finished.set()
+
+    async def proof(self, parameters):
+        return await self.snapshot(parameters)
+
+    async def watch(self):
+        yield Publication({"value": 1}, "epoch_1", {"value": 1})
+        await asyncio.Event().wait()
+
+
+class _ScriptedBridgeChannel:
+    def __init__(self, source, frames, *, fail_result=False, end_after_frames=False, block_close=False):
+        self.source = source
+        self.frames = list(frames)
+        self.fail_result = fail_result
+        self.end_after_frames = end_after_frames
+        self.closed = asyncio.Event()
+        self.close_started = asyncio.Event()
+        self.close_release = asyncio.Event()
+        if not block_close:
+            self.close_release.set()
+        self.maximum = 1 << 20
+        self.sent_kinds = []
+        self.send_task_refs = []
+        self.failure_sent = False
+        self.send_failure = ConnectionResetError("fixture_send_failure")
+
+    async def receive(self):
+        if self.frames:
+            frame = self.frames.pop(0)
+            if frame["kind"] == "cancel":
+                await self.source.snapshot_started.wait()
+            return frame, 0
+        if self.end_after_frames:
+            raise EOFError("script_finished")
+        await self.closed.wait()
+        raise EOFError("channel_closed")
+
+    async def send(self, frame):
+        self.sent_kinds.append(frame["kind"])
+        if frame["kind"] == "hello":
+            for incoming in self.frames:
+                incoming["channelId"] = frame["channelId"]
+        if frame["kind"] in {"result", "ended"}:
+            self.send_task_refs.append(weakref.ref(asyncio.current_task()))
+        if self.fail_result and frame["kind"] == "result":
+            self.failure_sent = True
+            raise self.send_failure
+        return 0
+
+    async def close(self):
+        self.close_started.set()
+        await self.close_release.wait()
+        self.closed.set()
+
+
+class _GatedBridgeIterator:
+    def __init__(self):
+        self.first = True
+        self.next_cleanup_started = asyncio.Event()
+        self.next_cleanup_release = asyncio.Event()
+        self.close_started = asyncio.Event()
+        self.close_release = asyncio.Event()
+        self.closed = asyncio.Event()
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self.first:
+            self.first = False
+            return Publication({"value": 1}, "epoch_1", {})
+        try:
+            await asyncio.Event().wait()
+        finally:
+            self.next_cleanup_started.set()
+            await self.next_cleanup_release.wait()
+
+    async def aclose(self):
+        self.close_started.set()
+        await self.close_release.wait()
+        self.closed.set()
 
 
 class ClientTerminalLifetimeTests(unittest.IsolatedAsyncioTestCase):
@@ -658,3 +769,256 @@ class OwnedTaskRetirementTests(unittest.IsolatedAsyncioTestCase):
     async def _reader_connected(self, reader):
         while reader.inspect()["connectionsOpened"] == 0:
             await asyncio.sleep(0)
+
+
+class BridgeChildTaskRetirementTests(unittest.IsolatedAsyncioTestCase):
+    async def _serve_recording_connection(self, bridge, channel):
+        connection_refs = []
+        original_close = _Connection.close
+
+        async def capture_connection(connection, *, suppress_errors=False):
+            connection_refs.append(weakref.ref(connection))
+            await original_close(connection, suppress_errors=suppress_errors)
+
+        caught_eof = False
+        with patch.object(_Connection, "close", capture_connection):
+            try:
+                await bridge.serve(channel)
+            except EOFError:
+                caught_eof = True
+            else:
+                self.fail("scripted bridge input did not terminate")
+        return caught_eof, tuple(connection_refs)
+
+    @staticmethod
+    def _frames(*, cancel=False, block_snapshot=False):
+        hello = example("client-hello")
+        request = example("client-request")
+        if block_snapshot:
+            request["parameters"] = {"block": True}
+        frames = [hello, request]
+        if cancel:
+            cancellation = example("client-cancel")
+            cancellation.update(sequence=3, handleId=request["requestId"], handleType="request")
+            frames.append(cancellation)
+        return frames
+
+    async def test_failed_emit_releases_its_owned_send_task_without_clearing_error(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            source = _BridgeLifetimeSource()
+            channel = _ScriptedBridgeChannel(source, self._frames(), fail_result=True)
+            bridge = Bridge(source)
+            bridge_ref = weakref.ref(bridge)
+            channel_ref = weakref.ref(channel)
+
+            caught_eof, connection_refs = await self._serve_recording_connection(bridge, channel)
+            self.assertTrue(caught_eof)
+            self.assertTrue(channel.failure_sent)
+            self.assertIn("result", channel.sent_kinds)
+            self.assertIsNotNone(bridge_ref())
+            self.assertEqual(len(connection_refs), 1)
+            self.assertIsNotNone(connection_refs[0]())
+
+            send_error = channel.send_failure
+            self.assertIs(type(send_error), ConnectionResetError)
+            self.assertIsNotNone(send_error.__traceback__)
+            send_tasks = tuple(channel.send_task_refs)
+            self.assertEqual(len(send_tasks), 1)
+
+            channel.send_failure = None
+            del send_error, bridge, channel, source
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            self.assertIsNone(bridge_ref())
+            self.assertIsNone(channel_ref())
+            self.assertIsNone(connection_refs[0]())
+            self.assertTrue(all(reference() is None for reference in send_tasks))
+        finally:
+            if enabled:
+                gc.enable()
+
+    async def test_cancelled_request_and_connection_close_retire_owned_tasks(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            source = _BridgeLifetimeSource(block_snapshot=True)
+            channel = _ScriptedBridgeChannel(
+                source, self._frames(cancel=True, block_snapshot=True), end_after_frames=True
+            )
+            bridge = Bridge(source)
+            bridge_ref = weakref.ref(bridge)
+            channel_ref = weakref.ref(channel)
+
+            caught_eof, connection_refs = await self._serve_recording_connection(bridge, channel)
+            self.assertTrue(caught_eof)
+            self.assertTrue(source.snapshot_started.is_set())
+            self.assertTrue(source.snapshot_finished.is_set())
+            self.assertIn("ended", channel.sent_kinds)
+            self.assertIsNotNone(bridge_ref())
+            self.assertEqual(len(connection_refs), 1)
+            self.assertIsNone(connection_refs[0]())
+
+            request_tasks = tuple(source.snapshot_tasks)
+            send_tasks = tuple(channel.send_task_refs)
+            self.assertEqual(len(request_tasks), 1)
+            self.assertEqual(len(send_tasks), 1)
+
+            del bridge, channel, source
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            self.assertIsNone(bridge_ref())
+            self.assertIsNone(channel_ref())
+            self.assertIsNone(connection_refs[0]())
+            self.assertTrue(all(reference() is None for reference in request_tasks))
+            self.assertTrue(all(reference() is None for reference in send_tasks))
+        finally:
+            if enabled:
+                gc.enable()
+
+    async def test_repeated_close_cancellation_still_closes_channel_after_child_join(self):
+        source = _BridgeLifetimeSource()
+        channel = _ScriptedBridgeChannel(source, [], block_close=True)
+        connection = _Connection(channel, source, .05, .1)
+        child_started = asyncio.Event()
+        child_finally = asyncio.Event()
+        child_release = asyncio.Event()
+
+        async def owned_child():
+            child_started.set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                child_finally.set()
+                await child_release.wait()
+
+        child = asyncio.create_task(owned_child())
+        connection.tasks["owned"] = child
+        await child_started.wait()
+        closing = asyncio.create_task(connection.close())
+        await child_finally.wait()
+
+        closing.cancel()
+        closing.cancel()
+        child_release.set()
+        await channel.close_started.wait()
+        self.assertFalse(closing.done())
+        closing.cancel()
+        channel.close_release.set()
+        try:
+            await closing
+        except asyncio.CancelledError:
+            pass
+        else:
+            self.fail("caller cancellation was not reported after close")
+
+        self.assertTrue(channel.closed.is_set())
+        self.assertEqual(connection.tasks, {})
+        self.assertTrue(child.done())
+
+    async def test_channel_close_error_wins_over_repeated_caller_cancellation(self):
+        source = _BridgeLifetimeSource()
+        channel = _ScriptedBridgeChannel(source, [], block_close=True)
+        failure = ConnectionResetError("fixture_close_failure")
+
+        async def failing_close():
+            channel.close_started.set()
+            await channel.close_release.wait()
+            raise failure
+
+        channel.close = failing_close
+        connection = _Connection(channel, source, .05, .1)
+        closing = asyncio.create_task(connection.close())
+        await channel.close_started.wait()
+        closing.cancel()
+        closing.cancel()
+        channel.close_release.set()
+        try:
+            await closing
+        except ConnectionResetError as error:
+            self.assertIs(error, failure)
+        else:
+            self.fail("child close failure was replaced by caller cancellation")
+
+    async def test_cleanup_failure_does_not_replace_bridge_run_failure(self):
+        source = _BridgeLifetimeSource()
+        channel = _ScriptedBridgeChannel(source, self._frames(), end_after_frames=True)
+        cleanup_failure = ConnectionResetError("fixture_cleanup_failure")
+
+        async def failing_close():
+            channel.close_started.set()
+            raise cleanup_failure
+
+        channel.close = failing_close
+        bridge = Bridge(source)
+        caught_eof, _connection_refs = await self._serve_recording_connection(bridge, channel)
+        self.assertTrue(caught_eof)
+
+    async def test_subscription_aclose_runs_after_repeated_cancel_during_producer_join(self):
+        from mesh_plus.protocol import Lifecycle, encode
+
+        source = _BridgeLifetimeSource()
+        iterator = _GatedBridgeIterator()
+        source.watch = lambda: iterator
+        channel = _ScriptedBridgeChannel(source, [])
+        connection = _Connection(channel, source, .05, .1)
+        client_hello = example("client-hello")
+        server_hello = example("server-hello")
+        connection.guard = Lifecycle(client_hello, source.host)
+        connection.guard.received(server_hello, len(encode(server_hello)))
+        subscribe = example("client-subscribe")
+        subscribe.update(channelId=server_hello["channelId"], sequence=2, subscriptionId="gated")
+        connection.guard.sent(subscribe, 0)
+
+        subscription = asyncio.create_task(connection.subscription(subscribe))
+        while "data" not in channel.sent_kinds:
+            await asyncio.sleep(0)
+        subscription.cancel()
+        await iterator.next_cleanup_started.wait()
+        subscription.cancel()
+        iterator.next_cleanup_release.set()
+        await iterator.close_started.wait()
+        self.assertFalse(subscription.done())
+        subscription.cancel()
+        iterator.close_release.set()
+        try:
+            await subscription
+        except asyncio.CancelledError:
+            pass
+        else:
+            self.fail("subscription cancellation was not reported after iterator close")
+
+        self.assertTrue(iterator.closed.is_set())
+        self.assertNotIn("gated", connection.wakes)
+
+
+class TransportReadTaskRetirementTests(unittest.IsolatedAsyncioTestCase):
+    async def test_failed_receive_releases_owned_read_task_after_error_release(self):
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            reader = asyncio.StreamReader()
+            reader.feed_eof()
+            channel = LineChannel(reader, None, "server")
+            channel_ref = weakref.ref(channel)
+
+            try:
+                await channel.receive()
+            except EOFError as error:
+                caught = error
+            else:
+                self.fail("EOF input did not terminate the read")
+
+            self.assertEqual(str(caught), "channel_closed")
+            self.assertIsNotNone(caught.__traceback__)
+            self.assertIsNone(channel.read_job)
+            self.assertIsNotNone(channel_ref())
+
+            del caught, channel, reader
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            self.assertIsNone(channel_ref())
+        finally:
+            if enabled:
+                gc.enable()

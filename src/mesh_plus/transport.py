@@ -201,7 +201,11 @@ class LineChannel:
             raise
         finally:
             self.read_job = None
-            _observe_cancelled_task_errors((read_job,))
+            try:
+                _observe_cancelled_task_errors((read_job,))
+            finally:
+                # The child error can point back to this coroutine's frame.
+                read_job = None
 
     async def _receive(self):
         try:

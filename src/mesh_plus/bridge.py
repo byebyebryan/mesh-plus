@@ -6,7 +6,12 @@ import uuid
 from dataclasses import dataclass
 
 from .protocol import PROTOCOL, Lifecycle, ProtocolError, check, encode
-from .transport import boottime_ms, finish_owned
+from .transport import (
+    _finish_owned_tasks,
+    _observe_cancelled_task_errors,
+    boottime_ms,
+    finish_owned,
+)
 
 
 @dataclass(frozen=True)
@@ -32,7 +37,15 @@ class Bridge:
         connection = _Connection(channel, self.adapter, self.heartbeat_interval, self.credit_timeout)
         try:
             await connection.run()
-        finally:
+        except BaseException:
+            # Closing is still mandatory after a failed run, but cleanup must
+            # not replace the original connection failure.
+            try:
+                await connection.close(suppress_errors=True)
+            except BaseException:
+                pass
+            raise
+        else:
             await connection.close()
 
 
@@ -59,9 +72,15 @@ class _Connection:
             self.guard.received(frame, size)
             if on_admit:
                 on_admit()
-            write = asyncio.create_task(self.channel.send(frame))
-            # Finish an admitted frame before releasing the ended barrier lock.
-            await finish_owned(write)
+            write = None
+            try:
+                write = asyncio.create_task(self.channel.send(frame))
+                # Finish an admitted frame before releasing the ended barrier lock.
+                await finish_owned(write)
+            finally:
+                # A failed send task retains this frame through its exception
+                # traceback. Do not leave the completed task in that frame.
+                write = None
             return True
 
     async def run(self):
@@ -101,15 +120,25 @@ class _Connection:
             if kind in {"request", "subscribe"}:
                 key = frame["requestId"] if kind == "request" else frame["subscriptionId"]
                 coroutine = self.request(frame) if kind == "request" else self.subscription(frame)
-                task = asyncio.create_task(coroutine)
-                self.tasks[key] = task
-                task.add_done_callback(lambda done, k=key: self.finished(k, done))
+                task = None
+                try:
+                    task = asyncio.create_task(coroutine)
+                    self.tasks[key] = task
+                    task.add_done_callback(lambda done, k=key: self.finished(k, done))
+                finally:
+                    coroutine = None
+                    task = None
             elif kind == "cancel":
                 key = frame["handleId"]
                 task = self.tasks.get(key)
-                if task:
+                if task is not None:
                     task.cancel()
-                    await asyncio.gather(task, return_exceptions=True)
+                    try:
+                        await _finish_owned_tasks((task,))
+                    finally:
+                        if self.tasks.get(key) is task:
+                            self.tasks.pop(key, None)
+                        task = None
                 if self.guard.handles[key]["phase"] != "done":
                     await self.emit("ended", handleId=key, handleType=frame["handleType"], reason="cancelled", cursor=None)
             elif kind == "credit":
@@ -118,7 +147,9 @@ class _Connection:
 
     def finished(self, key, task):
         self.tasks.pop(key, None)
-        if not task.cancelled() and task.exception() is not None:
+        if task.cancelled():
+            _observe_cancelled_task_errors((task,))
+        elif task.exception() is not None:
             # A transport/protocol failure cannot leave a half-live connection.
             asyncio.create_task(self.channel.close())
 
@@ -149,6 +180,7 @@ class _Connection:
         self.wakes[key] = wake
         last_progress = boottime_ms()
         blocked_since = None
+        primary_error = False
         try:
             first = await asyncio.wait_for(anext(iterator), 3)
             self.adapter.validate(first.payload)
@@ -215,22 +247,74 @@ class _Connection:
                 with contextlib.suppress(TimeoutError):
                     await asyncio.wait_for(wake.wait(), wait_ms / 1000)
         except asyncio.CancelledError:
+            primary_error = True
             raise
         except Exception as error:
+            primary_error = True
             reason = "publisher_restart" if isinstance(error, ProtocolError) and error.code == "publisher_restart" else "gap"
             if self.guard.handles[key]["phase"] != "done":
                 await self.emit("ended", handleId=key, handleType="subscription", reason=reason, cursor=None)
+            primary_error = False
+        except BaseException:
+            primary_error = True
+            raise
         finally:
             self.wakes.pop(key, None)
-            if producer:
-                producer.cancel()
-                await asyncio.gather(producer, return_exceptions=True)
-            if hasattr(iterator, "aclose"):
-                await iterator.aclose()
+            cleanup_cancelled = False
+            owned_producer = producer
+            if owned_producer is not None:
+                owned_producer.cancel()
+                try:
+                    await _finish_owned_tasks((owned_producer,))
+                except asyncio.CancelledError:
+                    cleanup_cancelled = True
+                finally:
+                    producer = None
+                    owned_producer = None
+            close_task = None
+            try:
+                if hasattr(iterator, "aclose"):
+                    close_task = asyncio.ensure_future(iterator.aclose())
+                    try:
+                        await finish_owned(close_task)
+                    except asyncio.CancelledError:
+                        cleanup_cancelled = True
+            except BaseException:
+                if not primary_error:
+                    raise
+            finally:
+                close_task = None
+                iterator = None
+                latest = None
+            if cleanup_cancelled and not primary_error:
+                raise asyncio.CancelledError
 
-    async def close(self):
-        tasks = list(self.tasks.values())
+    async def close(self, *, suppress_errors=False):
+        tasks = tuple(self.tasks.values())
         for task in tasks:
             task.cancel()
-        await asyncio.gather(*tasks, return_exceptions=True)
-        await self.channel.close()
+        cancelled = False
+        try:
+            await _finish_owned_tasks(tasks)
+        except asyncio.CancelledError:
+            cancelled = True
+        finally:
+            self.tasks.clear()
+            tasks = ()
+            task = None
+
+        close_task = None
+        try:
+            close_task = asyncio.ensure_future(self.channel.close())
+            try:
+                await finish_owned(close_task)
+            except asyncio.CancelledError:
+                cancelled = True
+        except BaseException:
+            if not suppress_errors:
+                raise
+        finally:
+            close_task = None
+
+        if cancelled and not suppress_errors:
+            raise asyncio.CancelledError
