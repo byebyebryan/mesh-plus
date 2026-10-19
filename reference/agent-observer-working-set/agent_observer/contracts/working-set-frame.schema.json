@@ -1,0 +1,2265 @@
+{
+  "$id": "urn:agent-observer:working-set-frame:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "bootId": {
+      "maxLength": 36,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "clock": {
+      "enum": [
+        "boottime"
+      ]
+    },
+    "clockCeiling": {
+      "anyOf": [
+        {
+          "maximum": 9007199254740991,
+          "minimum": -9007199254740991,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "clockDomain": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "clockGeneration": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "emittedAt": {
+      "maximum": 4000000000000,
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "emittedBoottimeMs": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "hostScope": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "status",
+        "view",
+        "heartbeat",
+        "gap",
+        "resync",
+        "error"
+      ]
+    },
+    "observationRevision": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "projection": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "scopes": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "clocks": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "accepted": {
+                          "maximum": 9007199254740991,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "acceptedBoottimeMs": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "component": {
+                          "enum": [
+                            "runtime",
+                            "history"
+                          ]
+                        },
+                        "originComponent": {
+                          "enum": [
+                            "runtime",
+                            "history"
+                          ]
+                        },
+                        "sampleId": {
+                          "maxLength": 36,
+                          "minLength": 1,
+                          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                          "type": "string"
+                        },
+                        "sampledBoottimeMs": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "wallMs": {
+                          "maximum": 4000000000000,
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "component",
+                        "accepted",
+                        "sampleId",
+                        "originComponent",
+                        "sampledBoottimeMs",
+                        "wallMs",
+                        "acceptedBoottimeMs"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 2,
+                    "type": "array"
+                  },
+                  "contextGeneration": {
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "continuity": {
+                    "maximum": 9007199254740991,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "coverage": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "reason": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": "string"
+                      },
+                      "status": {
+                        "enum": [
+                          "complete",
+                          "partial",
+                          "warming",
+                          "stale",
+                          "unavailable",
+                          "unsupported"
+                        ]
+                      },
+                      "supports": {
+                        "items": {
+                          "maximum": 8193,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "maxItems": 2,
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "reason",
+                      "supports"
+                    ],
+                    "type": "object"
+                  },
+                  "members": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "active": {
+                          "anyOf": [
+                            {
+                              "additionalProperties": false,
+                              "properties": {
+                                "supports": {
+                                  "items": {
+                                    "maximum": 8193,
+                                    "minimum": 0,
+                                    "type": "integer"
+                                  },
+                                  "maxItems": 2,
+                                  "type": "array"
+                                }
+                              },
+                              "required": [
+                                "supports"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "fieldSupports": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "activity": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "kind": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "lastUpdated": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "latestTurn": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "outcome": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "phase": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "runtime": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "savedIdentity": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "workspace": {
+                              "anyOf": [
+                                {
+                                  "maximum": 8193,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "runtime",
+                            "phase",
+                            "kind",
+                            "savedIdentity",
+                            "activity",
+                            "outcome",
+                            "workspace",
+                            "lastUpdated",
+                            "latestTurn"
+                          ],
+                          "type": "object"
+                        },
+                        "identity": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "hostScope": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                              "type": "string"
+                            },
+                            "namespace": {
+                              "maxLength": 71,
+                              "minLength": 1,
+                              "pattern": "^sha256:[0-9a-f]{64}$",
+                              "type": "string"
+                            },
+                            "nativeId": {
+                              "maxLength": 36,
+                              "minLength": 1,
+                              "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                              "type": "string"
+                            },
+                            "nativeIdKind": {
+                              "enum": [
+                                "thread",
+                                "session"
+                              ]
+                            },
+                            "provider": {
+                              "enum": [
+                                "codex",
+                                "claude"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "hostScope",
+                            "provider",
+                            "namespace",
+                            "nativeIdKind",
+                            "nativeId"
+                          ],
+                          "type": "object"
+                        },
+                        "recent": {
+                          "anyOf": [
+                            {
+                              "additionalProperties": false,
+                              "properties": {
+                                "activityAt": {
+                                  "maximum": 4000000000000,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                "clock": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "accepted": {
+                                      "maximum": 9007199254740991,
+                                      "minimum": 1,
+                                      "type": "integer"
+                                    },
+                                    "component": {
+                                      "enum": [
+                                        "runtime",
+                                        "history"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "component",
+                                    "accepted"
+                                  ],
+                                  "type": "object"
+                                },
+                                "lowerBoottimeMs": {
+                                  "maximum": 9007199254740991,
+                                  "minimum": -9007199254740991,
+                                  "type": "integer"
+                                },
+                                "supports": {
+                                  "items": {
+                                    "maximum": 8193,
+                                    "minimum": 0,
+                                    "type": "integer"
+                                  },
+                                  "maxItems": 2,
+                                  "type": "array"
+                                },
+                                "upperBoottimeMs": {
+                                  "maximum": 9007199254740991,
+                                  "minimum": -9007199254740991,
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "supports",
+                                "activityAt",
+                                "clock",
+                                "lowerBoottimeMs",
+                                "upperBoottimeMs"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "identity",
+                        "fieldSupports",
+                        "active",
+                        "recent"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 4096,
+                    "type": "array"
+                  },
+                  "namespace": {
+                    "maxLength": 71,
+                    "minLength": 1,
+                    "pattern": "^sha256:[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  "nonmembers": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "horizonBoottimeMs": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "identity": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "hostScope": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                              "type": "string"
+                            },
+                            "namespace": {
+                              "maxLength": 71,
+                              "minLength": 1,
+                              "pattern": "^sha256:[0-9a-f]{64}$",
+                              "type": "string"
+                            },
+                            "nativeId": {
+                              "maxLength": 36,
+                              "minLength": 1,
+                              "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                              "type": "string"
+                            },
+                            "nativeIdKind": {
+                              "enum": [
+                                "thread",
+                                "session"
+                              ]
+                            },
+                            "provider": {
+                              "enum": [
+                                "codex",
+                                "claude"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "hostScope",
+                            "provider",
+                            "namespace",
+                            "nativeIdKind",
+                            "nativeId"
+                          ],
+                          "type": "object"
+                        },
+                        "reason": {
+                          "enum": [
+                            "excluded_kind",
+                            "outside_window",
+                            "no_activity"
+                          ]
+                        },
+                        "recent": {
+                          "anyOf": [
+                            {
+                              "additionalProperties": false,
+                              "properties": {
+                                "absence": {
+                                  "anyOf": [
+                                    {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "activity": {
+                                          "additionalProperties": false,
+                                          "properties": {
+                                            "at": {
+                                              "const": null
+                                            },
+                                            "health": {
+                                              "const": "unavailable"
+                                            },
+                                            "reason": {
+                                              "const": "no_conversation_activity"
+                                            },
+                                            "source": {
+                                              "const": null
+                                            }
+                                          },
+                                          "required": [
+                                            "at",
+                                            "source",
+                                            "health",
+                                            "reason"
+                                          ],
+                                          "type": "object"
+                                        },
+                                        "field": {
+                                          "const": "latestTurn"
+                                        },
+                                        "latestTurn": {
+                                          "additionalProperties": false,
+                                          "properties": {
+                                            "health": {
+                                              "enum": [
+                                                "current",
+                                                "stale",
+                                                "unavailable",
+                                                "unsupported",
+                                                "ambiguous"
+                                              ]
+                                            },
+                                            "lastKnownValue": {
+                                              "additionalProperties": false,
+                                              "properties": {
+                                                "completedAt": {
+                                                  "maximum": 4000000000000,
+                                                  "minimum": 0,
+                                                  "type": [
+                                                    "integer",
+                                                    "null"
+                                                  ]
+                                                },
+                                                "durationMs": {
+                                                  "maximum": 4000000000000,
+                                                  "minimum": 0,
+                                                  "type": [
+                                                    "integer",
+                                                    "null"
+                                                  ]
+                                                },
+                                                "id": {
+                                                  "maxLength": 512,
+                                                  "type": [
+                                                    "string",
+                                                    "null"
+                                                  ]
+                                                },
+                                                "startedAt": {
+                                                  "maximum": 4000000000000,
+                                                  "minimum": 0,
+                                                  "type": [
+                                                    "integer",
+                                                    "null"
+                                                  ]
+                                                },
+                                                "status": {
+                                                  "enum": [
+                                                    "in_progress",
+                                                    "completed",
+                                                    "failed",
+                                                    "cancelled",
+                                                    "unknown"
+                                                  ]
+                                                },
+                                                "timestampPrecisionMs": {
+                                                  "maximum": 4000000000000,
+                                                  "minimum": 1,
+                                                  "type": [
+                                                    "integer",
+                                                    "null"
+                                                  ]
+                                                }
+                                              },
+                                              "required": [
+                                                "id",
+                                                "status",
+                                                "startedAt",
+                                                "completedAt",
+                                                "durationMs",
+                                                "timestampPrecisionMs"
+                                              ],
+                                              "type": "object"
+                                            },
+                                            "observedAt": {
+                                              "maximum": 4000000000000,
+                                              "minimum": 0,
+                                              "type": [
+                                                "integer",
+                                                "null"
+                                              ]
+                                            },
+                                            "reason": {
+                                              "maxLength": 128,
+                                              "minLength": 1,
+                                              "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                                              "type": "string"
+                                            },
+                                            "receipt": {
+                                              "anyOf": [
+                                                {
+                                                  "additionalProperties": false,
+                                                  "properties": {
+                                                    "component": {
+                                                      "enum": [
+                                                        "runtime",
+                                                        "history"
+                                                      ]
+                                                    },
+                                                    "contextGeneration": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": 0,
+                                                      "type": "integer"
+                                                    },
+                                                    "observedBoottimeMs": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": 0,
+                                                      "type": "integer"
+                                                    },
+                                                    "sampledBoottimeMs": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": 0,
+                                                      "type": "integer"
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "component",
+                                                    "sampledBoottimeMs",
+                                                    "observedBoottimeMs",
+                                                    "contextGeneration"
+                                                  ],
+                                                  "type": "object"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            "source": {
+                                              "maxLength": 128,
+                                              "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            },
+                                            "value": {
+                                              "anyOf": [
+                                                {
+                                                  "additionalProperties": false,
+                                                  "properties": {
+                                                    "completedAt": {
+                                                      "maximum": 4000000000000,
+                                                      "minimum": 0,
+                                                      "type": [
+                                                        "integer",
+                                                        "null"
+                                                      ]
+                                                    },
+                                                    "durationMs": {
+                                                      "maximum": 4000000000000,
+                                                      "minimum": 0,
+                                                      "type": [
+                                                        "integer",
+                                                        "null"
+                                                      ]
+                                                    },
+                                                    "id": {
+                                                      "maxLength": 512,
+                                                      "type": [
+                                                        "string",
+                                                        "null"
+                                                      ]
+                                                    },
+                                                    "startedAt": {
+                                                      "maximum": 4000000000000,
+                                                      "minimum": 0,
+                                                      "type": [
+                                                        "integer",
+                                                        "null"
+                                                      ]
+                                                    },
+                                                    "status": {
+                                                      "enum": [
+                                                        "in_progress",
+                                                        "completed",
+                                                        "failed",
+                                                        "cancelled",
+                                                        "unknown"
+                                                      ]
+                                                    },
+                                                    "timestampPrecisionMs": {
+                                                      "maximum": 4000000000000,
+                                                      "minimum": 1,
+                                                      "type": [
+                                                        "integer",
+                                                        "null"
+                                                      ]
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "id",
+                                                    "status",
+                                                    "startedAt",
+                                                    "completedAt",
+                                                    "durationMs",
+                                                    "timestampPrecisionMs"
+                                                  ],
+                                                  "type": "object"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "value",
+                                            "observedAt",
+                                            "source",
+                                            "health",
+                                            "reason",
+                                            "receipt"
+                                          ],
+                                          "type": "object"
+                                        }
+                                      },
+                                      "required": [
+                                        "field",
+                                        "latestTurn",
+                                        "activity"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "activityAt": {
+                                  "maximum": 4000000000000,
+                                  "minimum": 0,
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "clock": {
+                                  "anyOf": [
+                                    {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "accepted": {
+                                          "maximum": 9007199254740991,
+                                          "minimum": 1,
+                                          "type": "integer"
+                                        },
+                                        "component": {
+                                          "enum": [
+                                            "runtime",
+                                            "history"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "component",
+                                        "accepted"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "kind": {
+                                  "enum": [
+                                    "window_disabled",
+                                    "outside_window",
+                                    "no_activity"
+                                  ]
+                                },
+                                "lowerBoottimeMs": {
+                                  "anyOf": [
+                                    {
+                                      "maximum": 9007199254740991,
+                                      "minimum": -9007199254740991,
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "support": {
+                                  "anyOf": [
+                                    {
+                                      "maximum": 8193,
+                                      "minimum": 0,
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "upperBoottimeMs": {
+                                  "anyOf": [
+                                    {
+                                      "maximum": 9007199254740991,
+                                      "minimum": -9007199254740991,
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "support",
+                                "clock",
+                                "activityAt",
+                                "lowerBoottimeMs",
+                                "upperBoottimeMs",
+                                "absence"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "supports": {
+                          "items": {
+                            "maximum": 8193,
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          "maxItems": 2,
+                          "type": "array"
+                        },
+                        "value": {
+                          "enum": [
+                            "child",
+                            "system",
+                            "parked"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "identity",
+                        "reason",
+                        "value",
+                        "supports",
+                        "recent",
+                        "horizonBoottimeMs"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 4096,
+                    "type": "array"
+                  },
+                  "provider": {
+                    "enum": [
+                      "codex"
+                    ]
+                  },
+                  "supportTable": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "accepted": {
+                          "maximum": 9007199254740991,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "component": {
+                          "enum": [
+                            "runtime",
+                            "history"
+                          ]
+                        },
+                        "contextGeneration": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "expiresBoottimeMs": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "namespace": {
+                          "maxLength": 71,
+                          "minLength": 1,
+                          "pattern": "^sha256:[0-9a-f]{64}$",
+                          "type": "string"
+                        },
+                        "provider": {
+                          "enum": [
+                            "codex"
+                          ]
+                        },
+                        "sampledBoottimeMs": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "serviceId": {
+                          "maxLength": 36,
+                          "minLength": 1,
+                          "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "serviceId",
+                        "provider",
+                        "namespace",
+                        "contextGeneration",
+                        "component",
+                        "accepted",
+                        "sampledBoottimeMs",
+                        "expiresBoottimeMs"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 8194,
+                    "type": "array"
+                  },
+                  "uncertain": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "horizonBoottimeMs": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "identity": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "hostScope": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                              "type": "string"
+                            },
+                            "namespace": {
+                              "maxLength": 71,
+                              "minLength": 1,
+                              "pattern": "^sha256:[0-9a-f]{64}$",
+                              "type": "string"
+                            },
+                            "nativeId": {
+                              "maxLength": 36,
+                              "minLength": 1,
+                              "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                              "type": "string"
+                            },
+                            "nativeIdKind": {
+                              "enum": [
+                                "thread",
+                                "session"
+                              ]
+                            },
+                            "provider": {
+                              "enum": [
+                                "codex",
+                                "claude"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "hostScope",
+                            "provider",
+                            "namespace",
+                            "nativeIdKind",
+                            "nativeId"
+                          ],
+                          "type": "object"
+                        },
+                        "priorSupport": {
+                          "anyOf": [
+                            {
+                              "maximum": 8193,
+                              "minimum": 0,
+                              "type": "integer"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "reason": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                          "type": "string"
+                        },
+                        "support": {
+                          "anyOf": [
+                            {
+                              "maximum": 8193,
+                              "minimum": 0,
+                              "type": "integer"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "identity",
+                        "reason",
+                        "priorSupport",
+                        "support",
+                        "horizonBoottimeMs"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 4096,
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "provider",
+                  "namespace",
+                  "contextGeneration",
+                  "continuity",
+                  "supportTable",
+                  "clocks",
+                  "coverage",
+                  "members",
+                  "uncertain",
+                  "nonmembers"
+                ],
+                "type": "object"
+              },
+              "maxItems": 1,
+              "type": "array"
+            },
+            "sessions": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "activity": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "at": {
+                        "maximum": 4000000000000,
+                        "minimum": 0,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "health": {
+                        "enum": [
+                          "current",
+                          "stale",
+                          "unavailable",
+                          "unsupported",
+                          "ambiguous"
+                        ]
+                      },
+                      "lastKnownAt": {
+                        "maximum": 4000000000000,
+                        "minimum": 0,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reason": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": "string"
+                      },
+                      "source": {
+                        "maxLength": 128,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "at",
+                      "source",
+                      "health",
+                      "reason"
+                    ],
+                    "type": "object"
+                  },
+                  "blockedReasons": {
+                    "items": {
+                      "enum": [
+                        "approval",
+                        "question"
+                      ]
+                    },
+                    "maxItems": 2,
+                    "type": "array"
+                  },
+                  "createdAt": {
+                    "maximum": 4000000000000,
+                    "minimum": 0,
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "cwd": {
+                    "maxLength": 4096,
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cwdSource": {
+                    "maxLength": 128,
+                    "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hasSavedHistory": {
+                    "type": "boolean"
+                  },
+                  "identity": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "hostScope": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "maxLength": 71,
+                        "minLength": 1,
+                        "pattern": "^sha256:[0-9a-f]{64}$",
+                        "type": "string"
+                      },
+                      "nativeId": {
+                        "maxLength": 36,
+                        "minLength": 1,
+                        "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                        "type": "string"
+                      },
+                      "nativeIdKind": {
+                        "enum": [
+                          "thread",
+                          "session"
+                        ]
+                      },
+                      "provider": {
+                        "enum": [
+                          "codex",
+                          "claude"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "hostScope",
+                      "provider",
+                      "namespace",
+                      "nativeIdKind",
+                      "nativeId"
+                    ],
+                    "type": "object"
+                  },
+                  "inventory": {
+                    "enum": [
+                      "live",
+                      "saved"
+                    ]
+                  },
+                  "kind": {
+                    "enum": [
+                      "user",
+                      "child",
+                      "system",
+                      "unknown"
+                    ]
+                  },
+                  "lastUpdated": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "at": {
+                        "maximum": 4000000000000,
+                        "minimum": 0,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "health": {
+                        "enum": [
+                          "current",
+                          "stale",
+                          "unavailable",
+                          "unsupported",
+                          "ambiguous"
+                        ]
+                      },
+                      "lastKnownAt": {
+                        "maximum": 4000000000000,
+                        "minimum": 0,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "lastKnownTimestampPrecisionMs": {
+                        "maximum": 4000000000000,
+                        "minimum": 1,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "observedAt": {
+                        "maximum": 4000000000000,
+                        "minimum": 0,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reason": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": "string"
+                      },
+                      "receipt": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": false,
+                            "properties": {
+                              "component": {
+                                "enum": [
+                                  "runtime",
+                                  "history"
+                                ]
+                              },
+                              "contextGeneration": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "observedBoottimeMs": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "sampledBoottimeMs": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "component",
+                              "sampledBoottimeMs",
+                              "observedBoottimeMs",
+                              "contextGeneration"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "source": {
+                        "maxLength": 128,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "timestampPrecisionMs": {
+                        "maximum": 4000000000000,
+                        "minimum": 1,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "at",
+                      "timestampPrecisionMs",
+                      "observedAt",
+                      "source",
+                      "health",
+                      "reason",
+                      "receipt"
+                    ],
+                    "type": "object"
+                  },
+                  "latestTurn": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "health": {
+                        "enum": [
+                          "current",
+                          "stale",
+                          "unavailable",
+                          "unsupported",
+                          "ambiguous"
+                        ]
+                      },
+                      "lastKnownValue": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "completedAt": {
+                            "maximum": 4000000000000,
+                            "minimum": 0,
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "durationMs": {
+                            "maximum": 4000000000000,
+                            "minimum": 0,
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "id": {
+                            "maxLength": 512,
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "startedAt": {
+                            "maximum": 4000000000000,
+                            "minimum": 0,
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "status": {
+                            "enum": [
+                              "in_progress",
+                              "completed",
+                              "failed",
+                              "cancelled",
+                              "unknown"
+                            ]
+                          },
+                          "timestampPrecisionMs": {
+                            "maximum": 4000000000000,
+                            "minimum": 1,
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "status",
+                          "startedAt",
+                          "completedAt",
+                          "durationMs",
+                          "timestampPrecisionMs"
+                        ],
+                        "type": "object"
+                      },
+                      "observedAt": {
+                        "maximum": 4000000000000,
+                        "minimum": 0,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reason": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": "string"
+                      },
+                      "receipt": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": false,
+                            "properties": {
+                              "component": {
+                                "enum": [
+                                  "runtime",
+                                  "history"
+                                ]
+                              },
+                              "contextGeneration": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "observedBoottimeMs": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "sampledBoottimeMs": {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "component",
+                              "sampledBoottimeMs",
+                              "observedBoottimeMs",
+                              "contextGeneration"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "source": {
+                        "maxLength": 128,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": false,
+                            "properties": {
+                              "completedAt": {
+                                "maximum": 4000000000000,
+                                "minimum": 0,
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "durationMs": {
+                                "maximum": 4000000000000,
+                                "minimum": 0,
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "id": {
+                                "maxLength": 512,
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "startedAt": {
+                                "maximum": 4000000000000,
+                                "minimum": 0,
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "status": {
+                                "enum": [
+                                  "in_progress",
+                                  "completed",
+                                  "failed",
+                                  "cancelled",
+                                  "unknown"
+                                ]
+                              },
+                              "timestampPrecisionMs": {
+                                "maximum": 4000000000000,
+                                "minimum": 1,
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "status",
+                              "startedAt",
+                              "completedAt",
+                              "durationMs",
+                              "timestampPrecisionMs"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "observedAt",
+                      "source",
+                      "health",
+                      "reason",
+                      "receipt"
+                    ],
+                    "type": "object"
+                  },
+                  "metadataIssues": {
+                    "items": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                      "type": "string"
+                    },
+                    "maxItems": 128,
+                    "type": "array"
+                  },
+                  "nativeIds": {
+                    "anyOf": [
+                      {
+                        "additionalProperties": false,
+                        "properties": {
+                          "sessionTreeRootId": {
+                            "maxLength": 36,
+                            "minLength": 1,
+                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                            "type": "string"
+                          },
+                          "threadId": {
+                            "maxLength": 36,
+                            "minLength": 1,
+                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "threadId",
+                          "sessionTreeRootId"
+                        ],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "properties": {
+                          "sessionId": {
+                            "maxLength": 36,
+                            "minLength": 1,
+                            "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "sessionId"
+                        ],
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "outcome": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "clock": {
+                        "enum": [
+                          "native",
+                          "sample",
+                          null
+                        ]
+                      },
+                      "health": {
+                        "enum": [
+                          "current",
+                          "stale",
+                          "unavailable",
+                          "unsupported",
+                          "ambiguous"
+                        ]
+                      },
+                      "lastKnownValue": {
+                        "enum": [
+                          "completed",
+                          "failed",
+                          "cancelled"
+                        ]
+                      },
+                      "observedAt": {
+                        "maximum": 4000000000000,
+                        "minimum": 0,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reason": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": "string"
+                      },
+                      "source": {
+                        "maxLength": 128,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "value": {
+                        "enum": [
+                          "completed",
+                          "failed",
+                          "cancelled",
+                          "unknown"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "observedAt",
+                      "source",
+                      "health",
+                      "reason",
+                      "clock"
+                    ],
+                    "type": "object"
+                  },
+                  "phase": {
+                    "anyOf": [
+                      {
+                        "additionalProperties": false,
+                        "properties": {
+                          "clock": {
+                            "enum": [
+                              "native",
+                              "sample",
+                              null
+                            ]
+                          },
+                          "health": {
+                            "enum": [
+                              "current",
+                              "stale",
+                              "unavailable",
+                              "unsupported",
+                              "ambiguous"
+                            ]
+                          },
+                          "lastKnownValue": {
+                            "enum": [
+                              "working",
+                              "blocked",
+                              "waiting"
+                            ]
+                          },
+                          "observedAt": {
+                            "maximum": 4000000000000,
+                            "minimum": 0,
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "reason": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                            "type": "string"
+                          },
+                          "source": {
+                            "maxLength": 128,
+                            "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "value": {
+                            "enum": [
+                              "working",
+                              "blocked",
+                              "waiting",
+                              "unknown"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "observedAt",
+                          "source",
+                          "health",
+                          "reason",
+                          "clock"
+                        ],
+                        "type": "object"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "runtime": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "clock": {
+                        "enum": [
+                          "native",
+                          "sample",
+                          null
+                        ]
+                      },
+                      "health": {
+                        "enum": [
+                          "current",
+                          "stale",
+                          "unavailable",
+                          "unsupported",
+                          "ambiguous"
+                        ]
+                      },
+                      "lastKnownValue": {
+                        "enum": [
+                          "running",
+                          "parked"
+                        ]
+                      },
+                      "observedAt": {
+                        "maximum": 4000000000000,
+                        "minimum": 0,
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reason": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": "string"
+                      },
+                      "source": {
+                        "maxLength": 128,
+                        "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "value": {
+                        "enum": [
+                          "running",
+                          "parked",
+                          "unknown"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "observedAt",
+                      "source",
+                      "health",
+                      "reason",
+                      "clock"
+                    ],
+                    "type": "object"
+                  },
+                  "title": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "workspace": {
+                    "anyOf": [
+                      {
+                        "additionalProperties": false,
+                        "properties": {
+                          "health": {
+                            "enum": [
+                              "current",
+                              "unavailable",
+                              "unsupported"
+                            ]
+                          },
+                          "projectKey": {
+                            "maxLength": 256,
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "reason": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                            "type": "string"
+                          },
+                          "relativePath": {
+                            "maxLength": 4096,
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "repo": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "commonDir": {
+                                    "maxLength": 4096,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "relativePath": {
+                                    "maxLength": 4096,
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "root": {
+                                    "maxLength": 4096,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "root",
+                                  "commonDir",
+                                  "relativePath"
+                                ],
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "root": {
+                            "maxLength": 4096,
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "rootKey": {
+                            "maxLength": 128,
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "health",
+                          "reason",
+                          "root",
+                          "rootKey",
+                          "relativePath",
+                          "projectKey",
+                          "repo"
+                        ],
+                        "type": "object"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "identity",
+                  "nativeIds",
+                  "title",
+                  "kind",
+                  "cwd",
+                  "cwdSource",
+                  "inventory",
+                  "hasSavedHistory",
+                  "phase",
+                  "runtime",
+                  "outcome",
+                  "blockedReasons",
+                  "createdAt",
+                  "activity",
+                  "lastUpdated",
+                  "latestTurn",
+                  "workspace",
+                  "metadataIssues"
+                ],
+                "type": "object"
+              },
+              "maxItems": 4096,
+              "type": "array"
+            }
+          },
+          "required": [
+            "scopes",
+            "sessions"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9_]{0,127}$",
+      "type": "string"
+    },
+    "selector": {
+      "additionalProperties": false,
+      "properties": {
+        "active": {
+          "additionalProperties": false,
+          "properties": {
+            "runtimeHealths": {
+              "const": [
+                "current"
+              ],
+              "items": {
+                "enum": [
+                  "current"
+                ]
+              },
+              "maxItems": 1,
+              "type": "array"
+            },
+            "runtimeValues": {
+              "const": [
+                "running"
+              ],
+              "items": {
+                "enum": [
+                  "running"
+                ]
+              },
+              "maxItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "runtimeValues",
+            "runtimeHealths"
+          ],
+          "type": "object"
+        },
+        "kinds": {
+          "const": [
+            "unknown",
+            "user"
+          ],
+          "items": {
+            "enum": [
+              "unknown",
+              "user"
+            ]
+          },
+          "maxItems": 2,
+          "type": "array"
+        },
+        "providers": {
+          "const": [
+            "codex"
+          ],
+          "items": {
+            "enum": [
+              "codex"
+            ]
+          },
+          "maxItems": 1,
+          "type": "array"
+        },
+        "recent": {
+          "additionalProperties": false,
+          "properties": {
+            "boundary": {
+              "const": "exclusive"
+            },
+            "field": {
+              "const": "activity.at"
+            },
+            "unknown": {
+              "const": "unresolved"
+            },
+            "windowMs": {
+              "maximum": 2592000000,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "field",
+            "windowMs",
+            "boundary",
+            "unknown"
+          ],
+          "type": "object"
+        },
+        "version": {
+          "const": 1
+        }
+      },
+      "required": [
+        "version",
+        "providers",
+        "kinds",
+        "active",
+        "recent"
+      ],
+      "type": "object"
+    },
+    "selectorDigest": {
+      "maxLength": 71,
+      "minLength": 1,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "sequence": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "serviceId": {
+      "maxLength": 36,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "accepted": {
+                  "maximum": 9007199254740991,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "attempts": {
+                  "maximum": 9007199254740991,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "expiresBoottimeMs": {
+                  "maximum": 4000000000000,
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "health": {
+                  "enum": [
+                    "warming",
+                    "current",
+                    "partial",
+                    "stale",
+                    "unavailable"
+                  ]
+                },
+                "inFlight": {
+                  "type": "boolean"
+                },
+                "lastResult": {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "^[a-z][a-z0-9_]{0,127}$",
+                  "type": "string"
+                },
+                "name": {
+                  "enum": [
+                    "runtime",
+                    "history"
+                  ]
+                },
+                "sampledBoottimeMs": {
+                  "maximum": 4000000000000,
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "attempts",
+                "accepted",
+                "sampledBoottimeMs",
+                "expiresBoottimeMs",
+                "health",
+                "lastResult",
+                "inFlight"
+              ],
+              "type": "object"
+            },
+            "maxItems": 2,
+            "type": "array"
+          },
+          "configHome": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "configHomeKind": {
+            "enum": [
+              "default",
+              "explicit"
+            ]
+          },
+          "contextGeneration": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "namespace": {
+            "maxLength": 71,
+            "minLength": 1,
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "codex",
+              "claude"
+            ]
+          }
+        },
+        "required": [
+          "provider",
+          "namespace",
+          "configHome",
+          "configHomeKind",
+          "contextGeneration",
+          "components"
+        ],
+        "type": "object"
+      },
+      "maxItems": 1,
+      "type": "array"
+    },
+    "state": {
+      "enum": [
+        "warming",
+        "ready",
+        "stopping"
+      ]
+    },
+    "uid": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "viewRevision": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "workingSetProtocol": {
+      "const": 1
+    }
+  },
+  "required": [
+    "serviceId",
+    "bootId",
+    "uid",
+    "hostScope",
+    "sequence",
+    "viewRevision",
+    "kind",
+    "state",
+    "emittedAt",
+    "emittedBoottimeMs",
+    "clock",
+    "clockDomain",
+    "reason",
+    "sources",
+    "workingSetProtocol",
+    "selector",
+    "selectorDigest",
+    "observationRevision",
+    "clockCeiling",
+    "clockGeneration",
+    "projection"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,139 @@
+{
+  "$id": "urn:agent-observer:working-set-request:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "hostScope": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,255}$",
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "status",
+        "snapshot",
+        "watch"
+      ]
+    },
+    "selector": {
+      "additionalProperties": false,
+      "properties": {
+        "active": {
+          "additionalProperties": false,
+          "properties": {
+            "runtimeHealths": {
+              "const": [
+                "current"
+              ],
+              "items": {
+                "enum": [
+                  "current"
+                ]
+              },
+              "maxItems": 1,
+              "type": "array"
+            },
+            "runtimeValues": {
+              "const": [
+                "running"
+              ],
+              "items": {
+                "enum": [
+                  "running"
+                ]
+              },
+              "maxItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "runtimeValues",
+            "runtimeHealths"
+          ],
+          "type": "object"
+        },
+        "kinds": {
+          "const": [
+            "unknown",
+            "user"
+          ],
+          "items": {
+            "enum": [
+              "unknown",
+              "user"
+            ]
+          },
+          "maxItems": 2,
+          "type": "array"
+        },
+        "providers": {
+          "const": [
+            "codex"
+          ],
+          "items": {
+            "enum": [
+              "codex"
+            ]
+          },
+          "maxItems": 1,
+          "type": "array"
+        },
+        "recent": {
+          "additionalProperties": false,
+          "properties": {
+            "boundary": {
+              "const": "exclusive"
+            },
+            "field": {
+              "const": "activity.at"
+            },
+            "unknown": {
+              "const": "unresolved"
+            },
+            "windowMs": {
+              "maximum": 2592000000,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "field",
+            "windowMs",
+            "boundary",
+            "unknown"
+          ],
+          "type": "object"
+        },
+        "version": {
+          "const": 1
+        }
+      },
+      "required": [
+        "version",
+        "providers",
+        "kinds",
+        "active",
+        "recent"
+      ],
+      "type": "object"
+    },
+    "selectorDigest": {
+      "maxLength": 71,
+      "minLength": 1,
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "workingSetProtocol": {
+      "const": 1
+    }
+  },
+  "required": [
+    "workingSetProtocol",
+    "operation",
+    "hostScope",
+    "selector",
+    "selectorDigest"
+  ],
+  "type": "object"
+}

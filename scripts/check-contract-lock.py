@@ -18,7 +18,7 @@ def require(condition, message):
 
 def main():
     lock = json.loads((ROOT / "contracts/LOCK.json").read_text())
-    require(lock["lockRevision"] == 5 and lock["status"] == "frozen_for_implementation", "lock disposition")
+    require(lock["lockRevision"] == 6 and lock["status"] == "frozen_for_implementation", "lock disposition")
     require(lock["products"] == ["state"], "unsupported product promoted")
     require(lock["capabilities"] == ["snapshot", "proof", "subscribe"], "unsupported capability promoted")
     require(lock["backends"] == ["ipc", "ssh-stdio", "wss"], "unsupported backend promoted")
@@ -36,6 +36,7 @@ def main():
     expected.update("contracts/agent-profile-v2/" + name for name in ("contract.md", "profile.schema.json"))
     expected.update("contracts/agent-profile-v3/" + name for name in ("contract.md", "profile.schema.json"))
     expected.update("contracts/agent-active-v1/" + name for name in ("contract.md", "profile.schema.json"))
+    expected.update("contracts/agent-working-set-v1/" + name for name in ("contract.md", "profile.schema.json"))
     require(set(lock["normativeDigests"]) == expected, "normative inventory changed")
     require("wss-runtime" not in lock["excluded"], "WSS disposition")
     for name in ("registry", "authorization"):
@@ -66,6 +67,10 @@ def main():
     active = ROOT / "reference/agent-observer-active/agent_observer/contracts"
     copies["agent-active-native.schema.json"] = active / "active-frame.schema.json"
     copies["agent-active-request.schema.json"] = active / "active-request.schema.json"
+    working = ROOT / "reference/agent-observer-working-set/agent_observer/contracts"
+    copies["agent-working-set-native.schema.json"] = working / "working-set-frame.schema.json"
+    copies["agent-working-set-request.schema.json"] = working / "working-set-request.schema.json"
+    copies["read-agent-working-set.profile.schema.json"] = ROOT / "contracts/agent-working-set-v1/profile.schema.json"
     packaged = ROOT / "src/mesh_plus/schemas"
     require({path.name for path in packaged.glob("*.json")} == set(copies), "schema copy inventory changed")
     for name, path in copies.items():
@@ -73,7 +78,8 @@ def main():
     for name in ("tmux", "agent"):
         require(lock["profiles"][name] == name + "-observer.mesh-candidate.v1", "profile binding")
     require(set(lock["profileExtensions"]) == {"agent-observer.mesh-candidate.v2", "agent-observer.mesh-candidate.v3",
-                                                "agent-observer.mesh-active.v1"}, "profile extension binding")
+                                                "agent-observer.mesh-active.v1",
+                                                "agent-observer.mesh-working-set.v1"}, "profile extension binding")
     extension = lock["profileExtensions"]["agent-observer.mesh-candidate.v2"]
     require(extension == {"domain": "agent", "sdkInterface": 1, "nativeProtocol": "agent-observer.snapshot",
                           "nativeVersion": 5, "serviceProtocol": 3,
@@ -116,6 +122,43 @@ def main():
     require(header["properties"] == {k: v for k, v in native["properties"].items() if k != "projection"} and
             header["required"] == [k for k in native["required"] if k != "projection"] and
             header["additionalProperties"] is False, "active owner service projection")
+    extension = lock["profileExtensions"]["agent-observer.mesh-working-set.v1"]
+    require(extension == {
+        "domain": "agent", "sdkInterface": 1, "nativeProtocol": "agent-observer.working-set",
+        "nativeVersion": 1, "schema": "contracts/agent-working-set-v1/profile.schema.json",
+        "nativeSchema": "reference/agent-observer-working-set/agent_observer/contracts/working-set-frame.schema.json",
+        "requestSchema": "reference/agent-observer-working-set/agent_observer/contracts/working-set-request.schema.json",
+    }, "working-set profile disposition")
+    native_raw = (ROOT / extension["nativeSchema"]).read_bytes()
+    native = json.loads(native_raw)
+    request = json.loads((ROOT / extension["requestSchema"]).read_text())
+    profile = json.loads((ROOT / extension["schema"]).read_text())
+    projection = native["properties"]["projection"]["anyOf"][0]
+    require(profile["properties"]["protocol"] == {"const": "agent-observer.mesh-working-set.v1"},
+            "working-set response protocol")
+    require(profile["properties"]["sessions"]["items"] == projection["properties"]["sessions"]["items"] ==
+            previous["properties"]["sessions"]["items"], "working-set changes API4 body")
+    require(profile["$comment"] == "Native frame SHA-256: " + hashlib.sha256(native_raw).hexdigest() +
+            "; selector family; immutable configured window required", "working-set native binding")
+    require(request["properties"]["selector"] == native["properties"]["selector"] and
+            "const" not in native["properties"]["selectorDigest"], "working-set selector family")
+    recent = native["properties"]["selector"]["properties"]["recent"]["properties"]
+    require(recent["windowMs"]["minimum"] == 0 and recent["windowMs"]["maximum"] == 2_592_000_000,
+            "working-set reviewed window range")
+    scope = projection["properties"]["scopes"]["items"]
+    require(scope["properties"]["supportTable"]["maxItems"] == 8194,
+            "working-set support table structural bound")
+    owner = profile["properties"]["mesh"]["allOf"][1]["properties"]["hosts"]["items"]["properties"]["owner"]["anyOf"][0]
+    require(owner["properties"]["protocol"] == {"const": "agent-observer.working-set"} and
+            owner["properties"]["version"] == {"const": 1}, "working-set owner binding")
+    metadata = owner["properties"]["metadata"]["anyOf"][0]
+    require(metadata["properties"] == {"scopes": projection["properties"]["scopes"]} and
+            metadata["required"] == ["scopes"] and metadata["additionalProperties"] is False,
+            "working-set lossless metadata projection")
+    header = owner["properties"]["service"]
+    require(header["properties"] == {k: v for k, v in native["properties"].items() if k != "projection"} and
+            header["required"] == [k for k in native["required"] if k != "projection"] and
+            header["additionalProperties"] is False, "working-set lossless service projection")
     print(f"PASS: {len(expected)} locked inputs, {len(copies)} identical packaged schemas; state core only")
 
 
