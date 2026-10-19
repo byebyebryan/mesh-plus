@@ -1,0 +1,37 @@
+{
+  "closeReceipt": {
+    "bridgePid": 1908553,
+    "bridgeReaped": true,
+    "bridgeReturncode": 1,
+    "closeForwarded": {
+      "kind": "close",
+      "lineBytes": 161,
+      "lineSha256": "531155fb489983f45d7d63f2e92c6e292ab7c2a03a661ba8c3d161a030607637",
+      "reason": "client_done"
+    }
+  },
+  "errors": 0,
+  "failures": 1,
+  "gcDisabled": true,
+  "mode": "before",
+  "modules": {
+    "mesh_plus": {
+      "path": "/home/bryan/.cache/agent-observer-working-set-20261018/final-mesh-b9e8488e/src/mesh_plus/__init__.py",
+      "sha256": "d4c9f162318ab9942f47c730884001fafaeffc5ddfab1967ce961acd89eb268f"
+    },
+    "mesh_plus.client": {
+      "path": "/home/bryan/.cache/agent-observer-working-set-20261018/final-mesh-b9e8488e/src/mesh_plus/client.py",
+      "sha256": "b6bcc712080c62952861072c5f77d9b88208f28ef08e998efab55924613bd78e"
+    },
+    "mesh_plus.protocol": {
+      "path": "/home/bryan/.cache/agent-observer-working-set-20261018/final-mesh-b9e8488e/src/mesh_plus/protocol.py",
+      "sha256": "5a53fa9bec8ffa7c0fe4ba0911dec6c38a2f4739d281be52775d0c56349125c3"
+    },
+    "mesh_plus.transport": {
+      "path": "/home/bryan/.cache/agent-observer-working-set-20261018/final-mesh-b9e8488e/src/mesh_plus/transport.py",
+      "sha256": "85233efe4c67c0ab5545e9606d636191a83114e5418fb0056c5251f7c71444df"
+    }
+  },
+  "skips": 0,
+  "tests": 1
+}

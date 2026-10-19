@@ -1,0 +1,29 @@
+test_client_close_reaches_bridge_after_delayed_forward_and_exits_normally (test_transport.TransportTests.test_client_close_reaches_bridge_after_delayed_forward_and_exits_normally) ... FAIL
+
+======================================================================
+FAIL: test_client_close_reaches_bridge_after_delayed_forward_and_exits_normally (test_transport.TransportTests.test_client_close_reaches_bridge_after_delayed_forward_and_exits_normally)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/bryan/.cache/agent-observer-working-set-20261018/final-mesh-bfa91a69/tests/test_transport.py", line 302, in test_client_close_reaches_bridge_after_delayed_forward_and_exits_normally
+    self.assertEqual(channel.process.returncode, 0,
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     f"wrapperReturnCode={channel.process.returncode}, "
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     f"bridgeReturncode={report['bridgeReturncode']}, "
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     f"closeForwarded={report['closeForwarded'] is not None}, "
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     f"bridgeReaped={report['bridgeReaped']}")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 143 != 0 : wrapperReturnCode=143, bridgeReturncode=1, closeForwarded=True, bridgeReaped=True
+
+----------------------------------------------------------------------
+Ran 1 test in 0.122s
+
+FAILED (failures=1)

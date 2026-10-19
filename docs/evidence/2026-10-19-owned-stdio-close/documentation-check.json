@@ -1,0 +1,14 @@
+{
+  "source": "captured primary tool output",
+  "command": [
+    "/home/bryan/code/mesh-plus/.venv/bin/python",
+    "scripts/check-design.py"
+  ],
+  "returncode": 0,
+  "status": "passed",
+  "checkedAtUtc": "2026-10-19T09:06:32.964037+00:00",
+  "checksPassed": 116,
+  "sourceParityChecked": false,
+  "validationScope": "schemas, adversarial design model, frozen producer projection; no native/network/runtime acceptance",
+  "gitDiffCheckReturncode": 0
+}

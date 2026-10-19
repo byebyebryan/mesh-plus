@@ -1,0 +1,12 @@
+{
+  "returncode": 0,
+  "elapsedSeconds": 34.26768078102032,
+  "interpreter": "/home/bryan/code/mesh-plus/.venv/bin/python",
+  "sourcePins": {
+    "src/mesh_plus/transport.py": "e5e589f84a0834a075e8ea3443acb7756ddb9f159cd4d12eaebeccee3856130c",
+    "tests/test_transport.py": "a88d9dceddb8cbec2191405013a85aa21040190a5675c502e8b10625459345d0",
+    "docs/terminal-lifetime.md": "826abb4aa4ebcd889ff78e6d6338ce6918b45d44c2f097a7f240d001448d2653"
+  },
+  "logSha256": "fe21baea8d4127e8ea3cd18cd8659d292fbfa426ae146fe611c0818562b57770",
+  "sharedLockHeld": true
+}

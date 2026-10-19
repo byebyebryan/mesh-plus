@@ -1,0 +1,54 @@
+{
+  "cases": [
+    {
+      "python": "314",
+      "mode": "before",
+      "tests": 1,
+      "errors": 0,
+      "failures": 1,
+      "skips": 0,
+      "loadedMeshPins": 4,
+      "bridgeReaped": true,
+      "bridgeReturncode": 1,
+      "resultSha256": "9df7afe86cf41a22ae0814187e54499d2b5de74459610f552833c77b1e1f76ff"
+    },
+    {
+      "python": "314",
+      "mode": "after",
+      "tests": 39,
+      "errors": 0,
+      "failures": 0,
+      "skips": 0,
+      "loadedMeshPins": 13,
+      "bridgeReaped": true,
+      "bridgeReturncode": 0,
+      "resultSha256": "c73a6200ba16d250593cf8b3506e88c0314d4a3c2861bd2bd233806e4b8f5fc0"
+    },
+    {
+      "python": "311",
+      "mode": "before",
+      "tests": 1,
+      "errors": 0,
+      "failures": 1,
+      "skips": 0,
+      "loadedMeshPins": 4,
+      "bridgeReaped": true,
+      "bridgeReturncode": 1,
+      "resultSha256": "72dd1f6292d7cce05533aa21a295b1c09a2fd108ee3d32e9b542b04c66ba3e6b"
+    },
+    {
+      "python": "311",
+      "mode": "after",
+      "tests": 39,
+      "errors": 0,
+      "failures": 0,
+      "skips": 0,
+      "loadedMeshPins": 13,
+      "bridgeReaped": true,
+      "bridgeReturncode": 0,
+      "resultSha256": "08b15bfae4a7a2ea1b2a1a9e79c9f232a725021e6800277caf9124031104e56c"
+    }
+  ],
+  "sharedLock": true,
+  "testOnlyAudit": "capturesclose-receiptbeforetemporarydirectory cleanup; normativeSourceandtestfilesunchanged"
+}
