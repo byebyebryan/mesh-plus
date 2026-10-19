@@ -249,22 +249,28 @@ class LineChannel:
         return self._reached
 
     async def send(self, value):
-        if self.codec is None:
-            raw = encode(value)
-            validate(value, self.outgoing, len(raw), self.maximum)
-        else:
-            raw = self.codec.encode(value)
-            self.codec.validate(value, self.outgoing, len(raw), self.maximum)
-        async with self.lock:
-            check(not self.closed, "channel_closed")
-            self.writer.write(raw + b"\n")
-            started = boottime_ms()
-            await asyncio.wait_for(self.writer.drain(), self.io_timeout)
-            check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
-            self._metrics["sentFrames"] += 1
-            self._metrics["sentBytes"] += len(raw) + 1
-            self._count_kind("sent", value["kind"], len(raw) + 1)
-        return len(raw)
+        raw = None
+        try:
+            if self.codec is None:
+                raw = encode(value)
+                validate(value, self.outgoing, len(raw), self.maximum)
+            else:
+                raw = self.codec.encode(value)
+                self.codec.validate(value, self.outgoing, len(raw), self.maximum)
+            async with self.lock:
+                check(not self.closed, "channel_closed")
+                self.writer.write(raw + b"\n")
+                started = boottime_ms()
+                await asyncio.wait_for(self.writer.drain(), self.io_timeout)
+                check(boottime_ms() - started <= int(self.io_timeout * 1000), "frame_deadline")
+                self._metrics["sentFrames"] += 1
+                self._metrics["sentBytes"] += len(raw) + 1
+                self._count_kind("sent", value["kind"], len(raw) + 1)
+            return len(raw)
+        finally:
+            # A stored stream error can retain the send traceback. These
+            # temporary caller/body references are no longer in use on exit.
+            value = raw = None
 
     async def close(self):
         if self.closed:

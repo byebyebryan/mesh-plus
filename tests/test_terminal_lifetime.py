@@ -1057,6 +1057,7 @@ class IPCServerTerminalRetirementTests(unittest.IsolatedAsyncioTestCase):
             if enabled:
                 gc.enable()
 
+
     async def test_successful_direct_bridge_request_releases_handler_and_listener(self):
         enabled = gc.isenabled()
         gc.disable()
@@ -1244,5 +1245,101 @@ class IPCServerTerminalRetirementTests(unittest.IsolatedAsyncioTestCase):
             if server is not None and not server.closed:
                 await server.close()
             directory.cleanup()
+            if enabled:
+                gc.enable()
+
+
+
+class StoredStreamErrorRetirementTests(unittest.IsolatedAsyncioTestCase):
+    async def test_original_reader_error_does_not_retain_completed_bridge_or_source(self):
+        class Writer:
+            def close(self):
+                pass
+
+            async def wait_closed(self):
+                pass
+
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            error = ConnectionResetError(104, "Connection reset by peer")
+            reader = asyncio.StreamReader()
+            reader.set_exception(error)
+            channel = LineChannel(reader, Writer(), "client")
+            source = _BridgeLifetimeSource()
+            bridge = Bridge(source)
+            bridge_ref, source_ref = weakref.ref(bridge), weakref.ref(source)
+            try:
+                await bridge.serve(channel)
+            except ConnectionResetError as caught:
+                self.assertIs(caught, error)
+            else:
+                self.fail("original reset was not delivered")
+            traceback = error.__traceback__
+            self.assertIsNotNone(traceback)
+            self.assertTrue(channel.closed)
+            await channel.close()
+            self.assertIs(error.__traceback__, traceback)
+            self.assertIs(reader.exception(), error)
+            self.assertEqual(error.errno, 104)
+
+            # Keep the real StreamReader and original error/traceback alive.
+            # Only references no longer used by completed application frames
+            # should disappear; no internal asyncio error is edited.
+            del bridge, source
+            self.assertIsNone(bridge_ref())
+            self.assertIsNone(source_ref())
+        finally:
+            if enabled:
+                gc.enable()
+
+    async def test_failed_send_drops_body_after_unwind_preserving_original_error(self):
+        class Body(list):
+            pass
+
+        class Writer:
+            def __init__(self, error):
+                self.error = error
+                self.written = 0
+
+            def write(self, raw):
+                self.written += len(raw)
+
+            async def drain(self):
+                raise self.error
+
+            def close(self):
+                pass
+
+            async def wait_closed(self):
+                pass
+
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            error = BrokenPipeError(32, "Broken pipe")
+            writer = Writer(error)
+            channel = LineChannel(asyncio.StreamReader(), writer, "client")
+            body = Body(["owned JSON body" * 4096])
+            body_ref = weakref.ref(body)
+            frame = example("server-result")
+            frame["payload"] = {"body": body}
+            try:
+                await channel.send(frame)
+            except BrokenPipeError as caught:
+                self.assertIs(caught, error)
+            else:
+                self.fail("original write failure was not delivered")
+            self.assertGreater(writer.written, 0)
+            self.assertIsNotNone(body_ref())  # caller still owns frame/body
+            traceback = error.__traceback__
+            self.assertIsNotNone(traceback)
+            await channel.close()
+            self.assertIs(error.__traceback__, traceback)
+            self.assertEqual(error.errno, 32)
+            del frame, body
+            self.assertIsNone(body_ref())
+            self.assertIs(writer.error, error)
+        finally:
             if enabled:
                 gc.enable()

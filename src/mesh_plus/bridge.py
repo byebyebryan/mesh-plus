@@ -47,6 +47,10 @@ class Bridge:
             raise
         else:
             await connection.close()
+        finally:
+            # A stream can retain its original IO exception after close. Its
+            # traceback must not keep these completed application owners alive.
+            connection = channel = self = None
 
 
 class _Connection:
@@ -81,6 +85,7 @@ class _Connection:
                 # A failed send task retains this frame through its exception
                 # traceback. Do not leave the completed task in that frame.
                 write = None
+                frame = fields = on_admit = None
             return True
 
     async def run(self):
@@ -155,19 +160,23 @@ class _Connection:
 
     async def request(self, frame):
         deadline = boottime_ms() + frame["timeoutMs"]
+        method = payload = None
         try:
-            method = self.adapter.snapshot if frame["operation"] == "snapshot" else self.adapter.proof
-            payload = await asyncio.wait_for(method(frame["parameters"]), frame["timeoutMs"] / 1000)
-            check(boottime_ms() < deadline, "request_deadline")
-            self.adapter.validate(payload)
-        except asyncio.CancelledError:
-            raise
-        except Exception as error:
-            code = "deadline" if isinstance(error, TimeoutError) else "source_unavailable"
-            await self.emit("result", requestId=frame["requestId"], outcome="error", payload=None,
-                            error={"code": code, "message": "Cached source request failed"})
-        else:
-            await self.emit("result", requestId=frame["requestId"], outcome="ok", payload=payload, error=None)
+            try:
+                method = self.adapter.snapshot if frame["operation"] == "snapshot" else self.adapter.proof
+                payload = await asyncio.wait_for(method(frame["parameters"]), frame["timeoutMs"] / 1000)
+                check(boottime_ms() < deadline, "request_deadline")
+                self.adapter.validate(payload)
+            except asyncio.CancelledError:
+                raise
+            except Exception as error:
+                code = "deadline" if isinstance(error, TimeoutError) else "source_unavailable"
+                await self.emit("result", requestId=frame["requestId"], outcome="error", payload=None,
+                                error={"code": code, "message": "Cached source request failed"})
+            else:
+                await self.emit("result", requestId=frame["requestId"], outcome="ok", payload=payload, error=None)
+        finally:
+            method = payload = None
 
     async def subscription(self, frame):
         key = frame["subscriptionId"]
@@ -181,6 +190,7 @@ class _Connection:
         last_progress = boottime_ms()
         blocked_since = None
         primary_error = False
+        first = publication = admitted = collect = None
         try:
             first = await asyncio.wait_for(anext(iterator), 3)
             self.adapter.validate(first.payload)
@@ -286,6 +296,7 @@ class _Connection:
                 close_task = None
                 iterator = None
                 latest = None
+                first = publication = admitted = collect = None
             if cleanup_cancelled and not primary_error:
                 raise asyncio.CancelledError
 
@@ -315,6 +326,10 @@ class _Connection:
                 raise
         finally:
             close_task = None
+            # Requests and watch iterators have unwound before channel close.
+            # An IO exception held by the closed stream may retain this frame,
+            # but the completed connection no longer needs its adapter.
+            self.adapter = None
 
         if cancelled and not suppress_errors:
             raise asyncio.CancelledError

@@ -73,3 +73,21 @@ through local IPC.
 The additional IPC listener tests exercise zero-client close, a successful
 direct Bridge request, a reset during a Bridge request, and a handler whose
 cancellation cleanup is deliberately held open.
+
+## Stored stream errors
+
+An asyncio stream can retain its original IO exception after the operation has
+failed. Its traceback can consequently retain completed application frames.
+After their actual cleanup has unwound, Bridge serve, request, subscription and
+emit frames release the adapter, bound callbacks, publication and temporary
+body references they no longer use. A failed `LineChannel.send` similarly
+releases its temporary input and encoded buffer on exit. Live requests and
+iterator cleanup keep their references until they have finished.
+
+The original exception, errno and traceback remain unchanged; no exception or
+private asyncio state is cleared. Tests keep a real StreamReader's reset and
+its traceback alive while checking application-owner retirement, and retain a
+failed writer's original error while checking temporary JSON-body release.
+Caller-owned bodies remain alive while the caller retains them. This is an
+application lifetime guarantee, not a claim that every internal asyncio object
+retires without cyclic GC or that whole-process RSS has reached a plateau.
