@@ -928,7 +928,8 @@
                                             "type": "object"
                                           },
                                           "maxItems": 8194,
-                                          "type": "array"
+                                          "type": "array",
+                                          "uniqueItems": true
                                         },
                                         "uncertain": {
                                           "items": {

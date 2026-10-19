@@ -1,12 +1,15 @@
 """Explicit working-set registration preserves existing SDK1 defaults."""
 
 import hashlib
+import json
 import tempfile
 import unittest
 from dataclasses import replace
 from importlib.resources import files
 from pathlib import Path
 from types import SimpleNamespace
+
+from jsonschema import Draft202012Validator, ValidationError
 
 from mesh_plus.api import descriptor
 from mesh_plus.cli import configured_adapter
@@ -17,6 +20,26 @@ PROFILE = "agent-observer.mesh-working-set.v1"
 
 
 class WorkingSetRegistrationTests(unittest.TestCase):
+    def test_packaged_schema_rejects_duplicate_support_maps_without_owner_callback(self):
+        profile = json.loads(files("mesh_plus").joinpath(
+            "schemas/read-agent-working-set.profile.schema.json").read_text())
+        owner = profile["properties"]["mesh"]["allOf"][1]["properties"]["hosts"]["items"]["properties"]["owner"]["anyOf"][0]
+        metadata = owner["properties"]["metadata"]["anyOf"][0]
+        support = {"serviceId": "00000000-0000-4000-8000-000000000001",
+                   "provider": "codex", "namespace": "sha256:" + "a" * 64,
+                   "contextGeneration": 1, "component": "runtime", "accepted": 1,
+                   "sampledBoottimeMs": 1, "expiresBoottimeMs": 100000}
+        scope = {"provider": "codex", "namespace": support["namespace"],
+                 "contextGeneration": 1, "continuity": 1, "supportTable": [support],
+                 "clocks": [], "coverage": {"status": "unsupported", "reason": "fixture", "supports": []},
+                 "members": [], "uncertain": [], "nonmembers": []}
+        validator = Draft202012Validator(metadata)
+        validator.validate({"scopes": [scope]})
+        scope["supportTable"].append(dict(support))
+        with self.assertRaises(ValidationError) as rejected:
+            validator.validate({"scopes": [scope]})
+        self.assertEqual(rejected.exception.validator, "uniqueItems")
+
     def test_explicit_descriptor_binds_packaged_profile_without_changing_defaults(self):
         working = descriptor("agent", profile_id=PROFILE)
         raw = files("mesh_plus").joinpath("schemas/read-agent-working-set.profile.schema.json").read_bytes()

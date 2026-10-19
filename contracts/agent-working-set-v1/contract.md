@@ -49,7 +49,10 @@ two historical references per 4,096 uncertain identities plus two current
 component maps; that structural ceiling grants no extra storage budget.
 
 The packaged structural schemas enforce closed shapes, typed positions,
-nullability, static bounds and lengths. Pure native admission additionally
+nullability, static bounds and lengths. The public profile additionally sets
+`uniqueItems` on each support table to reject duplicate complete JSON maps
+independently; native admission enforces the same uniqueness and stricter order
+semantics. Pure native admission additionally
 requires `type(index) is int`, actual enclosing-table bounds, exact canonical
 uniqueness/order, no unused entries and all original support/clock/selection
 semantics on direct, bridge and reconstructed public routes. An integral float

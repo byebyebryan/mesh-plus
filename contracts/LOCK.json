@@ -148,8 +148,8 @@
     "contracts/agent-active-v1/profile.schema.json": "9f29bfd0fe1803f4ccf30c4cbfbc8f63de4423fdb6eda234291685d99bef46ae",
     "reference/agent-observer-working-set/agent_observer/contracts/working-set-frame.schema.json": "a87b9661f3436a5894056e94f9b061ae84ecd9c78110d759e9e7d54b70956b95",
     "reference/agent-observer-working-set/agent_observer/contracts/working-set-request.schema.json": "4f9b3f83ce00aab688830a7b452d476111abf26d52aca608548da8aba2318aeb",
-    "contracts/agent-working-set-v1/contract.md": "e9934ba116e308a1120a8509db14a766aada70e404613b8c5c125ed2b5b0d9be",
-    "contracts/agent-working-set-v1/profile.schema.json": "2c63c74969f9e67ca6c5d9a244c836ee9127ff6f12c23cb0138782aef3293f6e"
+    "contracts/agent-working-set-v1/contract.md": "82290d067592315b5e3850829bc48d55b119f57eed934bf1089b32868f48585b",
+    "contracts/agent-working-set-v1/profile.schema.json": "8b1ab6d4d37c007867c3a005341f58b9b60705f7e65fb0ae86df316638b543e9"
   },
   "profileExtensions": {
     "agent-observer.mesh-candidate.v2": {

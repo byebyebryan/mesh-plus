@@ -40,8 +40,13 @@ def generated(frame_raw, request_raw):
     owner = profile["properties"]["mesh"]["allOf"][1]["properties"]["hosts"]["items"]["properties"]["owner"]["anyOf"][0]
     owner["properties"]["protocol"] = {"const": "agent-observer.working-set"}
     owner["properties"]["version"] = {"const": 1}
+    metadata_scopes = copy.deepcopy(projection["properties"]["scopes"])
+    # The domain validator independently checks exact canonical uniqueness.
+    # The packaged public schema also rejects duplicate complete JSON maps,
+    # which Draft202012 can express without owner callbacks.
+    metadata_scopes["items"]["properties"]["supportTable"]["uniqueItems"] = True
     owner["properties"]["metadata"] = {"anyOf": [
-        {"type": "object", "properties": {"scopes": copy.deepcopy(projection["properties"]["scopes"])},
+        {"type": "object", "properties": {"scopes": metadata_scopes},
          "required": ["scopes"], "additionalProperties": False},
         {"type": "null"},
     ]}

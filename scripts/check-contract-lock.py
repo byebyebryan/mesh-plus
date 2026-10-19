@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from copy import deepcopy
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
@@ -152,7 +153,9 @@ def main():
     require(owner["properties"]["protocol"] == {"const": "agent-observer.working-set"} and
             owner["properties"]["version"] == {"const": 1}, "working-set owner binding")
     metadata = owner["properties"]["metadata"]["anyOf"][0]
-    require(metadata["properties"] == {"scopes": projection["properties"]["scopes"]} and
+    working_scopes = deepcopy(projection["properties"]["scopes"])
+    working_scopes["items"]["properties"]["supportTable"]["uniqueItems"] = True
+    require(metadata["properties"] == {"scopes": working_scopes} and
             metadata["required"] == ["scopes"] and metadata["additionalProperties"] is False,
             "working-set lossless metadata projection")
     header = owner["properties"]["service"]
