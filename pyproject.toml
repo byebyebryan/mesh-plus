@@ -26,6 +26,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 mesh_plus = ["schemas/*.json"]
+"mesh_plus.view_feed" = ["*.schema.json"]
 "mesh_plus.wss" = ["*.schema.json"]
 "mesh_plus.testing" = ["corpus.json", "catalog.json"]
 

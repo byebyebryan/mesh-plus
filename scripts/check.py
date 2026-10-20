@@ -18,6 +18,7 @@ def main():
         ["scripts/check-contract-lock.py"],
         ["scripts/check-design.py", *(["--check-sources"] if args.check_sources else [])],
         ["scripts/check-delivery.py"],
+        ["scripts/check-view-feed.py"],
         ["scripts/check-runtime.py", *([] if args.native else ["--core-only"])],
         ["-m", "ruff", "check", "src", "tests", "scripts"],
     ]

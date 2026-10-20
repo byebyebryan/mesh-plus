@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mesh-plus:view-change-feed:v1",
+  "type": "object",
+  "properties": {
+    "protocol": {"const": "mesh-plus.view-change-feed.v1"},
+    "kind": {"enum": ["replacement", "delta"]},
+    "streamId": {"$ref": "#/$defs/uuid"},
+    "binding": {"$ref": "#/$defs/binding"},
+    "base": {
+      "anyOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/target"}
+      ]
+    },
+    "target": {"$ref": "#/$defs/target"},
+    "owner": {"type": "object"},
+    "envelope": {"$ref": "#/$defs/envelope"},
+    "records": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "array", "maxItems": 4096, "items": {"type": "object"}}
+      ]
+    },
+    "upserts": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {"$ref": "#/$defs/key"},
+          "record": {"type": "object"}
+        },
+        "required": ["key", "record"],
+        "additionalProperties": false
+      }
+    },
+    "removals": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {"$ref": "#/$defs/key"}
+    },
+    "order": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/key"}}
+      ]
+    },
+    "reason": {
+      "enum": ["initial", "delta", "forced", "larger_delta", "token_mismatch", "resync"]
+    }
+  },
+  "required": [
+    "protocol", "kind", "streamId", "binding", "base", "target", "owner", "envelope",
+    "records", "upserts", "removals", "order", "reason"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "minLength": 36,
+      "maxLength": 36,
+      "pattern": "^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$"
+    },
+    "digest": {
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "key": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {"type": ["string", "integer"], "maxLength": 16384}
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "revision": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "digest": {"$ref": "#/$defs/digest"}
+      },
+      "required": ["revision", "digest"],
+      "additionalProperties": false
+    },
+    "binding": {
+      "type": "object",
+      "properties": {
+        "hostId": {"type": "string", "minLength": 1, "maxLength": 16384,
+                     "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
+        "sourceId": {"type": "string", "minLength": 1, "maxLength": 128,
+                       "pattern": "^[a-z][a-z0-9_]{0,127}$"},
+        "profileId": {"type": "string", "minLength": 1, "maxLength": 128,
+                        "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
+        "contractDigest": {"$ref": "#/$defs/digest"},
+        "selector": {"type": "object"},
+        "nativePublisher": {"type": "string", "minLength": 1, "maxLength": 256},
+        "nativeClock": {
+          "type": "object",
+          "properties": {
+            "bootId": {"type": "string", "minLength": 1, "maxLength": 36},
+            "timeNamespace": {"type": "string", "minLength": 1, "maxLength": 128}
+          },
+          "required": ["bootId", "timeNamespace"],
+          "additionalProperties": false
+        },
+        "bridgeId": {"$ref": "#/$defs/uuid"}
+      },
+      "required": ["hostId", "sourceId", "profileId", "contractDigest", "selector",
+                   "nativePublisher", "nativeClock", "bridgeId"],
+      "additionalProperties": false
+    },
+    "envelope": {
+      "type": "object",
+      "properties": {
+        "meshProtocol": {"const": 1},
+        "kind": {"const": "candidate"},
+        "nonce": {"type": "null"},
+        "bridgeId": {"$ref": "#/$defs/uuid"},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "sourceId": {"type": "string", "minLength": 1, "maxLength": 128,
+                      "pattern": "^[a-z][a-z0-9_]{0,127}$"},
+        "hostId": {"type": "string", "minLength": 1, "maxLength": 16384,
+                    "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
+        "clock": {
+          "type": "object",
+          "properties": {
+            "bootId": {"type": "string", "minLength": 1, "maxLength": 36},
+            "timeNamespace": {"type": "string", "minLength": 1, "maxLength": 128,
+                               "pattern": "^time:[0-9]+$"}
+          },
+          "required": ["bootId", "timeNamespace"],
+          "additionalProperties": false
+        },
+        "encodedAtMs": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "ownerDigest": {"$ref": "#/$defs/digest"},
+        "remaining": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "properties": {
+              "sourceId": {"type": "string", "minLength": 1, "maxLength": 256},
+              "component": {"type": "string", "minLength": 1, "maxLength": 128,
+                             "pattern": "^[a-z][a-z0-9_]{0,127}$"},
+              "health": {"enum": ["current", "partial", "stale", "warming", "unavailable"]},
+              "accepted": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+              "remainingMs": {"type": "integer", "minimum": 0, "maximum": 9007199254740991}
+            },
+            "required": ["sourceId", "component", "health", "accepted", "remainingMs"],
+            "additionalProperties": false
+          }
+        },
+        "error": {"type": "null"}
+      },
+      "required": ["meshProtocol", "kind", "nonce", "bridgeId", "sequence", "sourceId", "hostId",
+                   "clock", "encodedAtMs", "ownerDigest", "remaining", "error"],
+      "additionalProperties": false
+    }
+  }
+}

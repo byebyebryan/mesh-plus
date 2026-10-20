@@ -1,0 +1,2840 @@
+{
+  "positive": [
+    {
+      "name": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "replacement",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": null,
+        "target": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 1,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1000,
+          "ownerDigest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce",
+          "remaining": [],
+          "error": null
+        },
+        "records": [
+          {
+            "id": "a",
+            "birth": 1,
+            "value": null,
+            "support": 0
+          },
+          {
+            "id": "b",
+            "birth": 1,
+            "value": 0,
+            "support": 1
+          }
+        ],
+        "upserts": [],
+        "removals": [],
+        "order": [
+          [
+            "a",
+            1
+          ],
+          [
+            "b",
+            1
+          ]
+        ],
+        "reason": "initial"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "rows": [
+          {
+            "id": "a",
+            "birth": 1,
+            "value": null,
+            "support": 0
+          },
+          {
+            "id": "b",
+            "birth": 1,
+            "value": 0,
+            "support": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "whole_record_change",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "rows": [
+          {
+            "id": "a",
+            "birth": 1,
+            "value": false,
+            "support": 0
+          },
+          {
+            "id": "b",
+            "birth": 1,
+            "value": 0,
+            "support": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "pure_reorder",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "target": {
+          "revision": 3,
+          "digest": "sha256:0ece7437d00a6dde8c43adfe8bf0a7cef6e8e9982356f22f8e47887544137b30"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 3,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1002,
+          "ownerDigest": "sha256:0ece7437d00a6dde8c43adfe8bf0a7cef6e8e9982356f22f8e47887544137b30",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [],
+        "removals": [],
+        "order": [
+          [
+            "b",
+            1
+          ],
+          [
+            "a",
+            1
+          ]
+        ],
+        "reason": "delta"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "rows": [
+          {
+            "id": "b",
+            "birth": 1,
+            "value": 0,
+            "support": 1
+          },
+          {
+            "id": "a",
+            "birth": 1,
+            "value": false,
+            "support": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "atomic_table_and_ref_remap",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 3,
+          "digest": "sha256:0ece7437d00a6dde8c43adfe8bf0a7cef6e8e9982356f22f8e47887544137b30"
+        },
+        "target": {
+          "revision": 4,
+          "digest": "sha256:3e1fd58d0ff01fa53a5301e7c3323ddcbffe5e80d2357831d6017f3ee1d2a798"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 2
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 4,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1003,
+          "ownerDigest": "sha256:3e1fd58d0ff01fa53a5301e7c3323ddcbffe5e80d2357831d6017f3ee1d2a798",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "b",
+              1
+            ],
+            "record": {
+              "id": "b",
+              "birth": 1,
+              "value": 0,
+              "support": 0
+            }
+          },
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 1
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 2
+        },
+        "rows": [
+          {
+            "id": "b",
+            "birth": 1,
+            "value": 0,
+            "support": 0
+          },
+          {
+            "id": "a",
+            "birth": 1,
+            "value": false,
+            "support": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "metadata_only",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 4,
+          "digest": "sha256:3e1fd58d0ff01fa53a5301e7c3323ddcbffe5e80d2357831d6017f3ee1d2a798"
+        },
+        "target": {
+          "revision": 5,
+          "digest": "sha256:0386c308bcf475625715efa0cf35fe774fc1380bcf697a836323c1646cd02fec"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 5,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1004,
+          "ownerDigest": "sha256:0386c308bcf475625715efa0cf35fe774fc1380bcf697a836323c1646cd02fec",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "rows": [
+          {
+            "id": "b",
+            "birth": 1,
+            "value": 0,
+            "support": 0
+          },
+          {
+            "id": "a",
+            "birth": 1,
+            "value": false,
+            "support": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "remove_reinsert_new_birth",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 5,
+          "digest": "sha256:0386c308bcf475625715efa0cf35fe774fc1380bcf697a836323c1646cd02fec"
+        },
+        "target": {
+          "revision": 6,
+          "digest": "sha256:e583d05705d9b20d3b89b63917ab892648a952e3d00cabc3efdb9c0191e383a4"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 6,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1005,
+          "ownerDigest": "sha256:e583d05705d9b20d3b89b63917ab892648a952e3d00cabc3efdb9c0191e383a4",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "b",
+              2
+            ],
+            "record": {
+              "id": "b",
+              "birth": 2,
+              "value": "new incarnation",
+              "support": 0
+            }
+          }
+        ],
+        "removals": [
+          [
+            "b",
+            1
+          ]
+        ],
+        "order": [
+          [
+            "a",
+            1
+          ],
+          [
+            "b",
+            2
+          ]
+        ],
+        "reason": "delta"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "rows": [
+          {
+            "id": "a",
+            "birth": 1,
+            "value": false,
+            "support": 1
+          },
+          {
+            "id": "b",
+            "birth": 2,
+            "value": "new incarnation",
+            "support": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "remove_to_empty",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 6,
+          "digest": "sha256:e583d05705d9b20d3b89b63917ab892648a952e3d00cabc3efdb9c0191e383a4"
+        },
+        "target": {
+          "revision": 7,
+          "digest": "sha256:1fcec371b93f5bde1b4a587673541a0cf018db3e832f44597d16347148f398a0"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 7,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1006,
+          "ownerDigest": "sha256:1fcec371b93f5bde1b4a587673541a0cf018db3e832f44597d16347148f398a0",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [],
+        "removals": [
+          [
+            "a",
+            1
+          ],
+          [
+            "b",
+            2
+          ]
+        ],
+        "order": [],
+        "reason": "delta"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "rows": []
+      }
+    },
+    {
+      "name": "empty_replacement",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "replacement",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": null,
+        "target": {
+          "revision": 8,
+          "digest": "sha256:1fcec371b93f5bde1b4a587673541a0cf018db3e832f44597d16347148f398a0"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 8,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1007,
+          "ownerDigest": "sha256:1fcec371b93f5bde1b4a587673541a0cf018db3e832f44597d16347148f398a0",
+          "remaining": [],
+          "error": null
+        },
+        "records": [],
+        "upserts": [],
+        "removals": [],
+        "order": [],
+        "reason": "forced"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "rows": []
+      }
+    },
+    {
+      "name": "empty_to_record",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 8,
+          "digest": "sha256:1fcec371b93f5bde1b4a587673541a0cf018db3e832f44597d16347148f398a0"
+        },
+        "target": {
+          "revision": 9,
+          "digest": "sha256:5d30d038189bdabbb5d005c0fc81a310e070a1aba963b1a99e875df4faa270e9"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 9,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1008,
+          "ownerDigest": "sha256:5d30d038189bdabbb5d005c0fc81a310e070a1aba963b1a99e875df4faa270e9",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "unicode-雪",
+              1
+            ],
+            "record": {
+              "id": "unicode-雪",
+              "birth": 1,
+              "value": [
+                "x",
+                null,
+                0,
+                false
+              ],
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": [
+          [
+            "unicode-雪",
+            1
+          ]
+        ],
+        "reason": "delta"
+      },
+      "expected": {
+        "meta": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "rows": [
+          {
+            "id": "unicode-雪",
+            "birth": 1,
+            "value": [
+              "x",
+              null,
+              0,
+              false
+            ],
+            "support": 0
+          }
+        ]
+      }
+    }
+  ],
+  "negative": [
+    {
+      "name": "wrong_base_revision",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 99,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "wrong_base_digest",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "float_revision",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2.0,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "bool_revision",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": true,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "skipped_revision",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 3,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "foreign_selector",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 1
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "foreign_stream",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000004",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "foreign_clock",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:2"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "duplicate_upsert",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          },
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "conflicting_put_remove",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [
+          [
+            "a",
+            1
+          ]
+        ],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "record_key_disagreement",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "foreign",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "bool_identity",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              true
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "float_identity",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1.0
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "unknown_removal",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [
+          [
+            "missing",
+            1
+          ]
+        ],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "missing_order_on_membership_change",
+      "base": "metadata_only",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 5,
+          "digest": "sha256:0386c308bcf475625715efa0cf35fe774fc1380bcf697a836323c1646cd02fec"
+        },
+        "target": {
+          "revision": 6,
+          "digest": "sha256:e583d05705d9b20d3b89b63917ab892648a952e3d00cabc3efdb9c0191e383a4"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "R"
+            },
+            {
+              "scope": "A"
+            }
+          ],
+          "revision": 3
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 6,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1005,
+          "ownerDigest": "sha256:e583d05705d9b20d3b89b63917ab892648a952e3d00cabc3efdb9c0191e383a4",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "b",
+              2
+            ],
+            "record": {
+              "id": "b",
+              "birth": 2,
+              "value": "new incarnation",
+              "support": 0
+            }
+          }
+        ],
+        "removals": [
+          [
+            "b",
+            1
+          ]
+        ],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "duplicate_order",
+      "base": "whole_record_change",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "target": {
+          "revision": 3,
+          "digest": "sha256:0ece7437d00a6dde8c43adfe8bf0a7cef6e8e9982356f22f8e47887544137b30"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 3,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1002,
+          "ownerDigest": "sha256:0ece7437d00a6dde8c43adfe8bf0a7cef6e8e9982356f22f8e47887544137b30",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [],
+        "removals": [],
+        "order": [
+          [
+            "a",
+            1
+          ],
+          [
+            "a",
+            1
+          ]
+        ],
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "incomplete_order",
+      "base": "whole_record_change",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "target": {
+          "revision": 3,
+          "digest": "sha256:0ece7437d00a6dde8c43adfe8bf0a7cef6e8e9982356f22f8e47887544137b30"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 3,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1002,
+          "ownerDigest": "sha256:0ece7437d00a6dde8c43adfe8bf0a7cef6e8e9982356f22f8e47887544137b30",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [],
+        "removals": [],
+        "order": [
+          [
+            "a",
+            1
+          ]
+        ],
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "digest_mismatch",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": "corrupted",
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "mixed_support_table_refs",
+      "base": "pure_reorder",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 3,
+          "digest": "sha256:0ece7437d00a6dde8c43adfe8bf0a7cef6e8e9982356f22f8e47887544137b30"
+        },
+        "target": {
+          "revision": 4,
+          "digest": "sha256:3e1fd58d0ff01fa53a5301e7c3323ddcbffe5e80d2357831d6017f3ee1d2a798"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "wrong"
+            }
+          ],
+          "revision": 2
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 4,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1003,
+          "ownerDigest": "sha256:3e1fd58d0ff01fa53a5301e7c3323ddcbffe5e80d2357831d6017f3ee1d2a798",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "b",
+              1
+            ],
+            "record": {
+              "id": "b",
+              "birth": 1,
+              "value": 0,
+              "support": 0
+            }
+          },
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 1
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "proof_in_feed",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "proof",
+          "nonce": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    },
+    {
+      "name": "extra_field",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta",
+        "extra": true
+      }
+    },
+    {
+      "name": "nonempty_replacement_ops",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "replacement",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": null,
+        "target": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 1,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1000,
+          "ownerDigest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce",
+          "remaining": [],
+          "error": null
+        },
+        "records": [
+          {
+            "id": "a",
+            "birth": 1,
+            "value": null,
+            "support": 0
+          },
+          {
+            "id": "b",
+            "birth": 1,
+            "value": 0,
+            "support": 1
+          }
+        ],
+        "upserts": [],
+        "removals": [
+          [
+            "a",
+            1
+          ]
+        ],
+        "order": [
+          [
+            "a",
+            1
+          ],
+          [
+            "b",
+            1
+          ]
+        ],
+        "reason": "initial"
+      }
+    },
+    {
+      "name": "duplicate_replacement_records",
+      "base": "baseline_null_zero",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "replacement",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": null,
+        "target": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 1,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1000,
+          "ownerDigest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce",
+          "remaining": [],
+          "error": null
+        },
+        "records": [
+          {
+            "id": "a",
+            "birth": 1,
+            "value": null,
+            "support": 0
+          },
+          {
+            "id": "b",
+            "birth": 1,
+            "value": 0,
+            "support": 1
+          },
+          {
+            "id": "a",
+            "birth": 1,
+            "value": null,
+            "support": 0
+          }
+        ],
+        "upserts": [],
+        "removals": [],
+        "order": [
+          [
+            "a",
+            1
+          ],
+          [
+            "b",
+            1
+          ]
+        ],
+        "reason": "initial"
+      }
+    },
+    {
+      "name": "delta_before_baseline",
+      "base": "not-a-baseline",
+      "packet": {
+        "protocol": "mesh-plus.view-change-feed.v1",
+        "kind": "delta",
+        "streamId": "00000000-0000-0000-0000-000000000003",
+        "binding": {
+          "hostId": "local",
+          "sourceId": "default",
+          "profileId": "toy.view.v1",
+          "contractDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "selector": {
+            "windowMs": 72
+          },
+          "nativePublisher": "source",
+          "nativeClock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "bridgeId": "00000000-0000-0000-0000-000000000002"
+        },
+        "base": {
+          "revision": 1,
+          "digest": "sha256:bb783ec2dba7ea192608b6c5783de8ff96de375109fa1a9bf15417aceea48fce"
+        },
+        "target": {
+          "revision": 2,
+          "digest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18"
+        },
+        "owner": {
+          "supportTable": [
+            {
+              "scope": "A"
+            },
+            {
+              "scope": "R"
+            }
+          ],
+          "revision": 1
+        },
+        "envelope": {
+          "meshProtocol": 1,
+          "kind": "candidate",
+          "nonce": null,
+          "bridgeId": "00000000-0000-0000-0000-000000000002",
+          "sequence": 2,
+          "sourceId": "default",
+          "hostId": "local",
+          "clock": {
+            "bootId": "00000000-0000-0000-0000-000000000001",
+            "timeNamespace": "time:1"
+          },
+          "encodedAtMs": 1001,
+          "ownerDigest": "sha256:8f8f14c92083e99e017c1274d2558718e25bda5335e48b85d7bd3507ba924c18",
+          "remaining": [],
+          "error": null
+        },
+        "records": null,
+        "upserts": [
+          {
+            "key": [
+              "a",
+              1
+            ],
+            "record": {
+              "id": "a",
+              "birth": 1,
+              "value": false,
+              "support": 0
+            }
+          }
+        ],
+        "removals": [],
+        "order": null,
+        "reason": "delta"
+      }
+    }
+  ]
+}

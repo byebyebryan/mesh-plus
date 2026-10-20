@@ -181,8 +181,18 @@ async def run(args, *, publisher_factories=None):
     from .transport import IPCServer
 
     adapter = configured_adapter(args.config, args.source, publisher_factories=publisher_factories)
-    bridge = Bridge(adapter)
-    if args.command == "bridge":
+    if args.command in {"view-feed-bridge", "view-feed-serve"}:
+        from .state import ReferenceProfile
+        from .view_feed import ViewFeedBridge
+
+        host, domain, _socket = configured_descriptor(args.config, args.source)
+        profile = getattr(adapter, "state_profile", None)
+        if profile is None:
+            profile = ReferenceProfile(domain)
+        bridge = ViewFeedBridge(adapter, profile=profile)
+    else:
+        bridge = Bridge(adapter)
+    if args.command in {"bridge", "view-feed-bridge"}:
         await bridge.serve(await stdio_channel())
     else:
         server = None
@@ -226,11 +236,11 @@ def main(*, publisher_factories=None):
     diagnostic.add_argument("--mode", choices=("snapshot", "subscribe"), default="snapshot")
     diagnostic.add_argument("--timeout-ms", type=int, choices=range(1, 60001), default=5000, metavar="1..60000")
     default = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "mesh-plus/sources.toml"
-    for name in ("bridge", "serve"):
+    for name in ("bridge", "serve", "view-feed-bridge", "view-feed-serve"):
         command = commands.add_parser(name)
         command.add_argument("--source", required=True)
         command.add_argument("--config", type=Path, default=default)
-        if name == "bridge":
+        if name in {"bridge", "view-feed-bridge"}:
             command.add_argument("--stdio", action="store_true", required=True)
         else:
             command.add_argument("--socket", type=Path, required=True)

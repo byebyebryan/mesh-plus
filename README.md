@@ -9,8 +9,9 @@ checkout.
 
 A separate [view change-feed design](docs/view-change-feed-design.md) captures
 the proposed conservative Mesh-owned comparison/reconstruction path over complete
-published views. It is a design draft; the retained delta implementation stays
-dark and existing routes and contracts remain unchanged.
+published views. The [explicit source API](docs/view-feed-api.md) now implements
+that path on its own opt-in IPC/stdio route. It remains a source/private candidate;
+the retained delta implementation stays dark and live selections are unchanged.
 
 Latest hosted prerelease: [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23).
 The release publishes the exact independently qualified wheel, with SHA256 and

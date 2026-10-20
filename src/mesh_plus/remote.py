@@ -21,11 +21,13 @@ class SetupError(Exception):
         super().__init__(code)
 
 
-async def connect_catalog_host(catalog, host, domain, source, *, authority=None, connector=connect_ssh, profile=None, codec=None):
+async def connect_catalog_host(catalog, host, domain, source, *, authority=None, connector=connect_ssh,
+                               profile=None, codec=None, client_factory=None):
     check(not host["local"] and bool(host["routes"]), "remote_host")
     profile = resolve_profile(domain, profile)
     codec = profile.bind(host["id"], source) if codec is None else codec
     check_binding(codec, host["id"], source, profile.descriptor.profile_id)
+    check(client_factory is None or callable(client_factory), "client_factory")
     policy = catalog.payload["sshPolicy"]
     timeout = min(60, policy["connectTimeoutSeconds"] * policy["connectionAttempts"] + 3)
     last = None
@@ -35,7 +37,8 @@ async def connect_catalog_host(catalog, host, domain, source, *, authority=None,
         try:
             channel = await connector(route["destination"], source, executable=policy["executable"],
                                       timeout_seconds=policy["connectTimeoutSeconds"], attempts=policy["connectionAttempts"])
-            client = await Client.connect(channel, host=host["id"], source=source,
+            factory = Client.connect if client_factory is None else client_factory
+            client = await factory(channel, host=host["id"], source=source,
                                           profile=profile.descriptor.profile_id, codec=codec.validate_bridge,
                                           required=("snapshot", "proof", "subscribe"), timeout=timeout)
             check(channel.reached_count <= 1, "duplicate_reached_marker")

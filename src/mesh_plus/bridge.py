@@ -190,24 +190,27 @@ class _Connection:
         last_progress = boottime_ms()
         blocked_since = None
         primary_error = False
-        first = publication = admitted = collect = None
+        first = publication = outgoing = admitted = collect = None
         try:
             first = await asyncio.wait_for(anext(iterator), 3)
             self.adapter.validate(first.payload)
             await self.emit("subscribed", subscriptionId=key, start=frame["start"],
                             publisherEpoch=first.epoch, barrier=first.barrier)
             latest = first
+            publisher_epoch = first.epoch
+            first = None
 
             async def collect():
                 nonlocal latest, skipped, finished
                 try:
                     async for publication in iterator:
                         self.adapter.validate(publication.payload)
-                        check(publication.epoch == first.epoch, "publisher_restart")
+                        check(publication.epoch == publisher_epoch, "publisher_restart")
                         skipped = skipped or latest is not None
                         latest = publication
                         wake.set()
                 finally:
+                    publication = None
                     finished = True
                     wake.set()
 
@@ -223,6 +226,13 @@ class _Connection:
                         last_progress = boottime_ms()
                         skipped = False
                     handle = self.guard.handles[key]
+                    outgoing = publication
+                    reset = getattr(self.adapter, "reset_publication", None)
+                    if handle["resync"] and callable(reset):
+                        outgoing = reset(publication)
+                        check(isinstance(outgoing, Publication) and outgoing.epoch == publication.epoch,
+                              "reset_publication")
+                        self.adapter.validate(outgoing.payload)
                     def admitted():
                         nonlocal latest, skipped
                         if latest is publication:
@@ -231,7 +241,8 @@ class _Connection:
                     sent = await self.emit("data", credited=True, on_admit=admitted, subscriptionId=key,
                                            streamSequence=handle["stream"] + 1, publisherEpoch=publication.epoch,
                                            deliveryKind="resync" if handle["resync"] else "view",
-                                           cursor=None, payload=publication.payload)
+                                           cursor=None, payload=outgoing.payload)
+                    outgoing = None
                     if sent:
                         last_progress = boottime_ms()
                         blocked_since = None
@@ -296,7 +307,7 @@ class _Connection:
                 close_task = None
                 iterator = None
                 latest = None
-                first = publication = admitted = collect = None
+            first = publication = outgoing = admitted = collect = None
             if cleanup_cancelled and not primary_error:
                 raise asyncio.CancelledError
 

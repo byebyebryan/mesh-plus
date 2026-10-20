@@ -367,16 +367,18 @@ async def subprocess_channel(argv, *, reached_nonce=None, codec=None):
 
 
 def ssh_argv(destination, source_id, *, bridge="mesh-plus", executable="ssh", nonce=None,
-             timeout_seconds=2, attempts=1, sync=False):
+             timeout_seconds=2, attempts=1, sync=False, view_feed=False):
     check(isinstance(destination, str) and bool(destination) and not destination.startswith("-") and
           not any(c.isspace() or ord(c) < 32 for c in destination), "ssh_destination")
     check(isinstance(source_id, str) and bool(source_id) and len(source_id) <= 128 and
           all(c.isascii() and (c.isalnum() or c in "_.-") for c in source_id), "source_id")
     check(bridge == "mesh-plus", "bridge_command")
     check(type(sync) is bool, "bridge_command")
+    check(type(view_feed) is bool and not (sync and view_feed), "bridge_command")
     check(type(timeout_seconds) is int and 1 <= timeout_seconds <= 60 and type(attempts) is int and
           1 <= attempts <= 10, "ssh_policy")
-    domain = [bridge, "sync-bridge" if sync else "bridge", "--source", source_id, "--stdio"]
+    command_name = "view-feed-bridge" if view_feed else "sync-bridge" if sync else "bridge"
+    domain = [bridge, command_name, "--source", source_id, "--stdio"]
     if nonce is None:
         command = shlex.join(domain)
     else:
@@ -390,10 +392,12 @@ def ssh_argv(destination, source_id, *, bridge="mesh-plus", executable="ssh", no
             "-o", "ControlMaster=no", "-o", "ControlPath=none", "--", destination, command]
 
 
-async def connect_ssh(destination, source_id, *, executable="ssh", timeout_seconds=2, attempts=1):
+async def connect_ssh(destination, source_id, *, executable="ssh", timeout_seconds=2, attempts=1,
+                      view_feed=False):
     nonce = secrets.token_hex(16)
     return await subprocess_channel(ssh_argv(destination, source_id, executable=executable, nonce=nonce,
-                                             timeout_seconds=timeout_seconds, attempts=attempts), reached_nonce=nonce)
+                                             timeout_seconds=timeout_seconds, attempts=attempts,
+                                             view_feed=view_feed), reached_nonce=nonce)
 
 
 class IPCServer:

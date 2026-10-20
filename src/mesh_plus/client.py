@@ -285,7 +285,17 @@ class Client:
                 frame, size = await self.channel.receive()
                 self.guard.expire(boottime_ms())
                 if frame["kind"] in {"data", "result"} and frame.get("payload") is not None:
-                    self.codec(frame["payload"])
+                    # This ownership transfer is an explicit internal opt-in;
+                    # an existing callable with an incidental method of this
+                    # name must keep the original validator-only behavior.
+                    admission = getattr(self.codec, "_mesh_payload_admission", None)
+                    admit = (getattr(self.codec, "admit_payload", None)
+                             if type(admission) is int and admission == 1 else None)
+                    if callable(admit):
+                        frame["payload"] = admit(frame["payload"], encoded_bytes=size, frame=frame)
+                        check(isinstance(frame["payload"], dict), "admitted_payload")
+                    else:
+                        self.codec(frame["payload"])
                 outcome = self.guard.received(frame, size)
                 if outcome == "error":
                     raise DeliveryError(frame["error"]["code"], frame["error"]["message"])
