@@ -228,7 +228,9 @@ class _Connection:
                     handle = self.guard.handles[key]
                     outgoing = publication
                     reset = getattr(self.adapter, "reset_publication", None)
-                    if handle["resync"] and callable(reset):
+                    reset_version = getattr(self.adapter, "_mesh_publication_reset", None)
+                    if (handle["resync"] and type(reset_version) is int and
+                            reset_version == 1 and callable(reset)):
                         outgoing = reset(publication)
                         check(isinstance(outgoing, Publication) and outgoing.epoch == publication.epoch,
                               "reset_publication")

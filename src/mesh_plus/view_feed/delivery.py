@@ -99,6 +99,8 @@ class _OwnedFrame(dict):
 
 
 class _FeedPublisher:
+    _mesh_publication_reset = 1
+
     def __init__(self, adapter, profile, selector, limits, token, token_scheme):
         self.adapter, self.state_profile = adapter, profile
         self.host, self.source, self.profile = adapter.host, adapter.source, adapter.profile

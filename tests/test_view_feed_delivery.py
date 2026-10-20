@@ -263,6 +263,31 @@ class ViewFeedDeliveryTests(unittest.IsolatedAsyncioTestCase):
             self.fail("coalesced replacement missing")
         await sub.close()
 
+    async def test_legacy_resync_ignores_incidental_reset_method(self):
+        await self.start(legacy=True)
+
+        def incidental(_publication):
+            raise AssertionError("legacy publisher did not opt in to feed reset")
+
+        self.publisher.reset_publication = incidental
+        client = await Client.connect(await connect_ipc(self.path), host="local", source="default",
+                                      profile=self.profile.descriptor.profile_id,
+                                      codec=self.profile.bind("local", "default").validate_bridge)
+        self.addAsyncCleanup(client.close)
+        sub = Subscription(client, "legacy-zero-credit")
+        client.subscriptions[sub.key] = sub
+        await client._send("subscribe", subscriptionId=sub.key,
+                           start={"mode": "baseline", "cursor": None}, credit={"frames": 0, "bytes": 0})
+        await asyncio.wait_for(sub.ready, 3)
+        for _ in range(2):
+            self.update()
+            await asyncio.sleep(.03)
+        await client._send("credit", subscriptionId=sub.key, credit={"frames": 1, "bytes": 1_000_000})
+        frame = await self.data(sub)
+        self.assertEqual(frame["deliveryKind"], "resync")
+        self.assertEqual(frame["payload"]["ownerFrame"], self.source.fixture.frame)
+        await sub.close()
+
     async def test_retained_output_stays_funded_after_client_close_and_retires_without_gc(self):
         server = await self.start()
         client = await self.connect()
