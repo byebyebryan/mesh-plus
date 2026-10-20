@@ -82,3 +82,6 @@ An additional explicit `scripts/check-view-feed-observer.py --observer PATH
 --output REPORT` uses synthetic accepted data and a disposable `collect=False`
 Observer Runtime, IPC/stdio feed, ordinary Reader and domain facade. It performs
 no provider collection, native fleet connection, installation or deployment.
+
+The [source qualification checkpoint](evidence/2026-10-20-view-feed/README.md)
+records exact source/wheel inputs, dual-version results and remaining boundaries.

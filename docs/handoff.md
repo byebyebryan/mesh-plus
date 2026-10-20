@@ -14,6 +14,9 @@ comparison, atomic reconstruction and bounded full replacement recovery over
 complete published views. Its separate opt-in setup leaves the frozen Delivery
 grammar and old schemas unchanged. It does not resume the retained engine,
 select an artifact or establish producer/native/installed acceptance.
+The [view-feed source checkpoint](evidence/2026-10-20-view-feed/README.md)
+records 479 canonical checks per Python version, isolated wheel checks and
+disposable current Observer composition, with production gates kept separate.
 
 The [a23 hosted prerelease](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23)
 publishes the accepted a23 wheel unchanged, with checksums and provenance.

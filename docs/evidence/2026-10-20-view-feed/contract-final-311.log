@@ -1,0 +1,40 @@
+{
+  "fixtureSha256": "7bc9429d1ef92f51b1e3853828438eb244c236c72f43ab42cdc49503c9f8eb48",
+  "negative": [
+    "wrong_base_revision",
+    "wrong_base_digest",
+    "float_revision",
+    "bool_revision",
+    "skipped_revision",
+    "foreign_selector",
+    "foreign_stream",
+    "foreign_clock",
+    "duplicate_upsert",
+    "conflicting_put_remove",
+    "record_key_disagreement",
+    "bool_identity",
+    "float_identity",
+    "unknown_removal",
+    "missing_order_on_membership_change",
+    "duplicate_order",
+    "incomplete_order",
+    "digest_mismatch",
+    "mixed_support_table_refs",
+    "proof_in_feed",
+    "extra_field",
+    "nonempty_replacement_ops",
+    "duplicate_replacement_records",
+    "delta_before_baseline"
+  ],
+  "positive": [
+    "baseline_null_zero",
+    "whole_record_change",
+    "pure_reorder",
+    "atomic_table_and_ref_remap",
+    "metadata_only",
+    "remove_reinsert_new_birth",
+    "remove_to_empty",
+    "empty_replacement",
+    "empty_to_record"
+  ]
+}
