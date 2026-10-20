@@ -13,7 +13,14 @@ published views. The [explicit source API](docs/view-feed-api.md) now implements
 that path on its own opt-in IPC/stdio route. It remains a source/private candidate;
 the retained delta implementation stays dark and live selections are unchanged.
 
-Latest hosted prerelease: [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23).
+The **0.1.0a24 experimental prerelease candidate** adds this explicit complete-view
+feed and includes the opt-in working-set SDK registration. It preserves the
+accepted full/active/Tmux defaults, full nonce proofs and existing selections.
+Its qualification covers standalone correctness and disposable source/Reader
+composition; producer CPU/RSS, large-view/native fleet and deployed-pair gates
+remain separate. See the [view-feed API](docs/view-feed-api.md).
+
+Latest qualified hosted prerelease: [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23).
 The release publishes the exact independently qualified wheel, with SHA256 and
 provenance assets; see the [producer acceptance](docs/evidence/2026-10-16-active-feed/README.md).
 The [publication receipt](docs/evidence/2026-10-16-active-feed-publication/acceptance.json)

@@ -32,7 +32,10 @@ try:
             if event.kind == "replacement":
                 reset_view(event.candidate)
             else:
-                apply_record_changes(event.upserts, event.removals, event.order)
+                apply_change_atomically(
+                    candidate=event.candidate,  # includes complete new owner metadata
+                    upserts=event.upserts, removals=event.removals, order=event.order,
+                )
         finally:
             event.close()
 finally:

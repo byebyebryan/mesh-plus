@@ -14,6 +14,7 @@ from dataclasses import asdict
 
 from ..bridge import Bridge, Publication
 from ..client import Client
+from ..evidence import digest
 from ..protocol import MAX_CONTROL, check, decode_json, encode
 from ..state import check_binding, validate_bridge
 from ..transport import LineChannel, boottime_ms, finish_owned, within_deadline
@@ -125,7 +126,7 @@ class _FeedPublisher:
             nonce = requested["nonce"]
             check(type(nonce) is str and len(nonce) == 32 and
                   all(c in "0123456789abcdef" for c in nonce), "view_feed_nonce")
-            check(_selector(requested["selector"]) == self.selector, "view_feed_selector")
+            check(digest(_selector(requested["selector"])) == digest(self.selector), "view_feed_selector")
             self.limits = _narrow(self.limits, _limits(requested["limits"]))
             self.budget.narrow(self.limits)
             self.negotiated = True
@@ -380,7 +381,8 @@ class ViewFeedClient:
             check(remaining > 0, "view_feed_setup_deadline")
             ready = await within_deadline(client.request("snapshot", parameters, timeout_ms=remaining), deadline)
             check(ready.get("protocol") == FEED_PROTOCOL and ready.get("kind") == "ready" and
-                  ready.get("nonce") == nonce and ready.get("selector") == selector and
+                  ready.get("nonce") == nonce and
+                  digest(_selector(ready.get("selector"))) == digest(selector) and
                   ready.get("hostId") == host and ready.get("sourceId") == source and
                   ready.get("profile") == profile.descriptor.profile_id and
                   ready.get("contractDigest") == profile.descriptor.contract_digest, "view_feed_ready_binding")
@@ -427,13 +429,23 @@ class ViewFeedClient:
 
     async def subscribe(self):
         check(not self.closed, "view_feed_closed")
-        raw = await self.client.subscribe()
-        if self.closed:
-            await finish_owned(asyncio.create_task(raw.close()))
-            check(False, "view_feed_closed")
-        sub = ViewFeedSubscription(self, raw)
-        self._subscriptions.add(sub)
-        return sub
+        raw = sub = None
+        try:
+            raw = await self.client.subscribe()
+            check(not self.closed, "view_feed_closed")
+            sub = ViewFeedSubscription(self, raw)
+            check(not self.closed, "view_feed_closed")
+            self._subscriptions.add(sub)
+            return sub
+        except BaseException:
+            if sub is not None:
+                sub.retire()
+            if raw is not None:
+                with contextlib.suppress(Exception):
+                    await finish_owned(asyncio.create_task(raw.close()))
+            raise
+        finally:
+            raw = sub = None
 
     async def changes(self):
         sub = await self.subscribe()

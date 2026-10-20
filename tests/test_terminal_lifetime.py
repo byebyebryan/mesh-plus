@@ -6,8 +6,8 @@ import weakref
 from pathlib import Path
 from unittest.mock import patch
 
+from sdk_fixture import Publisher
 from test_protocol import example
-from test_reader import CachedClient
 
 from mesh_plus.bridge import Bridge, Publication, _Connection
 from mesh_plus.client import Client, DeliveryError
@@ -57,32 +57,34 @@ class _Source:
             self.watchers.discard(queue)
 
 
-class _ObserverBridgeAdapter:
-    """Use the existing synthetic Observer response fixture through real IPC."""
+class _FixtureBridgeAdapter:
+    """Exercise SDK lifetimes through real IPC without an optional Observer."""
 
     def __init__(self):
-        self.cached = CachedClient("agent", "local")
-        self.codec = self.cached.adapter
+        self.cached = Publisher("agent", "local")
+        self.state_profile = self.cached.state_profile
+        self.codec = self.cached.codec
         self.host = "local"
         self.source = "default"
-        self.profile = self.codec.profile
+        self.profile = self.cached.profile
         self.capabilities = ("snapshot", "proof", "subscribe")
         self.watch_started = asyncio.Event()
         self.release_watch = asyncio.Event()
 
     def validate(self, payload):
-        return self.codec.validate(payload)
+        return self.cached.validate(payload)
 
     async def snapshot(self, parameters):
-        return await self.cached.request("snapshot", parameters)
+        return await self.cached.snapshot(parameters)
 
     async def proof(self, parameters):
-        return await self.cached.request("proof", parameters)
+        return await self.cached.proof(parameters)
 
     async def watch(self):
         self.watch_started.set()
         payload = await self.snapshot({})
-        yield Publication(payload, self.codec.epoch(self.cached.frame), {"viewRevision": 1})
+        epoch = self.codec.inspect_native(self.cached.frame).publisher
+        yield Publication(payload, epoch, {"viewRevision": 1})
         await self.release_watch.wait()
 
 
@@ -706,7 +708,7 @@ class OwnedTaskRetirementTests(unittest.IsolatedAsyncioTestCase):
         gc.disable()
         directory = tempfile.TemporaryDirectory()
         path = Path(directory.name) / "mesh.sock"
-        adapter = _ObserverBridgeAdapter()
+        adapter = _FixtureBridgeAdapter()
         bridge = Bridge(adapter)
         bridge_ref = weakref.ref(bridge)
 
@@ -721,12 +723,12 @@ class OwnedTaskRetirementTests(unittest.IsolatedAsyncioTestCase):
         async def connect(current_adapter=adapter):
             client = await Client.connect(await connect_ipc(path), host=current_adapter.host,
                                           source=current_adapter.source, profile=current_adapter.profile,
-                                          codec=current_adapter.codec.validate)
+                                          codec=current_adapter.codec.validate_bridge)
             client_refs.append(weakref.ref(client))
             return client
 
-        endpoint = Endpoint("local", True, None, connect)
-        reader = Reader("agent", [endpoint], local_host="local")
+        endpoint = Endpoint("local", True, None, connect, adapter.codec)
+        reader = Reader("agent", [endpoint], local_host="local", profile=adapter.state_profile)
         reader_ref = weakref.ref(reader)
         stream = reader.watch(request_id="a" * 32)
         try:

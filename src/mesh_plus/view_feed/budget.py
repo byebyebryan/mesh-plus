@@ -67,13 +67,13 @@ class FeedBudget:
 
     def narrow(self, limits):
         """Permanently narrow shared limits without discarding live leases."""
-        check(type(limits) is FeedLimits and
-              limits.heap_bytes <= self.limits.heap_bytes and
-              limits.encoded_bytes <= self.limits.encoded_bytes and
-              limits.max_records <= self.limits.max_records and
-              limits.max_packet_bytes <= self.limits.max_packet_bytes,
-              "view_feed_limit_enlargement")
         with self._lock:
+            check(type(limits) is FeedLimits and
+                  limits.heap_bytes <= self.limits.heap_bytes and
+                  limits.encoded_bytes <= self.limits.encoded_bytes and
+                  limits.max_records <= self.limits.max_records and
+                  limits.max_packet_bytes <= self.limits.max_packet_bytes,
+                  "view_feed_limit_enlargement")
             check(self._heap <= limits.heap_bytes and self._encoded <= limits.encoded_bytes,
                   "view_feed_capacity")
             self.limits = limits

@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from publisher_fixture import Source
 from sdk_fixture import Profile
@@ -84,6 +85,25 @@ class ViewFeedDeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(b.closed)
         self.assertEqual((await b.request())["kind"], "candidate")
 
+    async def test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling(self):
+        await self.start()
+        client, sibling = await self.connect(), await self.connect()
+        other = await client.subscribe()
+        first = await self.data(other)
+        with patch("mesh_plus.view_feed.delivery.FeedReceiver",
+                   side_effect=ProtocolError("view_feed_capacity")):
+            with self.assertRaisesRegex(ProtocolError, "view_feed_capacity"):
+                await client.subscribe()
+        self.assertEqual(list(client.client.subscriptions), [other.subscription.key])
+        self.assertEqual(client._subscriptions, {other})
+        self.assertEqual(self.source.fixture.watchers, 1)
+        self.update()
+        self.assertEqual((await self.data(other))["payload"]["ownerFrame"], self.source.fixture.frame)
+        self.assertTrue(first["payload"]["ownerFrame"]["snapshot"]["sessions"])
+        await other.close()
+        self.assertEqual(self.source.fixture.watchers, 0)
+        self.assertEqual((await sibling.request())["kind"], "candidate")
+
     async def test_legacy_endpoint_refuses_negotiation_without_fallback(self):
         await self.start(legacy=True)
         with self.assertRaises(Exception):
@@ -111,6 +131,15 @@ class ViewFeedDeliveryTests(unittest.IsolatedAsyncioTestCase):
         await self.start(selector={"windowMs": 72})
         with self.assertRaises(Exception):
             await self.connect(selector={"windowMs": 24})
+        self.assertEqual(self.source.reads, 0)
+
+    async def test_selector_binding_distinguishes_bool_float_and_integer_before_io(self):
+        await self.start(selector={"windowMs": 1, "options": {"a": 1, "b": False}})
+        for bad in (True, 1.0):
+            with self.subTest(value=bad), self.assertRaises(Exception):
+                await self.connect(selector={"windowMs": bad, "options": {"a": 1, "b": False}})
+        client = await self.connect(selector={"options": {"b": False, "a": 1}, "windowMs": 1})
+        self.assertFalse(client.closed)
         self.assertEqual(self.source.reads, 0)
 
     async def test_plain_client_cannot_subscribe_without_feed_setup(self):

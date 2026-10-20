@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import tempfile
+import threading
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -93,6 +94,30 @@ class ViewFeedWireTests(unittest.TestCase):
         wire.close()
         wire.close()
         self.assertEqual(budget.inspect()["heapBytes"], 0)
+
+    def test_interleaved_narrow_cannot_enlarge_a_newer_limit(self):
+        budget = FeedBudget()
+        real_lock = threading.Lock()
+        smaller = FeedLimits(heap_bytes=40 * 1024 * 1024)
+
+        class EarlierWinner:
+            armed = True
+
+            def __enter__(self):
+                if self.armed:
+                    self.armed = False
+                    # Model another public narrowing winning the lock before
+                    # this call acquires it; the outer check must see that cap.
+                    budget.narrow(smaller)
+                real_lock.acquire()
+
+            def __exit__(self, *_args):
+                real_lock.release()
+
+        budget._lock = EarlierWinner()
+        with self.assertRaisesRegex(ProtocolError, "view_feed_limit_enlargement"):
+            budget.narrow(FeedLimits(heap_bytes=50 * 1024 * 1024))
+        self.assertEqual(budget.limits, smaller)
 
     def test_fixed_remote_command_preserves_policy_and_reached_wrapper(self):
         with tempfile.TemporaryDirectory() as directory:
