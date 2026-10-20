@@ -1,5 +1,10 @@
 # Experimental a24 publication review
 
+Published: [Mesh Plus 0.1.0a24 experimental prerelease](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a24).
+[publication.json](publication.json) records the exact tag, assets, hosted CI and
+downloaded-wheel validation. The review below retains its pre-publication input
+and execution provenance.
+
 Reviewed runtime: `7e152d22fa57fc45049438b50877433d8c96f6d8`, following
 the [original source checkpoint](../2026-10-20-view-feed/README.md). Version
 `0.1.0a24` is a new experimental GitHub prerelease from the isolated
@@ -49,6 +54,9 @@ The two raw `review-before-*.log` files retain unittest's trailing space on
 their second line. Those two evidence-only whitespace warnings are preserved
 with the original bytes and hashes; the remaining staged files pass the
 whitespace check.
+The subsequent raw `branch-ci.log` and `tag-ci.log` likewise preserve GitHub's
+timestamped blank lines and package-manager whitespace. The publication
+closeout's non-log files pass the whitespace check.
 
 The new wheel is retained separately at
 `.cache/view-feed-publication-20261020/artifacts-final/mesh_plus-0.1.0a24-py3-none-any.whl`,
@@ -56,6 +64,25 @@ SHA256 `9bca5b554babfa59ba56b1a4ac5e8e5c66a85e63709731ee1fe7d4f0ed6a18a6`.
 Publication assets include that exact wheel, its versioned manifest, SHA256SUMS
 and provenance. Hosted branch/tag CI, downloaded-byte checks and GitHub signed
 release verification are recorded in the subsequent publication receipt.
+
+Both [branch CI](https://github.com/byebyebryan/mesh-plus/actions/runs/39468842455)
+and [tag CI](https://github.com/byebyebryan/mesh-plus/actions/runs/39469214605)
+passed all four jobs: standalone 483 tests and optional WSS 34 tests on Python
+3.11/3.13, plus the fault laboratory. All four public assets match their
+pre-upload SHA256 values; GitHub's verified signed release binds the exact
+annotated tag and every asset. A fresh Python 3.11 environment installed the
+downloaded wheel with neither Observer installed: all 107 runtime/schema files
+match, 40 feed tests pass, and the six disposable Observer scenarios pass with
+two fresh actual native proofs each. Existing a23 asset IDs, sizes and hashes
+remain unchanged. The release tag is immutable at `bb0c453`; documentation
+closeout commits remain on the isolated branch.
+
+To verify the recorded files and optionally the downloaded assets:
+
+```sh
+rtk proxy .venv/bin/python docs/evidence/2026-10-20-view-feed-publication/verify.py
+rtk proxy .venv/bin/python docs/evidence/2026-10-20-view-feed-publication/verify.py --assets .cache/view-feed-publication-20261020/public-download
+```
 
 This is an experimental publication, not a default-route or production
 performance promotion. Full source reads, whole-target verification and nonce

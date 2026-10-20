@@ -17,6 +17,11 @@ select an artifact or establish producer/native/installed acceptance.
 The [view-feed source checkpoint](evidence/2026-10-20-view-feed/README.md)
 records 479 canonical checks per Python version, isolated wheel checks and
 disposable current Observer composition, with production gates kept separate.
+The subsequent [a24 review and publication](evidence/2026-10-20-view-feed-publication/README.md)
+records 483 standalone checks on three Python versions, passing branch/tag CI,
+signed public assets and a fresh downloaded-wheel check. This experimental
+release is on the isolated feature branch; accepted `main` and live selections
+remain at a23.
 
 The [a23 hosted prerelease](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23)
 publishes the accepted a23 wheel unchanged, with checksums and provenance.

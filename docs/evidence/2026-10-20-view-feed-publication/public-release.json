@@ -1,0 +1,67 @@
+{
+  "assets": [
+    {
+      "apiUrl": "https://api.github.com/repos/byebyebryan/mesh-plus/releases/assets/660038141",
+      "contentType": "application/json",
+      "createdAt": "2026-10-20T17:48:14Z",
+      "digest": "sha256:8f725bd48555755ffa373c792631d147b2656adb94cc2209122eab60885fa0f0",
+      "downloadCount": 0,
+      "id": "RA_kwDOVC9Oo84nV2H9",
+      "label": "",
+      "name": "mesh-0.1.0a24.json",
+      "size": 1158,
+      "state": "uploaded",
+      "updatedAt": "2026-10-20T17:48:15Z",
+      "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a24/mesh-0.1.0a24.json"
+    },
+    {
+      "apiUrl": "https://api.github.com/repos/byebyebryan/mesh-plus/releases/assets/660038147",
+      "contentType": "application/octet-stream",
+      "createdAt": "2026-10-20T17:48:14Z",
+      "digest": "sha256:9bca5b554babfa59ba56b1a4ac5e8e5c66a85e63709731ee1fe7d4f0ed6a18a6",
+      "downloadCount": 0,
+      "id": "RA_kwDOVC9Oo84nV2ID",
+      "label": "",
+      "name": "mesh_plus-0.1.0a24-py3-none-any.whl",
+      "size": 296369,
+      "state": "uploaded",
+      "updatedAt": "2026-10-20T17:48:15Z",
+      "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a24/mesh_plus-0.1.0a24-py3-none-any.whl"
+    },
+    {
+      "apiUrl": "https://api.github.com/repos/byebyebryan/mesh-plus/releases/assets/660038140",
+      "contentType": "application/json",
+      "createdAt": "2026-10-20T17:48:14Z",
+      "digest": "sha256:88e8253ec0599d71fb6c790485a07298a4f46b19ab2d395fa5f343a1f6c7ad86",
+      "downloadCount": 0,
+      "id": "RA_kwDOVC9Oo84nV2H8",
+      "label": "",
+      "name": "provenance.json",
+      "size": 48391,
+      "state": "uploaded",
+      "updatedAt": "2026-10-20T17:48:15Z",
+      "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a24/provenance.json"
+    },
+    {
+      "apiUrl": "https://api.github.com/repos/byebyebryan/mesh-plus/releases/assets/660038143",
+      "contentType": "application/octet-stream",
+      "createdAt": "2026-10-20T17:48:14Z",
+      "digest": "sha256:71a94988fda26aac1d4eb7e52de3ac4e41fde1e378d408dbbff981589d68ecaf",
+      "downloadCount": 0,
+      "id": "RA_kwDOVC9Oo84nV2H_",
+      "label": "",
+      "name": "SHA256SUMS",
+      "size": 269,
+      "state": "uploaded",
+      "updatedAt": "2026-10-20T17:48:15Z",
+      "url": "https://github.com/byebyebryan/mesh-plus/releases/download/v0.1.0a24/SHA256SUMS"
+    }
+  ],
+  "isDraft": false,
+  "isPrerelease": true,
+  "name": "Mesh Plus 0.1.0a24 \u2014 experimental complete-view change feed",
+  "publishedAt": "2026-10-20T17:49:25Z",
+  "tagName": "v0.1.0a24",
+  "targetCommitish": "bb0c45399e5b8264c9936ca48457cc9a442431df",
+  "url": "https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a24"
+}
