@@ -1,0 +1,62 @@
+test_immutable_revision_token_binding_and_invalid_registry (test_wss_carrier.BindingCase.test_immutable_revision_token_binding_and_invalid_registry) ... ok
+test_snapshot_scope_change_prevents_any_dispatch (test_wss_carrier.BindingCase.test_snapshot_scope_change_prevents_any_dispatch) ... ok
+test_active_certificate_expiry_wallclock (test_wss_carrier.WSSCase.test_active_certificate_expiry_wallclock) ... ok
+test_active_listener_credentials_replacement_revokes (test_wss_carrier.WSSCase.test_active_listener_credentials_replacement_revokes) ... ok
+test_complete_message_queue_overload_closes_without_unbounded_retention (test_wss_carrier.WSSCase.test_complete_message_queue_overload_closes_without_unbounded_retention) ... ok
+test_composed_selection_monitors_catalog_registry_trust_credentials (test_wss_carrier.WSSCase.test_composed_selection_monitors_catalog_registry_trust_credentials) ... ok
+test_fragment_stall_binary_strict_json_and_empty_fragments (test_wss_carrier.WSSCase.test_fragment_stall_binary_strict_json_and_empty_fragments) ... ok
+test_fragmented_valid_hello_and_control_capacity (test_wss_carrier.WSSCase.test_fragmented_valid_hello_and_control_capacity) ... ok
+test_graceful_websocket_close_and_late_validation_rejection (test_wss_carrier.WSSCase.test_graceful_websocket_close_and_late_validation_rejection) ... ok
+test_origin_path_and_subprotocol (test_wss_carrier.WSSCase.test_origin_path_and_subprotocol) ... ok
+test_owned_capture_path_replacement_and_private_policy (test_wss_carrier.WSSCase.test_owned_capture_path_replacement_and_private_policy) ... ok
+test_partial_header_deadline_and_boottime_resume_tick (test_wss_carrier.WSSCase.test_partial_header_deadline_and_boottime_resume_tick) ... ok
+test_pre_tls_admission_and_cleanup (test_wss_carrier.WSSCase.test_pre_tls_admission_and_cleanup) ... ok
+test_receive_cancel_safe_and_repeated_close_owned (test_wss_carrier.WSSCase.test_receive_cancel_safe_and_repeated_close_owned) ... ok
+test_redirect_is_rejected_without_second_destination (test_wss_carrier.WSSCase.test_redirect_is_rejected_without_second_destination) ... ok
+test_repeated_send_cancellation_retires_owned_channel (test_wss_carrier.WSSCase.test_repeated_send_cancellation_retires_owned_channel) ... ok
+test_repeated_setup_cancellation_closes_tls_writer (test_wss_carrier.WSSCase.test_repeated_setup_cancellation_closes_tls_writer) ... ok
+test_rotation_overlap_removal_and_policy_failure (test_wss_carrier.WSSCase.test_rotation_overlap_removal_and_policy_failure) ... ok
+test_server_trust_and_hostname (test_wss_carrier.WSSCase.test_server_trust_and_hostname) ... ok
+test_snapshot_proof_subscribe_and_independent_cancel (test_wss_carrier.WSSCase.test_snapshot_proof_subscribe_and_independent_cancel) ... ok
+test_untrusted_missing_expired_and_unknown_client (test_wss_carrier.WSSCase.test_untrusted_missing_expired_and_unknown_client) ... ok
+test_utf8_exact_negotiated_ceiling_and_large_fragments (test_wss_carrier.WSSCase.test_utf8_exact_negotiated_ceiling_and_large_fragments) ... ok
+test_wrong_binding_rejected_before_publisher_request (test_wss_carrier.WSSCase.test_wrong_binding_rejected_before_publisher_request) ... ok
+test_health_changes_do_not_revoke_but_private_key_and_registry_do (test_wss_integration.IntegrationCase.test_health_changes_do_not_revoke_but_private_key_and_registry_do) ... ok
+test_real_mixed_factory_poll_watch_failure_tokens_both_profiles (test_wss_integration.IntegrationCase.test_real_mixed_factory_poll_watch_failure_tokens_both_profiles) ... ok
+test_send_validation_time_is_inside_budget_and_closes (test_wss_integration.IntegrationCase.test_send_validation_time_is_inside_budget_and_closes) ... ok
+test_setup_phases_share_one_deadline_before_dispatch (test_wss_integration.IntegrationCase.test_setup_phases_share_one_deadline_before_dispatch) ... ok
+test_snapshot_scope_check_shares_short_acquisition_budget (test_wss_integration.IntegrationCase.test_snapshot_scope_check_shares_short_acquisition_budget) ... ok
+test_wss_operation_bytes_match_channel_scope (test_wss_integration.IntegrationCase.test_wss_operation_bytes_match_channel_scope) ... ok
+test_queue_admission_uses_same_deadline (test_wss_integration.LocalFilesCase.test_queue_admission_uses_same_deadline) ... ok
+test_timeout_and_close_report_owned_job_and_reject_replacement (test_wss_integration.LocalFilesCase.test_timeout_and_close_report_owned_job_and_reject_replacement) ... ok
+test_cancel_and_timeout_reap_owned_resolver (test_wss_integration.ResolutionCase.test_cancel_and_timeout_reap_owned_resolver) ... ok
+test_literals_do_not_spawn_and_hostname_lookup_preserves_addresses (test_wss_integration.ResolutionCase.test_literals_do_not_spawn_and_hostname_lookup_preserves_addresses) ... ok
+test_injected_wss_cli_both_domains_poll_push_and_cleanup (test_wss_publisher.WSSPublisherTests.test_injected_wss_cli_both_domains_poll_push_and_cleanup) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 15.674s
+
+OK
+{
+  "status": "passed",
+  "testsRun": 34,
+  "checkedAtUtc": "2026-10-20T17:41:16.807013+00:00",
+  "python": "3.11.17",
+  "scope": "standalone WSS independent profile",
+  "packages": {
+    "mesh-plus": "0.1.0a24",
+    "websockets": "17.2"
+  },
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "installed": false,
+  "expectedFailures": 0,
+  "unexpectedSuccesses": 0,
+  "excluded": [
+    "live fleet",
+    "physical suspend",
+    "WAN",
+    "deployment selection"
+  ]
+}

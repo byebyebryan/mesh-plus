@@ -1,0 +1,59 @@
+test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling (test_view_feed_delivery.ViewFeedDeliveryTests.test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling) ... FAIL
+test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) ... 
+  test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) (value=True) ... FAIL
+  test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) (value=1.0) ... FAIL
+test_interleaved_narrow_cannot_enlarge_a_newer_limit (test_view_feed_wire.ViewFeedWireTests.test_interleaved_narrow_cannot_enlarge_a_newer_limit) ... FAIL
+
+======================================================================
+FAIL: test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling (test_view_feed_delivery.ViewFeedDeliveryTests.test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/bryan/code/mesh-plus-view-feed/tests/test_view_feed_delivery.py", line 97, in test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling
+    self.assertEqual(list(client.client.subscriptions), [other.subscription.key])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['7ccf26e5bea1cd290d585944cbf25fc4', '76b497bdccdf2d10f97983b7899864e0'] != ['7ccf26e5bea1cd290d585944cbf25fc4']
+
+First list contains 1 additional elements.
+First extra element 1:
+'76b497bdccdf2d10f97983b7899864e0'
+
+- ['7ccf26e5bea1cd290d585944cbf25fc4', '76b497bdccdf2d10f97983b7899864e0']
++ ['7ccf26e5bea1cd290d585944cbf25fc4']
+
+======================================================================
+FAIL: test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) (value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus-view-feed/tests/test_view_feed_delivery.py", line 139, in test_selector_binding_distinguishes_bool_float_and_integer_before_io
+    with self.subTest(value=bad), self.assertRaises(Exception):
+                                  ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+AssertionError: Exception not raised
+
+======================================================================
+FAIL: test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) (value=1.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus-view-feed/tests/test_view_feed_delivery.py", line 139, in test_selector_binding_distinguishes_bool_float_and_integer_before_io
+    with self.subTest(value=bad), self.assertRaises(Exception):
+                                  ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+AssertionError: Exception not raised
+
+======================================================================
+FAIL: test_interleaved_narrow_cannot_enlarge_a_newer_limit (test_view_feed_wire.ViewFeedWireTests.test_interleaved_narrow_cannot_enlarge_a_newer_limit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus-view-feed/tests/test_view_feed_wire.py", line 118, in test_interleaved_narrow_cannot_enlarge_a_newer_limit
+    with self.assertRaisesRegex(ProtocolError, "view_feed_limit_enlargement"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ProtocolError not raised
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.098s
+
+FAILED (failures=4)

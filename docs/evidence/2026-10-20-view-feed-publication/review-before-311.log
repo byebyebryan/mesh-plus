@@ -1,0 +1,61 @@
+test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling (test_view_feed_delivery.ViewFeedDeliveryTests.test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling) ... FAIL
+test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) ... 
+  test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) (value=True) ... FAIL
+  test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) (value=1.0) ... FAIL
+test_interleaved_narrow_cannot_enlarge_a_newer_limit (test_view_feed_wire.ViewFeedWireTests.test_interleaved_narrow_cannot_enlarge_a_newer_limit) ... FAIL
+
+======================================================================
+FAIL: test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling (test_view_feed_delivery.ViewFeedDeliveryTests.test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/unittest/async_case.py", line 90, in _callTestMethod
+    if self._callMaybeAsync(method) is not None:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/unittest/async_case.py", line 112, in _callMaybeAsync
+    return self._asyncioRunner.run(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bryan/code/agent-observer/.local/cpu-prepared-20261015/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/bryan/code/mesh-plus-view-feed/tests/test_view_feed_delivery.py", line 97, in test_receiver_constructor_refusal_retires_raw_subscription_and_preserves_sibling
+    self.assertEqual(list(client.client.subscriptions), [other.subscription.key])
+AssertionError: Lists differ: ['55333b7c44d89812db2f0adcbaf2df8d', 'c6affa8afad00c493a0a456432e0ed25'] != ['55333b7c44d89812db2f0adcbaf2df8d']
+
+First list contains 1 additional elements.
+First extra element 1:
+'c6affa8afad00c493a0a456432e0ed25'
+
+- ['55333b7c44d89812db2f0adcbaf2df8d', 'c6affa8afad00c493a0a456432e0ed25']
++ ['55333b7c44d89812db2f0adcbaf2df8d']
+
+======================================================================
+FAIL: test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) (value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus-view-feed/tests/test_view_feed_delivery.py", line 139, in test_selector_binding_distinguishes_bool_float_and_integer_before_io
+    with self.subTest(value=bad), self.assertRaises(Exception):
+AssertionError: Exception not raised
+
+======================================================================
+FAIL: test_selector_binding_distinguishes_bool_float_and_integer_before_io (test_view_feed_delivery.ViewFeedDeliveryTests.test_selector_binding_distinguishes_bool_float_and_integer_before_io) (value=1.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus-view-feed/tests/test_view_feed_delivery.py", line 139, in test_selector_binding_distinguishes_bool_float_and_integer_before_io
+    with self.subTest(value=bad), self.assertRaises(Exception):
+AssertionError: Exception not raised
+
+======================================================================
+FAIL: test_interleaved_narrow_cannot_enlarge_a_newer_limit (test_view_feed_wire.ViewFeedWireTests.test_interleaved_narrow_cannot_enlarge_a_newer_limit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bryan/code/mesh-plus-view-feed/tests/test_view_feed_wire.py", line 118, in test_interleaved_narrow_cannot_enlarge_a_newer_limit
+    with self.assertRaisesRegex(ProtocolError, "view_feed_limit_enlargement"):
+AssertionError: ProtocolError not raised
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.104s
+
+FAILED (failures=4)

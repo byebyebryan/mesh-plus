@@ -1,0 +1,667 @@
+{
+  "python": "3.13.14 (main, Jun 23 2026, 15:18:27) [Clang 22.1.3 ]",
+  "gcEnabled": false,
+  "scenarios": [
+    {
+      "mode": "ipc",
+      "sourceRows": 0,
+      "selectedRows": 0,
+      "freshNonces": 2,
+      "nativeDigest": "sha256:4e86c50953fd057b159f8ba62850ca1fceaa29e3acd757d67040c7f6259f86e7",
+      "metrics": {
+        "closed": false,
+        "failed": false,
+        "capabilities": [
+          "proof",
+          "snapshot",
+          "subscribe"
+        ],
+        "activeHandles": 1,
+        "pendingRequests": 0,
+        "subscriptions": 1,
+        "retainedHandles": 4,
+        "bufferedBytes": 0,
+        "bufferedControlBytes": 0,
+        "rotationDue": false,
+        "rotationHandles": 4080,
+        "peakBufferedBytes": 3581,
+        "peakBufferedControlBytes": 0,
+        "peakQueueFrames": 1,
+        "operations": {
+          "snapshotRequests": 1,
+          "proofRequests": 2,
+          "snapshotResultBytes": 623,
+          "proofResultBytes": 6168,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "channel": {
+          "receivedFrames": 6,
+          "sentFrames": 6,
+          "receivedBytes": 11111,
+          "sentBytes": 1907,
+          "closed": false,
+          "byteScope": "completed-json-lines",
+          "byKind": {
+            "received": {
+              "hello": {
+                "frames": 1,
+                "bytes": 416
+              },
+              "result": {
+                "frames": 3,
+                "bytes": 6791
+              },
+              "subscribed": {
+                "frames": 1,
+                "bytes": 322
+              },
+              "data": {
+                "frames": 1,
+                "bytes": 3582
+              }
+            },
+            "sent": {
+              "hello": {
+                "frames": 1,
+                "bytes": 379
+              },
+              "request": {
+                "frames": 3,
+                "bytes": 1023
+              },
+              "subscribe": {
+                "frames": 1,
+                "bytes": 275
+              },
+              "credit": {
+                "frames": 1,
+                "bytes": 230
+              }
+            }
+          }
+        },
+        "viewFeed": {
+          "heapBytes": 25767733,
+          "encodedBytes": 25490066,
+          "heapLimitBytes": 67108864,
+          "encodedLimitBytes": 33554432,
+          "peakHeapBytes": 25991412,
+          "peakEncodedBytes": 25496918
+        }
+      }
+    },
+    {
+      "mode": "ipc",
+      "sourceRows": 3,
+      "selectedRows": 0,
+      "freshNonces": 2,
+      "nativeDigest": "sha256:5d0db0d0241fcde58a742ab39c1c5d729daed283c85f905c6863bbfb81f68a4e",
+      "metrics": {
+        "closed": false,
+        "failed": false,
+        "capabilities": [
+          "proof",
+          "snapshot",
+          "subscribe"
+        ],
+        "activeHandles": 1,
+        "pendingRequests": 0,
+        "subscriptions": 1,
+        "retainedHandles": 4,
+        "bufferedBytes": 0,
+        "bufferedControlBytes": 0,
+        "rotationDue": false,
+        "rotationHandles": 4080,
+        "peakBufferedBytes": 4270,
+        "peakBufferedControlBytes": 0,
+        "peakQueueFrames": 1,
+        "operations": {
+          "snapshotRequests": 1,
+          "proofRequests": 2,
+          "snapshotResultBytes": 623,
+          "proofResultBytes": 7546,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "channel": {
+          "receivedFrames": 6,
+          "sentFrames": 6,
+          "receivedBytes": 13178,
+          "sentBytes": 1907,
+          "closed": false,
+          "byteScope": "completed-json-lines",
+          "byKind": {
+            "received": {
+              "hello": {
+                "frames": 1,
+                "bytes": 416
+              },
+              "result": {
+                "frames": 3,
+                "bytes": 8169
+              },
+              "subscribed": {
+                "frames": 1,
+                "bytes": 322
+              },
+              "data": {
+                "frames": 1,
+                "bytes": 4271
+              }
+            },
+            "sent": {
+              "hello": {
+                "frames": 1,
+                "bytes": 379
+              },
+              "request": {
+                "frames": 3,
+                "bytes": 1023
+              },
+              "subscribe": {
+                "frames": 1,
+                "bytes": 275
+              },
+              "credit": {
+                "frames": 1,
+                "bytes": 230
+              }
+            }
+          }
+        },
+        "viewFeed": {
+          "heapBytes": 25792857,
+          "encodedBytes": 25492133,
+          "heapLimitBytes": 67108864,
+          "encodedLimitBytes": 33554432,
+          "peakHeapBytes": 26044370,
+          "peakEncodedBytes": 25500363
+        }
+      }
+    },
+    {
+      "mode": "ipc",
+      "sourceRows": 12,
+      "selectedRows": 0,
+      "freshNonces": 2,
+      "nativeDigest": "sha256:99599259da3a08b0879348de041a844486ceed806ad991a02010f921eb666627",
+      "metrics": {
+        "closed": false,
+        "failed": false,
+        "capabilities": [
+          "proof",
+          "snapshot",
+          "subscribe"
+        ],
+        "activeHandles": 1,
+        "pendingRequests": 0,
+        "subscriptions": 1,
+        "retainedHandles": 4,
+        "bufferedBytes": 0,
+        "bufferedControlBytes": 0,
+        "rotationDue": false,
+        "rotationHandles": 4080,
+        "peakBufferedBytes": 4270,
+        "peakBufferedControlBytes": 0,
+        "peakQueueFrames": 1,
+        "operations": {
+          "snapshotRequests": 1,
+          "proofRequests": 2,
+          "snapshotResultBytes": 623,
+          "proofResultBytes": 7546,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "channel": {
+          "receivedFrames": 6,
+          "sentFrames": 6,
+          "receivedBytes": 13178,
+          "sentBytes": 1907,
+          "closed": false,
+          "byteScope": "completed-json-lines",
+          "byKind": {
+            "received": {
+              "hello": {
+                "frames": 1,
+                "bytes": 416
+              },
+              "result": {
+                "frames": 3,
+                "bytes": 8169
+              },
+              "subscribed": {
+                "frames": 1,
+                "bytes": 322
+              },
+              "data": {
+                "frames": 1,
+                "bytes": 4271
+              }
+            },
+            "sent": {
+              "hello": {
+                "frames": 1,
+                "bytes": 379
+              },
+              "request": {
+                "frames": 3,
+                "bytes": 1023
+              },
+              "subscribe": {
+                "frames": 1,
+                "bytes": 275
+              },
+              "credit": {
+                "frames": 1,
+                "bytes": 230
+              }
+            }
+          }
+        },
+        "viewFeed": {
+          "heapBytes": 25792857,
+          "encodedBytes": 25492133,
+          "heapLimitBytes": 67108864,
+          "encodedLimitBytes": 33554432,
+          "peakHeapBytes": 26044370,
+          "peakEncodedBytes": 25500363
+        }
+      }
+    },
+    {
+      "mode": "stdio",
+      "sourceRows": 0,
+      "selectedRows": 0,
+      "freshNonces": 2,
+      "nativeDigest": "sha256:9738949d7527db85a2c6f16c82b6374230a5e2a51756109f584b2b0e4d831244",
+      "metrics": {
+        "closed": false,
+        "failed": false,
+        "capabilities": [
+          "proof",
+          "snapshot",
+          "subscribe"
+        ],
+        "activeHandles": 1,
+        "pendingRequests": 0,
+        "subscriptions": 1,
+        "retainedHandles": 4,
+        "bufferedBytes": 0,
+        "bufferedControlBytes": 0,
+        "rotationDue": false,
+        "rotationHandles": 4080,
+        "peakBufferedBytes": 3581,
+        "peakBufferedControlBytes": 0,
+        "peakQueueFrames": 1,
+        "operations": {
+          "snapshotRequests": 1,
+          "proofRequests": 2,
+          "snapshotResultBytes": 623,
+          "proofResultBytes": 6168,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "channel": {
+          "receivedFrames": 6,
+          "sentFrames": 6,
+          "receivedBytes": 11111,
+          "sentBytes": 1907,
+          "closed": false,
+          "byteScope": "completed-json-lines",
+          "byKind": {
+            "received": {
+              "hello": {
+                "frames": 1,
+                "bytes": 416
+              },
+              "result": {
+                "frames": 3,
+                "bytes": 6791
+              },
+              "subscribed": {
+                "frames": 1,
+                "bytes": 322
+              },
+              "data": {
+                "frames": 1,
+                "bytes": 3582
+              }
+            },
+            "sent": {
+              "hello": {
+                "frames": 1,
+                "bytes": 379
+              },
+              "request": {
+                "frames": 3,
+                "bytes": 1023
+              },
+              "subscribe": {
+                "frames": 1,
+                "bytes": 275
+              },
+              "credit": {
+                "frames": 1,
+                "bytes": 230
+              }
+            }
+          }
+        },
+        "viewFeed": {
+          "heapBytes": 25767733,
+          "encodedBytes": 25490066,
+          "heapLimitBytes": 67108864,
+          "encodedLimitBytes": 33554432,
+          "peakHeapBytes": 25991412,
+          "peakEncodedBytes": 25496918
+        }
+      }
+    },
+    {
+      "mode": "stdio",
+      "sourceRows": 3,
+      "selectedRows": 0,
+      "freshNonces": 2,
+      "nativeDigest": "sha256:daf26a93a2db7a046add48d0e3bb591daf151458e9d4f0bfcf36995ba9e4b721",
+      "metrics": {
+        "closed": false,
+        "failed": false,
+        "capabilities": [
+          "proof",
+          "snapshot",
+          "subscribe"
+        ],
+        "activeHandles": 1,
+        "pendingRequests": 0,
+        "subscriptions": 1,
+        "retainedHandles": 4,
+        "bufferedBytes": 0,
+        "bufferedControlBytes": 0,
+        "rotationDue": false,
+        "rotationHandles": 4080,
+        "peakBufferedBytes": 4270,
+        "peakBufferedControlBytes": 0,
+        "peakQueueFrames": 1,
+        "operations": {
+          "snapshotRequests": 1,
+          "proofRequests": 2,
+          "snapshotResultBytes": 623,
+          "proofResultBytes": 7546,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "channel": {
+          "receivedFrames": 6,
+          "sentFrames": 6,
+          "receivedBytes": 13178,
+          "sentBytes": 1907,
+          "closed": false,
+          "byteScope": "completed-json-lines",
+          "byKind": {
+            "received": {
+              "hello": {
+                "frames": 1,
+                "bytes": 416
+              },
+              "result": {
+                "frames": 3,
+                "bytes": 8169
+              },
+              "subscribed": {
+                "frames": 1,
+                "bytes": 322
+              },
+              "data": {
+                "frames": 1,
+                "bytes": 4271
+              }
+            },
+            "sent": {
+              "hello": {
+                "frames": 1,
+                "bytes": 379
+              },
+              "request": {
+                "frames": 3,
+                "bytes": 1023
+              },
+              "subscribe": {
+                "frames": 1,
+                "bytes": 275
+              },
+              "credit": {
+                "frames": 1,
+                "bytes": 230
+              }
+            }
+          }
+        },
+        "viewFeed": {
+          "heapBytes": 25792857,
+          "encodedBytes": 25492133,
+          "heapLimitBytes": 67108864,
+          "encodedLimitBytes": 33554432,
+          "peakHeapBytes": 26044370,
+          "peakEncodedBytes": 25500363
+        }
+      }
+    },
+    {
+      "mode": "stdio",
+      "sourceRows": 12,
+      "selectedRows": 0,
+      "freshNonces": 2,
+      "nativeDigest": "sha256:6b09fa9d94406c07461ef727bb9b79f266368d6e7fa74616ab3d95e9c72b6010",
+      "metrics": {
+        "closed": false,
+        "failed": false,
+        "capabilities": [
+          "proof",
+          "snapshot",
+          "subscribe"
+        ],
+        "activeHandles": 1,
+        "pendingRequests": 0,
+        "subscriptions": 1,
+        "retainedHandles": 4,
+        "bufferedBytes": 0,
+        "bufferedControlBytes": 0,
+        "rotationDue": false,
+        "rotationHandles": 4080,
+        "peakBufferedBytes": 4270,
+        "peakBufferedControlBytes": 0,
+        "peakQueueFrames": 1,
+        "operations": {
+          "snapshotRequests": 1,
+          "proofRequests": 2,
+          "snapshotResultBytes": 623,
+          "proofResultBytes": 7546,
+          "otherResultBytes": 0,
+          "requestTimeouts": 0,
+          "requestCancellations": 0,
+          "rotationRejections": 0,
+          "unprocessedResultBytes": 0
+        },
+        "channel": {
+          "receivedFrames": 6,
+          "sentFrames": 6,
+          "receivedBytes": 13178,
+          "sentBytes": 1907,
+          "closed": false,
+          "byteScope": "completed-json-lines",
+          "byKind": {
+            "received": {
+              "hello": {
+                "frames": 1,
+                "bytes": 416
+              },
+              "result": {
+                "frames": 3,
+                "bytes": 8169
+              },
+              "subscribed": {
+                "frames": 1,
+                "bytes": 322
+              },
+              "data": {
+                "frames": 1,
+                "bytes": 4271
+              }
+            },
+            "sent": {
+              "hello": {
+                "frames": 1,
+                "bytes": 379
+              },
+              "request": {
+                "frames": 3,
+                "bytes": 1023
+              },
+              "subscribe": {
+                "frames": 1,
+                "bytes": 275
+              },
+              "credit": {
+                "frames": 1,
+                "bytes": 230
+              }
+            }
+          }
+        },
+        "viewFeed": {
+          "heapBytes": 25792857,
+          "encodedBytes": 25492133,
+          "heapLimitBytes": 67108864,
+          "encodedLimitBytes": 33554432,
+          "peakHeapBytes": 26044370,
+          "peakEncodedBytes": 25500363
+        }
+      }
+    }
+  ],
+  "loadedInputs": {
+    "/home/bryan/code/mesh-plus-view-feed/scripts/check-view-feed-observer.py": "5731b6af6c71b3b7e2b0352e985f3987e89422e3812056d63d8e97c8da5fdc74",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/__init__.py": "3c88a846dabf68f1ee22fe8459f2236a1b8c2df89658b322b7eefc138be68639",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/_compat.py": "c7483b88450e9c15490bbdb3c850a06f578aab2c52fbb7f62c69cdc99febf79b",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/_config.py": "746ab7c51e9f819105e9406dfcbd13f9e507201e22e37911987d0fdbcb09570f",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/exceptions.py": "6f8bcc6e7a10dd5a7059986aad88bfb2c5d508af28d9ce074124b4f5c49433da",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/setters.py": "e7e75c4fadc640adf938d1334a07d70a46c1ee93e4691faabf5e669b83d54b34",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/_make.py": "1fb387d9e592e429c1ccb5233451355b299f3eb985d6bf1fbf644f76df4cb980",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/converters.py": "1a50de3b33de4c581e0412db8fd1b9ec4cf994093af2e85200b45827f7b17bce",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/filters.py": "64188a58ba774742df099b2aed7d75a67f565fc36c952db05cce23b272ce19cf",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/validators.py": "9b7411cd94c036be1fd82e1e55d528160d753605d66a4f166ade2a4131a1bdcb",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/_cmp.py": "dcd9f54e3c659546225ff9c9a159c4917a0393484cd4360a8f90c4ec665ee22d",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/_funcs.py": "231e481134dfcf9174d45fb5d8c17f0921689889f687c6faec4555cf6802b411",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/_next_gen.py": "050b42525cf08368161d3617050beb118067cc152b0ef3b9eeed0fcba5023e17",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/_version_info.py": "c3847e1580b734afe43241945899583f87150251fd1d1682fae9b77dc8d89073",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attr/__init__.py": "7ce608bedd5e192a90adee2e092dec256299d26c00b82f140faa9b6b9392f7f5",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attrs/converters.py": "f244258eb5707d24d1bbc20dc0493c488d1e1abce659fb6c4fbaccd04ab2a213",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attrs/exceptions.py": "0020829a0d7dfaf0c56833d8f6f165d7df523d709030dfdb10db380c02e3ce6b",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attrs/filters.py": "54e50c66e83db8453a754b80d1d1758c89d42b43cbddf2e03f45414b977e0831",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attrs/setters.py": "78bd5889d6105774f687dfd2608652651d4501c1c66f54ee093cb41342efd925",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attrs/validators.py": "c5ccbac03e53b5391d086d5fe1759ba1c3d23b47da06393921f5497cfe92523d",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/attrs/__init__.py": "47168064dc1888487e7dcbc72d936943f0d62a78bbdccfe3c443c47ed8aad597",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/rpds/__init__.py": "c373205d6ee5a530880b0d0a5dbc36d105f9ef7fe46ec12758878cb0202e82f3",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/referencing/_attrs.py": "6e04fe28c84354b786b56c4cfd218a61e2da6411734f691454574090e7178bc8",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/referencing/exceptions.py": "cc581a120e9688a793e7c310b8a36c8060e71ecce9dba738a11782eac17d8073",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/referencing/typing.py": "5a351b9d9ea33c0777d5c9c214069e588544373c87b47749c8e95e96fd4663bd",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/referencing/_core.py": "d923c67da4efcc0dec46a6e3ff8476c02fbe7e25e8942515a4b14b249eb3759f",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/referencing/__init__.py": "e4864a5da007fc55b20894646939f55dca6d2df83d72f78b6fdbb99d853124ab",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/_utils.py": "5efebfc0a2ac941265c328fdfa3d9cf090c5c3ee33e1a5859d57b6a57f21ed4e",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/exceptions.py": "6f8da150339f3c5729ac8e1994da630de2cabfc93dbce86059cb768f20e5c739",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/_format.py": "96bb3553b892076657f59d846a5b113987909b577d91e7f0d822e8d3c1bc3f8b",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/_types.py": "7ff9e44c36eb8dadc4ddfb083530bbdf2fe03174d4db5d08fc7eea2b434ddf47",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/referencing/jsonschema.py": "8d767ab7ac7da13bd31cc202d2d4726858d6e6bdaa78739b62ebbb52149f2b74",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema_specifications/_core.py": "b4585cd42325789dc024e2bf6e3c4ea4541376bb140a51467c5c4f054fc279b3",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema_specifications/__init__.py": "aa84c1d83298eeabcdac684c3c7ea0b6600944b8a599543e7c56704faaf2ab0d",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/_keywords.py": "afcfc3aea01f9fa40bc109e65c4820bde89253e51a20bda9da7b8f20d7a57c57",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/_legacy_keywords.py": "dad5aec113d66d84bb10097cc01202feb69b1aebf527875f60ba8d10fa528610",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/protocols.py": "960cabc951ea1628d2151033f79721dd5376173fa84c5ca18fd39b732e4ffc22",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/_typing.py": "a572e71b2de336d2144ead37ee451fab4c1ed7bd3ce5e1ed2700c9dadfbe9901",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/validators.py": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/jsonschema/__init__.py": "a7e470e134bfd0e3c76482722260d6b1d5a099de823d61cc5cbabb06e4314c67",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/protocol.py": "5a53fa9bec8ffa7c0fe4ba0911dec6c38a2f4739d281be52775d0c56349125c3",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/evidence.py": "224dae58b30c28f142ea1fa0e31038c76704f383082b79989cfef3908ceb388c",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/state.py": "d95a9132cf89982072637383e8c96ac3b619e8ddf478e995f95585ba74907330",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/admission.py": "2b703d4c84a0ae966fee8d4db637b01fc0fdb4971351d4484a85c6e18d2d85bb",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/transport.py": "84bda9fe332a28ed67a33425e544c208bacd4103d1e4f97279a996c98eb2547c",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/bridge.py": "df0171bd20e42daf1d12e8ed17d8c4ef022105a9bbf0cd276e3de669e3a768cb",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/client.py": "f78cf45a6f9438609dd49b458452651862fce8b7e3eef7015e8b0b397221fb01",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/catalog.py": "f8d52f8e8f73f84504b931bdd2970ab60eeac3b69fce22d3fde7d6bb8d6cdb1a",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/view.py": "9efa74e1f0b69a293b0f454be937d3580c5cd986e94fbe0edcd7a5a039bdbe6c",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/reader.py": "f3ddd60f5a2510e3d689f044b0b7e66142835a86fe9faf07b3b832e2cfb54670",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/remote.py": "a3a55b72336782e900607f689baffa2153e1613032eb7cdfc60fed3ec8371e54",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/configured_read.py": "dc39f08d557b4ce6ca9f988eeb91e8749f363c8d930fe915cf801df82d77a32c",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/prepared.py": "333f179ebf6eeabf5528d9d938cdc7ef484fb2ffcf9ec41608e7f29719f77486",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/_receipt_history.py": "d5703497b3acfdea53318e7de1da828867ac68e937971c3c7640dbe76b5ab70a",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/publisher.py": "0dfbf1461a4555f3c0a9b02f8788cd85c9b7c8ae90087d11c84ea4c3a4188336",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/api.py": "8b63c94e7da9a886280b7a8ce5baa8ab26e010edc7284b6dbec4889db53353cc",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/view_feed/budget.py": "29517d2a47abd2a38ea2d6b00935516a8bf75d8d64c5f23bf8791c7258ef86c5",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/view_feed/protocol.py": "a93595d2531436e9ea960f1d13bff5fac401ca367058b09684e7c78ba33451fa",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/view_feed/core.py": "f2a7cd566855a27f6314c821e0102c62e8e8c6783c597bc371702d2a9dc0143f",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/view_feed/wire.py": "d7a9da2242187a7c901fa7d1772372270479f2864d8d6bb77fa057e15570cecd",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/view_feed/delivery.py": "c17da2dd80e4c8d5fcb644d0f7d81953ef553bc6ae0fc45cb940337a93566374",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/view_feed/configured.py": "f41933bfb27512f8674eb846f9f70dd0072b15f4016436f8e803f2b39ba75e73",
+    "/home/bryan/code/mesh-plus-view-feed/.cache/view-feed-publication-20261020/env313/lib/python3.13/site-packages/mesh_plus/view_feed/__init__.py": "a497637c94f30fa628c6270335311c5ae716bc22fbb2ef780e833b47d2180ca3",
+    "/home/bryan/code/agent-observer-working-set/tests/mesh_test_support.py": "59524c76d17601cbac4db2869dbf16e5ff0e07d160ad317df8760eae438374be",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/__init__.py": "9df4617f6d49419caeebfd258545b9a95d7b08735d221ae3b792f1cb72a18a09",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/bounded_json.py": "846a8538de41525359a2147a1f5b71f3958f0028490fd0d23c4041de07b6c0e6",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/contract_shape.py": "7af867d262ca767aab68ac02ce79483b3ce128ff127a40c391f53882cde700fc",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/contract.py": "93f14f4375a13d05aeaede24bf30538bd09f5e0d6e74a019793e69c64a81ea6b",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/service_contract.py": "7cef03366f012d972b47ab0fddad611a9e2613e498214005c98e120ee57905d8",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/workspace.py": "4b8a63d362af880b6acd4326e767d32a800df3f5f6e1282e5c4d62d4263ac92e",
+    "/home/bryan/code/agent-observer-working-set/tests/test_service_contract.py": "78c340327e737b7cbe66457604a59b0212bb6dcde3cfaf1416fb97b9e9334d18",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/activity.py": "f8ad39a1992070347988b0b9c73710bc7acecd3336afb1cf47dcefcbd67bbff1",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/observation_scheduler.py": "e3850f0c2791e21600e57daca3d8af8756d7e072065afa0b69febcb690896dd6",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/timing.py": "8748c4285271f39eb50cf9bb1d58074bf76fe276ebf522a05f588ab83ece942d",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/observation_support.py": "7319a9b5e6c13f840905ae4e0835392dddc7ec81bb73edece0a5ffa5191fbc32",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/active_contract.py": "c9e20d73523b4943328a3f66a6552d7a992d5ffc71a29faed473eb48184600bf",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/active_feed.py": "93b154e4e187c9be67f6cc66ae3f783c1ec4ca4acccb4e90d0b3f908380a25de",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/observation_evidence.py": "2e1c004aca8f68d41ec2f613006a0f6e522fac12be1416e7a4bc67904caef24c",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/observation_engine.py": "46296dcc9ebbe13ef7cafd808080cdac19cc93092a784b6c6b7986d57f880d79",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/provider.py": "98243e7de42af101951b3ffba9de017a66f78483ecc70b651e5f3d48fe61c7b8",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/service_state.py": "e879590a0e11dbe6788621501cc563ea5d045cb1d13d7d6d0d32eb3e5208c4cf",
+    "/home/bryan/code/agent-observer-working-set/tests/test_service_state.py": "e2538cbafa0718774a034b9e4d92980b32c617d3bca4b38da0f021f805b71742",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/native_artifacts.py": "743e30c5a67cf3f3d9b5cf7d1990859d9a0df8b725dcb4245fd73415fe54d773",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/_image_memo.py": "e51920f262521b25d00812458f52b67474039334581426108703cfeb5604c331",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/sync_contract.py": "49e33c4216de6a951ddfb3c40731860fb510fa1a1cee9e94f43f5e1d99405236",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/sync_commitment.py": "544fba79d3a05ac898a925432d0923de9eca31658481ae15e1118cc8c0be1ff5",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/sync_native.py": "09609ea9f6aeb8980f4b767c7768baa22a33287b47c3eeeb09dac39e3462d04d",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/service_runtime.py": "32ab2451244256d6a33f4762f0b4ba3ff6a995cedf439c324583e92e80336ea5",
+    "/home/bryan/code/agent-observer-working-set/tests/test_service_runtime.py": "35275647a577f7220bdc205bfe5e31b2017fd7caf5d8cfa64b139aa5dd4853a1",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/working_set_policy.py": "1af48f051e4bbddc19ca24b7b4cb891431571c63ff8584b283b0b8b8b2b66519",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/working_set_supports.py": "20ba9d34d3af30a2766e9bbda4ff2ab449a324bc7a52b8e18451c94ec4fe05c2",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/working_set_contract.py": "8f1499aa724c292f2d19aeb8995569f36d1c86ccec6967c4ed34583594ed9093",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/mesh_working_set_profile.py": "da003bca249a6a33bf145eb10280d1b6e674158f9e840ba04ed0222ebc0dcc7c",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/mesh_working_set_publisher.py": "f1830a32baed77055758dfe4345b27b7308383ed556bb9ea6a610a0c30fd315e",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/mesh_working_set_read.py": "201ed055bca77d3e8dd6f16df74a970b4c918aedc62c4286364917f3b2f4ed21",
+    "/home/bryan/code/agent-observer-working-set/tests/test_working_set_registered_sdk.py": "1077903b42602020271d80fce8646481e472acc77aacc58b08956b3f206b8dc7",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/working_set_clocks.py": "84651c63c266c7563873034c54b87ec25312fd5022e3cc3bacca580417f67a7c",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/working_set_decisions.py": "104423810e003ecc812451faa9b9d8e730284c76a93d02fdd84c40149bb3f008",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/working_set_ledger.py": "48381ecc8b0e1c678aff05ea94ea7e4848137fb2493295cf0ab1c598e067b7aa",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/working_set_feed.py": "bb8fb1e79d89d0f8e3a6d9b6c38e473fe6d7332acad13ba491eb3d548768eef6",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/read_cache.py": "03d3b097ecba5a34e83ef1dfea1fd4208597e69bae538c5b072b1e4a819ba9fa",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/service_public.py": "704cfe0065dfe2a8c86c27766f14f88916f55a827211762576efba05512ec41a",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/mesh_source.py": "bcbbba27b0296c2ff9792697b31c1b89410c407f15df71b522262313ba987fae",
+    "/home/bryan/code/agent-observer-working-set/agent_observer/mesh_working_set_source.py": "e5b239a49e4d27f32d4f421290a251785dcdb62a7c9a43777f2ae1369b0b582a"
+  },
+  "observer": "/home/bryan/code/agent-observer-working-set",
+  "uid": 1000,
+  "scope": "synthetic accepted input, collect=False actual Runtime IPC, owned Mesh IPC/stdio, ordinary Reader+domain facade; separate ledgers; no provider/native fleet/installed/CPU/RSS acceptance"
+}
