@@ -7,6 +7,11 @@ release or adoption acceptance. See the [dark-feature status and safe Git
 handoff](docs/delta-sync-dark-status.md) before resuming work or cleaning this
 checkout.
 
+A separate [view change-feed design](docs/view-change-feed-design.md) captures
+the proposed conservative Mesh-owned comparison/reconstruction path over complete
+published views. It is a design draft; the retained delta implementation stays
+dark and existing routes and contracts remain unchanged.
+
 Latest hosted prerelease: [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23).
 The release publishes the exact independently qualified wheel, with SHA256 and
 provenance assets; see the [producer acceptance](docs/evidence/2026-10-16-active-feed/README.md).

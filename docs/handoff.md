@@ -8,6 +8,12 @@ checkpoint, failed CPU/capacity gates, resume criteria and protected lineage.
 Earlier G1 continuation notes describe their dated checkpoints; they do not
 schedule further work after this wrap-up. Normal a7/a23 routes remain selected.
 
+The separate [view change-feed design R1](view-change-feed-design.md), dated
+2026-10-19, captures the current design discussion before implementation. It
+proposes Mesh-owned whole-record comparison, atomic reconstruction and bounded
+snapshot recovery over complete published views. This draft does not resume
+the retained engine or change any accepted interface, artifact or live selection.
+
 The [a23 hosted prerelease](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23)
 publishes the accepted a23 wheel unchanged, with checksums and provenance.
 Its [installed producer gates](evidence/2026-10-16-active-feed/README.md) remain
