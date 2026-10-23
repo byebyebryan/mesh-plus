@@ -6,19 +6,20 @@ live retirement and firmware changes remain separately scoped.
 
 ## Current checkpoint
 
-Checkpoint 2 in progress. Luna Max owns the bounded utility example, its guide
-and focused tests in the isolated Observer worktree. Primary owns six-repository
-current-state documentation, host/consumer acceptance, dashboard compatibility,
-integration, final gates and this ledger. No deployed/runtime selection changes.
+The agreed source/artifact endpoint is complete. Luna Max supplied the bounded
+census and utility implementation/tests. Primary owned decisions, six-repository
+documentation, review corrections, installed/host compatibility, integration and
+acceptance. The [final handoff](evidence/2026-10-22-ecosystem-realignment/README.md)
+records results and remaining publication/retirement boundaries.
 
 | Checkpoint | Status | Evidence / next acceptance |
 | --- | --- | --- |
 | 0 Current state / consumers | Accepted | Source census reviewed/corrected; read-only snapshots on all three hosts |
 | 1 Ownership / capabilities | Accepted | Existing authority split preserved; user direction reflected in owner docs |
-| 2 Utility read path | In progress | Luna example/guide/tests; primary existing-dashboard compatibility |
-| 3 Justified simplification | Decisions accepted; packet pending | Retain full, active, writer and Tmux roles; unknown manual uses prevent retirement |
-| 4 Documentation / integration | Drafted; gates pending | Six current landing pages and existing AGENTS aligned; exact integration packet follows commits |
-| 5 Qualification / handoff | In progress | Selected dashboard immutable verification passes; owning gates follow |
+| 2 Utility read path | Accepted | 17 focused tests per interpreter; final owning gate; six outside-checkout cases; dashboard consumer compatibility |
+| 3 Justified simplification | Accepted | Retained-path decisions and concrete later retirement packets; no unsupported runtime deletion |
+| 4 Documentation / integration | Accepted | Six current landing pages and existing AGENTS aligned; exact local commits/prerequisites recorded |
+| 5 Qualification / handoff | Accepted | All six source gates; qualified example; 19 dashboard cases; three-host preservation audit |
 
 ## Baseline and decisions
 
@@ -45,17 +46,19 @@ integration, final gates and this ledger. No deployed/runtime selection changes.
   this coordination tree. Original source worktrees remain protected.
 - RLCD compatibility-only detached tree:
   `/home/bryan/code/esp32-rlcd-ecosystem-proof-20261023`, at the exact selected
-  source 629af3721b9ffc6218060c839d22472cf1b808e0. No RLCD source edits planned.
+  source 629af3721b9ffc6218060c839d22472cf1b808e0. No RLCD source was edited.
 
 ## Current review and verification
 
-- Luna's initial utility passed seven focused tests; primary found and returned
-  an outer-timeout/quiet-tick race. The corrected thirteen-test slice passes on
-  Python 3.11/3.14, including a real configured-reader quiet-expiry regression.
-  The first full Observer gate passes with the required working-set SDK.
-  Outside-checkout smoke then exposed a local timeout boundary using the real
-  public ContractError type; Luna is correcting that last edge case before
-  another focused/owning gate and actual local smoke. Keep checkpoint 2 open.
+- Primary review exposed a Mesh quiet-tick race; the first installed smoke then
+  exposed a real public ContractError/local deadline boundary. Luna corrected
+  both. The final 17-case focused suite passes on Python 3.11 and 3.14 with exact
+  a8/a24 wheels. The final owning gate passes 1,206 tests with zero skips.
+  Failed initial evidence remains separate; it is not reassigned to the fix.
+- Six final outside-checkout cases pass against unchanged installed a8/a24
+  packages. Snap Default/Work namespaces stay distinct, all final views revoke,
+  and output excludes conversation content. Source unavailable states remain
+  visible; success is not a claim of continuously healthy native sources.
 - Agent Plus source gate passed. SSH source gate passed after a narrow,
   pre-existing formatting defect in `scripts/check-public-contract` was fixed.
   The defect also reproduces on the untouched original source.
@@ -83,15 +86,24 @@ integration, final gates and this ledger. No deployed/runtime selection changes.
   not this loop's local source/artifact endpoint.
 - Detailed private logs and machine-readable gate receipts are under
   `/home/bryan/.cache/agent-ecosystem-realignment-20261023/validation/`.
-- Four accepted local commits are complete (not pushed): Agent Plus `3b11f50`,
-  SSH Plus `11d6be1`, Tmux Observer `db63675`, Tmux Plus `e7c0e80`. A final
+- Accepted local commits are complete (not pushed): Agent Plus `3b11f50`,
+  SSH Plus `11d6be1`, Tmux Observer `db63675`, Tmux Plus `e7c0e80` / `0bc11ba`, Observer
+  `488100e`, and Mesh census/ownership `6a1daff` plus this closeout commit. A final
   focused doc review corrected Tmux's current SDK paragraph and aligned
   Observer roadmap wording; links and whitespace pass. Original source trees
   and remote main refs remain untouched.
+- The final whole-documentation link audit found a retired Agent Plus navigation
+  link in Tmux's historical plan. It now points to the verified pre-cleanup Git
+  checkpoint; the historical design itself is unchanged.
+- The final before/after audit reports zero selected-link/configuration changes
+  and zero service PID/state changes across all three hosts. All 37 baseline
+  native process birth identities were still observed. No apply, native action,
+  provider query, firmware or installed-prefix change was performed.
 
 ## Restart procedure
 
-Read this ledger and the plan, inspect outstanding Luna messages, refresh goal
-status and repository heads/dirty state, then resume the current checkpoint.
-Inspect actual partial diffs before editing a worker-owned file. Keep raw
-provider payloads, prompts, conversation content and credentials out of evidence.
+For later work, read the final handoff and decisions/rollout packet, refresh the
+relevant heads and effective host selections, then scope the next integration,
+publication, runtime or retirement checkpoint. This source loop schedules no
+automatic rollout. Preserve concurrent work and keep provider payloads,
+conversation content and credentials out of evidence.

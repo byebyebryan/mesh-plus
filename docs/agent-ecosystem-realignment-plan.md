@@ -1,7 +1,9 @@
 # Agent ecosystem realignment: execution plan
 
-Status: execution authorized through the source/artifact endpoint by the user's
-explicit luna-goal-loop request, 2026-10-23. This document coordinates work across the six repositories. Each
+Status: source/artifact endpoint completed under the user's explicit
+luna-goal-loop request, 2026-10-23. See the
+[qualification and handoff](evidence/2026-10-22-ecosystem-realignment/README.md).
+This document coordinates work across the six repositories. Each
 repository continues to own its contracts, code, checks and acceptance evidence.
 Managed host selection belongs to chezmoi. This plan does not supersede frozen
 contracts or reassign historical acceptance to new bytes.

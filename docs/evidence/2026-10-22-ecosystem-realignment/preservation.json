@@ -1,0 +1,36 @@
+{
+  "observedAt": "2026-10-23T07:57:45.064625+00:00",
+  "scope": "Before/after read-only selectors, configuration hashes and service PID/state. No apply/restart/native action.",
+  "hosts": [
+    {
+      "host": "starship",
+      "sameBoot": true,
+      "selectorChanges": [],
+      "configurationChanges": [],
+      "unitPidOrStateChanges": [],
+      "baselineNativeProcesses": 6,
+      "baselineNativeProcessesStillObserved": 6,
+      "nativeSnapshotCaveat": "Natural native/client activity may change process snapshots; no lifecycle action or provider query was performed."
+    },
+    {
+      "host": "snap",
+      "sameBoot": true,
+      "selectorChanges": [],
+      "configurationChanges": [],
+      "unitPidOrStateChanges": [],
+      "baselineNativeProcesses": 30,
+      "baselineNativeProcessesStillObserved": 30,
+      "nativeSnapshotCaveat": "Natural native/client activity may change process snapshots; no lifecycle action or provider query was performed."
+    },
+    {
+      "host": "carbon",
+      "sameBoot": true,
+      "selectorChanges": [],
+      "configurationChanges": [],
+      "unitPidOrStateChanges": [],
+      "baselineNativeProcesses": 1,
+      "baselineNativeProcessesStillObserved": 1,
+      "nativeSnapshotCaveat": "Natural native/client activity may change process snapshots; no lifecycle action or provider query was performed."
+    }
+  ]
+}

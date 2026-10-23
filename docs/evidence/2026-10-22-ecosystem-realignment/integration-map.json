@@ -117,8 +117,12 @@
         "8e0427ca466feda65860c7f13a2119a977165436",
         "d3149272589aca6a209145dc82e75c70784f90e0"
       ],
-      "thisLoopCommit": null,
-      "integration": "Local review only; separately review prerequisites or port the loop change to target main."
+      "thisLoopCommit": "6a1daff6aeb45e3a31d7a3e0f1d25450e5d7c0f2",
+      "integration": "Local review only; separately review prerequisites or port the loop change to target main.",
+      "coordinationCloseout": "The later commit containing final README/qualification/status; exact final head is in the generated private handoff manifest.",
+      "loopCommitsBeforeCoordinationCloseout": [
+        "6a1daff6aeb45e3a31d7a3e0f1d25450e5d7c0f2"
+      ]
     },
     {
       "repository": "rofi-ssh-plus",
@@ -130,7 +134,10 @@
       "cachedMatchesRemote": true,
       "basePrerequisitesOutsideMain": [],
       "thisLoopCommit": "11d6be18fa2715255bafd3e284a6910fb50c0a92",
-      "integration": "Local review only; separately review prerequisites or port the loop change to target main."
+      "integration": "Local review only; separately review prerequisites or port the loop change to target main.",
+      "loopCommitsBeforeCoordinationCloseout": [
+        "11d6be18fa2715255bafd3e284a6910fb50c0a92"
+      ]
     },
     {
       "repository": "agent-observer",
@@ -252,8 +259,11 @@
         "a8bbdbfdfec9730d83e86b9f3b589919eaf7d710",
         "f39f91788fe8ba8f9ac9322db0eed25ad15254fa"
       ],
-      "thisLoopCommit": null,
-      "integration": "Local review only; separately review prerequisites or port the loop change to target main."
+      "thisLoopCommit": "488100e665c6ab64887d18e1306b94472bfe3f3b",
+      "integration": "Local review only; separately review prerequisites or port the loop change to target main.",
+      "loopCommitsBeforeCoordinationCloseout": [
+        "488100e665c6ab64887d18e1306b94472bfe3f3b"
+      ]
     },
     {
       "repository": "rofi-agent-plus",
@@ -265,7 +275,10 @@
       "cachedMatchesRemote": true,
       "basePrerequisitesOutsideMain": [],
       "thisLoopCommit": "3b11f50923019b82a98b26fdf4a8bc4b8030c5d3",
-      "integration": "Local review only; separately review prerequisites or port the loop change to target main."
+      "integration": "Local review only; separately review prerequisites or port the loop change to target main.",
+      "loopCommitsBeforeCoordinationCloseout": [
+        "3b11f50923019b82a98b26fdf4a8bc4b8030c5d3"
+      ]
     },
     {
       "repository": "tmux-observer",
@@ -281,7 +294,10 @@
         "bb4b0438864e587f3d70cce2576d25c76aa8460a"
       ],
       "thisLoopCommit": "db63675bf0cc25042ce02a309ac1636c750566dd",
-      "integration": "Local review only; separately review prerequisites or port the loop change to target main."
+      "integration": "Local review only; separately review prerequisites or port the loop change to target main.",
+      "loopCommitsBeforeCoordinationCloseout": [
+        "db63675bf0cc25042ce02a309ac1636c750566dd"
+      ]
     },
     {
       "repository": "rofi-tmux-plus",
@@ -294,8 +310,12 @@
       "basePrerequisitesOutsideMain": [
         "3839c2a22a4c33b690896c3497436a9b32855a1d"
       ],
-      "thisLoopCommit": "e7c0e80068f51728b0d18d18464bb1d8c082958c",
-      "integration": "Local review only; separately review prerequisites or port the loop change to target main."
+      "thisLoopCommit": "0bc11bab737695d3883839f184cc99f84c0400a6",
+      "integration": "Local review only; separately review prerequisites or port the loop change to target main.",
+      "loopCommitsBeforeCoordinationCloseout": [
+        "e7c0e80068f51728b0d18d18464bb1d8c082958c",
+        "0bc11bab737695d3883839f184cc99f84c0400a6"
+      ]
     }
   ]
 }
