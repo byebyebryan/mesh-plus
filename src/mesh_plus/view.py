@@ -43,7 +43,6 @@ def profile_validator(domain, profile_id=None):
         if "$id" in schema:
             registry = registry.with_resource(schema["$id"], Resource.from_contents(schema))
     suffix = {"agent-observer.mesh-candidate.v2": "-v2", "agent-observer.mesh-candidate.v3": "-v3",
-              "agent-observer.mesh-active.v1": "-active",
               "agent-observer.mesh-working-set.v1": "-working-set"}.get(selected.profile_id, "")
     profile = json.loads(files("mesh_plus").joinpath("schemas", "read-" + domain + suffix + ".profile.schema.json").read_text())
     return Draft202012Validator(profile, registry=registry)

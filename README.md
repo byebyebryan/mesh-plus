@@ -1,5 +1,9 @@
 # Mesh Plus
 
+Source candidate **0.1.0a25** [withdraws the standalone Agent active profile](docs/active-profile-retirement.md).
+Working-set, full Agent, Tmux and Host Mesh boundaries remain. The published
+releases and their historical capability/acceptance records below are unchanged.
+
 Reusable host authority and cached state delivery for a configured fleet.
 Mesh owns logical hosts/routes and network validity; producers own the meaning
 of their records. SSH Plus exposes the supported Host Mesh CLI and SSH picker.

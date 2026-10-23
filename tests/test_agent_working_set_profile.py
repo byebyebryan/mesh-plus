@@ -49,8 +49,7 @@ class WorkingSetRegistrationTests(unittest.TestCase):
         self.assertEqual(working.frame_bytes, 8_404_992)
         self.assertEqual(descriptor("agent").profile_id, "agent-observer.mesh-candidate.v1")
         self.assertEqual(descriptor("tmux").profile_id, "tmux-observer.mesh-candidate.v1")
-        for old in ("agent-observer.mesh-candidate.v2", "agent-observer.mesh-candidate.v3",
-                    "agent-observer.mesh-active.v1"):
+        for old in ("agent-observer.mesh-candidate.v2", "agent-observer.mesh-candidate.v3"):
             self.assertNotEqual(working.contract_digest, descriptor("agent", profile_id=old).contract_digest)
         for domain, profile_id in (("tmux", PROFILE), ("agent", PROFILE + ".unknown")):
             with self.subTest(domain=domain, profile=profile_id), self.assertRaises(ProtocolError):

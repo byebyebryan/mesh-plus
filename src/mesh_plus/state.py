@@ -64,7 +64,6 @@ def descriptor(domain, *, profile_id=None):
     profile_id = default if profile_id is None else profile_id
     versions = {"agent-observer.mesh-candidate.v2": ("-v2", 5, "agent-observer.snapshot"),
                 "agent-observer.mesh-candidate.v3": ("-v3", 6, "agent-observer.snapshot"),
-                "agent-observer.mesh-active.v1": ("-active", 1, "agent-observer.active-feed"),
                 "agent-observer.mesh-working-set.v1": ("-working-set", 1, "agent-observer.working-set")}
     extension = versions.get(profile_id) if domain == "agent" else None
     check(profile_id == default or extension is not None, "profile_descriptor")
