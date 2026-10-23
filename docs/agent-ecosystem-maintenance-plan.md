@@ -1,6 +1,8 @@
 # Agent ecosystem: maintenance and retirement follow-up
 
-Status: plan updated and reviewed, 2026-10-23; execution has not started.
+Status: full-loop execution authorized 2026-10-23. The
+[execution ledger](agent-ecosystem-maintenance-status.md) records checkpoint
+acceptance; the original planning review did not itself perform implementation.
 This follows the completed [realignment loop](agent-ecosystem-realignment-plan.md)
 and its [qualification handoff](evidence/2026-10-22-ecosystem-realignment/README.md).
 The earlier retained-path decisions remain accurate for that completed loop;
@@ -19,10 +21,10 @@ the user decisions below govern the next one.
 | Tmux / repositories | Maintain generic tmux workflows and the six existing repository boundaries |
 | Host topology | Starship -> Snap; Snap -> Starship; Carbon -> Snap and Starship; no automatic reverse edge to Carbon |
 
-This request authorizes plan editing and review only. Proposed full-loop
-completion includes local source integration, qualified new artifacts, consumer
+The subsequent goal-loop request adopts full-loop execution. Completion
+includes local source integration, qualified new artifacts, consumer
 compatibility and bounded retirement on Starship, Snap and Carbon. A later
-execution request can adopt the whole plan or name a smaller endpoint. Once a
+execution request may narrow the endpoint. Once a
 checkpoint is authorized, routine preparation, corrections and its reviewed
 changes do not need another approval of the same product decision.
 

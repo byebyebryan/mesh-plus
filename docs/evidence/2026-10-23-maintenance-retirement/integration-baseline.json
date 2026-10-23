@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/home/bryan/code/mesh-plus-maintenance-20261023",
+    "head": "92202f0b3f34f1cff68294be02696a0f569c986c",
+    "main": "7c30fc92caf03476e239c10a3bb8cad97f365d90",
+    "behindAhead": "0\t108",
+    "mainIsAncestor": true
+  },
+  {
+    "path": "/home/bryan/code/agent-observer-maintenance-20261023",
+    "head": "488100e665c6ab64887d18e1306b94472bfe3f3b",
+    "main": "85c1c6489debdec06b967db25f4c326389ca2816",
+    "behindAhead": "0\t111",
+    "mainIsAncestor": true
+  },
+  {
+    "path": "/home/bryan/code/rofi-ssh-plus-ecosystem-20261023",
+    "head": "11d6be18fa2715255bafd3e284a6910fb50c0a92",
+    "main": "470dd89db0bd881f70e5dfc623a07b8ad932ca65",
+    "behindAhead": "0\t1",
+    "mainIsAncestor": true
+  },
+  {
+    "path": "/home/bryan/code/rofi-agent-plus-ecosystem-20261023",
+    "head": "3b11f50923019b82a98b26fdf4a8bc4b8030c5d3",
+    "main": "62d9bc587049be52d955592291055d23754d2968",
+    "behindAhead": "0\t1",
+    "mainIsAncestor": true
+  },
+  {
+    "path": "/home/bryan/code/tmux-observer-ecosystem-20261023",
+    "head": "db63675bf0cc25042ce02a309ac1636c750566dd",
+    "main": "7e14d799796a96b81f3a35947a7ed3c535701bf2",
+    "behindAhead": "0\t4",
+    "mainIsAncestor": true
+  },
+  {
+    "path": "/home/bryan/code/rofi-tmux-plus-ecosystem-20261023",
+    "head": "0bc11bab737695d3883839f184cc99f84c0400a6",
+    "main": "236ee8aaaaf14d14aa3861c3da8965c1a3d27071",
+    "behindAhead": "0\t3",
+    "mainIsAncestor": true
+  }
+]
