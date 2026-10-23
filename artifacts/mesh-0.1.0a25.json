@@ -1,0 +1,44 @@
+{
+  "manifestVersion": 1,
+  "package": "mesh-plus",
+  "version": "0.1.0a25",
+  "experimental": true,
+  "wheel": "mesh_plus-0.1.0a25-py3-none-any.whl",
+  "wheelSha256": "0055e42162827744add4f817d3918cfc20471e5ec5a3cdf0840d254f76f5dc3a",
+  "sourceRevision": "8ca467f2e37b5794861b46ca8b40eb8b301f6ca9",
+  "interfaces": {
+    "sdk": 1,
+    "read": 1,
+    "delivery": 1,
+    "preparation": 1,
+    "admission": 1,
+    "viewFeed": 1
+  },
+  "contracts": {
+    "rootLockSha256": "7c41f8383a2e3105d18eab30b9d6d047f1b7472247c0d41c14e01eae00eca69c",
+    "rootLockRevision": 6,
+    "lockedInputs": 37,
+    "priorA23NormativeDigestsPreserved": 33,
+    "viewFeedLockSha256": "649c924ee11dfd63679ad1a72a22a85868223ea1e53730e12f0cba9332f8ffe1"
+  },
+  "python": ">=3.11",
+  "dependencies": [
+    "jsonschema>=4.26,<5"
+  ],
+  "optionalWss": "websockets>=17.1,<18",
+  "entryPoints": [
+    "mesh-plus",
+    "mesh-plus-wss"
+  ],
+  "qualification": {
+    "sourceGate": {
+      "tests": 480,
+      "python": "3.14.8"
+    },
+    "installedPair": "Observer 0.7.0a9 / Mesh 0.1.0a25 exact wheel bytes verified",
+    "scope": "Full/working-set/Tmux preserved; active-only descriptor withdrawn; public and production receipts are separate"
+  },
+  "retiredProfiles": [
+    "agent-observer.mesh-active.v1"
+  ]
+}

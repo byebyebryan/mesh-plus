@@ -8,12 +8,15 @@ Plus is an independent entry/window client. Agent Observer is the read-only
 producer for utilities; Tmux observation/management remains independently useful.
 Mesh and SSH Plus remain their shared host/routing backbone.
 
-The 2026-10-23 role census observes independently selected SDKs: Agent
-working-set and Tmux full-view routes use a24, while Agent full/active routes and
-the SSH authority retain older reviewed packages. Owner deployment manifests,
-effective host overrides and installed launchers determine selection. Statements
-about live a23 selection in earlier checkpoint text retain their dated scope.
-Publication of a24 did not enable its opt-in feed protocol.
+The current approved Agent collector/working-set selection is Observer a9 /
+Mesh a25 on Starship, Snap Default/Work and Carbon. Writer and standalone
+active hosting are retired. The full publisher remains on its older reviewed
+pair; Tmux retains a24 and the existing dashboards retain a8/a24. See the
+[public delivery plan](agent-ecosystem-public-delivery-plan.md) and
+[execution status](agent-ecosystem-public-delivery-status.md) for publication
+and canonical-source acceptance. Independent owner manifests and installed
+launchers determine each role; the older deployment passages below are dated
+receipts rather than current selection instructions.
 
 Delta-sync development is stopped and retained as a **dark, gated feature**.
 The [owning status and Git handoff](delta-sync-dark-status.md) records the exact
