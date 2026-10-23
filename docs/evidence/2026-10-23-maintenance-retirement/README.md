@@ -1,10 +1,17 @@
 # Read-only maintenance retirement acceptance
 
-Checkpoint recorded 2026-10-23. M2-M4 and Starship/Snap M5 are accepted within
-these bounds. **Carbon remains unaccepted and unchanged:** repeated bounded
-operator SSH attempts timed out; Tailscale reported it offline, last seen at
-2026-10-23 16:00 UTC. Full-loop completion requires its live baseline, scoped
-selection/retirement and outbound-route acceptance when reachable.
+M0-M6 accepted within the adopted local-source/private-fleet endpoint,
+2026-10-23. All three hosts now select the qualified read-only pair and have
+retired the managed writer and standalone active hosting. Carbon became
+reachable for its fresh baseline and scoped rollout after the initial two-host
+checkpoint. The [requirement audit](audit-coverage.json) records the evidence
+for every checkpoint and required acceptance item.
+
+Carbon's local Codex feed reported unavailable with zero members both before
+and after the change. That negative state remains truthful; no native Codex
+session was started or claimed accepted there. Its passive services and actual
+outbound reads are accepted. Publication and hardware acceptance remain outside
+this endpoint.
 
 ## Source, artifacts and consumers
 
@@ -55,15 +62,17 @@ selection/retirement and outbound-route acceptance when reachable.
 The reviewed managed source is Chezmoi candidate 79c6f9a, including the earlier
 four-file topology fix at 71f2c4a. The retirement-only patch was applied to each
 canonical source without resetting, stashing or committing concurrent work.
-Canonical source HEADs remain Starship 7633b195 and Snap 34627be4; owned applied
-source deltas are retained, with their exact preimages in private recovery.
+Canonical source HEADs remain Starship/Carbon 7633b195 and Snap 34627be4;
+owned applied source deltas and their exact preimages remain in private recovery.
 Snap's unrelated package manifest and committed Codex work are preserved.
 
-[Per-host acceptance](two-host-acceptance.json) proves installed/running new
-collector and working-set bytes, four retired targets absent, obsolete socket
-absent and repeat scoped apply/cleanup converged. Only the Default collector and
-working-set publisher restarted on Starship; Snap additionally restarted Work's
-separate pair. All baseline native process identities survived (4 and 20),
+[Per-host acceptance](fleet-acceptance.json) and
+[final verification](final-fleet-verification.json) prove installed/running new
+collector and working-set bytes, four retired targets and the obsolete socket
+absent per host, and repeat scoped apply/cleanup converged. Only the Default
+collector and working-set publisher restarted on Starship/Carbon; Snap also
+restarted Work's separate pair. Every native process identity captured immediately
+before each apply survived its bounded window (Starship 4, Snap 20 and Carbon 1),
 along with unchanged full bridge, Tmux and dashboard process births, SSH history,
 Agent Plus configuration and dashboard selections. No firmware, provider
 settings, native lifecycle action or unrelated upgrade was performed.
@@ -77,25 +86,35 @@ conflict after intentional byte-exact rollback was overridden only for the
 captured pilot targets after exact source/live preimage checks and another
 scoped diff/dry-run; no unrelated conflict was overwritten.
 
-Live Host Mesh lists remain Starship/Snap only, with successful reads in both
-allowed directions. Source checks cover Carbon -> Snap/Starship and reject the
-reverse edges without connecting to Carbon. Carbon's actual outbound behavior
-awaits its own operator baseline; no automatic Carbon edge was added.
+Live Host Mesh lists remain Starship/Snap only on those two hosts, with
+successful reads in both allowed directions. Carbon lists itself, Snap and
+Starship, and [actual cached reads](carbon-reads.json) reach both permitted
+peers, including Snap's separately selected Work source. Installed public
+reader checks reject Carbon from Starship and Snap with unknown_host before
+any connection attempt. No automatic reverse Carbon edge was added. Carbon's
+live SSH configuration remains byte-identical across the source policy fix.
+
+Native identity receipts prove preservation during each scoped change, rather
+than indefinite client lifetime. At the later closeout, one Starship frontend
+client had departed and two Snap Claude clients had been replaced; all surviving
+managed service process births still matched their accepted rollout. No native
+session control action was performed by this loop.
 
 Software producer/consumer acceptance does not claim GUI or physical display
 acceptance. The dashboard bundle, firmware and wire were preserved.
 
-## Recovery and remaining work
+## Recovery and remaining publication boundary
 
 Private logs, wheel archives, deployment drivers and full preimages are under
 /home/bryan/.cache/agent-ecosystem-maintenance-20261023 on the owning hosts;
-Snap's receipts are additionally captured locally. The source patch excludes
-unrelated source work. Historical installed prefixes were not purged.
+Snap and Carbon's receipts are additionally captured locally. Carbon's separate
+four-file topology preimages precede its retirement patch. Historical installed
+prefixes were not purged. The [initial two-host receipt](two-host-acceptance.json)
+remains dated evidence; the all-host files above supersede its pending endpoint.
 
-When Carbon is reachable: capture its source/role/native baseline first, compare
-its owned preimages rather than assuming Starship's state, preserve its two
-outbound peers, stage/verify the same pair, review scoped status/diff/dry-run,
-apply only its owned collector/working-set targets, qualify local/outbound reads,
-then execute exact cleanup and repeat-apply/startup checks. Stop on an owner
-conflict or unexplained difference. Update this receipt and the execution ledger
-only after those gates pass. No further product-policy decision is required.
+The maintained local candidates and reviewed canonical source deltas are
+retained for subsequent owner-reviewed promotion. No remote push, public wheel
+or tag publication, Tmux hosted-a9 supply claim, firmware change or GUI/device
+acceptance was made. There is no remaining M0-M6 task within this adopted
+endpoint. Future public promotion/release is a separate action and must use the
+exact recorded runtime and artifact provenance.

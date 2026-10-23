@@ -1,0 +1,104 @@
+[
+  {
+    "host": "starship",
+    "observedAt": "2026-10-23T20:57:50.254289+00:00",
+    "newPair": "Observer 0.7.0a9 / Mesh 0.1.0a25",
+    "retiredTargetsAbsent": true,
+    "obsoleteSocketAbsent": true,
+    "repeatApplyConverged": true,
+    "newPairRunningUnits": [
+      "agent-observer.service",
+      "mesh-plus-agent-working-set.service"
+    ],
+    "retainedUnits": [
+      "mesh-plus-agent.service",
+      "rlcd-agent-dashboard.service",
+      "tmux-observer-desktop.service",
+      "tmux-observer-fleet@51730cbc2d9e93b6a6cc13c7ce209c64.service",
+      "tmux-observer-owner@starship.service"
+    ],
+    "nativeIdentityCountPreservedAtApply": 4,
+    "nativeProcessesAtLaterCloseout": 3,
+    "sourceHeadBefore": "7633b195fb199541e9dd9e2658ecc6edf6be167c",
+    "sourceHeadAfter": "7633b195fb199541e9dd9e2658ecc6edf6be167c",
+    "packageManifestPreservedAtApply": true,
+    "effectiveHostIds": [
+      "starship",
+      "snap"
+    ],
+    "localObservation": {
+      "state": "complete",
+      "members": 13,
+      "snapWorkMembers": null
+    }
+  },
+  {
+    "host": "snap",
+    "observedAt": "2026-10-23T20:57:50.559035+00:00",
+    "newPair": "Observer 0.7.0a9 / Mesh 0.1.0a25",
+    "retiredTargetsAbsent": true,
+    "obsoleteSocketAbsent": true,
+    "repeatApplyConverged": true,
+    "newPairRunningUnits": [
+      "agent-observer-profile-work.service",
+      "agent-observer.service",
+      "mesh-plus-agent-working-set-work.service",
+      "mesh-plus-agent-working-set.service"
+    ],
+    "retainedUnits": [
+      "mesh-plus-agent.service",
+      "rlcd-agent-dashboard.service",
+      "tmux-observer-desktop.service",
+      "tmux-observer-fleet@318e336b2981462bf5e88d08bfdff213.service",
+      "tmux-observer-owner@snap.service"
+    ],
+    "nativeIdentityCountPreservedAtApply": 20,
+    "nativeProcessesAtLaterCloseout": 20,
+    "sourceHeadBefore": "34627be4d2abc037b47c913c0d42a7b2db286dc8",
+    "sourceHeadAfter": "34627be4d2abc037b47c913c0d42a7b2db286dc8",
+    "packageManifestPreservedAtApply": true,
+    "effectiveHostIds": [
+      "snap",
+      "starship"
+    ],
+    "localObservation": {
+      "state": "complete",
+      "members": 5,
+      "snapWorkMembers": 1
+    }
+  },
+  {
+    "host": "carbon",
+    "observedAt": "2026-10-23T20:57:50.680006+00:00",
+    "newPair": "Observer 0.7.0a9 / Mesh 0.1.0a25",
+    "retiredTargetsAbsent": true,
+    "obsoleteSocketAbsent": true,
+    "repeatApplyConverged": true,
+    "newPairRunningUnits": [
+      "agent-observer.service",
+      "mesh-plus-agent-working-set.service"
+    ],
+    "retainedUnits": [
+      "mesh-plus-agent.service",
+      "tmux-observer-desktop.service",
+      "tmux-observer-fleet@c9f23d9619abdbfc9db9b90a4c261ae4.service",
+      "tmux-observer-owner@carbon.service"
+    ],
+    "nativeIdentityCountPreservedAtApply": 1,
+    "nativeProcessesAtLaterCloseout": 1,
+    "sourceHeadBefore": "7633b195fb199541e9dd9e2658ecc6edf6be167c",
+    "sourceHeadAfter": "7633b195fb199541e9dd9e2658ecc6edf6be167c",
+    "packageManifestPreservedAtApply": true,
+    "effectiveHostIds": [
+      "carbon",
+      "snap",
+      "starship"
+    ],
+    "localObservation": {
+      "state": "unavailable",
+      "members": 0,
+      "matchesPreUpgrade": true,
+      "liveCodexSessionAcceptance": false
+    }
+  }
+]

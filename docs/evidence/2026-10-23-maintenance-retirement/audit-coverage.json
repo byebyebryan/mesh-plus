@@ -1,0 +1,129 @@
+{
+  "status": "accepted",
+  "scope": "M0-M6 local source candidates and private managed rollout; no public promotion, publication or firmware acceptance",
+  "checkpoints": [
+    {
+      "id": "M0",
+      "status": "accepted",
+      "evidence": [
+        "fleet-acceptance.json",
+        "per-host original before.json and selector/unit/process preimages in private recovery"
+      ],
+      "coverage": "All three hosts and Snap Default/Work; Carbon fresh baseline captured before its rollout"
+    },
+    {
+      "id": "M1",
+      "status": "accepted",
+      "evidence": [
+        "maintained-lineage.json",
+        "Mesh baseline 483 cases and Observer baseline 1206 cases"
+      ],
+      "coverage": "Local main-promotion candidates extend maintained/released lineage; original refs/worktrees and default-off gates preserved; hosted Tmux a9 promotion excluded"
+    },
+    {
+      "id": "M2",
+      "status": "accepted",
+      "evidence": [
+        "Observer d33f62d",
+        "1210-case extraction/CLI gate",
+        "installed311-final.log: 49 cases, zero skips"
+      ],
+      "coverage": "Public cached list/bounded watch, active lease filter, explicit home/source and neutral projection helpers"
+    },
+    {
+      "id": "M3",
+      "status": "accepted",
+      "evidence": [
+        "Chezmoi 79c6f9a",
+        "RLCD 768b50d",
+        "dashboard-consumer.log: 19 cases",
+        "mixed-pair-dashboard.json",
+        "live dashboard reads and pilot watch receipts"
+      ],
+      "coverage": "Working-set inherited defaults; obsolete active benchmark withdrawn; exact immutable dashboard SDK/bundle retained and qualified"
+    },
+    {
+      "id": "M4",
+      "status": "accepted",
+      "evidence": [
+        "artifacts.json",
+        "final-public-api.json",
+        "Observer 1138-case gate",
+        "Mesh 480-case canonical gate",
+        "final-fleet-verification.json"
+      ],
+      "coverage": "Writer and standalone active implementation/entrypoint/current API/registration withdrawn; explicit old-request rejection without alias or provider work; frozen surviving bytes preserved"
+    },
+    {
+      "id": "M5",
+      "status": "accepted",
+      "evidence": [
+        "fleet-acceptance.json",
+        "final-fleet-verification.json",
+        "carbon-reads.json",
+        "Starship rollback.json and dashboard-rollback-watch.json"
+      ],
+      "coverage": "All three hosts; exact guarded cleanup and repeated scoped apply; pilot rollback/reselection; source and live selectors, package bytes, native identities at apply and independent role pins"
+    },
+    {
+      "id": "M6",
+      "status": "accepted",
+      "evidence": [
+        "README.md",
+        "artifacts.json",
+        "maintained-lineage.json",
+        "fleet-acceptance.json",
+        "final-fleet-verification.json",
+        "audit-coverage.json"
+      ],
+      "coverage": "Attributable source/artifact/consumer/host evidence, recovery, publication boundary and Carbon baseline limitation recorded"
+    }
+  ],
+  "requiredAcceptance": [
+    {
+      "requirement": "Working-set covers the old active membership",
+      "evidence": "test_read_only_retirement same-input nine-case pre-retirement identity oracle; test_working_set_projection active/old/unknown activity cases",
+      "result": "pass"
+    },
+    {
+      "requirement": "Broader membership remains intentional",
+      "evidence": "test_working_set_projection recent parked/unknown, quiet cutoffs, runtime expiry with recent-only retention",
+      "result": "pass"
+    },
+    {
+      "requirement": "Source truth survives",
+      "evidence": "test_current_summary complete-empty versus unavailable, two homes, quiet expiry, cancellation and sibling preservation; capture/registered SDK clock/incarnation cases; Carbon unavailable baseline retained",
+      "result": "pass"
+    },
+    {
+      "requirement": "Shared code survives removal",
+      "evidence": "Neutral projection_support/projection_fields, 1138-case Observer gate, 37 locked Mesh inputs and 28 identical packaged schemas, retained default-off sync gates",
+      "result": "pass"
+    },
+    {
+      "requirement": "Retirement is complete",
+      "evidence": "Installed entrypoint/module and exact wheel verification; explicit native/Mesh negative tests; all twelve managed targets and three active sockets absent, retired units not-found/inactive; repeat apply converges",
+      "result": "pass"
+    },
+    {
+      "requirement": "Existing products survive",
+      "evidence": "Full reads, current working-set/dashboard reads and exact home checks; native and unrelated full/Tmux/dashboard process preservation at each apply; independent artifact selections unchanged",
+      "result": "pass within software and rollout scope"
+    },
+    {
+      "requirement": "Topology survives",
+      "evidence": "Known/unknown-host source matrix; live directional host lists; actual allowed reads from owning hosts; installed Starship/Snap Carbon requests rejected with zero connection attempts",
+      "result": "pass"
+    },
+    {
+      "requirement": "Rollout is attributable",
+      "evidence": "Exact runtime/qualification commits and wheel hashes; separate current source, installed byte, running PID, SDK/bundle and read receipts; no physical/GUI acceptance inferred",
+      "result": "pass"
+    }
+  ],
+  "limitations": [
+    "Carbon local Codex observation was unavailable with zero members before and after selection; no native Codex session was started or claimed accepted there. Its collector/working-set delivery and allowed remote reads are accepted.",
+    "Native process identity preservation is scoped to each apply and pilot rollback/reselection. Later closeout observed a Starship frontend-client departure and Snap Claude client replacement after their earlier acceptance; no service process changed between accepted rollout and final closeout.",
+    "Protected main/public CI promotion, artifact publication, firmware/physical display acceptance and prefix purging remain outside the adopted endpoint."
+  ]
+}
