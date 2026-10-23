@@ -1,0 +1,56 @@
+[
+  {
+    "repo": "mesh-plus",
+    "candidate": "8ca467f2e37b5794861b46ca8b40eb8b301f6ca9",
+    "candidateBranch": "maintenance-retirement-20261023",
+    "main": "3b7582d53debf5e539db4a6d5cd6b246171f8f19",
+    "observedOriginMain": "7c30fc92caf03476e239c10a3bb8cad97f365d90",
+    "mainIsAncestor": true,
+    "aheadOfMain": 133
+  },
+  {
+    "repo": "agent-observer",
+    "candidate": "b72089d7aae2144d6244025cfc3c89277b962db1",
+    "candidateBranch": "maintenance-retirement-20261023",
+    "main": "b08db36162577e6f1ee9f2f9a366e021517d2a8d",
+    "observedOriginMain": "85c1c6489debdec06b967db25f4c326389ca2816",
+    "mainIsAncestor": true,
+    "aheadOfMain": 122
+  },
+  {
+    "repo": "rofi-ssh-plus",
+    "candidate": "11d6be18fa2715255bafd3e284a6910fb50c0a92",
+    "candidateBranch": "ecosystem-realignment-20261023",
+    "main": "470dd89db0bd881f70e5dfc623a07b8ad932ca65",
+    "observedOriginMain": "470dd89db0bd881f70e5dfc623a07b8ad932ca65",
+    "mainIsAncestor": true,
+    "aheadOfMain": 1
+  },
+  {
+    "repo": "rofi-agent-plus",
+    "candidate": "3b11f50923019b82a98b26fdf4a8bc4b8030c5d3",
+    "candidateBranch": "ecosystem-realignment-20261023",
+    "main": "62d9bc587049be52d955592291055d23754d2968",
+    "observedOriginMain": "62d9bc587049be52d955592291055d23754d2968",
+    "mainIsAncestor": true,
+    "aheadOfMain": 1
+  },
+  {
+    "repo": "tmux-observer",
+    "candidate": "db63675bf0cc25042ce02a309ac1636c750566dd",
+    "candidateBranch": "ecosystem-realignment-20261023",
+    "main": "7e14d799796a96b81f3a35947a7ed3c535701bf2",
+    "observedOriginMain": "7e14d799796a96b81f3a35947a7ed3c535701bf2",
+    "mainIsAncestor": true,
+    "aheadOfMain": 4
+  },
+  {
+    "repo": "rofi-tmux-plus",
+    "candidate": "0bc11bab737695d3883839f184cc99f84c0400a6",
+    "candidateBranch": "ecosystem-realignment-20261023",
+    "main": "236ee8aaaaf14d14aa3861c3da8965c1a3d27071",
+    "observedOriginMain": "236ee8aaaaf14d14aa3861c3da8965c1a3d27071",
+    "mainIsAncestor": true,
+    "aheadOfMain": 3
+  }
+]

@@ -1,0 +1,56 @@
+{
+  "observer": {
+    "manifestVersion": 6,
+    "package": "agent-observer",
+    "version": "0.7.0a9",
+    "wheel": "agent_observer-0.7.0a9-py3-none-any.whl",
+    "wheelSha256": "d68aaaf42cb2e86b14320437c6ee164f8a389a34e0bb1dffdf8c6ca8f3c4252a",
+    "sourceRevision": "31f08f9c9da3bcd8f6139f6693e06f41cf1ef1b3",
+    "apiVersion": 4,
+    "schemas": {
+      "snapshot": 6,
+      "watch": 6
+    },
+    "service": {
+      "protocol": 4,
+      "schemas": {
+        "request": 4,
+        "frame": 4
+      }
+    },
+    "entrypoints": [
+      "agent-observer",
+      "agent-observer-service"
+    ],
+    "nativeContracts": [
+      "codex_daemon_status_v2",
+      "codex_database_only_catalog_v1",
+      "codex_saved_native_timing_v1",
+      "codex_client_system_classification_v1"
+    ],
+    "notes": [
+      "Private qualified-candidate staging; no public publication claim.",
+      "Read-only API4/snapshot6/Service4 with ordinary working-set1 and full reads; paired Mesh 0.1.0a25.",
+      "Writer and standalone active-only dispatch retired; shared projection helpers and independent active/recent working-set membership preserved.",
+      "Delta and view-feed remain unselected; immutable old role pins and recovery inputs remain independent."
+    ],
+    "retiredCapabilities": [
+      "write",
+      "active-feed"
+    ],
+    "pairedMesh": {
+      "version": "0.1.0a25",
+      "wheel": "mesh_plus-0.1.0a25-py3-none-any.whl",
+      "wheelSha256": "0055e42162827744add4f817d3918cfc20471e5ec5a3cdf0840d254f76f5dc3a",
+      "sourceRevision": "8ca467f2e37b5794861b46ca8b40eb8b301f6ca9"
+    }
+  },
+  "mesh": {
+    "version": "0.1.0a25",
+    "wheel": "mesh_plus-0.1.0a25-py3-none-any.whl",
+    "wheelSha256": "0055e42162827744add4f817d3918cfc20471e5ec5a3cdf0840d254f76f5dc3a",
+    "sourceRevision": "8ca467f2e37b5794861b46ca8b40eb8b301f6ca9"
+  },
+  "prefix": "/home/bryan/.local/share/agent-observer/0.7.0a9-d68aaaf4-ws72-m0055e421",
+  "publication": "private-candidate; not published"
+}

@@ -9,11 +9,11 @@ remain outside this run.
 | --- | --- | --- |
 | M0 Baseline | Source and two hosts captured; Carbon pending | Directional graph confirmed on Starship/Snap; Carbon operator SSH timed out |
 | M1 Maintained lineage | Local candidates established | Isolated worktrees preserve released lineage, prior loop and topology fix; baseline owning gates pass |
-| M2 Read usability / common code | In progress | Shared helpers extracted; 17 lifecycle and 4 CLI tests pass; local cached CLI smoke passes; full owning gate running |
-| M3 Consumer migration | Pending | Dashboard already selects working-set with an independent SDK tuple; evaluate compatibility without an unnecessary bundle upgrade |
-| M4 Source / artifacts | Pending | Withdraw writer and active-only dispatch after shared extraction is accepted |
-| M5 Managed retirement | Pending | No live selection or service changes yet; Carbon required for full completion |
-| M6 Closeout | Pending | Exact source/artifact/consumer/host acceptance required |
+| M2 Read usability / common code | Accepted | Cached working-set list/watch and neutral projection helpers; 1,210-case owning gate and real cached CLI smoke pass |
+| M3 Consumer migration | Accepted in source/controlled consumer | Inherited dashboard defaults use working-set; 19 consumer cases and old installed dashboard SDK against new installed producer pass; live acceptance remains M5 |
+| M4 Source / artifacts | Accepted | Observer a9/Mesh a25 wheels; 1,138-case Observer gate, Mesh canonical gate, 49 Python 3.11 installed cases, installed-byte and capability checks pass |
+| M5 Managed retirement | Starship/Snap accepted; Carbon pending | New pair selected, legacy targets/hosting absent, repeat apply converged; Starship rollback/reselection passed; Carbon offline and unchanged |
+| M6 Closeout | Two-host handoff recorded; full completion pending | [Acceptance and resume boundary](evidence/2026-10-23-maintenance-retirement/README.md); Carbon remains required |
 
 ## Inputs and ownership
 
@@ -31,7 +31,8 @@ the local source parent.
 Private metadata receipts, logs and candidate staging are under
 `/home/bryan/.cache/agent-ecosystem-maintenance-20261023/`.
 The three-host probe saved Starship/Snap baselines and recorded Carbon's bounded
-SSH failure. No provider query, native action or live mutation was performed.
+SSH failure. The baseline used no provider query, native action or live mutation. Subsequent
+scoped live changes are recorded in the acceptance receipt.
 
 Mesh's baseline canonical gate and Observer's 1,206-case required-working-set
 gate pass in a new isolated editable development environment with the correct
@@ -49,3 +50,17 @@ selectors, configuration, process births and provider-independent consumer
 results before a scoped apply. Carbon's unavailable state cannot be counted as
 retirement acceptance. The user has been asked to bring it online while source
 work continues. Preserve the corrected graph throughout.
+
+## Accepted live checkpoint
+
+Observer a9/Mesh a25 now runs the Starship Default and Snap Default/Work
+collector/working-set roles. Four legacy targets and the active socket are absent
+on both hosts. Full/Tmux/dashboard roles and native sessions are preserved. The
+Starship pilot exercised captured rollback and finished reselected/retired.
+Canonical source heads remain unchanged with the reviewed owned deployment
+delta retained; Snap's unrelated source/package work is preserved.
+
+Carbon remains offline (Tailscale last seen 16:00 UTC; bounded SSH retries timed
+out), with no source or live mutation. M5/M6 cannot be marked fully complete.
+The [receipt](evidence/2026-10-23-maintenance-retirement/README.md) records exact
+artifacts, source candidates, independent role pins, recovery and resume steps.
