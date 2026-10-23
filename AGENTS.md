@@ -4,6 +4,12 @@ Start with `README.md` and `docs/handoff.md`. `docs/contract-freeze.md` and
 `contracts/LOCK.json` define the accepted state-only boundary. Historical studies
 and reserved schemas do not advertise additional runtime capabilities.
 
+`docs/ecosystem-role.md` describes the native-runtime ecosystem. Mesh/SSH remain
+the multi-host backbone. Agent Observer supplies Codex read-only observations;
+Agent Plus independently opens native Codex/Claude managers through Host Mesh.
+Tmux's generic workflows remain supported. Do not restore the former
+Agent Plus -> Tmux -> agent-runtime dependency through a cleanup or migration.
+
 Preserve the frozen wire contract and packaged schema bytes. A normative change
 requires explicit review; do not regenerate the lock merely to make checks pass.
 Compatible implementation fixes do not require a wire rename.

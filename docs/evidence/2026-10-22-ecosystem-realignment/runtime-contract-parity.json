@@ -1,0 +1,41 @@
+{
+  "scope": "Tracked producer/transport/frontend runtime and contract files compared with protected starting worktrees. New developer example and tests are separate.",
+  "repositories": [
+    {
+      "repo": "mesh-plus-view-feed",
+      "executionTree": "mesh-plus-ecosystem-plan-20261022",
+      "trackedRuntimeAndContractFilesCompared": 188,
+      "changed": []
+    },
+    {
+      "repo": "agent-observer-working-set",
+      "executionTree": "agent-observer-ecosystem-20261023",
+      "trackedRuntimeAndContractFilesCompared": 100,
+      "changed": []
+    },
+    {
+      "repo": "tmux-observer-view-feed-20261020",
+      "executionTree": "tmux-observer-ecosystem-20261023",
+      "trackedRuntimeAndContractFilesCompared": 174,
+      "changed": []
+    },
+    {
+      "repo": "rofi-ssh-plus",
+      "executionTree": "rofi-ssh-plus-ecosystem-20261023",
+      "trackedRuntimeAndContractFilesCompared": 48,
+      "changed": []
+    },
+    {
+      "repo": "rofi-agent-plus",
+      "executionTree": "rofi-agent-plus-ecosystem-20261023",
+      "trackedRuntimeAndContractFilesCompared": 64,
+      "changed": []
+    },
+    {
+      "repo": "rofi-tmux-plus-mesh-a24-20261020",
+      "executionTree": "rofi-tmux-plus-ecosystem-20261023",
+      "trackedRuntimeAndContractFilesCompared": 129,
+      "changed": []
+    }
+  ]
+}

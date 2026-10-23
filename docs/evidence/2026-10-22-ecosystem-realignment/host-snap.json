@@ -1,0 +1,609 @@
+{
+  "observedAt": "2026-10-23T07:08:07.327129+00:00",
+  "hostname": "80H1VV3",
+  "uid": 1000,
+  "bootId": "eda0f0ce-5494-4ec7-982f-05861c999557",
+  "scope": "Selectors, unit metadata and process identity only; no provider state or device acceptance.",
+  "selectors": {
+    "mesh-plus": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/mesh-plus",
+      "sha256": "c1540f24c0b85c1fe44b4f914509239d37ec4f8a89f991a0d5970427bd2f524f"
+    },
+    "mesh-plus-active": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/mesh-plus-active",
+      "sha256": "45274218a256f579e90b30106654b39b69693396050f4b4c7d05ae515e56a05d"
+    },
+    "mesh-plus-working-set": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/mesh-plus-working-set",
+      "sha256": "63928ad9cb39c5acb317a935893a86cf8c5336b9a8e54e35ec354223416e53e3"
+    },
+    "mesh-plus-tmux": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/mesh-plus-tmux",
+      "sha256": "d03782afebe81fc2c1f9f5b6e2a858615ff0e58e078cfa05435de0e4cfc52aa1"
+    },
+    "rofi-ssh-plus": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/rofi-ssh-plus",
+      "sha256": "eab686234450931f268547defeea75a886a59d6772196e4194b20a7900944d22"
+    },
+    "rofi-agent-plus": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/rofi-agent-plus/0.15.0a14-df62166955b5e8bd/bin/rofi-agent-plus",
+      "sha256": "fe610199f84246415e336c4165d9020f5b9ab64ffbd1bef3f754e789150547bb"
+    },
+    "rofi-agent-plus-host": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/rofi-agent-plus/0.15.0a14-df62166955b5e8bd/bin/rofi-agent-plus-host",
+      "sha256": "3cbfff64ff7eb900592292e833511234dff2dc97fee702a0af77531e6c83d491"
+    },
+    "rofi-tmux-plus": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/rofi/extensions/tmux-plus/bin/rofi-tmux-plus",
+      "sha256": "ae330f7c77a6d2833003f8281cb4fdc6a60d5360fdfc483a739dc1376ca9d497"
+    },
+    "agent-observer": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/agent-observer/0.7.0a5-25cd5663560c973b-cpu/bin/agent-observer",
+      "sha256": "0fc1095ed39b399a759e5ebae3a5737dd50f53e3921fa71ebce10431c66399be"
+    },
+    "agent-observer-service": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/agent-observer-service",
+      "sha256": "1df7f8bceff8a452f82e1f696b3e26dff76204a1a563b84e1b0634299da0fbec"
+    },
+    "agent-observer-write": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/agent-observer/0.4.0a16-a9c13aee3d04144c/bin/agent-observer-write",
+      "sha256": "a153167edef82c80ee0587b3a55af57be810ebc4efa9d08beb6d8976b4b09a11"
+    },
+    "tmux-observer": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/tmux-observer/bin/tmux-observer",
+      "sha256": "0f25fe4887a4516cdcff5b2cfb2ffafdc4d1f376977cecb28134b41395200a08"
+    },
+    "tmux-observer-client": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/tmux-observer/bin/tmux-observer-client",
+      "sha256": "aaa7d415a03abe838d282e4f6b0128d11e2b774392ba59d7d989ddbfaddfa510"
+    },
+    "rlcd-agent-dashboard": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/rlcd-agent-dashboard",
+      "sha256": "37a2a5d191ca84b676b2ef9f501c69c8bd2ecfd885024dd852efb5d1f6bfbdb3"
+    }
+  },
+  "units": [
+    {
+      "unit": "agent-observer-profile-work.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/agent-observer-profile-work.service",
+        "MainPID": "1859753",
+        "ExecMainStartTimestampMonotonic": "696324175236"
+      },
+      "process": {
+        "pid": 1859753,
+        "parent": 1772,
+        "startTicks": 69636913,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "agent-observer-",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/python",
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/agent-observer-service"
+        ]
+      }
+    },
+    {
+      "unit": "agent-observer.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/agent-observer.service",
+        "MainPID": "1859746",
+        "ExecMainStartTimestampMonotonic": "696324128881"
+      },
+      "process": {
+        "pid": 1859746,
+        "parent": 1772,
+        "startTicks": 69636909,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "agent-observer-",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/python",
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/agent-observer-service"
+        ]
+      }
+    },
+    {
+      "unit": "mesh-plus-agent-active.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/mesh-plus-agent-active.service",
+        "MainPID": "723865",
+        "ExecMainStartTimestampMonotonic": "223826928018"
+      },
+      "process": {
+        "pid": 723865,
+        "parent": 1772,
+        "startTicks": 22387188,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "mesh-plus-activ",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a7-5eafd4c1-active-feed/bin/python"
+        ]
+      }
+    },
+    {
+      "unit": "mesh-plus-agent-working-set-work.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/mesh-plus-agent-working-set-work.service",
+        "MainPID": "1859778",
+        "ExecMainStartTimestampMonotonic": "696324752137"
+      },
+      "process": {
+        "pid": 1859778,
+        "parent": 1772,
+        "startTicks": 69636971,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "mesh-plus-worki",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/python"
+        ]
+      }
+    },
+    {
+      "unit": "mesh-plus-agent-working-set.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/mesh-plus-agent-working-set.service",
+        "MainPID": "1859775",
+        "ExecMainStartTimestampMonotonic": "696324738212"
+      },
+      "process": {
+        "pid": 1859775,
+        "parent": 1772,
+        "startTicks": 69636969,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "mesh-plus-worki",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/python"
+        ]
+      }
+    },
+    {
+      "unit": "mesh-plus-agent.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/mesh-plus-agent.service",
+        "MainPID": "1428945",
+        "ExecMainStartTimestampMonotonic": "189738887939"
+      },
+      "process": {
+        "pid": 1428945,
+        "parent": 1772,
+        "startTicks": 18978384,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "mesh-plus",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a5-25cd5663560c973b-cpu/bin/python3",
+          "/home/bryan/.local/share/agent-observer/0.7.0a5-25cd5663560c973b-cpu/bin/mesh-plus"
+        ]
+      }
+    },
+    {
+      "unit": "rlcd-agent-dashboard.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/rlcd-agent-dashboard.service",
+        "MainPID": "1752328",
+        "ExecMainStartTimestampMonotonic": "731867959065"
+      },
+      "process": {
+        "pid": 1752328,
+        "parent": 1772,
+        "startTicks": 73191292,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "python",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/python",
+          "/home/bryan/.local/share/rlcd-agent-dashboard/164b7f99c40e7676/scripts/live-dashboard.py"
+        ]
+      }
+    },
+    {
+      "unit": "tmux-observer-desktop.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "exited",
+        "FragmentPath": "/home/bryan/.config/systemd/user/tmux-observer-desktop.service",
+        "MainPID": "0",
+        "ExecMainStartTimestampMonotonic": "714954353458"
+      },
+      "process": null
+    },
+    {
+      "unit": "tmux-observer-fleet@318e336b2981462bf5e88d08bfdff213.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/tmux-observer-fleet@.service",
+        "MainPID": "226453",
+        "ExecMainStartTimestampMonotonic": "714954458219"
+      },
+      "process": {
+        "pid": 226453,
+        "parent": 1772,
+        "startTicks": 71499941,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "tmux-observer-c",
+        "artifactPaths": [
+          "/home/bryan/.local/share/tmux-observer/bin/tmux-observer-client"
+        ]
+      }
+    },
+    {
+      "unit": "tmux-observer-owner@snap.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/tmux-observer-owner@.service",
+        "MainPID": "2507515",
+        "ExecMainStartTimestampMonotonic": "624080695346"
+      },
+      "process": {
+        "pid": 2507515,
+        "parent": 1772,
+        "startTicks": 62412565,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "tmux-observer",
+        "artifactPaths": [
+          "/home/bryan/.local/share/tmux-observer/bin/tmux-observer"
+        ]
+      }
+    }
+  ],
+  "nativeProcesses": [
+    {
+      "pid": 1006,
+      "parent": 975,
+      "startTicks": 77716137,
+      "uid": 1000,
+      "executable": "/opt/openai-codex/bin/codex",
+      "comm": "codex",
+      "artifactPaths": []
+    },
+    {
+      "pid": 1747,
+      "parent": 1719,
+      "startTicks": 77718514,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 2995,
+      "parent": 2975,
+      "startTicks": 77719446,
+      "uid": 1000,
+      "executable": "/opt/openai-codex/bin/codex",
+      "comm": "codex",
+      "artifactPaths": []
+    },
+    {
+      "pid": 12353,
+      "parent": 1772,
+      "startTicks": 16826,
+      "uid": 1000,
+      "executable": "/usr/bin/tmux",
+      "comm": "tmux: server",
+      "artifactPaths": []
+    },
+    {
+      "pid": 148639,
+      "parent": 1772,
+      "startTicks": 21553280,
+      "uid": 1000,
+      "executable": "/home/bryan/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex",
+      "comm": "codex",
+      "artifactPaths": []
+    },
+    {
+      "pid": 148860,
+      "parent": 1772,
+      "startTicks": 21553308,
+      "uid": 1000,
+      "executable": "/home/bryan/.codex-work/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex",
+      "comm": "codex",
+      "artifactPaths": []
+    },
+    {
+      "pid": 493112,
+      "parent": 1799541,
+      "startTicks": 71841520,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 493123,
+      "parent": 493112,
+      "startTicks": 71841525,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 499750,
+      "parent": 1799541,
+      "startTicks": 71866368,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 499770,
+      "parent": 499750,
+      "startTicks": 71866373,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 852755,
+      "parent": 1799541,
+      "startTicks": 72021660,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 852767,
+      "parent": 852755,
+      "startTicks": 72021665,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 1799541,
+      "parent": 1772,
+      "startTicks": 69557498,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 1799652,
+      "parent": 1799541,
+      "startTicks": 69557559,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 1799653,
+      "parent": 1799541,
+      "startTicks": 69557559,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 1799665,
+      "parent": 1799652,
+      "startTicks": 69557565,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 1799666,
+      "parent": 1799653,
+      "startTicks": 69557565,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 1926925,
+      "parent": 1799541,
+      "startTicks": 69740468,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 1926935,
+      "parent": 1926925,
+      "startTicks": 69740473,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 2140548,
+      "parent": 2140547,
+      "startTicks": 81296450,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 2143317,
+      "parent": 1799541,
+      "startTicks": 81298115,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 2143330,
+      "parent": 2143317,
+      "startTicks": 81298120,
+      "uid": 1000,
+      "executable": "/opt/claude-code/bin/claude",
+      "comm": "claude",
+      "artifactPaths": []
+    },
+    {
+      "pid": 2144588,
+      "parent": 2144587,
+      "startTicks": 81299478,
+      "uid": 1000,
+      "executable": "/opt/openai-codex/bin/codex",
+      "comm": "codex",
+      "artifactPaths": []
+    },
+    {
+      "pid": 2835265,
+      "parent": 148639,
+      "startTicks": 82431209,
+      "uid": 1000,
+      "executable": "/home/bryan/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex",
+      "comm": "codex",
+      "artifactPaths": []
+    },
+    {
+      "pid": 2864533,
+      "parent": 2864532,
+      "startTicks": 82586385,
+      "uid": 1000,
+      "executable": "/opt/openai-codex/bin/codex",
+      "comm": "codex",
+      "artifactPaths": []
+    },
+    {
+      "pid": 2870097,
+      "parent": 1772,
+      "startTicks": 82616114,
+      "uid": 1000,
+      "executable": "/home/bryan/.codex-work/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex",
+      "comm": "codex",
+      "artifactPaths": []
+    },
+    {
+      "pid": 4040864,
+      "parent": 1772,
+      "startTicks": 21370971,
+      "uid": 1000,
+      "executable": "/usr/bin/tmux",
+      "comm": "tmux: server",
+      "artifactPaths": []
+    },
+    {
+      "pid": 4040890,
+      "parent": 1772,
+      "startTicks": 21370981,
+      "uid": 1000,
+      "executable": "/usr/bin/tmux",
+      "comm": "tmux: server",
+      "artifactPaths": []
+    },
+    {
+      "pid": 4040945,
+      "parent": 1772,
+      "startTicks": 21371019,
+      "uid": 1000,
+      "executable": "/usr/bin/tmux",
+      "comm": "tmux: server",
+      "artifactPaths": []
+    },
+    {
+      "pid": 4041066,
+      "parent": 1772,
+      "startTicks": 21371255,
+      "uid": 1000,
+      "executable": "/usr/bin/tmux",
+      "comm": "tmux: server",
+      "artifactPaths": []
+    }
+  ],
+  "configuration": {
+    ".config/rofi-agent-plus/direct.toml": {
+      "exists": true,
+      "resolved": "/home/bryan/.config/rofi-agent-plus/direct.toml",
+      "sha256": "1aecbd5ee286935ce5989d5aebab9f2cdcca849a349ea5c6fe5b659e48301aa6"
+    },
+    ".config/agent-observer/profiles.toml": {
+      "exists": true,
+      "resolved": "/home/bryan/.config/agent-observer/profiles.toml",
+      "sha256": "bf0f4a6b5d0683a33da257671cdde2511dede61da5ff72abb07749d0fb97f562"
+    },
+    ".config/rlcd-agent-dashboard/selection.json": {
+      "exists": true,
+      "resolved": "/home/bryan/.config/rlcd-agent-dashboard/selection.json",
+      "sha256": "cbc23dfa2aac25ea109495e9e0518c509530cfdb7d84da49201eb99714680411",
+      "selection": {
+        "bundle": ".local/share/rlcd-agent-dashboard/164b7f99c40e7676",
+        "dependencies": {
+          "admission": 1,
+          "api": 4,
+          "memberLease": 1,
+          "mesh": "0.1.0a24",
+          "nativeVersion": 1,
+          "observer": "0.7.0a8",
+          "preparation": 1,
+          "profile": "agent-observer.mesh-working-set.v1",
+          "read": 2,
+          "scopeLease": 1,
+          "sdk": 1,
+          "selection": 1,
+          "service": 4,
+          "windowMs": 259200000,
+          "workingSetRead": 1
+        },
+        "manifestSha256": "164b7f99c40e767655c94ee907d34b7b8825bb6433a9a70e11be940f8788eb59",
+        "python": ".local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/python",
+        "sourceRevision": "629af3721b9ffc6218060c839d22472cf1b808e0"
+      }
+    },
+    ".config/rlcd-agent-dashboard/profiles.json": {
+      "exists": true,
+      "resolved": "/home/bryan/.config/rlcd-agent-dashboard/profiles.json",
+      "sha256": "0adab2f71f254ef556eadfcf81a022253b83781081eecbbc62a68f335e3d2e4a",
+      "selection": {}
+    },
+    ".config/mesh-plus/sources.toml": {
+      "exists": true,
+      "resolved": "/home/bryan/.config/mesh-plus/sources.toml",
+      "sha256": "866d06ba34f8414b36c6d451133b7b2767db5cd90fbccd94ccb267ca60627169"
+    }
+  },
+  "logicalHostId": "snap"
+}

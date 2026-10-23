@@ -1,5 +1,11 @@
 # Mesh Plus architecture and decisions
 
+For current product responsibilities and capability support, start with the
+[ecosystem role guide](ecosystem-role.md). The design below retains its wire
+and ownership scope; source/artifact/host selection follows independent owner
+records. Agent Plus now uses host routing for native manager entry and does not
+consume the state-delivery branch.
+
 ## Contract first
 
 A configured fleet and a domain contract are inputs. Mesh Plus invokes that
@@ -21,9 +27,10 @@ flowchart LR
     B -->|SSH read channels| N
     N --> P[Domain profile and pure read facade]
     P --> TC[Tmux prepared coordinator and Plus]
-    P --> AC[Agent read clients and later Agent Plus]
+    P --> AC[Agent read utilities and dashboards]
     D[Desktop association] --> TC
     H --> S[SSH Plus picker]
+    H --> AP[Agent Plus native-manager entry]
 ```
 
 The bridge exports an owning host's configured source, never its aggregated
@@ -66,11 +73,11 @@ value or attached-client count as current on its own.
 | Keep session row schemas and exact identities | Host scope already exists in both Observers; transport cannot improve identity |
 | Add one shared mesh section | Local and fleet parsing use one shape and one failure model |
 | Keep domain metadata per owner | Coverage, namespaces and generations remain attributable and independently validatable |
-| Separate delivery completeness from source coverage | A successfully delivered partial Claude source remains partial |
+| Separate delivery completeness from source coverage | Successful delivery preserves a producer's partial coverage |
 | Start with cached snapshot and watch | Both owner services already share passive collection; a read must not trigger collection |
 | Preserve existing explicit direct diagnosis | Its invocation, collection behavior and old envelope do not change implicitly |
 | Use fixed source adapters in a host-local bridge | Freshness proof can wrap existing local cached reads without modifying providers |
-| Keep domain versions independent of Mesh version | Active Agent work must not force a Tmux release or old Agent Plus migration |
+| Keep domain versions independent of Mesh version | Agent observation work must not force a Tmux release or native-entry migration |
 | Extract a reusable delivery/session engine first | IPC, SSH and a future WSS backend share request/subscription semantics |
 | Support embedded and local per-user service topologies | Several consumers may share upstream channels without a central fleet broker |
 | Retain Tmux's existing coordinator initially | Desktop, refresh tickets and installed acceptance have separate authority |

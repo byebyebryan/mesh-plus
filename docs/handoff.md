@@ -2,11 +2,25 @@
 
 ## Current disposition
 
+Use the [ecosystem role guide](ecosystem-role.md) for current responsibility and
+interface ownership. Native provider managers own conversation control; Agent
+Plus is an independent entry/window client. Agent Observer is the read-only
+producer for utilities; Tmux observation/management remains independently useful.
+Mesh and SSH Plus remain their shared host/routing backbone.
+
+The 2026-10-23 role census observes independently selected SDKs: Agent
+working-set and Tmux full-view routes use a24, while Agent full/active routes and
+the SSH authority retain older reviewed packages. Owner deployment manifests,
+effective host overrides and installed launchers determine selection. Statements
+about live a23 selection in earlier checkpoint text retain their dated scope.
+Publication of a24 did not enable its opt-in feed protocol.
+
 Delta-sync development is stopped and retained as a **dark, gated feature**.
 The [owning status and Git handoff](delta-sync-dark-status.md) records the exact
 checkpoint, failed CPU/capacity gates, resume criteria and protected lineage.
 Earlier G1 continuation notes describe their dated checkpoints; they do not
-schedule further work after this wrap-up. Normal a7/a23 routes remain selected.
+schedule further work after this wrap-up. The retained delta checkpoint did not
+change normal a7/a23 routes.
 
 The separate [view change-feed design R1](view-change-feed-design.md) now has an
 [explicit source implementation](view-feed-api.md): Mesh-owned whole-record
@@ -20,8 +34,8 @@ disposable current Observer composition, with production gates kept separate.
 The subsequent [a24 review and publication](evidence/2026-10-20-view-feed-publication/README.md)
 records 483 standalone checks on three Python versions, passing branch/tag CI,
 signed public assets and a fresh downloaded-wheel check. This experimental
-release is on the isolated feature branch; accepted `main` and live selections
-remain at a23.
+release was made from the isolated feature branch while accepted `main` remained
+at a23. Later owner adoption has its own role-specific evidence.
 
 The [a23 hosted prerelease](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23)
 publishes the accepted a23 wheel unchanged, with checksums and provenance.
@@ -275,6 +289,11 @@ state requires a nonce-bound cached read/proof before granting positive validity
 Heartbeats, polling and new connections never renew original source receipts.
 
 ## Integration work and gates
+
+The initial adaptation checklist below is historical. Its API 2 baseline and
+deferred Agent Plus migration are superseded by owner-specific profiles and
+native-manager entry. Current integration uses the supported SDK, role guide
+and exact producer/consumer receipts; this checklist schedules no new migration.
 
 Tmux's producer/coordinator integration and paired a10 selection are accepted in
 the hardening adoption record above. Agent's independently selected a10 transport

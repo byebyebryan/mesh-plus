@@ -1,0 +1,253 @@
+{
+  "observedAt": "2026-10-23T07:08:07.267855+00:00",
+  "hostname": "carbon",
+  "uid": 1000,
+  "bootId": "f5e0cb50-6965-4273-8985-714dba162db1",
+  "scope": "Selectors, unit metadata and process identity only; no provider state or device acceptance.",
+  "selectors": {
+    "mesh-plus": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/mesh-plus",
+      "sha256": "07ec39c8736f3744b16371c21a3e6ce3946fdcd36f2ad4b554f281d99e2424b8"
+    },
+    "mesh-plus-active": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/mesh-plus-active",
+      "sha256": "45274218a256f579e90b30106654b39b69693396050f4b4c7d05ae515e56a05d"
+    },
+    "mesh-plus-working-set": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/mesh-plus-working-set",
+      "sha256": "cb9fa080416c13270a40ffb0db80d82766acfb0158152e6545dd92df9ab7845f"
+    },
+    "mesh-plus-tmux": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/mesh-plus-tmux",
+      "sha256": "d03782afebe81fc2c1f9f5b6e2a858615ff0e58e078cfa05435de0e4cfc52aa1"
+    },
+    "rofi-ssh-plus": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/bin/rofi-ssh-plus",
+      "sha256": "eab686234450931f268547defeea75a886a59d6772196e4194b20a7900944d22"
+    },
+    "rofi-agent-plus": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/rofi-agent-plus/0.15.0a14-df62166955b5e8bd/bin/rofi-agent-plus",
+      "sha256": "fe610199f84246415e336c4165d9020f5b9ab64ffbd1bef3f754e789150547bb"
+    },
+    "rofi-agent-plus-host": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/rofi-agent-plus/0.15.0a14-df62166955b5e8bd/bin/rofi-agent-plus-host",
+      "sha256": "3cbfff64ff7eb900592292e833511234dff2dc97fee702a0af77531e6c83d491"
+    },
+    "rofi-tmux-plus": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/rofi/extensions/tmux-plus/bin/rofi-tmux-plus",
+      "sha256": "ae330f7c77a6d2833003f8281cb4fdc6a60d5360fdfc483a739dc1376ca9d497"
+    },
+    "agent-observer": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/agent-observer/0.7.0a5-25cd5663560c973b-cpu/bin/agent-observer",
+      "sha256": "0fc1095ed39b399a759e5ebae3a5737dd50f53e3921fa71ebce10431c66399be"
+    },
+    "agent-observer-service": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/agent-observer-service",
+      "sha256": "1df7f8bceff8a452f82e1f696b3e26dff76204a1a563b84e1b0634299da0fbec"
+    },
+    "agent-observer-write": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/agent-observer/0.4.0a16-a9c13aee3d04144c/bin/agent-observer-write",
+      "sha256": "1d9650f1a54dd098cf2291c6b7c6fc26a3032c41877ec32c824fd7c5239183f7"
+    },
+    "tmux-observer": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/tmux-observer/bin/tmux-observer",
+      "sha256": "0f25fe4887a4516cdcff5b2cfb2ffafdc4d1f376977cecb28134b41395200a08"
+    },
+    "tmux-observer-client": {
+      "exists": true,
+      "resolved": "/home/bryan/.local/share/tmux-observer/bin/tmux-observer-client",
+      "sha256": "aaa7d415a03abe838d282e4f6b0128d11e2b774392ba59d7d989ddbfaddfa510"
+    },
+    "rlcd-agent-dashboard": {
+      "exists": false
+    }
+  },
+  "units": [
+    {
+      "unit": "agent-observer.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/agent-observer.service",
+        "MainPID": "362752",
+        "ExecMainStartTimestampMonotonic": "19041556298"
+      },
+      "process": {
+        "pid": 362752,
+        "parent": 1044,
+        "startTicks": 10421846,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "agent-observer-",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/python",
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/agent-observer-service"
+        ]
+      }
+    },
+    {
+      "unit": "mesh-plus-agent-active.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/mesh-plus-agent-active.service",
+        "MainPID": "362754",
+        "ExecMainStartTimestampMonotonic": "19041574982"
+      },
+      "process": {
+        "pid": 362754,
+        "parent": 1044,
+        "startTicks": 10421848,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "mesh-plus-activ",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a7-5eafd4c1-active-feed/bin/python"
+        ]
+      }
+    },
+    {
+      "unit": "mesh-plus-agent-working-set.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/mesh-plus-agent-working-set.service",
+        "MainPID": "362766",
+        "ExecMainStartTimestampMonotonic": "19041822578"
+      },
+      "process": {
+        "pid": 362766,
+        "parent": 1044,
+        "startTicks": 10421872,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "mesh-plus-worki",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a8-d9608720-ws72-m9bca5b55/bin/python"
+        ]
+      }
+    },
+    {
+      "unit": "mesh-plus-agent.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/mesh-plus-agent.service",
+        "MainPID": "362756",
+        "ExecMainStartTimestampMonotonic": "19041579204"
+      },
+      "process": {
+        "pid": 362756,
+        "parent": 1044,
+        "startTicks": 10421848,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "mesh-plus",
+        "artifactPaths": [
+          "/home/bryan/.local/share/agent-observer/0.7.0a5-25cd5663560c973b-cpu/bin/python3",
+          "/home/bryan/.local/share/agent-observer/0.7.0a5-25cd5663560c973b-cpu/bin/mesh-plus"
+        ]
+      }
+    },
+    {
+      "unit": "tmux-observer-desktop.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "exited",
+        "FragmentPath": "/home/bryan/.config/systemd/user/tmux-observer-desktop.service",
+        "MainPID": "0",
+        "ExecMainStartTimestampMonotonic": "19041834376"
+      },
+      "process": null
+    },
+    {
+      "unit": "tmux-observer-fleet@c9f23d9619abdbfc9db9b90a4c261ae4.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/tmux-observer-fleet@.service",
+        "MainPID": "362773",
+        "ExecMainStartTimestampMonotonic": "19041953437"
+      },
+      "process": {
+        "pid": 362773,
+        "parent": 1044,
+        "startTicks": 10421886,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "tmux-observer-c",
+        "artifactPaths": [
+          "/home/bryan/.local/share/tmux-observer/bin/tmux-observer-client"
+        ]
+      }
+    },
+    {
+      "unit": "tmux-observer-owner@carbon.service",
+      "properties": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/home/bryan/.config/systemd/user/tmux-observer-owner@.service",
+        "MainPID": "362753",
+        "ExecMainStartTimestampMonotonic": "19041556964"
+      },
+      "process": {
+        "pid": 362753,
+        "parent": 1044,
+        "startTicks": 10421846,
+        "uid": 1000,
+        "executable": "/usr/bin/python3.14",
+        "comm": "tmux-observer",
+        "artifactPaths": [
+          "/home/bryan/.local/share/tmux-observer/bin/tmux-observer"
+        ]
+      }
+    }
+  ],
+  "nativeProcesses": [
+    {
+      "pid": 357344,
+      "parent": 1044,
+      "startTicks": 10059020,
+      "uid": 1000,
+      "executable": "/usr/bin/tmux",
+      "comm": "tmux: server",
+      "artifactPaths": []
+    }
+  ],
+  "configuration": {
+    ".config/rofi-agent-plus/direct.toml": {
+      "exists": true,
+      "resolved": "/home/bryan/.config/rofi-agent-plus/direct.toml",
+      "sha256": "d428329062e83e750338f5ec9b77cbf5a353182799674302694018916cc05691"
+    },
+    ".config/agent-observer/profiles.toml": {
+      "exists": true,
+      "resolved": "/home/bryan/.config/agent-observer/profiles.toml",
+      "sha256": "855d0070acf42e3c898cbb50076b958a8e815cb9dd42068e853e793002d6f6d6"
+    },
+    ".config/rlcd-agent-dashboard/selection.json": {
+      "exists": false
+    },
+    ".config/rlcd-agent-dashboard/profiles.json": {
+      "exists": false
+    },
+    ".config/mesh-plus/sources.toml": {
+      "exists": true,
+      "resolved": "/home/bryan/.config/mesh-plus/sources.toml",
+      "sha256": "919216c746169c24a46561f2d6d52a290e3bbfb6b1467b3ea8371dbcf2023455"
+    }
+  },
+  "logicalHostId": "carbon"
+}

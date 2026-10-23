@@ -1,5 +1,18 @@
 # Mesh Plus
 
+Reusable host authority and cached state delivery for a configured fleet.
+Mesh owns logical hosts/routes and network validity; producers own the meaning
+of their records. SSH Plus exposes the supported Host Mesh CLI and SSH picker.
+Agent Observer supplies Codex observations for read-only utilities; the Tmux
+pair serves generic tmux workflows. Agent Plus opens native provider managers
+through Host Mesh and does not consume Observer or Tmux state.
+
+Start with the [current ecosystem and ownership guide](docs/ecosystem-role.md),
+[Host Mesh boundary](docs/ssh-plus-integration.md) and [SDK interface](docs/sdk-api.md).
+Package publication, producer acceptance and installed role selection have
+independent receipts. The release/experiment checkpoints below retain their
+original scope.
+
 Delta-sync is a **dark, gated development feature**. Work is stopped at its
 retained source/evidence checkpoint because CPU and 2,000-row capacity gates
 fail. It is unavailable through the normal configured routes and has no new
@@ -21,7 +34,8 @@ composition; producer CPU/RSS, large-view/native fleet and deployed-pair gates
 remain separate. See the [view-feed API](docs/view-feed-api.md) and
 [publication review and receipt](docs/evidence/2026-10-20-view-feed-publication/README.md).
 
-Latest prerelease with installed producer qualification: [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23).
+The [**0.1.0a23**](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a23)
+release has its own dated installed producer qualification.
 The release publishes the exact independently qualified wheel, with SHA256 and
 provenance assets; see the [producer acceptance](docs/evidence/2026-10-16-active-feed/README.md).
 The [publication receipt](docs/evidence/2026-10-16-active-feed-publication/acceptance.json)
@@ -189,8 +203,9 @@ Existing published envelopes remain versioned interfaces. The candidate common
 shape requires new, explicitly negotiated domain profiles; adding networking
 fields does not make an old parser support fleet results. Tmux Observer and
 Tmux Plus are a coordinated extraction track. Agent Observer has an independent,
-moving producer track. Agent Plus is deliberately deferred, and is not a design
-reference for current Agent observation semantics.
+moving producer track. Agent Plus is an independent native-manager entry/window
+client through Host Mesh; Agent read utilities consume Observer's public read
+facades. Agent Plus's former external conversation-control model is historical.
 
 ## Validate the candidate
 
