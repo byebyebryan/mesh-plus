@@ -4,6 +4,25 @@ Execution authorized 2026-10-23 through the source/artifact endpoint in
 [the plan](agent-ecosystem-realignment-plan.md). Push, publication, fleet changes,
 live retirement and firmware changes remain separately scoped.
 
+## Follow-up planning, 2026-10-23
+
+The user has agreed to main following the maintained release lineage, a useful
+working-set CLI, full Observer write-path retirement, and retirement of the
+standalone active-only feed. The [follow-up plan](agent-ecosystem-maintenance-plan.md)
+records sequencing, exact retirement surfaces, compatibility, topology and
+acceptance. It supersedes the earlier unresolved/retain decisions for those
+two features in future work; it does not change the first loop's receipts.
+
+This turn updates and reviews the plan only. Follow-up implementation, builds,
+main promotion and managed retirement have not started. The proposed full-loop
+endpoint includes bounded fleet retirement after source/artifact/consumer gates;
+the later execution request determines which checkpoints are authorized.
+
+The intervening Host Mesh correction is an already completed, separate fix:
+Starship lists Snap, Snap lists Starship, and Carbon lists both. Preserve its
+four uncommitted chezmoi source changes and its applied topology. Future host
+refreshes must distinguish this correction from the earlier full-mesh census.
+
 ## Current checkpoint
 
 The agreed source/artifact endpoint is complete. Luna Max supplied the bounded

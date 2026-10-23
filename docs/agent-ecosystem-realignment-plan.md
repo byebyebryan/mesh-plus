@@ -3,6 +3,11 @@
 Status: source/artifact endpoint completed under the user's explicit
 luna-goal-loop request, 2026-10-23. See the
 [qualification and handoff](evidence/2026-10-22-ecosystem-realignment/README.md).
+The subsequent user review settled main-line maintenance, working-set CLI work
+and full retirement of Observer writes and the standalone active-only feed.
+The [maintenance and retirement follow-up](agent-ecosystem-maintenance-plan.md)
+is the current next-loop plan. The completed checkpoints and retained-path
+decisions below keep their original execution scope.
 This document coordinates work across the six repositories. Each
 repository continues to own its contracts, code, checks and acceptance evidence.
 Managed host selection belongs to chezmoi. This plan does not supersede frozen

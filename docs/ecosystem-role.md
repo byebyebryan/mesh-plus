@@ -59,8 +59,11 @@ an installed artifact alone does not establish consumer or native acceptance.
 The Tmux pair remains supported secondary tooling. A new feature needs a
 concrete tmux workflow or consumer; reduced agent-runtime relevance does not
 authorize service retirement. Existing explicit full reads, older feeds and
-writer routes remain available until their consumers and compatibility purpose
-are resolved independently.
+writer routes remain available in the installed cohort. The subsequent user
+review approved full retirement of Observer writes and the standalone active-only
+feed. The [follow-up plan](agent-ecosystem-maintenance-plan.md) governs their
+replacement, source withdrawal and later managed retirement; that work has not
+started. Full diagnostic and working-set reads remain supported.
 
 ## Development direction
 
