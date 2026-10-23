@@ -1,0 +1,15 @@
+{
+  "observer": {
+    "path": "/home/bryan/code/agent-observer-delivery-20261023",
+    "commit": "158a952b5135c7783a1a02d2e5013dcf377bb305"
+  },
+  "dotfiles": {
+    "path": "/home/bryan/code/chezmoi-delivery-audit-20261023",
+    "commit": "8c630a8e98b1f8b196730c153ef37a24c827bf17",
+    "tree": "278a9b68122caf911b12eb7e4f70521f92e8ec2d",
+    "parents": [
+      "34627be4d2abc037b47c913c0d42a7b2db286dc8",
+      "b3bcafc7823afc23dda86c2cf4a3ce489f4457d0"
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "repo": "mesh-plus",
+    "localPath": "/home/bryan/code/mesh-plus-maintenance-20261023",
+    "candidate": "06a305a22852be3fbae5c4774fdf987cf41f143d",
+    "remoteRefs": {
+      "refs/heads/main": "7c30fc92caf03476e239c10a3bb8cad97f365d90"
+    }
+  },
+  {
+    "repo": "agent-observer",
+    "localPath": "/home/bryan/code/agent-observer-maintenance-20261023",
+    "candidate": "8f5af7f99f2a847a5f269763c585f231f8165d25",
+    "remoteRefs": {
+      "refs/heads/main": "85c1c6489debdec06b967db25f4c326389ca2816"
+    }
+  },
+  {
+    "repo": "rofi-ssh-plus",
+    "localPath": "/home/bryan/code/rofi-ssh-plus-ecosystem-20261023",
+    "candidate": "11d6be18fa2715255bafd3e284a6910fb50c0a92",
+    "remoteRefs": {
+      "refs/heads/main": "470dd89db0bd881f70e5dfc623a07b8ad932ca65"
+    }
+  },
+  {
+    "repo": "rofi-agent-plus",
+    "localPath": "/home/bryan/code/rofi-agent-plus-host-removal-20261023",
+    "candidate": "35eeadaff286f20ee631c2240587536647c8248d",
+    "remoteRefs": {
+      "refs/heads/main": "62d9bc587049be52d955592291055d23754d2968"
+    }
+  },
+  {
+    "repo": "tmux-observer",
+    "localPath": "/home/bryan/code/tmux-observer-ecosystem-20261023",
+    "candidate": "db63675bf0cc25042ce02a309ac1636c750566dd",
+    "remoteRefs": {
+      "refs/heads/main": "7e14d799796a96b81f3a35947a7ed3c535701bf2"
+    }
+  },
+  {
+    "repo": "rofi-tmux-plus",
+    "localPath": "/home/bryan/code/rofi-tmux-plus-ecosystem-20261023",
+    "candidate": "0bc11bab737695d3883839f184cc99f84c0400a6",
+    "remoteRefs": {
+      "refs/heads/main": "236ee8aaaaf14d14aa3861c3da8965c1a3d27071"
+    }
+  },
+  {
+    "repo": "dotfiles",
+    "localPath": "/home/bryan/code/chezmoi-agent-plus-host-removal-20261023",
+    "candidate": "b3bcafc7823afc23dda86c2cf4a3ce489f4457d0",
+    "remoteRefs": {
+      "refs/heads/main": "34627be4d2abc037b47c913c0d42a7b2db286dc8"
+    }
+  },
+  {
+    "repo": "esp32-rlcd",
+    "localPath": "/home/bryan/code/esp32-rlcd-maintenance-20261023",
+    "candidate": "768b50d1d550abef2336040936c85602ef42eb6b",
+    "remoteRefs": {
+      "refs/heads/main": "aaeb32b23bd936f1aae88fa5e0c96b81f15691ab"
+    }
+  }
+]

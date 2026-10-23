@@ -1,0 +1,79 @@
+[
+  {
+    "repo": "mesh-plus",
+    "remoteMain": "7c30fc92caf03476e239c10a3bb8cad97f365d90",
+    "candidate": "06a305a22852be3fbae5c4774fdf987cf41f143d",
+    "remoteMainAncestor": true,
+    "remoteOnlyCandidateOnly": "0\t112",
+    "changedFiles": 918
+  },
+  {
+    "repo": "agent-observer",
+    "remoteMain": "85c1c6489debdec06b967db25f4c326389ca2816",
+    "candidate": "8f5af7f99f2a847a5f269763c585f231f8165d25",
+    "remoteMainAncestor": true,
+    "remoteOnlyCandidateOnly": "0\t115",
+    "changedFiles": 1082
+  },
+  {
+    "repo": "rofi-ssh-plus",
+    "remoteMain": "470dd89db0bd881f70e5dfc623a07b8ad932ca65",
+    "candidate": "11d6be18fa2715255bafd3e284a6910fb50c0a92",
+    "remoteMainAncestor": true,
+    "remoteOnlyCandidateOnly": "0\t1",
+    "changedFiles": 3
+  },
+  {
+    "repo": "rofi-agent-plus",
+    "remoteMain": "62d9bc587049be52d955592291055d23754d2968",
+    "candidate": "35eeadaff286f20ee631c2240587536647c8248d",
+    "remoteMainAncestor": true,
+    "remoteOnlyCandidateOnly": "0\t4",
+    "changedFiles": 10
+  },
+  {
+    "repo": "tmux-observer",
+    "remoteMain": "7e14d799796a96b81f3a35947a7ed3c535701bf2",
+    "candidate": "db63675bf0cc25042ce02a309ac1636c750566dd",
+    "remoteMainAncestor": true,
+    "remoteOnlyCandidateOnly": "0\t4",
+    "changedFiles": 49
+  },
+  {
+    "repo": "rofi-tmux-plus",
+    "remoteMain": "236ee8aaaaf14d14aa3861c3da8965c1a3d27071",
+    "candidate": "0bc11bab737695d3883839f184cc99f84c0400a6",
+    "remoteMainAncestor": true,
+    "remoteOnlyCandidateOnly": "0\t3",
+    "changedFiles": 8
+  },
+  {
+    "repo": "dotfiles",
+    "remoteMain": "34627be4d2abc037b47c913c0d42a7b2db286dc8",
+    "candidate": "b3bcafc7823afc23dda86c2cf4a3ce489f4457d0",
+    "remoteMainAncestor": false,
+    "remoteOnlyCandidateOnly": "1\t3",
+    "changedFiles": 37,
+    "remoteOnlyCommits": [
+      "34627be feat(codex): add shared-daemon subscription fallback"
+    ],
+    "mergeTreeExit": 0,
+    "mergeTree": "278a9b68122caf911b12eb7e4f70521f92e8ec2d",
+    "remoteOnlyFiles": [
+      ".chezmoiignore",
+      ".chezmoiremove",
+      "docs/codex-openrouter.md",
+      "dot_local/bin/executable_codex-direct",
+      "dot_local/bin/executable_codex-work-direct",
+      "scripts/check-codex-openrouter"
+    ]
+  },
+  {
+    "repo": "esp32-rlcd",
+    "remoteMain": "aaeb32b23bd936f1aae88fa5e0c96b81f15691ab",
+    "candidate": "768b50d1d550abef2336040936c85602ef42eb6b",
+    "remoteMainAncestor": true,
+    "remoteOnlyCandidateOnly": "0\t1",
+    "changedFiles": 3
+  }
+]

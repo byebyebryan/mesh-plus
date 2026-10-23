@@ -1,0 +1,56 @@
+[
+  {
+    "repo": "mesh-plus",
+    "candidateTipAdvertisedAt": [],
+    "advertisedHeads": 12,
+    "newVersionTagsPresent": [],
+    "publishedReleaseCommit": "bb0c45399e5b8264c9936ca48457cc9a442431df",
+    "publishedReleaseAncestor": true,
+    "candidateCommitsBeyondPublishedRelease": 8
+  },
+  {
+    "repo": "agent-observer",
+    "candidateTipAdvertisedAt": [],
+    "advertisedHeads": 5,
+    "newVersionTagsPresent": [],
+    "publishedReleaseCommit": "6340bc8aa6442bc8081a69c659d16d6f2657e527",
+    "publishedReleaseAncestor": true,
+    "candidateCommitsBeyondPublishedRelease": 6
+  },
+  {
+    "repo": "rofi-ssh-plus",
+    "candidateTipAdvertisedAt": [],
+    "advertisedHeads": 1,
+    "newVersionTagsPresent": []
+  },
+  {
+    "repo": "rofi-agent-plus",
+    "candidateTipAdvertisedAt": [],
+    "advertisedHeads": 1,
+    "newVersionTagsPresent": []
+  },
+  {
+    "repo": "tmux-observer",
+    "candidateTipAdvertisedAt": [],
+    "advertisedHeads": 4,
+    "newVersionTagsPresent": []
+  },
+  {
+    "repo": "rofi-tmux-plus",
+    "candidateTipAdvertisedAt": [],
+    "advertisedHeads": 2,
+    "newVersionTagsPresent": []
+  },
+  {
+    "repo": "dotfiles",
+    "candidateTipAdvertisedAt": [],
+    "advertisedHeads": 6,
+    "newVersionTagsPresent": []
+  },
+  {
+    "repo": "esp32-rlcd",
+    "candidateTipAdvertisedAt": [],
+    "advertisedHeads": 3,
+    "newVersionTagsPresent": []
+  }
+]
