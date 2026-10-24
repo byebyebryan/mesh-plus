@@ -1,7 +1,7 @@
 # Compatible admission simplification study
 
-[Plan](../../docs/history/performance/simplification-plan.md) and
-[assessment](../../docs/evidence/2026-10-13-simplification/README.md) bind source,
+[Plan](https://github.com/byebyebryan/mesh-plus/blob/12723500ea2fa7f06f3c7089fce62577c2d2fcea/docs/history/performance/simplification-plan.md) and
+[assessment](https://github.com/byebyebryan/mesh-plus/blob/12723500ea2fa7f06f3c7089fce62577c2d2fcea/docs/evidence/2026-10-13-simplification/README.md) bind source,
 wheel and installed-copy evidence separately. These tools are not packaged APIs.
 
 Create separate baseline/candidate wheel environments with the exact versions in

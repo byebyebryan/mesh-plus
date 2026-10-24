@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = ROOT / "scripts/reproduce-sync-codec-vectors.py"
-FIXTURE = ROOT / "docs/evidence/2026-10-16-delta-sync/codec-review-vectors-r1.json"
+FIXTURE = ROOT / "tests/fixtures/delta-sync/codec-review-vectors-r1.json"
 
 
 def require(condition, code):

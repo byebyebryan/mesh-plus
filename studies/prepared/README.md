@@ -1,6 +1,6 @@
 # Prepared consumer qualification
 
-These tools qualify the additive [local API](../../docs/prepared-consumer-api.md).
+These tools qualify the additive [local API](../../docs/reference/prepared-reads.md).
 They are not packaged owner adapters. `tests/prepared_fixture.py` explicitly
 models static compilation with an existing pure facade; owner adoption still
 requires an independently reviewed interface and certification.

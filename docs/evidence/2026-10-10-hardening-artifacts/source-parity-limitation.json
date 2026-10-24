@@ -1,6 +1,0 @@
-{
-  "state": "rejected",
-  "option": "--check-sources",
-  "reason": "source_head_changed:tmux-observer",
-  "disposition": "Preserve frozen historical HEADs and contract lock; use current exact packaged artifact/native gates independently."
-}

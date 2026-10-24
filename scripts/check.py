@@ -15,6 +15,7 @@ def main():
     parser.add_argument("--check-sources", action="store_true", help="verify reviewed sibling source baselines")
     args = parser.parse_args()
     commands = [
+        ["scripts/check-docs"],
         ["scripts/check-contract-lock.py"],
         ["scripts/check-design.py", *(["--check-sources"] if args.check_sources else [])],
         ["scripts/check-delivery.py"],

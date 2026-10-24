@@ -28,11 +28,11 @@ Mesh never starts a native provider to satisfy a read.
 
 | Need | Reference |
 | --- | --- |
-| Logical hosts and directional routes | [Host authority](docs/ssh-plus-integration.md) |
-| Cached polling and replacement watches | [SDK 1](docs/sdk-api.md) and [frozen contracts](docs/contract-freeze.md) |
-| Export an Observer-owned cached source | [Publisher API](docs/publisher-api.md) |
-| Repeated consumer reads and selection | [Prepared reads](docs/prepared-consumer-api.md) and [owned admission](docs/cpu-admission-api.md) |
-| Diagnose or qualify an integration | [Integration handoff](docs/handoff.md) |
+| Logical hosts and directional routes | [Host authority](docs/guides/host-routing.md) |
+| Cached polling and replacement watches | [SDK 1](docs/reference/sdk.md) and [frozen contracts](docs/contract-freeze.md) |
+| Export an Observer-owned cached source | [Publisher API](docs/reference/publishers.md) |
+| Repeated consumer reads and selection | [Prepared reads](docs/reference/prepared-reads.md) and [owned admission](docs/reference/admission.md) |
+| Diagnose or qualify an integration | [Integration handoff](docs/guides/integration.md) |
 
 Routes are endpoint-specific and directional. Reading from a peer grants it no
 reverse route. Delivery preserves unknown, partial, stale and unavailable
@@ -46,19 +46,20 @@ python scripts/check.py
 ```
 
 The standalone gate requires no sibling checkout or native provider. See
-[development](docs/development.md) for optional WSS, native and source-parity gates.
+[development](docs/maintenance/development.md) for optional WSS, native and source-parity gates.
 
 ## Releases and scope
 
 [0.1.0a25](https://github.com/byebyebryan/mesh-plus/releases/tag/v0.1.0a25)
 is the current published prerelease. Full Agent, working-set, Tmux and Host Mesh
 interfaces remain independently selected; standalone Agent active-only support
-is withdrawn. [Operations](docs/operations.md) links release/deployment evidence.
+is withdrawn. [Operations](docs/maintenance/operations.md) links release/deployment evidence.
 
 Ordinary delivery uses complete views. Optional view-feed and WSS support need
 explicit selection and acceptance. Delta-sync remains deferred and dark after
-failed qualification. The [history index](docs/history/README.md) separates those
-studies and old rollout ledgers from current setup and reference material.
+failed qualification.
 
 [Fleet Plus](https://dev.byebyebryan.com/fleet-plus/) presents the ecosystem;
 this repo owns transport/authority contracts, implementation and evidence.
+
+Current guides are organized in the [documentation index](docs/README.md).

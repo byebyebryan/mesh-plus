@@ -1,6 +1,6 @@
 # Controlled cached Mesh benchmark
 
-Study-only tools for the [authorized plan](../../docs/history/performance/controlled-performance-plan.md).
+Study-only tools for the [authorized plan](https://github.com/byebyebryan/mesh-plus/blob/12723500ea2fa7f06f3c7089fce62577c2d2fcea/docs/history/performance/controlled-performance-plan.md).
 No packaged SDK or wire changes. No active sibling checkout, Agent imports,
 ordinary Observer service, provider query, route writer or managed deployment.
 
@@ -72,7 +72,7 @@ raw metadata in deterministic gzip with input/report digests.
 `check-copy.py` and `copy_hypothesis.py` retain a rejected module-local cloning
 experiment. Its ownership cases pass, but four pipeline CPU blocks are flat or
 slower. It is not packaged, installed or used by the carrier benchmark. See the
-[assessment](../../docs/evidence/2026-10-12-controlled-performance/README.md).
+[assessment](https://github.com/byebyebryan/mesh-plus/blob/12723500ea2fa7f06f3c7089fce62577c2d2fcea/docs/evidence/2026-10-12-controlled-performance/README.md).
 
 Interrupted/failed pilot directories are retained locally as discarded attempts.
 They cannot certify performance. Loopback comparisons and synthetic fixed work do

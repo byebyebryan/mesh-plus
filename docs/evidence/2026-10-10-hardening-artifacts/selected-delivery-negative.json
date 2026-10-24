@@ -1,8 +1,0 @@
-{
-  "state": "passed",
-  "scope": "same prepared reader receipt supplied before and after; passive cached reads only",
-  "harnessSha256": "f990eeb44de5c5a21eff32fd7a4a0ac2af2b1f030680ba0a74116fee6604b46c",
-  "unchangedReaderRejected": true,
-  "successReportPublished": false,
-  "nativeMutation": false
-}

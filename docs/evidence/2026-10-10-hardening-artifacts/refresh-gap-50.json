@@ -1,7 +1,0 @@
-{
-  "state": "passed",
-  "cases": 50,
-  "failures": [],
-  "elapsedSeconds": 57.22791812499963,
-  "scope": "Owned actual IPC gap/control/full-resync; no ordinary native refresh"
-}

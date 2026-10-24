@@ -32,8 +32,7 @@ def main():
 
     def snapshot():
         mesh_paths = [*ROOT.glob("src/mesh_plus/**/*.py"), *ROOT.glob("tests/test_sync_*.py"),
-                      *ROOT.glob("scripts/check*.py"), ROOT / "pyproject.toml", ROOT / "contracts/LOCK.json",
-                      ROOT / "docs/delta-sync-contract-appendix.md"]
+                      *ROOT.glob("scripts/check*.py"), ROOT / "pyproject.toml", ROOT / "contracts/LOCK.json"]
         observer_paths = [*observer.glob("agent_observer/*.py"), *observer.glob("agent_observer/contracts/*.json"),
                           observer / "tests/test_mesh_sync_profile.py", observer / "tests/test_service_state.py"]
         return {"mesh": inputs(ROOT, mesh_paths), "observer": inputs(observer, observer_paths)}

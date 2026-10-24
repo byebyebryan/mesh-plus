@@ -424,7 +424,7 @@ class ProofOracle:
 
 
 def baseline_checks(check_sources):
-    manifest = read(ROOT / "docs/evidence/source-baselines.json")
+    manifest = read(ROOT / "tests/fixtures/source-baselines.json")
     for repo, info in manifest["repositories"].items():
         for item in info["files"]:
             if "frozenPath" in item:
@@ -475,7 +475,10 @@ print(json.dumps({'domain':domain,'ownersValidated':count,'pureImports':True}))
 
 
 def check_links(pending_output=None):
-    for path in [ROOT/"README.md", *sorted((ROOT/"docs").rglob("*.md")), *sorted((ROOT/"contracts").rglob("*.md"))]:
+    # Frozen contract documents retain source-relative historical links. Their
+    # bytes and normative dependencies are verified by check-contract-lock;
+    # maintained navigation is checked here and by scripts/check-docs.
+    for path in [ROOT/"README.md", *sorted((ROOT/"docs").rglob("*.md"))]:
         text = path.read_text()
         require(text.endswith("\n"), "missing_final_newline:"+str(path))
         require(not any(line.rstrip() != line for line in text.splitlines()), "trailing_whitespace:"+str(path))

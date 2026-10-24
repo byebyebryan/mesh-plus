@@ -18,7 +18,7 @@ mesh-plus doctor
 
 `doctor` reports installed package versions; it does not start an Observer or
 native provider. Public release assets and immutable provenance are linked from
-[operations](operations.md). No package-index publication is implied.
+[operations](maintenance/operations.md). No package-index publication is implied.
 
 ## Inspect configured hosts
 
@@ -33,7 +33,7 @@ Use `mesh-plus hosts --help` for supported explicit authority selection.
 Configuration owns local identity, logical peers and ordered SSH routes.
 History, `known_hosts`, DNS and remote observed rows do not discover new peers.
 Routes are directional; a host which reads another host is not automatically
-readable in reverse. [Host authority](ssh-plus-integration.md) explains ownership.
+readable in reverse. [Host authority](guides/host-routing.md) explains ownership.
 
 ## Add cached state deliberately
 
@@ -42,8 +42,8 @@ host-local cached service and an explicitly configured publisher/bridge source.
 The bridge exports only its owning host, not an already aggregated fleet.
 
 Use the owning Observer's setup guide for its collector and native service.
-Then follow the [integration handoff](handoff.md), [publisher reference](publisher-api.md)
-and [SDK](sdk-api.md). Mesh transports published state without collecting native
+Then follow the [integration handoff](guides/integration.md), [publisher reference](reference/publishers.md)
+and [SDK](reference/sdk.md). Mesh transports published state without collecting native
 facts. A missing or incompatible endpoint fails explicitly; there is no provider
 startup, fresh-read fallback or automatic reverse route.
 

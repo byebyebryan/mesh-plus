@@ -1,8 +1,0 @@
-{
-  "state": "rejected",
-  "scope": "legacy all-picker live gate",
-  "reason": "Agent Plus command resolves to versioned 0.14.0a1 pilot outside legacy extension; gate stopped before lifecycle",
-  "runtimeDefectClaimed": false,
-  "agentPlusMigrationDeferred": true,
-  "additionalLegacyActionCycleRejection": "Tmux Tab callback expectation belongs to retired script mode; installed native/headless Plus artifact gate remains separately accepted"
-}

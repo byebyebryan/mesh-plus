@@ -46,7 +46,7 @@ Reference APIs: [Sans-I/O integration](https://websockets.readthedocs.io/en/stab
 [server](https://websockets.readthedocs.io/en/stable/reference/sansio/server.html),
 [owned accepted sockets](https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.connect_accepted_socket).
 
-See [roadmap](../../docs/history/experiments/wss-roadmap.md) for acceptance and promotion gates.
+See [roadmap](https://github.com/byebyebryan/mesh-plus/blob/12723500ea2fa7f06f3c7089fce62577c2d2fcea/docs/history/experiments/wss-roadmap.md) for acceptance and promotion gates.
 
 Matched measurement runner:
 

@@ -1,1 +1,0 @@
-{"bytes": 40522, "positiveCases": 3, "rejectionCases": 9, "scope": "Same-model toy arithmetic and Python callback-shape guard only; no independent/native/runtime admission or rollback acceptance", "sha256": "b5114719c4a1085a1d21cdd0c2a29fa44012e23f18ed7ae23236945c4dc0a0dd"}

@@ -1,8 +1,0 @@
-{
-  "status": "passed",
-  "checkedAtUtc": "2026-10-13T19:50:17.915158+00:00",
-  "validationScope": "schemas, adversarial design model, frozen producer projection; no native/network/runtime acceptance",
-  "sourceParityChecked": false,
-  "checksPassed": 116,
-  "limits": "Native passivity, SSH integration, GUI, resource, physical suspend and deployment remain later gates"
-}

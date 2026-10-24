@@ -1,6 +1,6 @@
 # Prepared consumer ownership study
 
-[Proposal](../../docs/history/performance/prepared-consumer-proposal.md) defines a possible opt-in
+[Proposal](https://github.com/byebyebryan/mesh-plus/blob/12723500ea2fa7f06f3c7089fce62577c2d2fcea/docs/history/performance/prepared-consumer-proposal.md) defines a possible opt-in
 local API. This directory is outside the packaged runtime and does not implement
 SDK 1 preparation support or a negotiated wire capability.
 
@@ -42,5 +42,5 @@ unqualified. It makes no memory improvement claim, native prepared-owner claim,
 ordinary-network performance claim or deployment selection. A one-read lifetime
 can be slower; only complete lifetime results qualify a use-case decision.
 
-[Evidence](../../docs/evidence/2026-10-13-ownership/README.md) preserves exact
+[Evidence](https://github.com/byebyebryan/mesh-plus/blob/12723500ea2fa7f06f3c7089fce62577c2d2fcea/docs/evidence/2026-10-13-ownership/README.md) preserves exact
 inputs, source hashes, reports, incompatibility witnesses and required review.

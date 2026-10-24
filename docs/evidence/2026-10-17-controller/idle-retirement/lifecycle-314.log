@@ -1,7 +1,0 @@
-test_actual_four_transaction_pins_cancellation_close_failure_and_sibling (__main__.Lifecycle.test_actual_four_transaction_pins_cancellation_close_failure_and_sibling) ... ok
-test_actual_watch_survives_end_and_expiry_then_head_and_stop (__main__.Lifecycle.test_actual_watch_survives_end_and_expiry_then_head_and_stop) ... ok
-
-----------------------------------------------------------------------
-Ran 2 tests in 4.818s
-
-OK

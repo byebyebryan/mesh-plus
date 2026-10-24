@@ -1,1 +1,0 @@
-{"classification":"audit harness protocol failure, not producer failure", "reason":"contextmanager replacement of TemporaryDirectory lacked name/cleanup attributes used by lifecycle tests", "correction":"subclass original TemporaryDirectory and override cleanup only to copy bounded receipt before original cleanup", "priorReportsPreserved":true}

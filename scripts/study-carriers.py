@@ -353,6 +353,7 @@ async def studies(report_path):
               "limits": "Single warm-channel sample per payload size, no CPU/RSS benchmark; WSS user authorization and peer-credential IPC acceptance remain untested"}
     inputs = [Path(__file__).resolve(), ROOT / "scripts/delivery_model.py", *sorted(BASE.glob("*.schema.json"))]
     report["inputDigests"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
+    report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
 
@@ -360,7 +361,7 @@ async def studies(report_path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stdio", action="store_true")
-    parser.add_argument("--report", type=Path, default=ROOT / "docs/evidence/carrier-study.json")
+    parser.add_argument("--report", type=Path, default=ROOT / ".cache/carrier-study.json")
     args = parser.parse_args()
     if args.stdio:
         asyncio.run(publisher(Stdio()))
