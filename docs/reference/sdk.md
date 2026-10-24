@@ -13,9 +13,9 @@ selected reads are additive interfaces; see [prepared consumers](prepared-reads.
 and [owned admission](admission.md).
 
 Import supported networking entry points from `mesh_plus.api`. Its
-`SDK_INTERFACE_VERSION = 1` is independent of Mesh wire 1, profile v1, and native
-Tmux observation/service 1 or Agent snapshot 4/service 2. Existing module imports,
-domain-string constructors, CLI and reference adapter names remain supported.
+`SDK_INTERFACE_VERSION = 1` is independent of Mesh wire and native profile
+versions. Existing module imports, domain-string constructors, CLI and reference
+adapter names remain supported.
 
 Optional WSS uses the separate [`mesh_plus.wss.configured_reader`](../guides/wss.md)
 factory with the same pure profile and Read/Delivery semantics. Publisher
@@ -34,11 +34,11 @@ The exact structural signatures and immutable DTO constructors are in
 Implementations need no inheritance or bound-method validators.
 
 `ProfileDescriptor(sdk_version, profile_id, native_protocol, native_version,
-contract_digest, frame_bytes)` must equal `descriptor("tmux")` or
-`descriptor("agent")`. The digest binds the packaged profile schema; all native
-dependencies remain bound by the existing contract lock. Frame limits are the
-reviewed native ceilings, 1,064,960 and 8,404,992 bytes respectively. No plugin
-discovery, arbitrary new profile registration or remote code selection occurs.
+contract_digest, frame_bytes)` must match
+`descriptor(domain, profile_id=selected_profile_id)`. The digest binds the
+selected packaged schema; its descriptor supplies the native frame limit.
+Native dependencies remain bound by the contract lock. No plugin discovery,
+arbitrary new profile registration or remote code selection occurs.
 
 `NativeState(owner, records, clock, publisher, emitted_ms, receipts)` is a
 lossless local projection. `owner` retains protocol/version/metadata/service;
