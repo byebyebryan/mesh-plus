@@ -45,7 +45,7 @@ accepted interface; broader design studies add no runtime capability.
 ## Selection and compatibility
 
 Source head, package release and selected host roles are different records.
-Read CLI, collector, full feed, active feed, working-set feed, dashboard and SSH
+Read CLI, collector, full feed, working-set feed, dashboard and SSH
 authority can retain different exact artifacts. The deployment owner records
 effective host/home selections and rollback inputs; producer repositories retain
 the acceptance and compatibility evidence for their own interfaces.
@@ -58,12 +58,15 @@ an installed artifact alone does not establish consumer or native acceptance.
 
 The Tmux pair remains supported secondary tooling. A new feature needs a
 concrete tmux workflow or consumer; reduced agent-runtime relevance does not
-authorize service retirement. Existing explicit full reads, older feeds and
-writer routes remain available in the installed cohort. The subsequent user
-review approved full retirement of Observer writes and the standalone active-only
-feed. The [follow-up plan](agent-ecosystem-maintenance-plan.md) governs their
-replacement, source withdrawal and later managed retirement; that work has not
-started. Full diagnostic and working-set reads remain supported.
+authorize service retirement. Observer writes and standalone active-only hosting are fully retired. Working-set
+reads retain active membership and recent context; full diagnostic reads remain
+supported. The [public delivery closeout](evidence/2026-10-23-public-delivery/README.md)
+records publication and scoped managed retirement. Earlier writer/active receipts
+retain their original historical and recovery bounds.
+
+[Fleet Plus](https://dev.byebyebryan.com/fleet-plus/) owns the current shared
+presentation and cross-project explanations. This guide retains Mesh's interface
+ownership summary; source contracts and dated evidence stay in their owner repos.
 
 ## Development direction
 

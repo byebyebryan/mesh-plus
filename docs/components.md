@@ -25,9 +25,9 @@ an explicit adapter/profile, not generic arbitrary remote argv.
 
 ## Current interfaces
 
-Commands exist in the candidate package. SSH Plus selects the released shared
-authority on Snap and Starship; delivery CLI/services remain integration
-candidates, with no operational Observer transport migration selected:
+Commands are available in released Mesh packages. SSH authority, Agent working-set,
+full diagnostics and Tmux delivery have independent role selections; see the
+[current handoff](handoff.md) and owner deployment manifests. The interfaces include:
 
 ```text
 mesh-plus hosts --authority ssh-plus|mesh
