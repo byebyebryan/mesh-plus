@@ -23,5 +23,5 @@ unrelated SDK adoption is part of the withdrawal.
 Working-set preserves the active membership branch and adds independently
 qualified recent membership. Its wire shape is distinct. Consumer migration and
 same-input active-identity parity are required before producer retirement. See
-the [execution plan](agent-ecosystem-maintenance-plan.md) and
-[ledger](agent-ecosystem-maintenance-status.md).
+the [execution plan](history/delivery/agent-ecosystem-maintenance-plan.md) and
+[ledger](history/delivery/agent-ecosystem-maintenance-status.md).

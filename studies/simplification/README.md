@@ -1,6 +1,6 @@
 # Compatible admission simplification study
 
-[Plan](../../docs/simplification-plan.md) and
+[Plan](../../docs/history/performance/simplification-plan.md) and
 [assessment](../../docs/evidence/2026-10-13-simplification/README.md) bind source,
 wheel and installed-copy evidence separately. These tools are not packaged APIs.
 

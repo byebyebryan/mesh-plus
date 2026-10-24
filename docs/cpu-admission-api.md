@@ -1,8 +1,10 @@
 # Owned admission and selected prepared reads
 
-The a22 private candidate adds optional local APIs to SDK 1. Admission interface
+These optional local APIs were introduced in a22 and are retained by the
+published a25 prerelease under SDK 1. Admission interface
 1, selection interface 1 and preparation interface 1 are independent descriptors;
-lock 4 and every packaged schema retain their bytes. There is no new transport
+their introduction preserved lock-4 schema bytes; subsequent additive profile
+locks have independent provenance. There is no new transport
 capability, owner policy, default selection or deployment.
 
 ## Owned Reader handoff

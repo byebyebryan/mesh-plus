@@ -59,7 +59,7 @@ the selected source binding rather than numeric cross-host UID equality.
 
 ## SSH and subprocess ownership
 
-See the [transport design](transport-design.md) and
+See the [transport design](history/design/transport-design.md) and
 [delivery candidate](../contracts/mesh-delivery-v1/contract.md) for request/reply,
 subscription lifecycle and backend boundaries. SSH is the first remote backend.
 Local IPC carries the same delivery semantics; WSS has a separate future listener
@@ -120,7 +120,7 @@ An optional negotiated digest-proof extension avoids a second full payload when
 a fresh cached read validates the same retained source version. Changed receipts
 or records require full replacement; a lost owner cannot renew a retained copy.
 This saves bytes rather than the proof round trip. See the
-[proof conditions](transport-design.md#freshness-without-a-second-inventory-copy).
+[proof conditions](history/design/transport-design.md#freshness-without-a-second-inventory-copy).
 
 Resource admission counts source payloads, pending frames and owned children.
 Overflow rejects the operation or individual source explicitly. A frame already

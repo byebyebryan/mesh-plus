@@ -1,6 +1,6 @@
 # Prepared consumer ownership study
 
-[Proposal](../../docs/prepared-consumer-proposal.md) defines a possible opt-in
+[Proposal](../../docs/history/performance/prepared-consumer-proposal.md) defines a possible opt-in
 local API. This directory is outside the packaged runtime and does not implement
 SDK 1 preparation support or a negotiated wire capability.
 

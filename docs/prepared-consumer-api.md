@@ -1,7 +1,7 @@
 # Opt-in prepared consumer interface 1
 
 Reviewed implementation plan authorized on 2026-10-13 following the
-[proposal](prepared-consumer-proposal.md) and explicit discussion of additive
+[proposal](history/performance/prepared-consumer-proposal.md) and explicit discussion of additive
 API compatibility. This is a local Python extension through SDK 1, not a new
 wire profile, transport capability, selected artifact or owner certification.
 The frozen lock and packaged schemas remain byte-identical.

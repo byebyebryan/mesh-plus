@@ -1,16 +1,16 @@
 # Mesh SDK interface v1
 
-The reviewed [Agent timing extension](../contracts/agent-profile-v2/contract.md)
-adds compatible optional `descriptor(domain, profile_id=...)` selection.
-Existing defaults remain v1; explicit Agent v2 descriptors bind wire 5/Service 3.
-The generic SDK, Read/Delivery versions, Tmux profile and published native schemas
-are unchanged. Request admission, aggregate validators and guards use the
-selected descriptor; they do not retry under another profile.
+SDK 1 is the supported pure networking interface, independently versioned from
+package releases, native profiles and Read/Delivery wire 1. Current full Agent
+clients select explicit Agent v3 (snapshot 6 / Service 4); working-set uses its
+own profile. Legacy default Agent v1 and explicit timing v2 remain different
+bindings, not automatic negotiation. See [handoff](handoff.md).
 
-Accepted implementation specification, 2026-10-10. The preceding
-[review and negative probes](sdk-independence-review.md) remain dated evidence.
-This additive Python interface does not change the frozen Read/Delivery wire,
-schema bytes, profile identifiers or Host Mesh authority ABI.
+The frozen [lock](../contracts/LOCK.json) and profile contracts define exact
+native bindings. Standalone Agent active-only support is withdrawn despite
+retained historical schema inputs. Optional preparation, owned admission and
+selected reads are additive interfaces; see [prepared consumers](prepared-consumer-api.md)
+and [owned admission](cpu-admission-api.md).
 
 Import supported networking entry points from `mesh_plus.api`. Its
 `SDK_INTERFACE_VERSION = 1` is independent of Mesh wire 1, profile v1, and native

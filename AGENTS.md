@@ -36,3 +36,10 @@ Use chezmoi/dotfiles only for deployment configuration that actually needs manag
 Stage intended files only. Preserve dated evidence and frozen references; add
 new review evidence instead of attributing old acceptance to changed runtime
 bytes. Do not edit, migrate or deploy sibling projects without task scope.
+
+Current documentation starts at `docs/README.md`, with setup in
+`docs/getting-started.md` and gates in `docs/development.md`. Keep maintained
+guides separate from `docs/history/` plans and `docs/evidence/` receipts.
+Historical future-tense steps do not schedule work. Preserve frozen/evidence
+bytes and old forwarding paths needed by consumers; do not append new rollout
+ledgers to README, architecture or handoff.

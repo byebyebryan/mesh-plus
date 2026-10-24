@@ -1,6 +1,6 @@
 # Controlled cached Mesh benchmark
 
-Study-only tools for the [authorized plan](../../docs/controlled-performance-plan.md).
+Study-only tools for the [authorized plan](../../docs/history/performance/controlled-performance-plan.md).
 No packaged SDK or wire changes. No active sibling checkout, Agent imports,
 ordinary Observer service, provider query, route writer or managed deployment.
 

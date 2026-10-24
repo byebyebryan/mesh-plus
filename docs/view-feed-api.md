@@ -1,6 +1,6 @@
 # Explicit complete-view change feed
 
-The source implementation of the [conservative design](view-change-feed-design.md)
+The source implementation of the [conservative design](history/experiments/view-change-feed-design.md)
 is an additive, opt-in feed. Its [separate contract](../contracts/view-feed-v1/contract.md)
 defines packet, setup, ownership and recovery behavior. It does not enable the
 retained semantic delta engine or select a release/deployment.
